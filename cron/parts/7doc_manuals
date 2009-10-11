@@ -18,4 +18,17 @@ make -C trunk publish &> make.log
 
 echo "DDP update and build finished at `date`"
 
+# Workaround devref bug (links done to .html instead of .$lang.html) and
+# content neogciation
+webdocdir=$webdir/doc
+for lang in en fr ja
+do
+	for doc in $webdocdir/developers-reference/*.$lang.html
+	do
+		ln -sf $(basename "$doc" .html).$lang.html $webdocdir/developers-reference/$(basename "$doc" .html).html.$lang
+		ln -sf developers-reference.$lang.pdf $webdocdir/developers-reference/developers-reference.pdf.$lang
+		ln -sf developers-reference.$lang.txt.gz $webdocdir/developers-reference/developers-reference.txt.gz.$lang
+	done
+done
+
 echo
