@@ -329,9 +329,10 @@ foreach $lang (@search_in) {
                                            $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $firstdifftype, $transversion{"$lang/$file"}, $version{"$orig/$file"};
 		        $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/$orig/%s?root=webwml\&amp;view=diff\&amp;r1=%s\&amp;r2=%s\&amp;diff_format=%s\">%s\&nbsp;->\&nbsp;%s</a></td>",
                                            $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $seconddifftype, $transversion{"$lang/$file"}, $version{"$orig/$file"};
-                        $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/$orig/%s?root=webwml#rev%s\">[L]</a></td>", $file, $version{"$orig/$file"};
 		    }
-                    $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/*checkout*/webwml/%s/%s?root=webwml\">[F]</a></td>", $lang, $file;
+                    $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/$orig/%s?root=webwml#rev%s\">[L]</a></td>", $file, $version{"$orig/$file"};
+                    $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/%s/%s?root=webwml\&amp;view=markup\&amp;revision=%s\">[V]</a></td>", $lang, $file, $version{"$orig/$file"};
+                    $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/*checkout*/webwml/%s/%s?root=webwml\&amp;revision=%s\">[F]</a></td>", $lang, $file, $version{"$orig/$file"};
                     $o_body .= sprintf "<td align=center>%s</td>", $maintainer{"$lang/$file"} || "";
                     $o_body .= "</tr>\n";
                     $outdated{$lang}++;
