@@ -1,5 +1,5 @@
 #use wml::debian::template title="Wanna-build states: an explanation" BARETITLE="true"
-#use wml::debian::translation-check translation="1.19"
+#use wml::debian::translation-check translation="1.20"
 
     <p>このページでは、wanna-build 状態が意味するすべて、
        また、この状態にあるパッケージに何が起こるのか、ということを
@@ -18,9 +18,9 @@
 buildd.debian.org にインストールされている wanna-build
 データベースがあり、
 全パッケージとその現在のコンパイル状態を管理しています。
-状態は七つあります: <em>needs-build</em>, <em>building</em>,
- <em>uploaded</em>, <em>dep-wait</em>, <em>failed</em>,
- <em>not-for-us</em>, 及び <em>installed</em>。</p>
+状態は 8 つあります: <em>needs-build</em>, <em>building</em>,
+ <em>uploaded</em>, <em>dep-wait</em>, <em>BD-Uninstallable</em>,
+ <em>failed</em>, <em>not-for-us</em>, 及び <em>installed</em>。</p>
 
 <p>それぞれの意味は次の通りです:</p>
   <dl>
@@ -123,6 +123,30 @@ buildd.debian.org にインストールされている wanna-build
     <em>dep-wait</em> 状態は <tt>m68k</tt>
     移植者の手作業により変更されなければならないでしょう。</dd>
 
+    <dt><a name="bd-uninstallable">BD-Uninstallable</a></dt>
+    <dd>debconf9 の期間中、edos-debcheck 
+    を使ってパッケージのビルド依存がインストール可能かどうか確認し、
+    そうでなければ Needs-Build の状態に移行させるという <a
+    href='http://lists.debian.org/debian-wb-team/2009/07/msg00089.html'>Joachim
+    Breitner の提案</a>がありました。このとき既に wanna-build
+    にはビルド依存が直接入手可能か確認する機能がありましたが、
+    あるパッケージが a にビルド依存していてインストール出来ないとき、
+    a が b に依存、bが c (1.2.3 以上) に依存、そして c のバージョンはまだ
+    1.2.2 だ、というような場合には検知できず、
+    ビルドは早い段階で入手不可能なビルド依存により失敗していました。
+    これを見つけ出すのは buildd 管理者の手作業によるもので、
+    通常は冗長的な作業でした。BD-Uninstallable
+    パッチによって、これはもう問題にはならなくなります。
+    パッケージが BD-Uninstallable の状態にあるということは、
+    (直接または依存ツリーの一部が入手可能でないことにより)
+    ビルド依存の一つがインストール可能ではないことを示します。
+    残念ながら BD-Uninstallable
+    パッチでは厳密に言えばどのパッケージが欠けているのか、
+    という情報までは通知しません。これを見つけるには edos-debcheck
+    を使ってください。この問題はそれでも、
+    欠けている依存が実際に入手可能になると自動的に解決され、
+    その時点でパッケージは Needs-Build に再び移動します。</dd>
+
     <dt><a name="wanna-build-state-failed">failed</a></dt>
     <dd>ビルドが失敗し、autobuilder
     管理者がそれを再試行すべきでない実際の失敗だと判断すると
@@ -180,7 +204,7 @@ buildd.debian.org にインストールされている wanna-build
     パッケージは通常、平均して 15 分後に <em>installed</em> とされます。</dd>
     </dl>
 
-    <p>以上の七つの状態に加えて、かなりまれですが
+    <p>以上の 8 つの状態に加えて、かなりまれですが
     <em>wanna-build</em> には -removed の状態が二つあります。
     <em>dep-wait-removed</em> と <em>failed-removed</em> です。
     以下のようにそれぞれの<q>通常</q>の状態と関連します:
