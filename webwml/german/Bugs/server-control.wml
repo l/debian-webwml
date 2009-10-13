@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS &ndash; control-Server" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.78"
+#use wml::debian::translation-check translation="1.84"
 # $Id$
 # Translator: Martin Schulze <joey@infodrom.org>
 
@@ -57,6 +57,8 @@ des Befehls
 <dt><a href="#tag">tag</a></dt>
 <dt><a href="#retitle">retitle</a></dt>
 <dt><a href="#submitter">submitter</a></dt>
+<dt><a href="#affects">affects</a></dt>
+<dt><a href="#summary">summary</a></dt>
 </dl>
 </td>
 <!-- Versionierung -->
@@ -167,7 +169,10 @@ besser, stattdessen den <code>found</code>-Befehl zu verwenden.</p></dd>
 
 <dd>
 <p>Notiere, dass #<var>Fehlernummer</var> in der gegebenen <var>Version</var>
-des Pakets zu der sie zugewiesen wurde, angetroffen wurde.</p>
+des Pakets zu der sie zugewiesen wurde, angetroffen wurde.
+<var>Version</var> kann eine vollständig qualifizierte Version in der Form
+<var>Quelltextpaketname/Version</var> sein.
+</p>
 
 <p>Die Fehlerdatenbank verwendet diese Information in Verbindung mit
 korrigierten Versionen, die beim Schließen notiert werden, um Listen von
@@ -177,14 +182,18 @@ wenn er gefunden wurde, nachdem er korrigiert wurde.</p>
 
 <p>Falls keine <var>Version</var> angegeben wurde, wird die Liste der
 korrigierten Versionen für diesen Fehler bereinigt. Dies ist identisch zu
-dem Verhalten von <code>reopen</code>.</p>
+dem Verhalten von <code>reopen</code>.
+<var>Version</var> kann eine vollständig qualifizierte Version in der Form
+<var>Quelltextpaketname/Version</var> sein.
+</p>
 
-<p>Mit diesem Befehl wird eine Fehler nur als nicht-erledigt markiert,
-   falls keine Version angegeben ist, oder falls die <var>Version</var>, in der
-   der Fehler gefunden wurde, mit der <var>Version</var>, in der der Fehler
-   korrigiert wurde, übereinstimmt (falls Sie sich sicher sind, dass Sie den
-   Fehler als nicht-erledigt markieren wollen, verwenden Sie <code>reopen</code>
-   zusammen mit <code>found</code>).
+<p>Mit diesem Befehl wird ein Fehler nur als nicht-erledigt markiert,
+   falls keine Version angegeben ist, oder falls die <var>Version</var>,
+   in der der Fehler gefunden wurde, größer oder gleich der höchsten
+   <var>Version</var> ist, die als korrigiert markiert wurde.
+   (Falls Sie sich sicher sind, dass Sie den Fehler als nicht-erledigt
+   markieren wollen, verwenden Sie <code>reopen</code> zusammen mit
+   <code>found</code>).
 </p>
 
 <p>Dieser Befehl wurde als Präferenz für den <code>reopen</code> eingeführt,
@@ -196,7 +205,10 @@ hinzuzufügen, ohne unter Mehrdeutigkeiten zu leiden.</p></dd>
 
 <dd>
 <p>Entferne die Aufzeichnung, dass #<var>Fehlernummer</var> in der angegebenen
-<var>Version</var> des Pakets, dem er zugewiesen wurde, angetroffen wurde.</p>
+<var>Version</var> des Pakets, dem er zugewiesen wurde, angetroffen wurde.
+<var>Version</var> kann eine vollständig qualifizierte Version in der Form
+<var>Quelltextpaketname/Version</var> sein.
+</p>
 
 <p>Dies unterscheidet sich vom Schließen eines Fehlers in dieser Version 
 darin, dass der Fehler nicht als in dieser Version korrigiert aufgeführt ist;
@@ -208,11 +220,14 @@ Irrtümer, wann der Fehler gefunden wurde, in den Aufzeichnungen zu korrigieren.
 
 <dd>
 <p>Kennzeichne, dass der Fehler #<var>Fehlernummer</var> in der angegebenen
-   <var>Version</var> des zugewiesenen Pakets korrigiert wurde.</p>
+   <var>Version</var> des zugewiesenen Pakets korrigiert wurde.
+   <var>Version</var> kann eine vollständig qualifizierte Version in der Form
+   <var>Quelltextpaketname/Version</var> sein.
+</p>
 
 <p>Dies führt <em>nicht</em> dazu, dass der Fehler als geschlossen markiert
    wird, es ergänzt lediglich eine weitere Version, in der der Fehler
-   korrigiert wurde. Verwenden Sie dei Fehlernummer-done-Adresse, um einen
+   korrigiert wurde. Verwenden Sie die Fehlernummer-done-Adresse, um einen
    Fehler zu schließen und ihn als in einer bestimmen Version korrigiert zu
    markieren.
 </p></dd>
@@ -221,11 +236,20 @@ Irrtümer, wann der Fehler gefunden wurde, in den Aufzeichnungen zu korrigieren.
 
 <dd>
 <p>Entferne die Aufzeichnung, dass der Fehler <var>Fehlernummer</var> in der
-   angegebenen <var>Version</var> korrigiert wurde.</p>
+   angegebenen <var>Version</var> korrigiert wurde.
+   <var>Version</var> kann eine vollständig qualifizierte Version in der Form
+   <var>Quelltextpaketname/Version</var> sein.
+</p>
 
 <p>Dieser Befehl ist äquivalent zu <code>found</code> gefolgt von 
    <code>notfound</code> (<q>found</q> entfernt das <q>fixed</q> in einer
-   bestimmten Version, und <q>notfound</q> entfernt den <q>found</q>).
+   bestimmten Version, und <q>notfound</q> entfernt den <q>found</q>)
+   mit der Ausnahme, dass der Fehler nicht wieder geöffnet wird, wenn
+   die Version, in der der Fehler gefunden wurde, größer als jede
+   Version ist, in der der Fehler als korrigiert markiert wurde.
+   Es ist dazu gedacht, Irrtümer in der Aufzeichnung zu korrigieren,
+   wann ein Fehler behoben wurde. In den meisten Fällen benötigen Sie
+   eigentlich <code>found</code>, nicht <code>notfixed</code>.
 </p></dd>
 
 <dt><a name="submitter"><code>submitter</code> <var>Fehlernummer</var>
@@ -310,6 +334,42 @@ hat.</p>
 <p>Die Bedeutung der <a
 href="Developer#severities">Schweregrade</a> finden Sie in den
 allgemeinen Informationen zum Fehler-System für Entwickler.</p></dd>
+
+  <dt><a name="affects"><code>affects</code> <var>Fehlernummer</var>
+      [ <code>+</code> | <code>-</code> | <code>=</code>
+      ] <var>Paket</var> [ <var>Paket</var> ... ]</a></dt>
+  <dd>
+    <p>
+      Zeigt an, dass ein Fehler ein anderes Paket betrifft. Falls
+      <var>Fehlernummer</var> das <var>Paket</var> unbenutzbar macht,
+      obwohl der Fehler tatsächlich in dem Paket vorhanden ist, dem
+      er zugewiesen wurde, wird der Fehler in der Voreinstellung auf
+      der Fehlerseite des anderen <var>Paket</var>s aufgelistet.
+      Dies sollte immer dann benutzt werden, wenn der Fehler so
+      schwerwiegend ist, dass mehrere Benutzer Fehlerberichte gegen
+      das falsche Paket schreiben.
+    </p>
+  </dd>
+
+  <dt><a name="summary"><code>summary</code> <var>Fehlernummer</var>
+      [<var>Nachrichtennummer</var>]</a></dt>
+  <dd>
+    <p>
+      Wählt eine Nachricht aus, die als Zusammenfassung des Fehlers
+      verwendet wird. Der erste Absatz des Fehlers, der keine
+      Pseudo-Kopfzeilen enthält, wird ausgewertet und als
+      Zusammenfassung ausgewählt. Diese wird oben auf der Seite des
+      Fehlerberichts dargestellt. Das ist sinnvoll in Fällen, wo der
+      ursprüngliche Bericht das Problem nicht richtig beschreibt oder
+      es so viele Nachrichten gibt, dass das tatsächliche Problem
+      schwierig zu erkennen ist.
+    </p>
+    <p>
+      Falls die <var>Nachrichtennummer</var> nicht angegeben ist, wird
+      die Zusammenfassung gelöscht. Die <var>Nachrichtennummer</var>n
+      werden auf der Seite des Fehlerberichts angezeigt.
+    </p>
+  </dd>
 
 <dt><a name="clone"><code>clone</code> <var>Fehlernummer</var> <var>NeueID</var> [ <var>neue IDs</var> ... ]</a></dt>
 
@@ -419,16 +479,20 @@ einer Gruppe herausziehen möchten, schreiben Sie einfach mehrere
 
 <dt><a name="tag"><code>tags</code> <var>Fehlernummer</var> [ <code>+</code> 
     | <code>-</code> | <code>=</code> ] <var>Markierung</var> 
-    [ <var>Markierung</var> ... ]</a></dt>
+    [ <var>Markierung</var> ... ] [ <code>+</code> | <code>-</code>
+    | <code>=</code> <var>Markierung</var> ... ] ]</a></dt>
 
   <dd>
-  <p>Setzt Markierungen für den Fehlerbericht #<var>Fehlernummer</var>. Keine
-  Benachrichtigung wird an den Anwender geschickt, der den Fehler berichtet
-  hat. Die Aktion <code>+</code> bedeutet, dass jede übergebene Markierung
-  hinzugefügt wird, <code>-</code> bedeutet, dass jede übergebene Markierung
-  entfernt wird und <code>=</code> bedeutet, dass aktuelle Markierungen 
-  ignoriert und neu gesetzt werden sollen. Voreingestellt ist, dass neue 
-  Markierungen hinzugefügt werden.</p>
+  <p>Setzt Markierungen für den Fehlerbericht #<var>Fehlernummer</var>.
+  Keine Benachrichtigung wird an den Anwender geschickt, der den Fehler
+  berichtet hat. Die Aktion <code>+</code> bedeutet, dass jede folgend
+  übergebene Markierung hinzugefügt wird, <code>-</code> bedeutet,
+  dass jede folgend übergebene Markierung entfernt wird und
+  <code>=</code> bedeutet, dass die in der Liste folgenden
+  Markierungen gesetzt werden sollen. Zwischen den Markierungen
+  vorhandene Anweisungen <code>+</code>, <code>-</code> oder
+  <code>=</code> ändern die Aktion für die nachfolgenden Markierungen.
+  Voreingestellt ist, dass neue Markierungen hinzugefügt werden.</p>
 
   <p>Beispiel für die Benutzung:</p>
 
@@ -447,6 +511,10 @@ einer Gruppe herausziehen möchten, schreiben Sie einfach mehrere
 
         \# Setze Markierungen exakt auf 'moreinfo' und 'unreproducible'
         tags 123456 = moreinfo unreproducible
+
+        \# Entfernen der 'moreinfo'-Markierung und Hinzufügen der
+        \# 'patch'-Markierung
+        tags 123456 - moreinfo + patch
   </pre>
 
   <p>Markierungen können zurzeit folgende Werte annehmen: <code>patch</code>,
