@@ -45,8 +45,6 @@ $ADDED_FILE    = "$TMP_DIR/#cvs.files.added";
 $REMOVED_FILE  = "$TMP_DIR/#cvs.files.removed";
 $LOG_FILE      = "$TMP_DIR/#cvs.files.log";
 
-$FILE_PREFIX   = "#cvs.files";
-
 #
 #	Subroutines
 #
@@ -57,11 +55,12 @@ sub cleanup_tmpfiles {
     $wd = `pwd`;
     chdir("$TMP_DIR") || die("Can't chdir('$TMP_DIR')\n");
     opendir(DIR, ".");
-    push(@files, grep(/^$FILE_PREFIX\..*\.$id$/, readdir(DIR)));
-    closedir(DIR);
-    foreach (@files) {
-	unlink $_;
+    for my $file (readdir(DIR)) {
+	if (/^(#cvs\.files\.[[:alpha:]]+\.\d+\.$id)\$/) {
+	    unlink $1;
+	}
     }
+    closedir(DIR);
     unlink $LAST_FILE . "." . $id;
 
     chdir($wd);
