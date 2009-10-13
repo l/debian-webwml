@@ -85,7 +85,7 @@ while (<SRC>)
 	s/\bdiscovered a/entdeckte ein/;
 	s/\bdiscovered that\b/entdeckte, dass/;
 	s/discovered/entdeckte/;
-	s/traversal/überschreitung/;
+	s/traversal/Überschreitung/;
 	s/^(<p>)?A vulnerability was discovered in\b/$1Eine Verwundbarkeit wurde in entdeckt/;
 	s/^(<p>)?Two vulnerabilities were discovered in\b/$1Zwei Verwundbarkeiten wurden in entdeckt/;
 	s/Common Vulnerabilities and Exposures project/<q>Common Vulnerabilities and Exposures<\/q>-Projekt/;
@@ -184,6 +184,8 @@ while (<SRC>)
 	s/\(woody\)/(Woody)/;
 	s/\(sarge\)/(Sarge)/;
 	s/\(etch\)/(Etch)/;
+	s/\(lenny\)/(Lenny)/;
+	s/\(squeeze\)/(Squeeze)/;
 	s/\(sid\)/(Sid)/;
 	s/Refer to Debian (<.*>)?bug #([0-9]+)</Verweisen auf $1 Debian-Fehler #$2</;
 	s/(of|from) the Debian Security Audit (Project|Team)/vom Debian-Sicherheits-Audit-$2/;
