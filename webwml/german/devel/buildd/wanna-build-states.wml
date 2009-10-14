@@ -1,5 +1,5 @@
 #use wml::debian::template title="Wanna-build-Zustände: Eine Erklärung" BARETITLE="true"
-#use wml::debian::translation-check translation="1.19"
+#use wml::debian::translation-check translation="1.20"
 # $Id$
 # Translator: Kai Wasserbäch <debian@carbon-project.org>, 2008-01-14
 
@@ -17,9 +17,9 @@
 <h2>Die wanna-build Zustände</h2>
 <p>Für jede von Debian unterstützte Architektur ist auf buildd.debian.org 
 eine Datenbank installiert. Sie enthält alle Pakete und deren jeweiligen Kompilierungsstatus.
-Es gibt sieben Zustände: <em>needs-build</em>,
+Es gibt acht Zustände: <em>needs-build</em>,
 <em>building</em>, <em>uploaded</em>, <em>dep-wait</em>,
-<em>failed</em>, <em>not-for-us</em> und
+<em>BD-Uninstallable</em>, <em>failed</em>, <em>not-for-us</em> und
 <em>installed</em>.</p>
 
 <p>Die Bedeutung derselben ist wie folgt:</p>
@@ -131,6 +131,36 @@ Es gibt sieben Zustände: <em>needs-build</em>,
 	verfügbare Paket <tt>foo</tt> wartet, dann muss der Zustand <em>dep-wait</em> 
 	manuell für die Architektur <tt>m68k</tt> von dessen Portierern aufgehoben werden.
       </dd>
+      <dt><a name="bd-uninstallable">BD-Uninstallable</a></dt>
+      <dd>Während debconf9 <a
+	href="http://lists.debian.org/debian-wb-team/2009/07/msg00089.html">hatte
+	Joachim	Breitner die Idee</a>, edos-debcheck für die Überprüfung
+	der Installationsfähigkeit der zum Erzeugen des Pakets notwendigen
+	Abhängigkeiten zu verwenden. Bislang wurden diese Pakete in den
+	Status <q>Needs-Build</q> gesetzt. Zu dem damaligen Zeitpunkt
+	hatte wanna-build bereits die Fähigkeit, die unmittelbare
+	Verfügbarkeit der zum Erzeugen des Pakets notwendigen
+	Abhängigkeiten zu überprüfen. Allerdings schlug das Bauen des
+	Pakets früh fehl, wenn eine Abhängigkeit nicht installiert
+	werden konnte, weil das Paket von <var>a</var> abhängt, das
+	wiederum von <var>b</var> abhängt, welches seinerseits wiederum
+	von <var>c (&gt;=1.2.3)</var> abhängt und <var>c</var> erst
+	in der Version 1.2.2 vorliegt. Dies konnte nicht erkannt werden.
+	Solche Fehler herauszufinden, war also eine manuelle Aufgabe
+	für den buildd-Administrator und üblicherweise langwierig.
+	Mit dem BD-Uninstallable-Patch ist dies nicht länger ein
+	Problem. Wenn Ihr Paket im Status BD-Uninstallable ist,
+	bedeutet dies, dass eine der zum Erzeugen des Pakets notwendigen
+	Abhängigkeiten nicht installiert werden kann (entweder
+	unmittelbar oder weil ein Teil der weiteren Unterabhängigkeiten
+	nicht verfügbar ist). Leider stellt der BD-Uninstallable-Patch
+	keine Informationen darüber zur Verfügung, welches Paket genau
+	fehlt. Um das herauszufinden, verwenden Sie bitte edos-debcheck.
+	Dieses Problem wird sich aber lösen, sobald die fehlenden
+	Abhängigkeiten zur Verfügung stehen. Zu diesem Zeitpunkt wird
+	Ihr Paket automatisch wieder in den Status <q>Needs-Build</q>
+	verschoben.
+      </dd>
       <dt><a name="wanna-build-state-failed">failed</a></dt>
       <dd>Sollte das Erzeugen eines Paketes fehlschlagen und der Betreuer des 
         Autobuilders entscheiden, dass kein erneuter Versuch gestartet 
@@ -188,7 +218,7 @@ Es gibt sieben Zustände: <em>needs-build</em>,
 	wurde. Dies passiert im Durchschnitt nach ungefähr 15 Minuten.
       </dd>
     </dl>
-    <p>Außer diesen sieben Zuständen kennt <em>wanna-build</em> noch 
+    <p>Außer diesen acht Zuständen kennt <em>wanna-build</em> noch 
     zwei -removed-Zustände, die aber Sonderfälle sind. Es handelt 
     sich hierbei um <em>dep-wait-removed</em> und <em>failed-removed</em>. 
     Sie hängen direkt mit ihren respektiven <q>einfachen</q> Zuständen wie 
