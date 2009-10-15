@@ -1,7 +1,7 @@
 #use wml::debian::template title="Debian ウェブサイトのミラー"
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/mirror/webmirrors.data"
-#use wml::debian::translation-check translation="1.42"
+#use wml::debian::translation-check translation="1.44"
 
 <toc-display />
 
@@ -204,6 +204,24 @@ AddType image/x-icon .ico
 AddType application/rss+xml .rdf
 </pre>
 
+<p>スペイン語翻訳版の HTML, PDF,
+及びプレーンテキストファイルの正しい Context-Type
+ヘッダを返すため、Apache に正しい種類を次のように指示してください:</p>
+
+<pre>
+&lt;Files *.html.es>
+  ForceType text/html
+&lt;/Files>
+
+&lt;Files *.pdf.es>
+  ForceType application/pdf
+&lt;/Files>
+
+&lt;Files *.txt.es>
+  ForceType text/plain
+&lt;/Files>
+</pre>
+
 <p><a href="../events/">/events</a> 
 以下での content negotiation (内容交渉) の問題回避のため、カレンダーファイルには
 text/html の内容よりも低い優先度を割り当てる必要があります:</p>
@@ -227,3 +245,15 @@ Redirect /search http://search.debian.org
 Redirect /Packages http://packages.debian.org
 Redirect /lintian http://lintian.debian.org
 </pre>
+
+<h4>バーチャルホスト</h4>
+
+<p><a href="www.debian.org">www.debian.org</a>
+及び管理下のいくつかの名前でアクセスされる Debian ウェブサイトでは、
+負荷分散とユーザから近いミラーの選択のために GeoDNS を使っています。</p>
+
+<p>結論から言うと、Apache はいくつかのバーチャルホストを通して
+Debian ウェブサイトを使えるようにすべきです。
+こんな感じになります:</p>
+
+<pre>ServerAlias www.debian.org www.debian.com debian.org www.*.debian.org</pre>
