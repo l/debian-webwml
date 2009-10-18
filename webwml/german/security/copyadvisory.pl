@@ -105,6 +105,7 @@ while (<SRC>)
 	s/buffer overflows/Pufferüberläufe/;
 	s/buffer overflow/Pufferüberlauf/;
 	s/integer overflow/Integer-Überlauf/;
+	s/(sql|SQL) injection/SQL-Einschleusung/;
 	s/format string vulnerability/Formatierungszeichenkettenverwundbarkeit/;
 	s/format string vulnerabilities/Formatierungszeichenkettenverwundbarkeiten/;
 	s/insecure temporary files/unsichere temporäre Dateien/;
