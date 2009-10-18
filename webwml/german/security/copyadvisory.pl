@@ -82,7 +82,7 @@ while (<SRC>)
 	s/^(<p>)?A problem has been discovered in\b/$1Ein Problem wurde in entdeckt/;
 	s/^(<p>)?It was discovered that\b/$1Es wurde entdeckt, dass/;
 	s/\bdiscovered a problem in\b/entdeckte ein Problem in/;
-	s/\bdiscovered a/entdeckte ein/;
+	s/\bdiscovered an?/entdeckte ein/;
 	s/\bdiscovered that\b/entdeckte, dass/;
 	s/discovered/entdeckte/;
 	s/traversal/Überschreitung/;
@@ -176,6 +176,7 @@ while (<SRC>)
 	s/privilege escalation/Privilegienerweiterung/;
 	s/cross site/Site-übergreifend/;
 	s/\bis not affected/ist nicht betroffen/;
+	s/\bisn't affected by this problem/ist von diesem Problem nicht betroffen/;
 	s/does not contain ([[:word:]]*) packages?/enthält kein(e) $1-Paket(e)/;
 	s/does not contain a(?:ny)? ([[:word:]]*) packages/enthält keine $1-Pakete/;
 	s/does not contain a(?:ny)? ([[:word:]]*) package/enthält kein $1-Paket/;
