@@ -5,7 +5,7 @@
 
 <define-tag bts_main_form whitespace=delete>
   <form method="get" action="http://bugs.debian.org/cgi-bin/pkgreport.cgi">
-  <p style="visibility:hidden">
+  <p style="display:none">
   <input type="hidden" name="_fo_combine_key_fo_searchkey_value_fo_searchvalue" value="1">
   <input type="hidden" name="form_options" value="1">
   </p>
