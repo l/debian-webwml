@@ -5,12 +5,14 @@
 
 <define-tag bts_main_form whitespace=delete>
   <form method="get" action="http://bugs.debian.org/cgi-bin/pkgreport.cgi">
+  <p style="visibility:hidden">
   <input type="hidden" name="_fo_combine_key_fo_searchkey_value_fo_searchvalue" value="1">
   <input type="hidden" name="form_options" value="1">
+  </p>
 </define-tag>
 
 <define-tag bts_select_form whitespace=delete>
-  <nobr>
+  <span style="white-space:nowrap">
   <select name="_fo_searchkey">
   <option value="package" selected>
     <gettext domain="bugs">in package</gettext>
@@ -44,13 +46,13 @@
   </option>
   </select>
   <input type="text" name="_fo_searchvalue" value ="">
-  </nobr>
+  </span>
   <br>
 </define-tag>
 
 <define-tag bts_include_form whitespace=delete>
   <input type="hidden" name="_fo_concatenate_into_include_fo_includekey_fo_includevalue" value="1">
-  <nobr>
+  <span style="white-space:nowrap">
   <select name="_fo_includekey">
   <option value="subject">
     <gettext domain="bugs">with subject containing</gettext>
@@ -79,12 +81,12 @@
 
   </select>
   <input type="text" name="_fo_includevalue" value ="">
-  </nobr>
+  </span>
 </define-tag>
 
 <define-tag bts_exclude_form whitespace=delete>
   <input type="hidden" name="_fo_concatenate_into_exclude_fo_excludekey_fo_excludevalue" value="1">
-  <nobr>
+  <span style="white-space:nowrap">
   <select name="_fo_excludekey">
   <option value="subject">
     <gettext domain="bugs">with subject containing</gettext>
@@ -112,7 +114,7 @@
   </option>
   </select>
   <input type="text" name="_fo_excludevalue" value ="">
-  </nobr>
+  </span>
 </define-tag>
 
 <define-tag bts_orderby_form whitespace=delete>
