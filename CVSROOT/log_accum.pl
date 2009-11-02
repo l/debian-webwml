@@ -52,7 +52,8 @@ $LOG_FILE      = "$TMP_DIR/#cvs.files.log";
 sub cleanup_tmpfiles {
     local($wd, @files);
 
-    $wd = `pwd`;
+    use Cwd;
+    $wd = getcwd();
     chdir("$TMP_DIR") || die("Can't chdir('$TMP_DIR')\n");
     opendir(DIR, ".");
     for my $file (readdir(DIR)) {
