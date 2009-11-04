@@ -6,7 +6,7 @@ use strict;
 use LWP::UserAgent;
 
 # Parameters
-my $inputfile="http://ftp-master.debian.org/~joerg/arch-space";
+my $inputfile="http://ftp-master.debian.org/arch-space";
 
 my $ua = LWP::UserAgent->new;
 my $req = HTTP::Request->new(GET => $inputfile);
@@ -22,22 +22,16 @@ my $total ;
 my $space;
 
 for my $line (split("\n",$arch_space)) {
-	if ($line =~ /^([\w-]+)\s*\|(\d+)\s*$/) {
-		my $size = $2/1000000000;
-		$total += $2 ;
-		$space->{$1}=$size;
-	}
-	if ($line =~ /^(\d+)$/) {
-		my $size = $1/1000000000;
-		$total += $1 ;
-		$space->{'source'}=$size;
-	}
+	if ((my $arch, my $size) = split (/\s+/, $line)) {
+		$space->{$arch}=$size/1000000000 ;
+		$total += $size ;
+}
 }
 
-printf "<tr><td>source</td>\t<td>%.0f</td></tr>\n", $space->{"source"};
+printf "<tr><td>source</td>\t<td>%.0f</td></tr>\n", $space->{"Source"};
 
 foreach my $key (sort keys %$space) {
-	printf "<tr><td>$key</td>\t<td>%.0f</td></tr>\n", $space->{$key} unless ($key eq "source");
+	printf "<tr><td>$key</td>\t<td>%.0f</td></tr>\n", $space->{$key} unless ($key eq "Source");
 }
 
 $total /= 1000000000 ;
