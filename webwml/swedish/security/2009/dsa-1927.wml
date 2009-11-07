@@ -1,0 +1,94 @@
+#use wml::debian::translation-check translation="1.1"
+<define-tag description>utökning av privilegier/överbelastning/känsligt minnesläckage</define-tag>
+<define-tag moreinfo>
+
+<p>Observera: Debian 5.0.4, nästa punktutgåva av Debian Lenny,
+kommer innehålla ett nytt standardvärde för variabeln mmap_min_addr.
+Denna förändring kommer att lägga till ett ytterligare skydd mot en sorts
+säkerhetssårbarheter kända som <q>NULL-pekaravrefererings</q>-sårbarheter, men
+detta skydd kommer behövas kringgås vid användning av vissa applikationer.
+Ytterligare information om denna ändring, inklusive instruktioner för
+att göra denna ändring lokalt innan 5.0.4 släpps (rekommenderas), kan
+läsas på <a href="http://wiki.debian.org/mmap_min_addr">http://wiki.debian.org/mmap_min_addr</a>.</p>
+
+<p>Flera sårbarheter har upptäckts i Linuxkärnan som
+kan leda till en överbelastning, känsligt minnesläckage eller utökning av
+priviilegier.  Projektet Common Vulnerabilities and Exposures
+identifierar följande problem:</p>
+
+<ul>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-3228">CVE-2009-3228</a>
+
+    <p>Eric Dumazet rapporterade en förekomst av oinitialiserat kärnminne
+    i shemaläggaren för nätverkspaket. Lokala användare kan ha möjlighet att
+    utnyttja detta problem för att läsa innehållet i känsligt
+    kärnminne.</p></li>
+  
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-3238">CVE-2009-3238</a>
+
+    <p>Linus Torvalds tillhandahöll en ändring till funktionen get_random_int()
+    för att öka dess slumpmässighet.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-3547">CVE-2009-3547</a>
+
+    <p>Earl Chew upptäckte ett NULL-pekaravrefereringsproblem i funktionen
+    pipe_rdwr_open som kan användas av lokala användare för att erhålla
+    förhöjda privilegier.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-3612">CVE-2009-3612</a>
+
+    <p>Jiri Pirko upptäckte en felskrivning i en strukturinitialisering
+    i undersystemet netlink som kan tillåta lokala användare att få tillgång
+    till känsligt kärnminne.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-3620">CVE-2009-3620</a>
+
+    <p>Ben Hutchings upptäckte ett problem i DRM-hanteraren för grafikadaptrarna ATI Rage
+    128. Lokala användare kan ha möjlighet att utnyttja denna
+    sårbarhet för att orsaka en överbelastning
+    (NULL-pekaravreferering).</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-3621">CVE-2009-3621</a>
+
+    <p>Tomoki Sekiyama upptäckte ett dödlägestillstånd i implementationen av
+    UNIX domain socket. Lokala användare kan utnyttja denna sårbarhet
+    för att orsaka en överbelastning (systemhängning).</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-3638">CVE-2009-3638</a>
+
+    <p>David Wagner rapporterade ett spill i undersystemet KVM på
+    i386-system. Detta problem kan utnyttjas av lokala användare som kan komma åt
+    enhetsfilen /dev/kvm.</p></li>
+
+</ul>
+
+<p>För den stabila utgåvan (Lenny) har detta problem rättats i
+version 2.6.26-19lenny2.</p>
+
+<p>För den gamla stabila utgåvan (Etch) kommer dessa problem, där de
+förekommer, att rättas i uppdateringar till linux-2.6 och linux-2.6.24.</p>
+
+<p>Vi rekommenderar att ni uppgraderar era linux-2.6- och
+user-mode-linux-paket.</p>
+
+<p>Observera: Debian övervakar noga alla kända säkerhetsproblem i alla
+linuxkärnpaket i alla utgåvor med aktivt säkerhetsstöd.
+Men med tanke på hur ofta säkerhetsproblem av
+mindre allvarlig karaktär dyker upp och resurserna som krävs
+för att göra en uppdatering, kommer mindre allvarliga uppdateringar
+typiskt inte att släppas för alla kärnor på samma gång.
+De kommer snarare att släppas på ett något <q>hackigt</q> sätt.</p>
+
+<p>Följande matris listar ytterligare källpaket som har
+byggts om för kompatibilitet med eller för att dra fördel av denna uppdatering:</p>
+
+<div class="centerdiv"><table cellspacing="0" cellpadding="2">
+<tr><th>&nbsp;</th>                     <th>Debian 5.0 (Lenny)</th></tr>
+<tr><td>user-mode-linux</td>            <td>2.6.26-1um-2+19lenny2</td></tr>
+</table></div>
+
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2009/dsa-1927.data"
