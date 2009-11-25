@@ -97,4 +97,11 @@ might be able to use it.</li>
 <h3>
 General Porting Issues</h3>
 <p>
-<a href=http://www.gnu.org/software/hurd/hurd/porting/guidelines.html>A list of common issues</a> is available on the upstream website.
+<a href=http://www.gnu.org/software/hurd/hurd/porting/guidelines.html>A list of common issues</a> is available on the upstream website. The following common issues are specific to Debian.</p>
+
+<ul>
+<li>
+<code>Broken libc6 dependency</code>
+<p>
+Some packages use an erroneous dependency on <code>libc6-dev</code>. This is incorrect because <code>libc6</code> is specific to some architectures of GNU/Linux. The corresponding package for GNU is <code>libc0.3-dev</code> but other OSes will have different ones. You can locate the problem in the <code>debian/control</code> file of the source tree. Typical solutions include detecting the OS using <code>dpkg-architecture</code> and hardcoding the soname, or better, use a logical OR. eg: <code>libc6-dev | libc6.1-dev | libc0.3-dev | libc0.1-dev | libc-dev</code>. The <code>libc-dev</code> is a virtual package that works for any soname but you have to put it only as the last option.</p></li>
+</ul>
