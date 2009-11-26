@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian GNU/Hurd --- Udvikling" NOHEADER="yes"
-#use wml::debian::translation-check translation="1.32"
+#use wml::debian::translation-check translation="1.33"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
 
 <h1>Debian GNU/Hurd</h1>
@@ -82,4 +82,22 @@ vurderes de om ikke andet til at være umulige at tilpasse.</p>
 <h3>Generelle tilpasningsproblemstillinger</h3>
 
 <p>En <a href=http://www.gnu.org/software/hurd/hurd/porting/guidelines.html>liste 
-over almindelige problemerstillinger</a> er tilgængelig på opstrøms websted.</p>
+over almindelige problemerstillinger</a> er tilgængelig på opstrøms websted.  
+Det følgende er specifikt for Debian.</p>
+
+<ul>
+    <li>
+	<code>Defekt libc6-afhængighed</code>
+	<p>Nogle pakker anvender en fejlagtig afhængighed af 
+	<code>libc6-dev</code>.  Det er forkert, da <code>libc6</code> er 
+	specifik for nogle GNU/Linux-arkitekturer.  Den tilsvarende GNU-pakke er 
+	<code>libc0.3-dev</code>, men andre styresystemer vil have andre 
+	pakker.  Problemet findes i filen <code>debian/control</code> i 
+	kildekodetræet.  Typiske løsninger er at detektere styresystemet ved 
+	hjælp af <code>dpkg-architecture</code> og hårdkode soname, eller bedre, 
+	at anvende logisk OR.  Eksempelvis: 
+	<code>libc6-dev | libc6.1-dev | libc0.3-dev | libc0.1-dev | libc-dev</code>. 
+	<code>libc-dev</code> er en virtuel pakke, der fungerer for ethvert 
+	soname, men det skal kun anvendes som en sidste udvej.</p>
+    </li>
+</ul>
