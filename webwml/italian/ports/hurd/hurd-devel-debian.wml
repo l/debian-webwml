@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; Sviluppo" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.31" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.33" maintainer="Luca Monducci"
 
 <h1>Debian GNU/Hurd</h1>
 
@@ -101,130 +101,25 @@ portabili in futuro ma almeno per ora sono considerati non-portabili.</p>
 
 <h3>Problemi generali del port</h3>
 
-<p>Questo è un elenco delle incompatibilità più comuni che possono incontrare
-quando si compila del software non sufficientemente portabile su Hurd.</p>
+<p>
+<a href=http://www.gnu.org/software/hurd/hurd/porting/guidelines.html>Un
+elenco dei problemi più comuni</a> è disponibile sul sito web originale.
+Le seguenti problematiche sono specifiche di Debian.</p>
 
 <ul>
-    <li>
-	<code>Bad File Descriptor</code>
+    <li><code>Dipendenze di libc6 non funzionanti</code>
 
-	<p>Se si ottiene l'errore <code>Bad File Descriptor</code> quando si
-	tenta di leggere da un file (o quando si tenta di accedervi) si
-	controlli la chiamata a <code>open()</code>. Il secondo argomento è il
-	metodo di accesso, se questo è un numero fisso e non uno dei simboli
-	definiti nei file header standard il codice non è perfetto e deve
-	essere corretto in modo che usi <code>O_RDONLY</code>,
-	<code>O_WRONLY</code> o <code>O_RDWR</code>. Per esempio questo
-	problema è stato riscontrato nei pacchetti <code>fortunes</code> e
-	<code>mtools</code>.</p></li>
-
-    <li>
-	<code>PATH_MAX</code>
-
-	<p>Ogni uso incondizionato di <code>PATH_MAX</code> è incompatibile
-	con POSIX. Se non ci sono limiti superiori alla lunghezza di un
-	percorso questo simbolo non è definito in nessun file header, nel caso
-	opposto si può usare una implementazione che non si fida della
-	lunghezza della stringa oppure usare <code>sysconf()</code> per
-	interrogare la lunghezza durante l'esecuzione; se
-	<code>sysconf()</code> restituisce <code>-1</code> si deve usare
-	<code>realloc()</code> per allocare dinamicamente la memoria.</p></li>
-
-    <li>
-	<code>MAXHOSTNAMELEN</code>
-
-	<p>vedere <code>PATH_MAX</code></p></li>
-
-    <li>
-	<code>MAXPATHLEN</code>
-
-	<p>vedere <code>PATH_MAX</code></p></li>
-
-    <li>
-	<code>NOFILE</code>
-
-	<p>vedere <code>PATH_MAX</code></p></li>
-
-    <li>
-	<code>#define</code> specifiche di Hurd
-
-	<p>Se è necessario includere del codice specifico per Hurd tramite
-	<code>#if...#endif</code>, allora si può fare usando
-	<code>__GNU__</code>, però pensateci almeno tre volte prima di farlo.
-	In <em>molte</em> situazioni questo non è assolutamente necessario e
-	crea molti più problemi di quanti ne può risolvere. &Egrave; meglio
-	chiedere cosa fare sulla lista di messaggi se non si riesce a trovare
-	una soluzione migliore.</p></li>
-
-    <li>
-	<code>sys_errlist[]</code> vs. <code>strerror()</code>
-
-	<p>Se un programma ha solo il supporto per <code>sys_errlist[]</code>
-	allora è necessario fare un po' di lavoro per riuscire a compilarlo
-	con Hurd che non lo supporta e fornisce solo <code>strerror()</code>.
-	Steinar Hamre ha scritto riguardo a <code>strerror()</code>:</p>
-
-	<blockquote class="documentquote">
-	<p><code>strerror()</code> dovrebbe essere usato perché:</p>
-
-	<ul>
-	    <li>&Egrave; il modo previsto in POSIX.</li>
-	    <li>&Egrave; localizzato.</li>
-	    <li>Gestisce segnali non validi e valori fuori dai limiti (miglior
-		gestione degli errori, nessuna possibilità di buffer overflow
-		e nessun rischio di sicurezza).</li>
-	</ul>
-
-	<p><code>strerror()</code> dovrebbe essere usato sempre se è
-	disponibile. Sfortunatamente esistono ancora dei <em>vecchi</em>
-	sistemi non-POSIX che non hanno <code>strerror()</code>, ma hanno
-	solo <code>sys_errlist[]</code>.</p>
-
-	<p>Oggi, il supporto del solo <code>strerror()</code> è molto meglio
-	del solo supporto di <code>sys_errlist[]</code>. La cosa migliore (dal
-	punto di vista del port) è il supporto di entrambi. In
-	<code>configure.in</code> si deve:</p>
-
-	<p><code>AC_CHECK_FUNCS(strerror)</code></p>
-
-	<p>In <code>config.h.in</code>, si deve aggiungere:</p>
-
-	<p><code>#undef HAVE_STRERROR</code></p>
-
-	<p>E successivamente qualcosa di simile a:
-
-<pre>
-        \#ifndef HAVE_STRERROR
-        static char *
-        private_strerror (errnum)
-             int errnum;
-        {
-          extern char *sys_errlist[];
-          extern int sys_nerr;
-
-          if (errnum &gt; 0 &amp;&amp; errnum &lt;= sys_nerr)
-            return sys_errlist[errnum];
-          return "Unknown system error";
-        }
-        \#define strerror private_strerror
-        \#endif /* HAVE_STRERROR */
-</pre>
-
-	<p>Come esempio si può guardare le ultime fileutils (il codice
-	precedente è una versione semplificata di ciò che contengono).
-	Ovviamente le patch dovono essere inviate ai manutentori originali,
-	Questo è molto utile anche per i sistemi che funzionano con
-	<code>sys_errlist[]</code>.</p>
-	</blockquote></li>
-
-    <li>
-	Nomi di file che finiscono con uno slash "/"
-
-	<p>Questi sono una disgrazia se si vuole nominare una directory non
-	esistente usando questa sintassi. Per esempio, <code>mkdir
-	foobar/</code> <em>non</em> funziona sotto Hurd ma è conforme a POSIX.
-	POSIX permette che il percorso di una directory termini con degli
-	slash, poiché la directory ancora non esiste il percorso non indica
-	una directory e quindi non è garantito il funzionamento degli slash
-	finali. Eliminate gli slash e tutto andrà benissimo.</p></li>
+    <p>
+    Alcuni pacchetti usano erroneamente una dipendeza da
+    <code>libc6-dev</code>. Questo è sbagliato perché <code>libc6</code>
+    è specifica di alcune delle architetture di GNU/Linux. Il pacchetto
+    corrispondente per GNU è <code>libc0.3-dev</code> ma su altri Sistemi
+    Operativi potrebbe essere diverso. È possibile trovare questo errore
+    nel file <code>debian/control</code> del sorgente del pacchetto.
+    Le soluzioni tipiche sono includere il riconoscimento del SO tramite
+    <code>dpkg-architecture</code> e specificare il soname, o meglio usare
+    un OR logico. Per esempio: <code>libc6-dev | libc6.1-dev | libc0.3-dev
+    | libc0.1-dev | libc-dev</code>. Il pacchetto virtuale <code>libc-dev</code>
+    funziona con qualsiasi soname ma deve essere usato solo come ultima
+    risorsa.</p></li>
 </ul>
