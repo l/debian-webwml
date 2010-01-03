@@ -91,11 +91,11 @@ certain extensions.
 <p>
 To create a filesystem, use <code>mke2fs</code> and pass it <q><var>-b 4096
 -I 128 -o hurd</var></q> to designate the Hurd as the owner of the new file
-system. For instance, assuming the partition is <tt><q>/dev/hda2</q></tt>:
+system. For instance, assuming the partition is <tt><q>/dev/hda1</q></tt>:
 </p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
- \# mke2fs -b 4096 -I 128 -o hurd /dev/hda2
+ \# mke2fs -b 4096 -I 128 -o hurd /dev/hda1
 </pre></td></tr></table>
 
 
@@ -152,21 +152,32 @@ following is required:
 <h2> 5. Booting GNU/Hurd </h2>
 
 <p>
-All is now in readiness to boot GNU/Hurd for the first time. After verifying
-that the Grub boot disk is in the drive, reboot. If all goes well, either a
-Grub menu or command line will be displayed. If presented with a menu, press
-<kbd>c</kbd> to go to the command line.
+All is now in readiness to boot GNU/Hurd for the first time. Note that depending
+on your version of GRUB, small details with vary. Please make sure whether you
+have GRUB1 (aka legacy aka 0.95 and later up to 0.97), or GRUB2 (aka 1.95 and
+later). Examples below will provide both versions, make sure to pick the right
+one.
 </p>
 
 <p>
-First, GNU Mach needs to be loaded. This requires knowing the filesystem and
-the path to GNU Mach. Grub uses a partition nomenclature that is a bit
-different from both Linux and the Hurd:
-both IDE and SCSI drives are named <tt><q>(hdN,M)</q></tt>. <code>N</code> is the
-drive number (zero based) as enumerated by the BIOS. That is, Grub makes no
-distinction between IDE and SCSI disks. <code>M</code> identifies the partition
-on the drive. It is also zero based index. If this sounds confusing, relax:
-Grub is also helpful.
+If your system already has GRUB installed, just reboot it. Else, you need to use
+a Grub boot disk. On Debian, the grub-disk (grub1) or grub-rescue-pc (grub2)
+packages provides CD and Floppy disk images. Make sure that the Grub boot disk
+is in the drive, reboot. If all goes well, either a Grub menu or command line
+will be displayed. If the menu has a <tt><q>GNU/Hurd</q></tt> entry, you will
+probably be able to just reuse it to save a lot of typing burden. For now, if
+presented with a menu, press <kbd>c</kbd> to go to the command line.
+</p>
+
+<p>
+First, GNU Mach needs to be loaded. This requires knowing the filesystem
+and the path to GNU Mach. Grub uses a partition nomenclature that is a bit
+different from both Linux and the Hurd: both IDE and SCSI drives are named
+<tt><q>(hdN,M)</q></tt>. <code>N</code> is the drive number (zero based) as
+enumerated by the BIOS. That is, Grub makes no distinction between IDE and SCSI
+disks. <code>M</code> identifies the partition on the drive. It is zero based
+in grub1 but one based in grub2. If this sounds confusing, relax:  Grub is also
+helpful.
 </p>
 
 <p>
@@ -176,15 +187,32 @@ Grub searches on each filesystem for the specified file and prints where it was
 found. For example, to search for the kernel, <tt><q>/boot/gnumach.gz</q></tt>:
 </p>
 
-<table><tr><td>&nbsp;</td><td class=example><pre>
-   grub&#62; find /boot/gnumach.gz
+<table>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub1&#62; find /boot/gnumach.gz
    (hd0,0)
-</pre></td></tr></table>
+</pre></td></tr>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub2&#62; search -f /boot/gnumach.gz
+   (hd0,1)
+</pre></td></tr>
+</table>
 
 <p>
-Here, Grub is indicates that <tt><q>/boot/gnumach.gz</q></tt> is on
-<tt><q>(hd0,0)</q></tt>.
+Here, Grub1 indicates that <tt><q>/boot/gnumach.gz</q></tt> is on
+<tt><q>(hd0,0)</q> and Grub2, on <tt><q>(hd0,1)</q> (remember the difference
+in partition numbering between Grub1 and Grub2)</tt>.  To save you a couple of
+typing, set Grub's root to that value:
 </p>
+
+<table>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub1&#62; root (hd0,0)
+</pre></td></tr>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub2&#62; set root=(hd0,1)
+</pre></td></tr>
+</table>
 
 <p>
 Before loading the kernel, at least one option, the root partition, must be
@@ -197,10 +225,11 @@ GNU Mach enumerates disks starting at zero. IDE drives are prefixed with
 <code>hd</code>, while SCSI disks are prefixed with <code>sd</code>. Like
 Linux, drives are number by their position on the controller. For instance, the
 primary master is <code>hd0</code> and the secondary slave is <code>hd3</code>.
-Partitions use the BSD slice naming convention and append <code>sM</code> to
-the drive name to indicate a given partition. Note that <code>M</code> is a
-one, not zero, based index. The slice number is simple to calculate: just
-increment what was used for Grub by one.
+Partitions use the BSD slice naming convention and append <code>sM</code> to the
+drive name to indicate a given partition. Note that <code>M</code> is a one, not
+zero, based index. The slice number is simple to calculate: if you have Grub2,
+just reuse the same index, if you have Grub1, just increment what was used for
+Grub1 by one.
 </p>
 
 <p>
@@ -210,14 +239,19 @@ required.
 </p>
 
 <p>
-Assuming that the first drive (i.e. <tt><q>(hd0)</q></tt>) is the master on the
-secondary controller, we would have:
+To sum it up, assuming that the first drive (i.e. <tt><q>(hd0)</q></tt>) is the
+master on the master controller, we would have:
 </p>
 
-<table><tr><td>&nbsp;</td><td class=example><pre>
-   grub&#62; kernel (hd0,0)/boot/gnumach.gz root=device:hd2s1 -s
+<table>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub1&#62; kernel /boot/gnumach.gz root=device:hd0s1 -s
    [Multiboot-elf, ...]
-</pre></td></tr></table>
+</pre></td></tr>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub2&#62; multiboot /boot/gnumach.gz root=device:hd0s1 -s
+</pre></td></tr>
+</table>
 
 <p>
 Next, the root filesystem server and the <code>exec</code> server must be
@@ -227,24 +261,39 @@ type of information is being provided. Since the ext2fs command line is very
 long, it can be broken up by escaping the newline character in the normal Unix
 fashion. Be sure that there is not space after the antislash at the end of each
 line. Also be sure to differentiate <kbd>{</kbd> and <kbd>}</kbd> from <kbd>
-(</kbd> and <kbd>)</kbd>.
+(</kbd> and <kbd>)</kbd>. Mind the subttle differences between Grub1 and
+Grub2: Grub2 needs that the filename be repeated and quotes need
+to be used. Note that at this stage the --readonly option of
+<code>ext2fs.static</code> must not be passed.
 </p>
 
-<table><tr><td>&nbsp;</td><td class=example><pre>
-  grub&#62; module (hd0,0)/hurd/ext2fs.static \
+<table>
+<tr><td>&nbsp;</td><td class=example><pre>
+  grub1&#62; module /hurd/ext2fs.static \
    --multiboot-command-line=${kernel-command-line} \
    --host-priv-port=${host-port} \
    --device-master-port=${device-port} \
    --exec-server-task=${exec-task} -T typed ${root} \
    $(task-create) $(task-resume)
     [Multiboot-module  0x1c4000, 0x2cfe6a bytes]
-  grub&#62; module (hd0,0)/lib/ld.so.1 /hurd/exec $(exec-task=task-create)
+  grub1&#62; module /lib/ld.so.1 /hurd/exec $(exec-task=task-create)
     [Multiboot-module  0x494000, 0x27afe bytes]
-</pre></td></tr></table>
+</pre></td></tr>
+<tr><td>&nbsp;</td><td class=example><pre>
+  grub2&#62; module /hurd/ext2fs.static ext2fs \
+   --multiboot-command-line='${kernel-command-line}' \
+   --host-priv-port='${host-port}' \
+   --device-master-port='${device-port}' \
+   --exec-server-task='${exec-task}' -T typed '${root}' \
+   '$(task-create)' '$(task-resume)'
+  grub2&#62; module /lib/ld.so.1 exec /hurd/exec '$(exec-task=task-create)'
+</pre></td></tr>
+</table>
 
 <p>
 Once the Hurd is running, process can be automated by adding the appropriate
-commands to Grub's <tt><q>/boot/grub/menu.lst</q></tt> configuration file.
+commands to Grub1's <tt><q>/boot/grub/menu.lst</q></tt> or Grub2's
+<tt><q>/boot/grub/grub.cfg</q></tt> configuration file.
 </p>
 
 <p>
@@ -446,8 +495,9 @@ Happy Hacking!
 
 <p>
 Having to always load the kernel by hand can be very tedious. Edit the
-<tt><q>/boot/grub/menu.lst</q></tt> and tailor it appropriately; booting will
-become much quicker and easier.
+<tt><q>/boot/grub/menu.lst</q></tt> for Grub1 or
+<tt><q>/boot/grub/grub.cfg</q></tt> for Grub2 and tailor it appropriately;
+booting will become much quicker and easier.
 </p>
 
 
@@ -562,12 +612,5 @@ disabled.
 
 <p>
 Finally, run <code>startx</code>.
-</p>
-
-<p>
-There are several caveats to be aware of.
-<code>update-menu</code> has not yet been ported. As such, there are no fine
-Debian menus. Although a <code>pthreads</code> implementation exists not all
-pthread packages have been ported: do not expect Gnome and KDE to work.
 </p>
 
