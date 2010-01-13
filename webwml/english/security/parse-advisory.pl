@@ -125,7 +125,7 @@ $moreinfo =~ s|<p><p>|<p>|g;
 $moreinfo =~ s|</p>\n\n<li>|</p></li>\n\n<li>|g;
 $moreinfo =~ s|</li>\n\n<li>|\n\n<ul>\n\n<li>|;
 #$moreinfo =~ s|</p>\n\n<p>(\w* \w* stable)|</p></li>\n\n</ul>\n\n<p>$1|; 
-if ($moreinfo =~ /<ul>\n\n<li>/) { $moreinfo =~ s|</p>\n\n<p>(\w+ \w+ \w* ?((?old)?stable\|testing))|</p></li>\n\n</ul>\n\n<p>$1|; }
+if ($moreinfo =~ /<ul>\n\n<li>/) { $moreinfo =~ s|</p>\n\n<p>(\w+ \w+ \w* ?(oldstable\|stable\|testing))|</p></li>\n\n</ul>\n\n<p>$1|; }
 chomp ($moreinfo);
 $files =~ s/(- )?-+\n//g;
 $files =~ s/\n\n$/\n/s;
