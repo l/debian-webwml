@@ -1,5 +1,5 @@
 #use wml::debian::template title="Wanna-build states: een uitleg" BARETITLE="true"
-#use wml::debian::translation-check translation="1.19" maintainer="Wouter Verhelst"
+#use wml::debian::translation-check translation="1.21" maintainer="Wouter Verhelst"
 
     <p>Deze pagina probeert uit te leggen wat elke wanna-build status 
       betekent, en wat er met een pakket zal gebeuren als het zich in
@@ -16,7 +16,7 @@
 <h2>De wanna-build states</h2>
 <p>Voor elke architectuur die Debian ondersteunt is er een wanna-build
 database geïnstalleerd op buildd.debian.org, met daarin alle pakketten en
-hun huidige compilatiestatus. Er zijn zeven states:
+hun huidige compilatiestatus. Er zijn acht states:
 <em>needs-build</em>, <em>building</em>, <em>uploaded</em>,
 <em>dep-wait</em>, <em>failed</em>, <em>not-for-us</em>, en
 <em>installed</em>.</p>
@@ -141,6 +141,30 @@ hun huidige compilatiestatus. Er zijn zeven states:
 	dan zal de <em>dep-wait</em>-status voor <tt>m68k</tt> manueel
 	verwijderd moeten worden door de <tt>m68k</tt> porters.
       </dd>
+      <dt><a name="bd-uninstallable">BD-Uninstallable</a></dt>
+      <dd>Tijdens debconf9 had <a
+	href='http://lists.debian.org/debian-wb-team/2009/07/msg00089.html'>Joachim
+	Breitner het idee</a> om met edos-debcheck de installeerbaarheid van
+	build-dependencies te controleren van pakketten die normaal in de
+	'needs-build' status zouden gaan. Op dat ogenblik had wanna-build wel
+	de mogelijkheid om de onmiddelijke beschikbaarheid van een pakket te
+	detecteren; maar als een pakket niet geïnstalleerd kon worden omdat het
+	afhangt van pakket a dat afhangt van pakket b dat op zijn beurt afhangt
+	van pakket c (&gt;=1.2.3) waarbij c nog op versie 1.2.2 is, dan werd
+	dat niet gedetecteerd, en mislukte de compilatie omwille van
+	niet-beschikbare build-dependencies. Uitzoeken wat daar mis liep was
+	een handmatig proces voor de buildd-beheerder, en één dat gewoonlijk
+	nogal veel tijd nodig had. Met de BD-Uninstallable wijziging is dit
+	niet langer een probleem.  Als je pakket zich in BD-Uninstallable
+	bevindt, dan betekent dat dat één van de build-dependencies niet
+	installeerbaar is (hetzij onmiddelijk, hetzij omdat een deel van z'n
+	afhankelijkheidsboom niet beschikbaar is).  Helaas is er geen
+	informatie beschikbaar over welk pakket precies het probleem
+	veroorzaakt; gelieve edos-debcheck te gebruiken om dit uit te vinden.
+	Het probleem zal zichzelf echter automatisch oplossen eens de afwezige
+	afhankelijkheden terug beschikbaar zijn, en op dat ogenblik zal je
+	pakket automatisch terug naar Needs-Build verplaatst worden.
+      </dd>
       <dt><a name="wanna-build-state-failed">failed</a></dt>
       <dd>Als een compilatiepoging mislukt is, en de
         autobuilder-beheerder beslist dat het daadwerkelijk een
@@ -207,7 +231,7 @@ hun huidige compilatiestatus. Er zijn zeven states:
 	gemarkeerd wordt na, gemiddeld, 15 minuten.
       </dd>
     </dl>
-    <p>Na deze zeven states kent <em>wanna-build</em> ook nog twee
+    <p>Na deze acht states kent <em>wanna-build</em> ook nog twee
     -removed states, die eigenlijk grensgevallen zijn. Deze twee states
     zijn <em>dep-wait-removed</em> en <em>failed-removed</em>. Ze
     relateren met hun respectieve 'gewone' states als volgt: als een
