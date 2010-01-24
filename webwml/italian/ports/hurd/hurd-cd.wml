@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; CD di Hurd" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.63" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.65" maintainer="Luca Monducci"
 
 <define-tag cdserie>L1</define-tag>
 <define-tag cdbasetarball>gnu-2009-10-18.tar.gz</define-tag>
@@ -113,17 +113,17 @@ hurd-install-guide e Cook-book sono dei "must", devono essere assolutamente
 letti prima di iniziare.</p>
 
 <ol>
-    <li>
-	<em>Creare un disco di avvio con GRUB</em>
+<li>
+<em>Creare un disco di avvio con GRUB</em>
 
-	<p>Installare il pacchetto grub-disk, contiene l'immagine di un
-	dishetto con GRUB. Si può usare	"dd" se si sta usando GNU/Linux
-	oppure "rawrite" se si sta usando MS.</p></li>
+<p>Installare il pacchetto grub-disk o grub-rescue-pc, entrambi contengono
+l'immagine di un dishetto con GRUB. Si può usare "dd" se si sta usando
+GNU/Linux oppure "rawrite" se si sta usando MS.</p></li>
 
-    <li>
-	Assicurarsi di aver ben chiari i metodi con cui Linux, GRUB e Hurd
-	nominano i dischi e le partizioni, sarà necessario usarli tutti	e
-	tre e le relazioni fra questi possono creare confusione.</li>
+<li>
+Assicurarsi di aver ben chiari i metodi con cui Linux, GRUB e Hurd
+nominano i dischi e le partizioni, sarà necessario usarli tutti	e
+tre e le relazioni fra questi possono creare confusione.</li>
 </ol>
 
 <p>Hurd usa dei nomi delle partizioni diversi da Linux, quindi fate
@@ -139,10 +139,12 @@ successivamente ci sono maggiori informazioni.</p>
 il numero della partizione, quindi la prima partizione sul primo disco IDE è
 hd0s1, la terza partizione sul secondo disco SCSI è sd1s3 e così via.</p>
 
-<p>GRUB usa un altro sistema ancora per nominare le partizioni. Chiama le
+<p>GRUB1 usa un altro sistema ancora per nominare le partizioni. Chiama le
 partizioni (hdN,n), ma questa volta entrambi gli indici iniziano da zero e
 i dischi seguono un ordine diverso, prima tutti i dischi IDE e poi tutti i
 dischi SCSI. Questa volta la prima partizione sul primo disco IDE è (hd0,0).
+GRUB2 fa la stessa cosa ma le partizioni sono indicizzate a partire da uno,
+quindi la prima partizione sul primo disco IDE è (hd0,1).
 Per far veramente confusione (hd1,2) può indicare il primo disco SCSI se sul
 sistema c'è un solo disco IDE oppure può indicare il secondo disco IDE.
 Quindi è importante aver ben chiaro i vari nomi delle partizioni prima di
@@ -196,18 +198,20 @@ iniziare.</p>
 	riavvio]</li>
 </ol>   
 
-<p>Se la partizione di GNU/Hurd è "(hd0,0)" [secondo la nomenclatura di GRUB]
-e "sd0s1" [GNU/Hurd], significa che è la prima partizione sul primo hard disk
-(che è SCSI) e che non ci sono dischi IDE, il sistema sia avvia senza alcun
-intervento.<br />
-Adesso che l'immagine di GRUB è pronta è necessario modificarla un po' per
-far avviare il sistema GNU.</p>
+<p>L'impostazione predefinita dell'immagine di GRUB è la partizione di
+GNU/Hurd è "(hd0,0)" [secondo la nomenclatura di GRUB1], "(hd0,1)" [secondo
+la nomenclatura di GRUB2] e "sd0s1" [GNU/Hurd], che è la prima partizione
+sul primo hard disk (che è SCSI) e che non ci sono dischi IDE. Comunque,
+per il primi avvii è necessario passare l'opzione <code>-s</code> al kernel
+GNU/Mach per avviare in modalità singolo utente e rimuovere l'opzione
+--readonly dalla riga di comando <code>ext2fs.static</code>.</p>
 
-<p>Tenete le vostre mani lontano dalla tastiera fino a quando il processo di
+<p>Tenere le mani lontano dalla tastiera fino a quando il processo di
 avvio non è completato.</p>
 
-<p>"/boot/grub/menu.lst" sul dischetto di GRUB può essere modificato in modo
-che il sistema si avvii nel modo che si desidera.</p>
+<p>"/boot/grub/menu.lst" o "/boot/grub/grub.cfg" sul dischetto di GRUB
+può essere modificato in modo che il sistema si avvii nel modo che si
+desidera.</p>
 
 
 <h3>I passi successivi</h3>
