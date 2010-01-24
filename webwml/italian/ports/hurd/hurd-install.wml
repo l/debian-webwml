@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; Installazione" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.56" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.60" maintainer="Luca Monducci"
 
 <h1>Installazione di Debian GNU/Hurd</h1>
 
@@ -64,7 +64,11 @@ ripartizionare l'hard disk. Una possibilità è usare l'editor di partizioni
 di GNU, <a href="http://packages.debian.org/parted">Parted</a>.
 Non solo permette la modifica di base delle partizioni ma
 permette anche il ridimensionamento e lo spostamento delle partizioni.
-Il manuale è abbastanza completo e include svariati tutorial.</p>
+Il manuale è abbastanza completo e include svariati tutorial. Notare che
+esiste il tipo di partizione <code>63 GNU HURD or SysV</code>, questo tipo
+non dovrebbe essere usato altrimenti il CD di installazione non la
+riconoscerà. Usare il <code>83 Linux</code>.
+</p>
 
 <p>Hurd supporta diverse estensioni al formato del filesystem ext2fs. Le cose
 più importanti fra queste sono i traduttori passivi e un quarto gruppo di bit
@@ -82,10 +86,10 @@ estensioni.</p>
 <p>Per creare un filesystem usare <code>mke2fs</code> e passare <q><var>-b
 4096 -I 128 -o hurd</var></q> per indicare l'Hurd come proprietario del
 nuovo filesystem. Per esempio, supponendo che la partizione sia
-<tt>/dev/hda2</tt>:</p>
+<tt>/dev/hda1</tt>:</p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
-\# mke2fs -b 4096 -I 128 -o hurd /dev/hda2
+\# mke2fs -b 4096 -I 128 -o hurd /dev/hda1
 </pre></td></tr></table>
 
 
@@ -134,20 +138,29 @@ necessario:</p>
 
 <h2>5. Avvio di GNU/Hurd</h2>
 
-<p>Adesso tutto è pronto per avviare GNU/Hurd per la prima volta. Dopo aver
-verificato che il dischetto di avvio con Grub sia inserito nel drive riavviare
-il sistema. Se tutto va bene verrà mostrato il menu o la riga di comando di
-Grub. Se si presenta il menu premere <kbd>c</kbd> per passare alla riga di
-comando.</p>
+<p>Adesso tutto è pronto per avviare GNU/Hurd per la prima volta. Notare che
+in base alla versione di Grub alcuni dettagli possono cambiare. Assicurarsi
+di disporre di GRUB1 (il vecchio 0.95 o il successivo 0.97) o GRUB2 (noto
+come 1.95 e successivi). In seguito sono forniti esempi per entrambe le versioni,
+usare quelllo corretto.</p>
+
+Se sul sistema è già installato GRUB, è sufficiente riavviare. Altrimenti,
+è necessario usare un dischetto per avviare Grub. Su Debian i pacchetti
+grub-disk (grub1) o grub-rescue-pc (grub2) forniscono le immagini per CD e
+dischetti. Inserire il dischetto di avvio di Grub nel nettore e reiavviare.
+Se tutto funziona verrà mostrato il menu o la riga di comando di Grub. Se
+nel menu è già presente una voce per <tt><q>GNU/Hurd</q></tt>, probabilmente
+si può usarla senza dover scrivere un sacco di roba. Per adesso, se viene
+mostrato il menu, premere <kbd>c</kbd> per avere la riga di comando.<p>
 
 <p>Per prima cosa si deve caricare GNU Mach, questo richiede la conoscenza
 del filesystem e del percorso di GNU Mach. Grub usa una nomenclatura
-leggermente diversa sia da Linux che da Hurd: i dischi IDE e SCSI sono
-entrambi nominati <tt>(hdN,M)</tt>. <code>N</code> è il numero del dispositivo
+leggermente diversa da Linux, per Hurd: i dischi IDE e SCSI sono entrambi
+nominati <tt><q>(hdN,M)</q></tt>. <code>N</code> è il numero del dispositivo
 (partendo da zero) fornito dal BIOS, quindi Grub non fa distinzione fra dischi
-SCSI e IDE. <code>M</code> identifica la partizione sul disco (anche questo
-partendo da zero). Se questo confonde non c'è da preoccuparsi: Grub fornisce
-molti aiuti.</p>
+SCSI e IDE. <code>M</code> identifica la partizione sul disco, parte da zero
+con grub1 ma parte da 1 con grub2. Se questo confonde non c'è da preoccuparsi:
+Grub fornisce molti aiuti.</p>
 
 <p>Per determinare su quale filesystem risiede un particolare file Grub
 fornisce il comando <code>find</code>. Quando questo comando viene dato
@@ -155,13 +168,30 @@ insieme al nome di un file, Grub cerca su ogni filesystem il file specificato
 e mostra dove è stato trovato. Per esempio per cercare il kernel
 <tt>/boot/gnumach.gz</tt>:</p>
 
-<table><tr><td>&nbsp;</td><td class=example><pre>
-grub&#62; find /boot/gnumach.gz
+<table>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub1&#62; find /boot/gnumach.gz
    (hd0,0)
-</pre></td></tr></table>
+</pre></td></tr>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub2&#62; search -f /boot/gnumach.gz
+   (hd0,1)
+</pre></td></tr>
+</table>
 
-<p>In questo esempio Grub indica che <tt>/boot/gnumach.gz</tt> è su
-<tt>(hd0,0)</tt>.</p>
+<p>Dove indica per Grub1 che <tt><q>/boot/gnumach.gz</q></tt> è su
+<tt><q>(hd0,0)</q></tt> e per Grub2, su <tt><q>(hd0,1)</q></tt> (ricordarsi
+la differenza tra Grub1 e Grub2 nel numerare le partizioni). Per risparmiara
+un po' di scrittura, impostare la root di Grub a questo valore:</p>
+
+<table>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub1&#62; root (hd0,0)
+</pre></td></tr>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub2&#62; set root=(hd0,1)
+</pre></td></tr>
+</table>
 
 <p>Prima di caricare il kernel deve essere specificata sulla riga di comando
 almeno un'altra opzione, la partizione di root. Questa verrà usata da Hurd
@@ -176,20 +206,25 @@ loro posizione sul controller. Per esempio il master su canale primario è
 partizioni seguono la nomenclatura delle partizioni BSD, si aggiunge
 <code>sM</code> al nome del disco per indicare una certa partizione. Notare
 che <code>M</code> inizia a contare da uno e non da zero. Il numero della
-partizione è semplice da calcolare: basta incrementare il valore usato da
-Grub di uno.</p>
+partizione è semplice da calcolare: con Grub2, riusare lo stesso indice,
+con Grub1, basta incrementare di uno il valore usato da Grub1.</p>
 
 <p>Dal momento che Hurd non è stato ancora configurato è necessario avviare il
 sistema in modalità singolo-utente, è sufficiente aggiungere <q><var>-s</var></q>
 alla riga di comando del kernel.</p>
 
-<p>Supponendo che il primo disco (cioè <tt>(hd0)</tt>) sia il master sul
-controller secondario, si userà:</p>
+<p>Riassumendo, supponendo che il primo disco (cioè <tt><q>(hd0)</q></tt>) sia
+il master sul controller primario, si userà:</p>
 
-<table><tr><td>&nbsp;</td><td class=example><pre>
-grub&#62; kernel (hd0,0)/boot/gnumach.gz root=device:hd2s1 -s
+<table>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub1&#62; kernel /boot/gnumach.gz root=device:hd0s1 -s
    [Multiboot-elf, ...]
-</pre></td></tr></table>
+</pre></td></tr>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub2&#62; multiboot /boot/gnumach.gz root=device:hd0s1 -s
+</pre></td></tr>
+</table>
 
 <p>Successivamente devono essere caricati il servente per il filesystem di
 root e il servente <code>exec</code>. Questo si può fare grazie alla capacità
@@ -199,22 +234,37 @@ fornita. Dato che la riga di comando di ext2fs è molto lunga la si può
 spezzare usando la sequenza di escape del carattere a capo nello stesso modo
 usato normalmente in Unix. Assicurarsi di non lasciare spazi dopo il
 contro-slash finale di ogni riga inoltre assicurarsi di distinguere
-<kbd>{</kbd> e <kbd>}</kbd> da <kbd>(</kbd> e <kbd>)</kbd>.</p>
+<kbd>{</kbd> e <kbd>}</kbd> da <kbd>(</kbd> e <kbd>)</kbd>. Tenere in mente
+la sottile differenza tra Grub1 e Grub2: Grub2 ha bisogno che il nome del
+file sia ripetuto e tre deve essere tra virgolette. Notare che a questo
+punto l'opzione --readonbly di <code>ext2fs.static</code> non deve essere
+passata.</p>
 
-<table><tr><td>&nbsp;</td><td class=example><pre>
-grub&#62; module (hd0,0)/hurd/ext2fs.static \
+<table>
+<tr><td>&nbsp;</td><td class=example><pre>
+  grub1&#62; module /hurd/ext2fs.static \
    --multiboot-command-line=${kernel-command-line} \
    --host-priv-port=${host-port} \
    --device-master-port=${device-port} \
    --exec-server-task=${exec-task} -T typed ${root} \
    $(task-create) $(task-resume)
     [Multiboot-module  0x1c4000, 0x2cfe6a bytes]
-  grub&#62; module (hd0,0)/lib/ld.so.1 /hurd/exec $(exec-task=task-create)
+  grub1&#62; module /lib/ld.so.1 /hurd/exec $(exec-task=task-create)
     [Multiboot-module  0x494000, 0x27afe bytes]
-</pre></td></tr></table>
+</pre></td></tr>
+<tr><td>&nbsp;</td><td class=example><pre>
+  grub2&#62; module /hurd/ext2fs.static ext2fs \
+   --multiboot-command-line='${kernel-command-line}' \
+   --host-priv-port='${host-port}' \
+   --device-master-port='${device-port}' \
+   --exec-server-task='${exec-task}' -T typed '${root}' \
+   '$(task-create)' '$(task-resume)'
+  grub2&#62; module /lib/ld.so.1 exec /hurd/exec '$(exec-task=task-create)'
+</pre></td></tr>
+</table>
 
 <p>Una volta che Hurd è in esecuzione, il procedimento può essere automatizzato
-inserendo gli appropriati comandi nel file di configurzione di Grub
+inserendo gli appropriati comandi nel file di configurzione di Grub1
 <tt>/boot/grub/menu.lst</tt>.</p>
 
 <p>Adesso GNU/Hurd può essere avviato con:</p>
@@ -268,6 +318,18 @@ esegua di nuovo <code>./native-install</code>.</p>
 
 
 <h3>7.1 La rete</h3>
+
+<p>Come prima cosa assicurarsi che la propria scheda di rete sia
+riconosciuta da GNU Mach:</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# devprobe eth0
+ eth0
+</pre></td></tr></table>
+
+<p>Se <code>devprobe eth0</code> non restituisce <code>eth0</code>, il
+kernel non ha rilevato la scheda di rete ed è necessario provare con
+un'altra scheda.</p>
 
 <p>Per configurare la rete è necessario configurare prima il traduttore
 pfinet. Questo lo si fa con il comando <code>settrans</code> che collega
@@ -384,8 +446,9 @@ GNU/Hurd.</p>
 <h3>8.1 Il menu di Grub</h3>
 
 <p>Dover caricare il kernel a mano può essere molto tedioso. Modificare
-<tt>/boot/grub/menu.lst</tt> e adattarlo alle proprie esigenze, l'avvio
-del sistema diventerà molto più veloce e molto più semplice.</p>
+<tt><q>/boot/grub/menu.lst</q></tt> con Grub1 o <tt><q>/boot/grub/grub.cfg</q></tt>
+con Grub2 e adattarlo alle proprie esigenze, l'avvio del sistema diventerà
+molto più veloce e molto più semplice.</p>
 
 
 <h3>8.2 Aggiunta di device</h3>
@@ -484,9 +547,3 @@ EndSection
 entrambi disattivati.</p>
 
 <p>Infine, eseguire <code>startx</code>.</p>
-
-<p>Ci sono diverse cose da tenere in mente. Ancora non
-è stato fatto il port di <code>update-menu</code> quindi mancano i menu
-Debian. Sebbene esista l'implementazione di <code>pthreads</code> non è stato
-fatto il port di tutti i pacchetti pthread: non pensate che GNOME o KDE
-funzionino senza.</p>
