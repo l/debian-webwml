@@ -12,7 +12,7 @@ archive and rebuild them for the target architecture.</p>
 <p>The Debian distribution supports <a href="$(HOME)/ports/">quite a
 few architectures</a>,
 but the package maintainers usually only compile binary versions for
-a single architecture (usually i386).
+a single architecture (usually i386 or amd64).
 Developers for other architectures have to watch out for new
 versions of packages and recompile them if they want to stay
 up-to-date with the Intel distribution.</p>
@@ -43,7 +43,7 @@ autobuilder network, but it's really made of different parts:</p>
 
 <dl>
 
-<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">wanna-build</a></dt>
+<dt>wanna-build</dt>
 <dd>
 a tool that helps coordinate package (re)building through a database
 that keeps a list of packages and their status. There is one central
@@ -51,28 +51,27 @@ database per architecture  that stores package states, versions, and some other
 information.
 </dd>
 
-<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">buildd</a></dt>
+<dt><a href="http://packages.debian.org/buildd">buildd</a></dt>
 <dd>
 a daemon that periodically checks the database maintained by
 <em>wanna-build</em> and calls <em>sbuild</em> to build the packages.
-It keeps tracks of building failures and successes, and 
-will also upload packages after the build log
-has been acknowledged by the administrator.
+After the build log was acknowledged by the buildd administrator it
+uploads the package to the appropriate archive.
 </dd>
 
 <dt><a href="http://packages.debian.org/sbuild">sbuild</a></dt>
 <dd>
 is responsible for the actual compilation of packages in isolated chroots.
-It mainly uses standard Debian tools for this, but also takes care of
-source dependencies and some other minor quirks.
+It ensured that all needed source dependencies are installed into the
+chroot before building and then calls standard Debian tools to start
+the build process.  Build logs are submitted to the
+<a href="http://buildd.debian.org">build log database</a>.
 </dd>
 
 <dt><a href="http://packages.debian.org/quinn-diff">quinn-diff</a></dt>
 <dd>
-Feeds the wanna-build database with new
-packages. It compares the available package versions for two
-architectures and outputs the differences (comparing
-a Sources file and a Packages file).
+compares the available package versions for two architectures and outputs the
+differences (comparing a Sources file and a Packages file).
 </dd>
 
 </dl>
@@ -94,9 +93,11 @@ package name.</p>
 <p>If the build succeeds in all architectures, the maintainer will not
 need to do anything. All those binary packages will be uploaded to the
 architecture main site. If the build does not succeed the package will
-enter a special state (<em>Failed</em> or <em>Dep-Wait</em>, if they
-depend on specific build dependencies which are not available). 
-The autobuilder administrators will review packages which fail the build
+enter special states (<em>Build-Attempted</em> for build failures that
+were not reviewed, <em>Failed</em> for reviewed and reported bugs in
+the package or <em>Dep-Wait</em>, if they depend on specific build
+dependencies which are not available).
+The autobuilder administrators will review packages which fail to build
 and will report back to the maintainer, usually, opening up a bug in the
 Bug Tracking System.</p>
 
@@ -105,7 +106,8 @@ and that holds the package from entering <a href="$(HOME)/devel/testing">\
 testing</a>. Unfortunately, the package will need to wait until a machine 
 picks it up. Buildd administrators will not accept requests to speed
 up the building of a package since the priority list has already been
-established.</p>
+established, using the source package's priority as a baseline value
+and further priorization based on its section.</p>
 
 <p>You can check that status of the different buildds attempt
 of the packages that belong to any given maintainer by checking the 
@@ -163,4 +165,5 @@ i386@buildd.debian.org>.</p>
 <p><small>This introduction to the autobuilder network was written
 with bits and pieces provided by Roman Hodek, 
 Christian T. Steigies, Wouter Verhelst, Andreas Barth, 
-Francesco Paolo Lovergine and Javier Fern&aacute;ndez-Sanguino.</small></p>
+Francesco Paolo Lovergine, Javier Fern&aacute;ndez-Sanguino and
+Philipp Kern.</small></p>
