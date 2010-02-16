@@ -1,5 +1,5 @@
 #use wml::debian::template title="autobuilder ネットワーク" BARETITLE="true"
-#use wml::debian::translation-check translation="1.19"
+#use wml::debian::translation-check translation="1.20"
 
 <p>autobuilder ネットワークは、<a href="$(HOME)/ports/">Debian
 が現在サポートしている</a>すべてのアーキテクチャ用にパッケージを再コンパイルするのを加速するのに役立っている Debian
@@ -11,8 +11,8 @@
 
 <p>Debian ディストリビューションは<a
  href="$(HOME)/ports/">相当数のアーキテクチャ</a>をサポートしていますが、
-パッケージメンテナがバイナリ版をコンパイルするのは、通常、単一のアーキテクチャ (通常 i386)
-だけです。他のアーキテクチャの開発者が Intel
+パッケージメンテナがバイナリ版をコンパイルするのは、通常、単一のアーキテクチャ
+(通常 i386 や amd64) だけです。他のアーキテクチャの開発者が Intel
 ディストリビューションに追従し続けたい場合は、
 パッケージの新バージョンを監視して再コンパイルする必要があります。</p>
 
@@ -39,7 +39,7 @@
 
 <dl>
 
-<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">wanna-build</a></dt>
+<dt>wanna-build</dt>
 <dd>
 パッケージおよびその状態のリストを保持するデータベースと協調して、
 パッケージの (再) ビルドの調整を補助するツールです。
@@ -47,24 +47,25 @@
 パッケージの状態やバージョン、その他の情報を保存します。
 </dd>
 
-<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">buildd</a></dt>
+<dt><a href="http://packages.debian.org/buildd">buildd</a></dt>
 <dd>
 <em>wanna-build</em> により管理されるデータベースを定期的にチェックし、
 <em>sbuild</em> を呼び出してパッケージをビルドするデーモンです。
-ビルドの失敗や成功を追跡し、
-ビルドログを管理者が承認すればパッケージのアップロードも行います。
+buildd 管理者によってビルドログが確認されると、
+適切なアーカイブにパッケージをアップロードします。
 </dd>
 
 <dt><a href="http://packages.debian.org/sbuild">sbuild</a></dt>
 <dd>
 隔離された chroot におけるパッケージの実際のコンパイルを担当します。
-主に標準の Debian ツールを使いますが、
-ソースの依存関係やその他の予測不能な軽微な出来事にも対応します。
+必要となるソースの依存関係が全て、ビルド前に
+chroot 環境にインストールされていることを確実にしてから標準の
+Debian ツールを呼び出してビルドプロセスを開始します。
+ビルドログは<a href="http://buildd.debian.org">ビルドログデータベース</a>に送られます。
 </dd>
 
 <dt><a href="http://packages.debian.org/quinn-diff">quinn-diff</a></dt>
 <dd>
-新しいパッケージを wanna-build データベースに送ります。
 新たに利用可能になったそのパッケージバージョンを 2 つのアーキテクチャで比較し、
 (Sources ファイルや Packages ファイルを比較して) 違いを出力します。
 </dd>
@@ -89,9 +90,12 @@ builder ネットワークが動作します。</p>
 <p>ビルドが全アーキテクチャで成功すれば、管理者は何もする必要がありません。
 それらのバイナリのパッケージはすべて、
 各アーキテクチャのメインのサイトにアップロードされます。
-ビルドが成功しなかった場合、パッケージは特別な状態 (<em>Failed</em>、
+ビルドが成功しなかった場合、パッケージは特別な状態に入ります
+(ビルド失敗について精査されていないものは <em>Build-Attempted</em>,
+精査、パッケージの報告済みのバグであるものは <em>Failed</em>,
 あるいは特定の入手不可能なビルド依存状態に依存している場合は
-<em>Dep-Wait</em>) に入ります。autobuilder
+<em>Dep-Wait</em>) 。
+autobuilder
 管理者はビルドに失敗したパッケージをレビューして、
 通常はバグ追跡システムにバグ報告という形でメンテナに報告します。</p>
 
@@ -99,8 +103,10 @@ builder ネットワークが動作します。</p>
 そのことでパッケージが<a href="$(HOME)/devel/testing">テスト版 (testing)</a>
 に入るのを遅らせることになります。
 残念ながらパッケージがマシンに取り上げられるまで待つ必要があるでしょう。
-既に優先度リストがあるので、Buildd
-管理者がパッケージのビルドを早くする要求を受け入れることはないでしょう。</p>
+既に、ベースライン値、及びそのセクションを基にした詳細な優先順位の形で表される
+ソースパッケージの優先度を使った優先度リストがあるので、Buildd
+管理者がパッケージのビルドを早くする要求を受け入れることはないでしょう。
+</p>
 
 <p><a href="http://buildd.debian.org/bymaint.php">buildd
 ログ</a>を確認することで、任意のメンテナに属しているパッケージの、複数の buildd
@@ -155,5 +161,5 @@ i386@buildd.debian.org> のように
 <hrline />
 <p><small>この autobuilder ネットワークの入門は、Roman Hodek,
 Christian T. Steigies, Wouter Verhelst, Andreas Barth,
-Francesco Paolo Lovergine 及び Javier Fern&aacute;ndez-Sanguino
-によって提供された情報を元に書かれました。</small></p>
+Francesco Paolo Lovergine, Javier Fern&aacute;ndez-Sanguino 及び
+Philipp Kern によって提供された情報を元に書かれました。</small></p>
