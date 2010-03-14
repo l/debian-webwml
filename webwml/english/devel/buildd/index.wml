@@ -1,4 +1,4 @@
-#use wml::debian::template title="Autobuilder network" BARETITLE="true"
+#use wml::debian::template title="Autobuilder network"
 
 <p>The autobuilder network is a Debian development that helps speed
 up package recompilations for all the architectures
@@ -31,8 +31,8 @@ distributions current for a long time.
 The build daemon system automates most of this process. It consists of
 a set of scripts (written in Perl and Python) that have evolved over
 time to help porters with various tasks. They have finally developed
-into a system that is able to keep non-i386 Debian distributions
-up-to-date nearly automatically.
+into a system that is able to keep Debian distributions up-to-date nearly
+automatically.
 </p>
 
 
@@ -87,12 +87,14 @@ the buildd network. Whenever he uploads a package to the archive
 for all architectures (in state <em>Needs-Build</em>). 
 Build machines will query the build database for packages in this state,
 and will routinely take packages from that list. The list
-is prioritized by previous compilation state, priority, section, and finally
-package name.</p>
+is prioritized by previous compilation state (either <em>out-of-date</em>
+or <em>uncompiled</em>), priority, section and package name.  Futhermore,
+to prevent some packages from starving at the end of the queue, the priorities
+are dynamically adjusted with increasing waiting time in the queue.</p>
 
 <p>If the build succeeds in all architectures, the maintainer will not
 need to do anything. All those binary packages will be uploaded to the
-architecture main site. If the build does not succeed the package will
+corresponding archive. If the build does not succeed the package will
 enter special states (<em>Build-Attempted</em> for build failures that
 were not reviewed, <em>Failed</em> for reviewed and reported bugs in
 the package or <em>Dep-Wait</em>, if they depend on specific build
@@ -103,11 +105,10 @@ Bug Tracking System.</p>
 
 <p>Sometimes a package takes a long time to build for a given architecture
 and that holds the package from entering <a href="$(HOME)/devel/testing">\
-testing</a>. Unfortunately, the package will need to wait until a machine 
-picks it up. Buildd administrators will not accept requests to speed
-up the building of a package since the priority list has already been
-established, using the source package's priority as a baseline value
-and further priorization based on its section.</p>
+testing</a>.  If a package holds up a transition build priorities are
+usually adjusted upon request by the Release Team.  Other requests will
+not be accepted as the increased waiting time in the queue will lead to
+a higher build priority automatically.</p>
 
 <p>You can check that status of the different buildds attempt
 of the packages that belong to any given maintainer by checking the 
