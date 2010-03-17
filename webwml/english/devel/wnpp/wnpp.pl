@@ -10,6 +10,7 @@ chomp($host);
 use Net::LDAP;
 use Date::Parse;
 use HTML::Entities;
+use Encode qw(decode);
 
 # this is ok this way.  It says which server to query, on which port and what
 # to fetch from it.  The attribs array could be reduced.
@@ -57,7 +58,7 @@ my ( %rfa, %orphaned, %rfabymaint, %rfp, %ita, %itp, %age,
      next if @{$entry->get('debbugsState')}[0] eq 'done';
      next if @{$entry->get('debbugsState')}[0] eq 'archived';
      my $subject = "";
-     $subject = @{$entry->get('debbugsTitle')}[0]
+     $subject = decode("MIME-Header", @{$entry->get('debbugsTitle')}[0])
      	if $entry->get('debbugsTitle');
      # If a bug is merged with another, then only consider the youngest
      # bug and throw the others away.  This will weed out duplicates.
