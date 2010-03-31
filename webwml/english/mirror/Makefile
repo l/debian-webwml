@@ -65,7 +65,7 @@ nonushtml: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t nonushtml
 
 $(ENGLISHDIR)/mirror/size.data: $(ENGLISHDIR)/mirror/arch_size.pl
-	./arch_size.pl > $@
+	./arch_size.pl
 
 $(ENGLISHDIR)/mirror/official_sponsors.list: \
   $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
