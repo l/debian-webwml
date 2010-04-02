@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; Entwicklung" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.31"
+#use wml::debian::translation-check translation="1.33"
 # $Id$
 # Translator: Frank Lichtenheld <frank@lichtenheld.de> 2003-03-08
 
@@ -96,117 +96,25 @@ angesehen.</p>
 </ul>
 
 <h3>Allgemeine Portierungsprobleme</h3>
-<p>Nachfolgend finden sie eine Liste mit verbreiteten
-Kompatibilitätsproblemen, auf die Sie stoßen könnten, wenn Sie
-schlecht portable Software auf dem Hurd kompilieren.</p>
+
+<p><a href=http://www.gnu.org/software/hurd/hurd/porting/guidelines.html>Eine
+   Liste häufiger Problem</a> ist auf der Website der Originalautoren verfügbar.
+   Die nachfolgende Liste von häufigen Problemen ist spezifisch für Debian.</p>
 
 <ul>
-      <li><code>Ungültiger Dateideskriptor</code> (<code>Bad File
-	  Descriptor</code>)
-	<p>Wenn beim Versuch, aus einer Datei zu lesen (oder sonstwie
-	  auf sie zuzugreifen) ein <code>Bad File Descriptor</code>
-	  Fehler auftritt, sollten sie den <code>open()</code>-Aufruf
-	  überprüfen. Das zweite Argument ist die Zugriffsmethode. Wenn
-	  es eine feste Nummer anstatt eines in den
-	  Standard-Headerdateien definierten Symbols ist, dann ist der
-	  Code nicht portabel und sollte durch Benutzung eines der drei Symbole
-	  <code>O_RDONLY</code>, <code>O_WRONLY</code> oder
-	  <code>O_RDWR</code> gefixt werden. Dieser Fehler trat zum
-	  Beispiel in den Paketen <code>fortunes</code> und
-	  <code>mtools</code> auf.</p></li>
-      
-      <li><code>PATH_MAX</code>
-	<p>Jede unbedingte Benutzung von <code>PATH_MAX</code> ist eine
-	  POSIX-Inkompatibilität. Wenn es kein oberes Limit für die Länge
-	  eines Pfades gibt wird dieses Symbol in keiner Headerdatei
-	  definiert. Stattdessen sollten Sie eine andere Implementierung
-	  benutzen, die nicht auf die Länge eines Strings angewiesen ist
-	  oder <code>sysconf()</code> benutzen, um die Länge zur Laufzeit
-	  zu ermitteln. Wenn <code>sysconf()</code> <code>-1</code>
-	  zurückgibt, müssen Sie <code>realloc()</code> benutzen, um den
-	  benötigten Speicher dynamisch zu allozieren.</p></li>
-
-      <li><code>MAXHOSTNAMELEN</code>
-	<p>siehe <code>PATH_MAX</code></p></li>
-      <li><code>MAXPATHLEN</code>
-	<p>siehe <code>PATH_MAX</code></p></li>
-      <li><code>NOFILE</code>
-	<p>siehe <code>PATH_MAX</code></p></li>
-      
-      <li>hurdspezifisches <code>#define</code>
-	<p>Wenn Sie speziellen Code für den Hurd mit Hilfe von
-	  <code>#if...#endif</code> einfügen müssen, können Sie das
-	  <code>__GNU__</code>-Symbol dafür benutzen. Aber denken Sie
-	  mindestens dreimal nach, bevor Sie das tun. In den
-	  <em>meisten</em> Situationen ist dies komplett unnötig und
-	  schafft mehr Probleme als es löst. Fragen Sie besser auf der
-	  Mailingliste nach einer besseren Lösung, wenn Ihnen keine
-	  einfällt.</p></li>
-
-      <li><code>sys_errlist[]</code> vs. <code>strerror()</code>
-	<p>Wenn ein Programm nur <code>sys_errlist[]</code>
-	unterstützt, müssen Sie ein wenig Arbeit leisten, um es auf dem
-	Hurd zum Kompilieren zu bringen, da dieser nur noch
-	<code>strerror()</code> unterstützt. Steinar Hamre schreibt
-	über <code>strerror()</code>:</p>
-
-	<blockquote class="documentquote">
-	  <p><code>strerror()</code> sollte benutzt werden weil:
-	  <ul>
-	    <li>Es der moderne, POSIX-Weg ist.</li>
-	    <li>Es lokalisiert ist.</li>
-	    <li>Es ungültige Signale/Nummern außerhalb des
-	    erlaubten Bereichs verarbeitet. (Bessere Fehlerbehandlung und kein
-	    Pufferüberlauf-Kandidat/Sicherheitsrisiko)</li>
-	  </ul> 
-	  <p>Wenn verfügbar, sollte immer <code>strerror()</code> benutzt
-	    werden. Leider gibt es immer noch einige <em>alte</em>
-	    nicht-POSIX-Systeme, die kein <code>strerror()</code> haben,
-	    nur <code>sys_errlist[]</code>.</p>
-	  <p>Heute ist es wesentlich besser, nur
-	    <code>strerror()</code> zu unterstützen anstatt nur
-	    <code>sys_errlist[]</code>. Am besten (aus dem Blickwinkel
-	    der Portabilität) ist, beide zu unterstützen. Für
-	    <code>configure.in</code> brauchen Sie:</p>
-	  <p><code>AC_CHECK_FUNCS(strerror)</code></p>
-	  <p>In <code>config.h.in</code> müssen sie hinzufügen:</p>
-	  <p><code>#undef HAVE_STRERROR</code></p>
-	  <p>Und etwas wie:
-	  <pre>
-        \#ifndef HAVE_STRERROR
-        static char *
-        private_strerror (errnum)
-             int errnum;
-        {
-          extern char *sys_errlist[];
-          extern int sys_nerr;
-
-          if (errnum &gt; 0 &amp;&amp; errnum &lt;= sys_nerr)
-            return sys_errlist[errnum];
-          return "Unknown system error";
-        }
-        \#define strerror private_strerror
-        \#endif /* HAVE_STRERROR */
-	  </pre>
-
-	  <p>Sie können zum Beispiel in die neueste Version der
-	    fileutils schauen (das obige ist eine vereinfachte Version
-	    dessen, was ich dort gefunden habe.) Patches sollten
-	    natürlich an den ursprünglichen Betreuer weitergeleitet
-	    werden, das obige ist auch auf Systemen mit einem
-	    funktionierenden <code>sys_errlist[]</code>
-	    nützlich.</p>
-	</blockquote></li>
-
-      <li>Dateinamen, die in einem Slash <q>/</q> enden. 
-	<p>Solche Dateinamen sind böse, wenn sie nicht
-	  existieren und Sie ein Verzeichnis so nennen
-	  wollen. <code>mkdir foobar/</code> wird beim Hurd
-	  <em>nicht</em> funktionieren. Das ist
-	  POSIX-kompatibel. POSIX sagt, dass der Pfad eines
-	  Verzeichnisses am Ende angefügte Slashes haben darf. Aber
-	  das Verzeichnis existiert noch nicht, deshalb verweist
-	  der Pfad nicht auf ein Verzeichnis und so müssen abschließende
-	  Slashes nicht funktionieren. Entfernen Sie einfach die
-	  Slashes und alles ist ok.</p></li>
+      <li><code>Defekte Abhängigkeit für libc6</code> (<code>Broken libc6 
+          dependency</code>)
+       <p>Einige Pakete verwenden eine fehlerhafte Abhängigkeit auf 
+          <code>libc6-dev</code>. Das ist inkorrekt, da <code>libc6</code>
+	  speziell für bestimmte GNU/Linux-Architekturen gilt. Das 
+	  korrespondierende Paket für GNU lautet <code>libc0.3-dev</code>, aber
+	  andere Betriebssysteme haben andere Pakete. Sie können das Problem
+	  in der Datei <code>debian/control</code> des Quellbaums ermitteln. 
+	  Typische Lösungen sind u.A. die Erkennung des Betriebssystems mittels
+	  <code>dpkg-architecture</code> und die Hardkodierung des Sonamens.
+	  Besser verwenden Sie ein logisches ODER, z.B. 
+	  <code>libc6-dev | libc6.1-dev | libc0.3-dev | libc0.1-dev | libc-dev</code>,
+	  hierbei ist <code>libc-dev</code> ein virtuelles Paket, das für jeden
+	  Sonamen funktioniert. Sie dürfen es aber nur als letzte Option 
+	  einsetzen.</p></li>
 </ul>
