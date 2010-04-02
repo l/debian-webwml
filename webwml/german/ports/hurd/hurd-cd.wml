@@ -1,10 +1,11 @@
 #use wml::debian::template title="Debian GNU/Hurd -- Hurd-CDs" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.62"
+#use wml::debian::translation-check translation="1.66"
 # $Id$
 # Translator: Gerfried Fuchs <alfie@debian.org>  2001-09-07
 
-<define-tag cdserie>K16</define-tag>
+<define-tag cdserie>L1</define-tag>
+<define-tag cdbasetarball>gnu-2009-10-18.tar.gz</define-tag>
 <define-tag cdbasename>debian-<cdserie>-hurd-i386</define-tag>
 
 <h1>Debian GNU/Hurd</h1>
@@ -19,32 +20,22 @@ Linux-Kernel ein unabhängiges Projekt ist.</p>
 
 <p>Aktuell ist die Debian GNU/Hurd <cdserie>-Serie.</p>
 
-<p>Nur die ersten vier von sechs Images wurden für diese Serie freigegeben.</p>
+<p>Nur das erste Image wurden für diese Serie freigegeben.</p>
 
 <p>Ein kleines Mini-Image (<cdbasename>-mini.iso) wurde erstellt, das für jene
 nützlich sein sollte, die über das Netzwerk installieren wollen.</p>
 
-<p>baseGNU.tgz (die tar-Datei des GNU-Basis-Systems) wurde für diesen
+<p><cdbasetarball> (die tar-Datei des GNU-Basis-Systems) wurde für diesen
 CD-Satz speziell gebaut.</p>
-
-
-<h3>Hinweis.</h3>
-
-<p>Apt blieb beim Installieren von Paketen von der CD-ROM bei mancher Hardware
-hängen. Es scheint so, als ob dieses Problem gelöst wurde.</p>
-
-<p><em>Wichtig:</em> Bitte schauen Sie sich die <a
-   href="http://lists.debian.org/debian-hurd/2007/09/msg00007.html">Hinweise
-   zur Durchführung eines Upgrades</a> an.</p>
 
 
 <h3>Herunterladen.</h3>
 
-<p>Die aktuellen CD-Images sind <cdbasename>-CDx.iso. Alle der
-für ein GNU-System spezifischen Binär-Pakete können auf diesen ersten beiden
-CDs gefunden werden, und alle Pakete aus den Sektionen required, important und
-standard befinden sich auf der ersten CD.
-Ein GNU-Basis-System kann daher unter Verwendung der ersten CD installiert
+<p>Die aktuellen CD-Images sind <cdbasename>-DVDx.iso und <cdbasename>-mini.iso.
+   Alle der für ein GNU-System spezifischen Binärpakete können auf diesem ersten
+   Image gefunden werden, und alle Pakete aus den Abschnitten <q>required</q>,
+   <q>important</q> und <q>standard</q> befinden sich auf dem ersten Image. Ein
+   GNU-Basis-System kann daher unter Verwendung des ersten Images installiert
 werden.</p>
 
 <p>Diese Adressen spiegeln üblicherweise die Images, aber prüfen Sie das
@@ -52,9 +43,11 @@ zuerst.</p>
 
 <p>Die Haupt-Adresse ist <url "http://ftp.debian-ports.org/debian-cd/"> in
 Frankreich, und es gibt Spiegel für diese Images
-<url "http://www.superunprivileged.org/debian-cd/"> in Kanada,
-<url "ftp://ftp.duckcorp.org/hurdfr/hurd/"> in Frankreich und
-<url "ftp://ftp.eila.jussieu.fr/pub/Debian-CD/"> in Frankreich.</p>
+<url "http://www.gtlib.gatech.edu/pub/gnuab/debian-cd/"> in den USA und
+<url "ftp://ftp.duckcorp.org/hurdfr/hurd/"> in Frankreich.</p>
+
+<p>Eien Suche nach hurd-L auf <url "http://www.filesearching.com/"> könnte eine
+   nähere Site finden.</p>
 
 <p>Anweisungen, um eine CD von den Images zu brennen, können in der
 <a href="$(HOME)/CD/faq/">Debian-CD-FAQ</a> gefunden werden.</p>
@@ -125,7 +118,8 @@ bevor Sie beginnen.</p>
 <ol>
 <li><em>Erstellen Sie eine GRUB boot-Diskette</em>
 <p>
-Installieren Sie das Paket grub-disk, es enthält ein Disketten-Image für
+  Installieren Sie das Paket grub-disk oder grub-rescue-pc, sie enthalten ein 
+  Disketten-Image für
 GRUB. Sie können <q>dd</q> verwenden, wenn Sie mit GNU/Linux arbeiten, oder
 <q>rawrite</q>, wenn Sie mit MS arbeiten.</p></li>
 
@@ -148,10 +142,13 @@ Partitions-Nummer ist, so dass die erste Partition auf der ersten IDE-Platte
 hd0s1 ist, die dritte Partition auf der zweiten SCSI-Platte sd1s3 ist, und so
 weiter.</p>
 
-<p>GRUB hat noch eine andere Partitions-Benennung. Es nennt Partitionen
+<p>GRUB1 hat noch eine andere Partitions-Benennung. Es nennt Partitionen
 (hdN,n), aber dieses Mal beginnen die Disk- und Partitions-Nummern
 beide bei Null, und die Platten sind fortlaufend nummeriert, alle IDE-Platten
-zuerst, und SCSI anschließend. Um die Verwirrung komplett zu machen,
+zuerst, und SCSI anschließend. Diesmal ist also die erste Partition auf der 
+  ersten IDE-Platte (hd0,0). GRUB2 verfährt entsprechend, aber die Nummerierung
+  beginnt mit eins, daher wird dieser Fall jetzt (hd0,1) lauten.
+Um die Verwirrung komplett zu machen,
 könnte (hd1,2) auf die erste SCSI-Platte verweisen wenn Sie nur eine
 IDE-Platte haben, oder es könnte die zweite IDE-Platte sein. Deshalb ist
 es wichtig, dass Sie die verschiedenen Namen Ihrer Partitionen ausgearbeitet
@@ -203,17 +200,20 @@ Hängen Sie keine anderen Partitionen ein.
 </li>
 </ol>
 
-<p>Wenn Ihre GNU/Hurd-Partition <q>(hd0,0)</q> [GRUB Namensgebung]
+<p>Standardmäßig erwartet das GRUB-Image Ihre GNU/Hurd-Partition auf 
+  <q>(hd0,0)</q> [GRUB1-Namensgebung], <q>(hd0,1)</q> [GRUB2-Namensgebung]
 und <q>sd0s1</q> [GNU/Hurd] ist, was übersetzt bedeutet, die erste
 Partition der ersten Festplatte, welche eine SCSI-Platte ist, und es sind
-keine IDE-Platten vorhanden, dann wird das System ohne Änderung booten
-können.<br />
-Das GRUB-Image wurde vorbereitet, damit nur wenige Änderungen notwendig sind,
-um das GNU-System zu booten.</p>
+keine IDE-Platten vorhanden. Bei den ersten Boot-Läufen müssen Sie aber die
+  Option <code>-s</code> an den GNU/Mach-Kernel übergeben, um in den
+  Einzelbenutzermodus zu starten, und die Option <code>--readonly</code> 
+  von der Kommandozeile von <code>ext2fs.static</code> entfernen.</p>
+</p>
 
 <p>Nehmen Sie die Hände von der Tastatur, bis der boot-Prozess beendet ist.</p>
 
-<p><q>/boot/grub/menu.lst</q> auf der GRUB-Diskette kann editiert werden, damit
+<p><q>/boot/grub/menu.lst</q> oder <q>/boot/grub/grub.cfg</q> auf der 
+   GRUB-Diskette kann editiert werden, damit
 Ihr System so bootet, wie Sie es wünschen.</p>
 
 
