@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd &dash; Installation" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.56"
+#use wml::debian::translation-check translation="1.61"
 # $Id$
 # Translator: Helge Kreutzmann <debian@helgefjell.de>  2005-07-17
 
@@ -80,7 +80,10 @@ partitionieren. Eine Möglichkeit ist es, GNUs Partitions-Editor,
 <a href="http://packages.debian.org/parted">Parted</a>, zu
 verwenden. Er bietet nicht nur grundlegende Partitionseditierung, sondern auch
 Partitionsgrößenveränderungs- und -verschiebe-Funktionalität. Das Handbuch ist
-recht vollständig und enthält mehrere Anleitungskurse.
+recht vollständig und enthält mehrere Anleitungskurse. Beachten Sie, dass es
+  auch den Partitionstyp <code>63 GNU HURD or SysV</code> gibt, er sollte nicht
+  verwandt werden, da ansonsten die Installations-CD sie nicht finden wird. 
+  Verwenden Sie einfach <code>83 Linux</code>.
 </p>
 
 <p>
@@ -101,11 +104,11 @@ werden kann; Sie können u.U. nur einige Erweiterungen nicht benutzen.
 Um ein Dateisystem zu erzeugen, benutzen Sie <code>mke2fs</code> und übergeben
 Sie <q><var>-b 4096 -I 128 -o hurd</var></q>, um dem Hurd anzuzeigen, dass er der neue
 Eigentümer des Dateisystems ist. Wenn beispielsweise Ihre Partition 
-<tt><q>/dev/hda2</q></tt> ist:
+<tt><q>/dev/hda1</q></tt> ist:
 </p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
- \# mke2fs -b 4096 -I 128 -o hurd /dev/hda2
+ \# mke2fs -b 4096 -I 128 -o hurd /dev/hda1
 </pre></td></tr></table>
 
 
@@ -166,11 +169,20 @@ des Benutzers, dann wird das Folgende benötigt:
 <h2>5. GNU/Hurd booten</h2>
 
 <p>
-Alles ist nun in Bereitschaft, um GNU/Hurd zum ersten Mal zu booten. Nach der
-Überprüfung, dass die Grub-Boot-Diskette im Laufwerk liegt, rebooten Sie. Falls
-alles gut abläuft, wird entweder ein Grub-Menü oder eine Kommandozeile 
-angezeigt. Falls ein Menü angezeigt wird, drücken Sie <kbd>c</kbd>, um zur
-Kommandozeile zu gelangen.
+  Alles ist nun in Bereitschaft, um GNU/Hurd zum ersten Mal zu booten. Beachten
+  Sie, dass abhängig von der Version von GRUB sich kleine Details unterscheiden
+  werden. Bitte stellen Sie sicher, ob Sie GRUB1 (auch <q>legacy</q> oder
+  0.95 oder neuer bis 0.97) oder GRUB2 (auch 1.95 oder neuer) haben. Die 
+  folgenden Beispiele berücksichtigen beide Versionen, wählen Sie die richtige
+  aus. Falls auf Ihrem System bereits GRUB installiert ist, starten Sie das 
+  System einfach neu. Andernfalls müssen Sie ein Grub-Boot-Medium benutzen. 
+  Unter Debian stellen die Pakete grub-disk (grub1) bzw. grub-rescue-pc (grub2)
+  CD- und Disketten-Images bereit. Stellen Sie sicher, dass das Grub-Boot-Medium
+  im Laufwerk ist und starten Sie das System neu. Falls alles klappt, wird
+  entweder ein Grub-Menü oder eine Befehlszeile angezeigt. Falls im Menü ein
+  <tt><q>GNU/Hurd</q></tt>-Eintrag vorliegt, können Sie es wahrscheinlich 
+  benutzen, um viele Tipparbeit zu sparen. Erstmal drücken Sie <kbd>c</kbd>,
+  falls Ihnen das Menü angezeigt wird, um auf die Befehlszeile zu wechseln.
 </p>
 
 <p>
@@ -180,8 +192,9 @@ die sich ein bisschen von Linux und dem Hurd unterscheidet: sowohl IDE als auch
 SCSI-Laufwerke werden <tt><q>(hdN,M)</q></tt> benannt. <code>N</code> ist die
 Laufwerksnummer (mit Null beginnend) wie sie vom BIOS durchnummeriert wird.
 Das bedeutet, Grub unterscheidet nicht zwischen IDE- und SCSI-Platten. 
-<code>M</code> identifiziert die Partition auf dem Laufwerk. Es ist auch ein bei
-Null beginnender Index. Falls dies verwirrend klingt, entspannen Sie sich: Der
+<code>M</code> identifiziert die Partition auf dem Laufwerk. Bei Grub1 ist dies
+  auch ein bei Null beginnender Index, bei Grub2 beginnt er mit 1.
+  Falls dies verwirrend klingt, entspannen Sie sich: Der
 Grub ist auch hilfsbereit.
 </p>
 
@@ -194,13 +207,31 @@ dem Kernel <tt><q>/boot/gnumach.gz</q></tt> zu suchen:
 </p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>  
-   grub&#62; find /boot/gnumach.gz
+   grub1&#62; find /boot/gnumach.gz
    (hd0,0)
-</pre></td></tr></table>
+</pre></td></tr>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub2&#62; search -f /boot/gnumach.gz
+   (hd0,1)
+</pre></td></tr>
+</table>
 
 <p>
-Hier gibt Grub an, dass <tt><q>/boot/gnumach.gz</q></tt> auf <tt><q>(hd0,0)</q></tt> ist.
+Hier gibt Grub1 an, dass <tt><q>/boot/gnumach.gz</q></tt> auf 
+  <tt><q>(hd0,0)</q></tt> ist und Grub2, dass es auf <tt><q>(hd0,1)</q></tt>
+  ist (denken Sie an die Unterschiede in der Partitionsnummerierung zwischen
+  Grub1 und Grub2). Um Ihnen Tipparbeit zu sparen, setzen Sie Grubs Wert für 
+  root auf diesen Wert:
 </p>
+
+<table>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub1&#62; root (hd0,0)
+</pre></td></tr>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub2&#62; set root=(hd0,1)
+</pre></td></tr>
+</table>
 
 <p>
 Vor dem Laden des Kernels muss mindestens eine Option, die Wurzel-Partition, auf
@@ -216,7 +247,8 @@ Linux werden die Laufwerke entsprechend Ihrer Position am Kontroller nummeriert.
 Zum Beispiel ist der primäre Master <code>hd0</code> und der sekundäre Slave
 <code>hd3</code>. Partitionen benutzen die BSD-<q>Slice</q>-Namenskonvention und
 hängen <code>sM</code> an den Laufwerksnamen an, um eine bestimmte Partition
-anzuzeigen. Die Slice-Zahl ist einfach zu berechnen: erhöhen Sie einfach die
+anzuzeigen. Die Slice-Zahl ist einfach zu berechnen: falls Sie Grub2 einsetzen,
+  verwenden Sie den gleichen Index, im Falle von Grub1 erhöhen Sie einfach die
 von Grub verwendete Zahl um eins.
 </p>
 
@@ -227,14 +259,19 @@ Kernel-Befehlszeile.
 </p>
 
 <p>
-Unter der Annahme, dass das erste Laufwerk (d.h. <tt><q>(hd0)</q></tt>) der Master
-auf dem sekundären Kontroller ist, hätten wir:
+  In Summe hätten wir unter der Annahme, dass das erste Laufwerk (d.h. 
+  <tt><q>(hd0)</q></tt>) der Master auf dem sekundären Kontroller ist:
 </p>
 
-<table><tr><td>&nbsp;</td><td class=example><pre>  
-   grub&#62; kernel (hd0,0)/boot/gnumach.gz root=device:hd2s1 -s
+<table>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub1&#62; kernel /boot/gnumach.gz root=device:hd0s1 -s
    [Multiboot-elf, ...]
-</pre></td></tr></table>
+</pre></td></tr>
+<tr><td>&nbsp;</td><td class=example><pre>
+   grub2&#62; multiboot /boot/gnumach.gz root=device:hd0s1 -s
+</pre></td></tr>
+</table>
 
 <p>
 Als nächstes muss der Wurzeldateisystem-Server und der <code>exec</code>-Server
@@ -245,25 +282,39 @@ ext2fs-Befehlszeile sehr lang ist, kann Sie durch Schützen des
 Zeilenumbruchzeichens in normaler Unix-Manier umgebrochen werden. Stellen Sie
 sicher, dass nach dem umgedrehten Schrägstrich am Zeilenende kein Leerzeichen folgt. Stellen
 Sie auch sicher, <kbd>{</kbd> und <kbd>}</kbd> von <kbd>(</kbd> und <kbd>)</kbd>
-zu unterscheiden.
+zu unterscheiden. Beachten Sie die subtilen Unterschiede zwischen Grub1 und
+  Grub2: Bei Grub2 muss der Dateiname wiederholt und Anführungszeichen verwandt
+  werden. Beachten Sie, dass in dieser Stufe die Option <q>--readonly</q> von
+  <code>ext2fs.static</code> nicht übergeben werden darf.
 </p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>  
-  grub&#62; module (hd0,0)/hurd/ext2fs.static \
+  grub1&#62; module /hurd/ext2fs.static \
    --multiboot-command-line=${kernel-command-line} \
    --host-priv-port=${host-port} \
    --device-master-port=${device-port} \
    --exec-server-task=${exec-task} -T typed ${root} \
    $(task-create) $(task-resume)
     [Multiboot-module  0x1c4000, 0x2cfe6a bytes]
-  grub&#62; module (hd0,0)/lib/ld.so.1 /hurd/exec $(exec-task=task-create)
+  grub1&#62; module /lib/ld.so.1 /hurd/exec $(exec-task=task-create)
     [Multiboot-module  0x494000, 0x27afe bytes]
-</pre></td></tr></table>
+</pre></td></tr>
+<tr><td>&nbsp;</td><td class=example><pre>
+  grub2&#62; module /hurd/ext2fs.static ext2fs \
+   --multiboot-command-line='${kernel-command-line}' \
+   --host-priv-port='${host-port}' \
+   --device-master-port='${device-port}' \
+   --exec-server-task='${exec-task}' -T typed '${root}' \
+   '$(task-create)' '$(task-resume)'
+  grub2&#62; module /lib/ld.so.1 exec /hurd/exec '$(exec-task=task-create)'
+</pre></td></tr>
+</table>
 
 <p>
 Sobald der Hurd läuft, kann dieser Prozess automatisiert werden, indem die 
-passenden Befehle zu Grubs <tt><q>/boot/grub/menu.lst</q></tt>-Konfigurationsdatei
-hinzugefügt werden.
+passenden Befehle zu Grub1s 
+  <tt><q>/boot/grub/menu.lst</q></tt>-Konfigurationsdatei bzw. zu Grub2s
+  <tt><q>/boot/grub/grub.cfg</q></tt>-Konfigurationsdatei hinzugefügt werden.
 </p>
 
 <p>
@@ -331,6 +382,21 @@ lassen Sie <code>./native-install</code> laufen.
 
 
 <h3>7.1 Das Netz</h3>
+
+<p>
+  Stellen Sie zuerst sicher, dass Ihre Netzwerkkarte von GNU-Mach erkannt wird:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# devprobe eth0
+ eth0
+</pre></td></tr></table>
+
+<p>
+  Falls <code>devprobe eth0</code> nicht <code>eth0</code> liefert, hat der
+  Kernel Ihre Netzwerkkarte nicht erkannt und Sie können eine andere
+  ausprobieren.
+</p>
 
 <p>
 Um das Netz zu konfigurieren muss der pfinet-Übersetzer konfiguriert werden. 
@@ -417,9 +483,9 @@ Hier ist eine <tt><q>/etc/fstab</q></tt>-Datei als Beispiel:
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
 \# &#60;file system&#62; &#60;mount point&#62;   &#60;type&#62;  &#60;options&#62;  &#60;dump&#62;  &#60;pass&#62;
-/dev/hd2s1      /               ext2    rw         0       1
-/dev/hd2s2      /home           ext2    rw         0       2
-/dev/hd2s3      none            swap    sw         0       0
+/dev/hd0s1      /               ext2    rw         0       1
+/dev/hd0s2      /home           ext2    rw         0       2
+/dev/hd0s3      none            swap    sw         0       0
 </pre></td></tr></table>
 
 <p>
@@ -428,7 +494,7 @@ Denken Sie daran, jedes Gerät mit dem <code>MAKEDEV</code>-Befehl anzulegen:
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
  \# cd /dev
- \# ./MAKEDEV hd2s1 hd2s2 hd2s3
+ \# ./MAKEDEV hd0s1 hd0s2 hd0s3
 </pre></td></tr></table>
 
 <p>
@@ -475,7 +541,9 @@ Lustiges Hacken!
 
 <p>
 Immer den Kernel von Hand zu laden kann sehr ermüdend werden. Editieren Sie
-<tt><q>/boot/grub/menu.lst</q></tt> und passen Sie sie entsprechend an; das Booten
+  <tt><q>/boot/grub/menu.lst</q></tt> für Grub1 bzw. 
+  <tt><q>/boot/grub/grub.cfg</q></tt> für Grub2 und passen Sie sie entsprechend
+  an; das Booten
 wird viel schneller und leichter werden.
 </p>
 
@@ -594,12 +662,3 @@ deaktiviert sein.
 <p>
 Schließlich geben Sie <code>startx</code> ein.
 </p>
-
-<p>
-Es gibt mehrere Warnungen, derer Sie sich bewusst sein müssen. 
-<code>update-menu</code> ist noch nicht
-portiert worden. Daher gibt es keine schönen Debian-Menüs. Obwohl eine
-<code>pthreads</code>-Implementation existiert, sind noch nicht alle 
-pthread-Pakete portiert: erwarten Sie nicht, dass GNOME und KDE funktionieren.
-</p>
-
