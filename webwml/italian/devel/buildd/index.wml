@@ -1,5 +1,5 @@
-#use wml::debian::template title="Autobuilder network" BARETITLE="true"
-#use wml::debian::translation-check translation="1.19" maintainer="Giovanni Mascellani"
+#use wml::debian::template title="Autobuilder network"
+#use wml::debian::translation-check translation="1.21" maintainer="Giovanni Mascellani"
 
 <p>La rete di buildd è un sottoprogetto di Debian che aiuta a velocizzare
 la ricompilazione dei pacchetti per tutte le architetture che
@@ -12,7 +12,7 @@ Debian e ricompilarli per l'architettura richiesta.</p>
 
 <p>La distribuzione Debian supporta <a href="$(HOME)/ports/">un buon numero di
 architetture</a>, ma i mantenitori dei pacchetti in genere compilano i binari
-solo per una sola architettura (di solito i386). Gli sviluppatori di altre
+solo per una sola architettura (di solito i386 o amd64). Gli sviluppatori di altre
 architetture devono prestare attenzione a quando escono nuove versioni di ogni
 pacchetto e ricompilarle, se vogliono stare al passo con la distribuzione
 Intel.</p>
@@ -29,7 +29,7 @@ stato per lungo tempo l'unico modo di mantenere le distribuzioni non i386.</p>
 processo. Consiste di una serie di script (scritti in Perl e Python), che sono
 stati modificati molte volte nel corso del tempo in modo da aiutare i porter
 in molti compiti. Sono finalmente diventati un sistema che è capace di
-mantenere quasi automaticamente una distribuzione Debian non i386 aggiornata.
+mantenere quasi automaticamente le varie distribuzioni Debian aggiornate.
 </p>
 
 
@@ -40,7 +40,7 @@ della rete, ma in realtà è però diviso in parti diverse:</p>
 
 <dl>
 
-<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">wanna-build</a></dt>
+<dt>wanna-build</dt>
 <dd>
 un tool che coordina la (ri)compilazione dei pacchetti attraverso un database
 che mantiene la lista dei pacchetti e del loro stato. C'è un database centrale
@@ -48,26 +48,27 @@ per ogni architettura che memorizza lo stato dei pacchetti, la loro versione
 e qualche altra informazione.
 </dd>
 
-<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">buildd</a></dt>
+<dt><a href="http://packages.debian.org/buildd">buildd</a></dt>
 <dd>
 un demone che controlla periodicamente il database mantenuto da
-<em>wanna-build</em> e chiama <em>sbuild</em> per compilare i pacchetti. Tiene
-traccia delle compilazioni fallite e riuscite e carica i pacchetti nell'archivio
-una volta che il log di compilazione è stato accettato dall'amministratore.
+<em>wanna-build</em> e chiama <em>sbuild</em> per compilare i pacchetti. Una
+volta che la compilazione viene approvata da un amministratore, carica il
+pacchetto nell'archivio appropriato.
 </dd>
 
 <dt><a href="http://packages.debian.org/sbuild">sbuild</a></dt>
 <dd>
 è responsabile dell'effettiva compilazione dei pacchetti in chroot isolate.
-Per fare questo principalmente utilizza tool standard di Debian, ma tiene anche
-conto delle dipendenze di compilazione e di altre sottigliezze.
+Si assicura che tutte le dipendenze di compilazione siano soddisfatte, poi,
+utilizzando comandi standard di Debian, avvia la compilazione. I log di
+compilazione sono aggiunti al <a href="http://buildd.debian.org">database
+dei log di compilazione</a>.
 </dd>
 
 <dt><a href="http://packages.debian.org/quinn-diff">quinn-diff</a></dt>
 <dd>
-riempie il database di wanna-build con i nuovi pacchetti. Confronta la lista dei
-pacchetti disponibili ed elenca le differenze (comparando un file Sources ed un
-file Packages).
+confronta la lista dei pacchetti disponibili per due diverse architetture
+ed elenca le differenze (comparando un file Sources ed un file Packages).
 </dd>
 
 </dl>
@@ -84,25 +85,32 @@ architettura (nello stato <em>Needs-Build</em>, ossia "compilazione
 necessaria"). Le macchine di compilazione interrogheranno il database chiedendo
 quali pacchetti sono in quello stato e prenderanno continuamente pacchetti dalla
 lista. I criteri di priorità della lista sono lo stato della precedente
-compilazione, la priorità del pacchetto, la sua sezione ed infine il suo
-nome.</p>
+compilazione (<em>Out-Of-Date</em>, "non aggiornato", oppure <em>Uncompiled</em>,
+"non compilato"), la priorità del pacchetto, la sua sezione ed il suo nome.
+Inoltre, per evitare che alcuni pacchetti rimangano sempre in fondo alla coda
+e non vengano mai compilati, le priorità sono aggiustate dinamicamente
+man mano che il tempo di attesa aumenta.</p>
 
 <p>Se la compilazione ha successo su tutte le architetture, il mantenitore
 non avrà bisogno di fare niente. Tutti i pacchetti binari saranno caricati
-nell'archivio principale della loro architettura. Se la compilazione non finisce
-con successo, il pacchetto entrerà in uno stato speciale (<em>Failed</em>,
-"fallito", oppure <em>Dep-Wait</em>, "aspetta le dipendenze", se ha dipendenze
-di compilazione o di installazione che non sono disponibili). Gli amministratori
+nell'archivio corrispondente. Se la compilazione non finisce
+con successo, il pacchetto entrerà in uno stato speciale (<em>Build-Attempted</em>,
+"compilazione tentata", per compilazioni fallite che non sono state ancora
+revisionate dagli amministratori, <em>Failed</em>, "fallito", una volta
+che il fallimento è stato revisionato e riportato come bug, oppure
+<em>Dep-Wait</em>, "aspetta le dipendenze", se presentano dipendenze di
+compilazione non disponibili). Gli amministratori
 della rete di buildd controlleranno i pacchetti che non sono stati compilati
 con successo e ne daranno comunicazione al mantenitore, generalmente aprendo un
 bug nel Bug Tracking System.</p>
 
 <p>A volte un pacchetto impiega molto tempo per essere compilato per una certa
 architettura, e questo gli impedisce di entrare in
-<a href="$(HOME)/devel/testing">testing</a>. Sfortunatamente il pacchetto dovrà
-aspettare finché una macchina non lo prende. Gli amministratori di buildd non
-accetteranno richieste di velocizzare la compilazione di un pacchetto, perché
-la lista delle priorità è stata fissata.</p>
+<a href="$(HOME)/devel/testing">testing</a>. Se un pacchetto sta bloccando
+una transizione tipicamente le priorità di compilazione vengono aggiustate
+su richiesta del Team di Rilascio. Altre richieste di questo tipo non
+saranno accettate, dal momento che il pacchetto guadagna automaticamente
+priorità man mano che rimane nella coda.</p>
 
 <p>Puoi controllare lo stato di ogni tentativo fatto da buildd per compilare i
 pacchetti che appartengono ad ogni mantenitore controllando i
@@ -159,6 +167,6 @@ architetture possono essere raggiunti all'indirizzo
 
 <p><small>Questa introduzione alla rete di buildd è stata scritta mettendo
 insieme pezzetti appartenenti a Roman Hodek, Christian T. Steigies,
-Wouter Verhelst, Andreas Barth, Francesco Paolo Lovergine e
-Javier Fernández-Sanguino.</small></p>
+Wouter Verhelst, Andreas Barth, Francesco Paolo Lovergine,
+Javier Fernández-Sanguino e Philipp Kern.</small></p>
 
