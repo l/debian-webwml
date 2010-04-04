@@ -1,11 +1,11 @@
 #use wml::debian::template title="Errata corrige dell'Istallatore Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.126" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.129" maintainer="Luca Monducci"
 
-<h1 id="lenny-rc1">Errata per la release lenny RC2</h1>
+<h1 id="lenny-rc1">Errata per la release squeeze alpha 1</h1>
 
 <p>
-Questa è una lista dei problemi conosciuti nella versione lenny RC2
+Questa è una lista dei problemi conosciuti nella versione squeeze alpha 1
 dell'Installatore Debian. Se si riscontra un problema che non è presente
 in questa pagina, inviare un <a href="report-template">resoconto
 dell'installazione</a> in cui si descrive il proprio problema.
@@ -19,38 +19,6 @@ dell'installazione</a> in cui si descrive il proprio problema.
     Infatti gli script della modalità di ripristino assemblano automaticamente
     gli array, questo può comportare la corruzione dei dati se sono presenti
     dei superblocchi RAID non validi o obsoleti.
-    </dd>
-
-    <dt>Visualizzazione corrotta dei messaggi durante le installazioni in Dzongkha</dt>
-    <dd>
-    Nel caso in cui la password di root e la sua conferma non coincidono,
-    la visualizzazione dello schermo successivo è corrotta. Questo si
-    verifica nelle installazioni in lingua Dzongkha (si rovina la
-    visualizzazione dei font in corsivo).
-    </dd>
-
-    <dt>I device dei dischi potrebbero cambiare a ogni riavvio</dt>
-    <dd>
-    Sui sistemi con più dischi, il kernel/udev
-    al riavvio del sistema potrebbe assegnare un device diverso da
-    quello usato durante l'installazione a causa di un diverso
-    ordine nel caricamento dei driver.
-    <br />
-    Questo può comportare l'impossibilità d'avviare il sistema.
-    Nella maggior parte dei casi si può ovviare modificando
-    la configurazione del boot loader e /etc/fstab
-    usando la modalità di ripristino dell'installatore.
-    <br />
-    Notare che questo problema si può presentare a ogni avvio.
-    </dd>
-
-    <dt>Problemi di riavvio con le installazioni da chiavetta USB</dt>
-    <dd>
-    Il problema precedente si potrebbe verificare anche con le installazioni
-    da chiavetta USB. Lasciando la chiavetta collegata è possibile avviare
-    il sistema installato e correggere il file di configurazione del
-    bootloader. Si veda il <a href="http://bugs.debian.org/506263">bug #506263</a>
-    per i dettagli su come aggirare questo problema.
     </dd>
 
     <dt>Router difettosi possono causare problemi di rete</dt>
@@ -78,6 +46,14 @@ dell'installazione</a> in cui si descrive il proprio problema.
     <tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_wmem</tt>
     </dd>
 
+    <dt>I nomi dei paesi non sono ordinati correttamente in inglese</dt>
+    <dd>
+    Durante la scelta del mirror l'elenco con i nomi dei paesi è ordinato
+    in base ai codici dei paesi e non in base ai nomi, questo rende più
+    complicato trovare alcuni paesi nell'elenco. Questo problema affligge
+    solo le installazioni in inglese.
+    </dd>
+
 <!-- leaving this in for possible future use...
     <dt>i386: sono richiesti più di 32&nbsp;MB per l'installazione</dt>
     <dd>
@@ -89,35 +65,42 @@ dell'installazione</a> in cui si descrive il proprio problema.
     </dd>
 -->
 
+    <dt>Alcune tastiere USB potrebbero non funzionare</dt>
+    <dd>
+    Alcune tastiere USB richiedono dei moduli del kernel specifici.
+    Questi moduli mancano nell'installatore. Si vedano i bug
+    <a href="http://bugs.debian.org/561036">#561036</a> e
+    <a href="http://bugs.debian.org/567431"> #567431</a>.
+    Corretto nelle immagini create quotidianamente.
+    </dd>
+
     <dt>i386: qualche problema</dt>
     <dd>
     In questo rilascio il port su i386 ha qualche problema:
     <ul>
-    <li>A causa dell'aumento della dimensione del kernel 2.6.24, non
-    è più possibile fornire immagini per l'installazione da dischetto.
-    Probabilmente sarà nuovamente possibile fare delle installazioni
-    da dischetto quando l'Installatore utilizzerà la prossima versione
-    del kernel.</li>
-
-    <li>È presente almeno una segnalazione del crash dell'Installatore
-    durante il riconoscimento dell'hardware di rete su alcuni portatili
-    Dell Inspiron. Si veda il <a href="http://bugs.debian.org/509238">bug #509238</a>
-    per i dettagli. Un modo per aggirare questo problema è
-    avviare l'Installatore con il parametro "vga=771".</li>
+    <li>A causa dell'aumento della dimensione del kernel, non è possibile
+    fornire immagini per l'installazione da dischetti.</li>
     </ul>
     </dd>
 
-    <dt>PowerPC: vari problemi</dt>
+    <dt>Partizioni oltre i 16TiB non supportate da ext4</dt>
     <dd>
-    In questo rilascio il port su PowerPC è afflitto da alcuni problemi:
-    <ul>
-    <li>non funziona l'avvio da floppy su PowerPC Oldworld perché il
-    modulo swim3 non crea il device e perché miboot non è stato incluso</li>
+    Gli strumenti per la creazione di file system ext4 non supportano
+    la creazione di file system di dimensione superiore ai 16Tib.
+    </dd>
 
-    <li>Il modulo snd-powermac non è caricato automaticamente all'avvio
-    perché blocca alcuni sistemi. Per caricarlo automaticamente deve
-    essere aggiunto manualmente in <tt>/etc/modules</tt>.</li>
-    </ul>
+    <dt>armel: problema di avvio quando root è su RAID</dt>
+    <dd>
+    Fare attenzione a un problema che si verifica quando si sceglie di
+    avere la root su RAID che potrebbe causare l'impossibilità di avviare
+    la macchina dopo aver installato Debian. Fortunatamente esiste un modo
+    semplica per aggirare questo problema: quando l'installatore dice che
+    ha fini to e chiede di riavviare premere Indietro e aprire la shell dal
+    menu. Poi usare nano per modificare il file
+    <tt>/target/usr/share/initramfs-tools/hooks/flash_kernel_set_root</tt>
+    e cancellare il controllo che assicura l'esistenza del device di root.
+    Digitare exit, scegliere "Rendere il sistema avviabile" e premere OK al
+    messaggio "Installazione completa".
     </dd>
 
     <dt>s390: caratteristiche non supportate</dt>
@@ -125,8 +108,20 @@ dell'installazione</a> in cui si descrive il proprio problema.
     <ul>
     <li>Attualmente il supporto per la disciplina DADS DIAG non è
     disponibile</li>
-
-    <li>Il supporto per le interfacce di rete LCS non è disponibile</li>
     </ul>
+    </dd>
+    <dt>sparc: problema di installazione del bootloader silo</dt>
+    <dd>
+    Il bootloader silo non viene installato correttamente sul sistema
+    finale. A causa di questo problema, il riavvio fallisce. Si veda il
+    bug <a href="http://bugs.debian.org/565639">#565639</a> per i
+    dettagli. Corretto nelle immagini create quotidianamente.
+    </dd>
+
+    <dt>Le immagini per kFreeBSD non sono disponibili</dt>
+    <dd>
+    È in corso l'integrazione del supporto per kFreeBSD nell'installatore
+    e non è disponibile in questo rilascio. Dovrebbe esserre corretto con
+    il prossimo rilascio.
     </dd>
 </dl>
