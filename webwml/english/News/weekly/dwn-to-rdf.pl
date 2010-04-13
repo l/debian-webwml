@@ -152,7 +152,7 @@ if (open (F, $current . '/index.wml')) {
 		) {
 
 		if (!$headline) {
-		    rdf_add ($rss, $count++, 'Debian Weekly News '.$current, $body) if ($count == 0);
+		    rdf_add ($rss, $count++, 'Debian Project News '.$current, $body) if ($count == 0);
 		} else {
 		    rdf_add ($rss, $count++, $headline, $body);
 		}
