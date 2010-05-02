@@ -1,14 +1,14 @@
-<p>D'altres p‡gines del BTS:
+<p>D'altres p√†gines del BTS:
 
 <ul>
-  <li><a href="./">P‡gina principal de continguts del sistema de seguiment d'errors.</a>
+  <li><a href="./">P√†gina principal de continguts del sistema de seguiment d'errors.</a>
   <li><a href="Reporting">Instruccions per a reportar errors.</a>
-  <li><a href="Access">Accedint a la bit‡cola del sistema de seguiment d'errors.</a>
-  <li><a href="Developer">InformaciÛ per als desenvolupadors sobre el sistema de
+  <li><a href="Access">Accedint a la bit√†cola del sistema de seguiment d'errors.</a>
+  <li><a href="Developer">Informaci√≥ per als desenvolupadors sobre el sistema de
       seguiment d'errors.</a>
-  <li><a href="server-control">InformaciÛ per als desenvolupadors de com usar la
-      interfÌcie de correu per al control dels errors.</a>
-  <li><a href="server-refcard">Targeta de referËncia pel servidor de correu.</a>
+  <li><a href="server-control">Informaci√≥ per als desenvolupadors de com usar la
+      interf√≠cie de correu per al control dels errors.</a>
+  <li><a href="server-refcard">Targeta de refer√®ncia pel servidor de correu.</a>
   <li><a href="server-request">Demanant informes d'error per correu.</a>
 #  <li><a href="db/ix/full.html">Full list of outstanding and recent bug
 #      reports.</a>
