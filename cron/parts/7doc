@@ -114,6 +114,18 @@ test -d $webdocdir/packaging-manuals/python-policy || install -d -m 2775 $webdoc
 install -p -m 664 py/usr/share/doc/python/python-policy.html/* $webdocdir/packaging-manuals/python-policy/
 rm -rf py
 
+echo -n " debian-refcard"
+drdeb=`ls -t1 $ftpdir/pool/main/r/refcard/debian-refcard_*.deb | head -1`
+dpkg-deb -x $drdeb dr
+test -d $webdocdir/manuals/refcard || install -d -m 2775 $webdocdir/manuals/refcard
+for refcardfile in dr/usr/share/doc/debian-refcard/*a4.pdf.gz ; do
+	# rename from refcard-fr-a4.pdf.gz to refcard.fr.pdf as expected by the website
+	futurename=`echo $refcardfile | sed 's/refcard-\(\w*\)-a4.pdf.gz/refcard.\1.pdf/'`
+	gunzip -f $refcardfile && mv dr/usr/share/doc/debian-refcard/$(basename $refcardfile .gz) $futurename
+done
+install -p -m 664 dr/usr/share/doc/debian-refcard/*pdf $webdocdir/manuals/refcard/
+rm -rf dr
+
 echo
 
 # still not accounted for: libc5-libc6-Mini-HOWTO
