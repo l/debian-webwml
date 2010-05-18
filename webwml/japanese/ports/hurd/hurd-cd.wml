@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd --- Hurd-CDs" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.63"
+#use wml::debian::translation-check translation="1.66"
 
 
 <define-tag cdserie>L1</define-tag>
@@ -117,8 +117,8 @@ hurd-install-guide と Cook-book はあなたが始める前に必ず読んで�
 <ol>
 <li><em>GRUB 起動ディスクを使う</em>
 <p>
-GRUB フロッピーイメージの入っている grub-disk パッケージをインストール
-してください。
+GRUB フロッピーイメージの入っている grub-disk または grub-rescue-pc
+パッケージをインストールしてください。
 もし GNU/Linux で作業しているのなら dd を、MS で作業しているのなら
 rawrite を使うことができます。
 </p></li>
@@ -140,11 +140,13 @@ SCSI id 4 と 5 であるかそれ以外であるかにかかわらず、常に 
 n にはパーティションの番号が入るので、最初の IDE ドライブの最初のパーティションは
 hd0s1 となり、2 つ目の SCSI ドライブの 3 つ目のパーティションは sd1d3 というようになります。</p>
 
-<p>GRUB はまた異なるパーティション命名方を持ちます。GRUB はパーティションを
+<p>GRUB1 はまた異なるパーティション命名法を持ちます。GRUB はパーティションを
 (hdN,n) と呼びますが、今回はディスクの番号とパーティションの番号は
 ゼロから始まり、ディスクはまず IDE ディスクが先で SCSI ディスクは 2 番目という
 順番で動作します。今回では、最初の IDE ドライブの最初のパーティションは
-(hd0,0) になるでしょう。特に混乱するのは (hd1,2) が、もしあなたが IDE ドライブ
+(hd0,0) になるでしょう。GRUB2 でも同様なのですが、パーティションの番号が
+1 から始まるのでこの場合は (hd0,1) となります。
+特に混乱するのは (hd1,2) が、もしあなたが IDE ドライブ
 を 1 つしか持っていないのなら最初の SCSI ドライブを指し、そうでなければ
 2 つ目の IDE ドライブを指す可能性があるということです。従って始める前に
 パーティションの様々な名前について理解しておくことが重要になります。
@@ -183,18 +185,20 @@ Linux のラムディスクの中のツールを使うのが簡単かもしれ�
 (bios をリセットするのを忘れないでください)。それだけです! [1 度目の再起動]</li>
 </ol>
 
-<p>もし GNU/Hurd のパーティションが "(hd0,0)" [GRUB の命名法]
-で、"sd0s1" [GNU/Hurd] である場合、つまり IDE ドライブがなく
-SCSI の最初のハードディスクの最初のパーティションである場合、仲介なしに
-システムが起動するでしょう。<br />
-
-GRUB のイメージが準備されているので、GNU システムを起動するために
-ほとんど編集することはないでしょう。</p>
+<p>GRUB イメージのデフォルト設定では、
+GNU/Hurd のパーティションが "(hd0,0)" [GRUB1 の命名法]で、"(hd0,1)"
+[GRUB2 の命名法]で、"sd0s1" [GNU/Hurd] であると仮定しており、これは IDE ドライブがなく
+SCSI の最初のハードディスクの最初のパーティションであると判断されています。
+However, 
+初回起動時に <code>-s</code> オプションを
+ GNU/Mach kernel に与えてシングルユーザモードで起動し、
+<code>ext2fs.static</code> コマンドラインから
+<code>--readonly</code> オプションを削除する必要があります。</p>
 
 <p>起動プロセスが完了するまでキーボードから手を離しておいてください。</p>
 
 <p>システムが望むように起動するように、GRUB フロッピーの 
-"/boot/grub/menu.lst" を、編集することができます。
+<q>/boot/grub/menu.lst</q>または<q>/boot/grub/grub.cfg</q>を、編集することができます。
 </p>
 
 
