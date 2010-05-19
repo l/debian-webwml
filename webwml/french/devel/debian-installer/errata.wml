@@ -1,14 +1,14 @@
 #use wml::debian::template title="Errata pour l'installateur Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.126" maintainer="Nicolas Bertolissio"
+#use wml::debian::translation-check translation="1.129" maintainer="Nicolas Bertolissio"
 
 
-<h1 id="lenny-rc1"><i>Errata</i> pour la deuxième version candidate à la
-publication pour Lenny</h1>
+<h1 id="squeeze-alpha1"><i>Errata</i> pour la première version alpha
+pour Squeeze</h1>
 
 <p>
-Voici une liste des problèmes connus dans la deuxième version candidate à la
-publication de l'installateur Debian pour Lenny. Si vous n'y voyez pas le
+Voici une liste des problèmes connus dans la première version alpha
+de l'installateur Debian pour Squeeze. Si vous n'y voyez pas le
 problème que vous rencontrez, veuillez nous envoyer un <a
 href="report-template">compte-rendu d'installation</a> (en anglais) décrivant
 le problème.
@@ -23,37 +23,6 @@ RAID logiciel était utilisé sur le système à secourir. Les scripts du mode d
 secours assemblent automatiquement les disques, ce qui peut conduire à la
 corruption de données en présence de superblocs RAID invalides ou obsolètes.
 </dd>
-<dt>Affichage corrompu des messages dans les installations en Dzongkha</dt>
-<dd>
-Quand le mot de passe choisi pour root et sa confirmation ne correspondent
-pas, l'affichage des écrans qui suivent est brouillé pendant l'installation en
-langue Dzongkha (affichage cassé d'une police en italique).
-</dd>
-<dt>Possible modification des périphériques de disques lors du redémarrage</dt>
-    <dd>
-    Sur les systèmes comportant plusieurs contrôleurs de disques lors du
-    redémarrage du système, le programme réalisant la gestion des périphériques
-    en espace mémoire utilisateur (<q>udev</q>) peut assigner un n&oelig;ud de
-    périphérique différent de celui utilisé pendant l'installation à cause d'un
-    changement dans l'ordre de chargement des pilotes.<br />
-    Ceci peut entraîner l'échec du démarrage du système. Dans la plupart des
-    cas, ceci peut être corrigé en modifiant la configuration du chargeur
-    d'amorçage et /etc/fstab, en utilisant le mode de secours de l'installateur
-    par exemple.<br />
-    Veuillez noter cependant que ce problème peut se reproduire lors des
-    démarrages suivants. La correction de ce problème est une priorité pour la
-    prochaine version de l'installateur Debian&nbsp;;
-    </dd>
-    
-    <dt>Problèmes au redémarrage après l'installation depuis une clé USB</dt>
-    <dd>
-    Le problème ci-dessus peut aussi avoir lieu lors de l'installation depuis
-    une clé USB.
-    Laisser la clé USB en place provisoirement vous permettra de démarrer le
-    système installé et la bonne configuration du chargeur d'amorçage.
-    Voir <a href="http://bugs.debian.org/506263">#506263</a>
-    pour plus de détail et les solutions de contournement.
-    </dd>
     <dt>Problèmes de réseau possibles avec des routeurs bogués</dt>
     <dd>
     Si vous rencontrez des problèmes de réseau durant l'installation, cela peut
@@ -74,6 +43,13 @@ langue Dzongkha (affichage cassé d'une police en italique).
     <tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_wmem</tt>
     </dd>
 
+<dt>Pays non triés par ordre alphabétique en anglais</dt>
+<dd>
+Lors du choix du miroir, la liste des pays est triée par code pays au lieu 
+du nom du pays. Il peut être plus difficile de trouver certains pays dans la
+liste. Ce problème n'affecte que les installations effectuées en anglais. 
+</dd>
+
 <!-- conservé pour une possible utilisation ultérieure...
   <dt>Architecture i386&nbsp;: plus de 32&nbsp;Mo requis pour
     l'installation</dt>
@@ -85,47 +61,63 @@ langue Dzongkha (affichage cassé d'une police en italique).
     architectures&nbsp;;
     </dd>
 -->
+<dt>Certains claviers USB peuvent ne pas fonctionner</dt>
+<dd>
+Certains claviers USB nécessitent des modules spécifiques pour le noyau pour un bon fonctionnement, manquants dans la version actuelle de l'installateur Debian. Voir
+<a href="http://bugs.debian.org/561036">#561036</a>, 
+<a href="http://bugs.debian.org/567431"> #567431</a>.
+Ce problème est corrigé dans les images construites quotidiennement.
+</dd>
   <dt>Architectures i386 : peu de problèmes</dt>
     <dd>
     Le portage sur l'architecture i386 a quelques problèmes connus dans cette
     publication :
     <ul>
-    <li>À cause de l'augmentation de la taille du noyau 2.6.24, nous ne pouvons
-    fournir d'images d'installation pour disquettes. Nous prévoyons d'être
-    capables de prendre en charge les installations avec disquettes quand
-    l'installateur passera à la version suivante du noyau.</li>
-    <li>Nous avons reçu au moins un rapport signalant un arrêt brutal de
-    l'installateur lors de l'étape de détection du matériel réseau sur
-    quelques ordinateurs portables Dell Inspiron. Veuillez consulter le <a
-    href="http://bugs.debian.org/509238">bogue #509238</a> pour de plus amples
-    détails. Une solution de contournement semble être de lancer
-    l'installateur avec le paramètre « vga=771 ».</li>
-    </ul>
-    Sont affectés les systèmes qui ont des équipements <tt>/dev/ida/cXdX</tt>.
-    Ce problème (<a href="http://bugs.debian.org/466600">#466600</a>) devrait
-    être corrigé rapidement après la publication des reconstructions
-    quotidiennes et hebdomadaires de l'installateur et des images CD/DVD
-    lorsqu'une version corrigée de GRUB atteindra testing.
-    </dd>
-    <dt>Architecture PowerPC&nbsp;: divers problèmes</dt>
-    <dd>
-    Le portage sur l'architecture PowerPC a plusieurs problèmes dans cette
-    version&nbsp;:
-    <ul>
-      <li>l'installation par disquettes pour la sous-architecture oldworld est
-      cassée car aucun n&oelig;ud n'est créé pour le module swim3 et car miboot
-      n'est pas fourni,</li>
-      <li>le module snd-powermac n'est plus chargé par défaut car il gèle
-      certains systèmes&nbsp;; vous devrez l'ajouter vous-même dans
-      <tt>/etc/modules</tt>&nbsp;;</li>
+    <li>À cause de l'augmentation de la taille du noyau, nous ne pouvons
+    fournir d'images d'installation pour disquettes.</li>
     </ul>
     </dd>
+
+<dt>Les partitions de plus de 16TB ne sont pas prises en charge par ext4</dt>
+<dd>
+Les outils ext4 ne permettent pas de créer de systèmes de fichiers de plus de
+16TB.
+</dd>
+
+<dt>Architecture armel : problème d'amorçage avec racine sur RAID</dt>
+<dd>
+Il existe un problème lors de l'utilisation d'un RAID pour la partition racine,
+qui empêchera la machine de démarrer après l'installation de Debian.
+Heureusement, le contournement est simple : lorsque l'installateur vous propose de redémarrer après avoir terminé, choisissez <q>Revenir en arrière</q> et lancez un shell.
+Puis éditez avec nano le fichier
+<tt>/target/usr/share/initramfs-tools/hooks/flash_kernel_set_root</tt> 
+et supprimez le test qui s'assure que le périphérique racine existe.
+Tapez <q>exit</q>, choisissez <q>Rendre le système amorçable</q>, puis confirmez le message <q>Installation terminée</q>.
+</dd>
+
+
+
   <dt>Architecture s390&nbsp;: capacités non gérées</dt>
     <dd>
     <ul>
       <li>la gestion de la règle<!-- discipline ? --> DASD DIAG n'est
         actuellement pas disponible,</li>
-      <li>la gestion des interfaces réseau LCS n'est plus disponible.</li>
     </ul>
     </dd>
 </dl>
+
+<dt>Architecture sparc : problèmes dans l'installation du gestionnaire d'amorçage silo</dt>
+<dd>
+Le gestionnaire d'amorçage silo n'est pas correctement installé, ce qui fait
+échouer le redémarrage.
+Consultez <a href="http://bugs.debian.org/565639">#565639</a> pour plus de détails.
+Ce problème est corrigé dans les images construites quotidiennement.
+</dd>
+
+<dt>Les images kFreeBSD ne sont pas disponibles</dt>
+<dd>
+La prise en charge de kFreeBSD est toujours en cours d'intégration dans l'installation Debian et n'est pas disponible dans cette version.
+Le travail est en cours afin de corriger cela d'ici les prochaines versions.
+</dd>
+</dl>
+
