@@ -5,10 +5,10 @@
 # Original-Translator: Frank Lichtenheld <frank@lichtenheld.de>, 2003-11-11
 # Translator: Helge Kreutzmann <debian@helgefjell.de>, 2005-11-12 ff.
 
-<h1 id="lenny-rc1">Errata für Lenny-Veröffentlichung RC2</h1>
+<h1 id="squeeze-alpha1">Errata für Squeeze-Veröffentlichung Alpha1</h1>
 
 <p>
-Dies ist eine Liste der bekannten Probleme in der Lenny-RC2-Veröffentlichung des
+Dies ist eine Liste der bekannten Probleme in der Squeeze-Alpha1-Veröffentlichung des
 Debian-Installers. Falls Sie Ihr Problem hier nicht aufgeführt finden,
 senden Sie uns bitte einen <a href="report-template">\
 Installationsbericht</a>, der das Problem beschreibt.
@@ -22,34 +22,6 @@ Installationsbericht</a>, der das Problem beschreibt.
      Rettungsmodus RAID-Verbünde automatisch aufbauen. Dies könnte Daten
      beschädigen, falls ungültige oder veraltete RAID-Superblöcke vorhanden
      sind.
- </dd>
-  <dt>Fehlerhafte Anzeige von Meldungen bei Installationen auf Dzongkha</dt>
-  <dd>
-     Passt das ausgewählte Passwort für root und die Bestätigung nicht zusammen,
-     dann ist bei Installationen in der Sprache Dzongkha der folgende Bildschirm
-     durcheinandergewürfelt (defekte Anzeige kursiver Schrift).
- </dd>
-  <dt>Plattengeräte können sich beim Neustart ändern</dt>
-  <dd>
-     Auf Systemen mit mehreren Festplatten-Controllern kann es
-     vorkommen, dass der Kernel/Udev aufgrund verschiedener Lade-Reihenfolge
-     der Treiber einen anderen Geräteknoten als den bei der Installation
-     verwendeten beim System-Neustart zuweist.<br />
-     Dies kann zum Misslingen des Bootens des Systems führen. In den meisten
-     Fällen kann dies durch Änderung der Boot-Loader-Konfiguration und /etc/fstab
-     korrigiert werden, möglicherweise unter Verwendung des Rettungsmodus
-     des Installers.<br />
-     Beachten Sie, dass das Problem bei folgenden Neustarts erneut auftreten 
-     kann.
- </dd>
- <dt>Neustart-Probleme bei der Installation von USB-Sticks</dt>
- <dd>
-    Das vorherige Problem kann auch bei Installationen von einem USB-Stick 
-    auftreten. Lassen Sie den USB-Stick vorübergehend eingesteckt, um den
-    installierten Rechner zu booten und die Konfigurationsdatei des
-    Bootloaders zu korrigieren. Lesen Sie <a 
-    href="http://bugs.debian.org/506263">#506263</a> für Details über solche 
-    provisorischen Lösungen.
  </dd>
   <dt>Fehlerhafte Router können zu Netzproblemen führen</dt>
   <dd>
@@ -70,6 +42,14 @@ Installationsbericht</a>, der das Problem beschreibt.
       <tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_rmem</tt><br />
       <tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_wmem</tt>
 
+  <dt>Ländernamen auf Englisch nicht korrekt sortiert</dt>
+  <dd>
+     Während des Auswahl des Spiegels werden die Ländernamen nach Ländercode
+     und nicht nach Ländernamen sortiert. Dadurch kann es schwierig werden,
+     einige Länder in der Liste zu finden. Dies betrifft nur Installationen
+     auf Englisch.
+ </dd>
+
  </dd>
  <!-- leaving this in for possible future use...
      <dt>i386: mehr als 32&nbsp;MB an Speicher werden zur Installation benötigt</dt>
@@ -81,43 +61,63 @@ Installationsbericht</a>, der das Problem beschreibt.
         haben.
          </dd>
 -->
+  <dt>Einige USB-Tastaturen könnten nicht funktionieren</dt>
+  <dd>
+     Einige USB-Tastaturen benötigen zur korrekten Unterstützung spezielle 
+     Kernelmodule. Diese fehlen im aktuellen Installer. Lesen Sie hierzu <a 
+     href="http://bugs.debian.org/561036">#561036</a>, <a 
+     href="http://bugs.debian.org/567431">#567431</a>. In den täglich gebauten
+     Images ist dies bereits behoben.
+ </dd>
 
   <dt>i386: mehrere Probleme</dt>
   <dd>
      In der i386-Portierung gibt es in dieser Veröffentlichung mehrere bekannte
      Probleme:
      <ul>
-       <li>Aufgrund gestiegener Größe des 2.6.24er Kernels sind wir nicht in der
+       <li>Aufgrund gestiegener Größe des Kernels sind wir nicht in der
      Lage, Installations-Images für Installationen von Diskette bereitzustellen.
-     Wir erwarten, dass wir Installationen von Disketten wieder ermöglichen,
-     wenn der Installer auf die nächste Kernelversion umsteigt.</li>
-       <li>Wir erhielten mindestens einen Bericht, dass der Installer beim 
-           Schritt des Erkennens der Netzhardware auf einigen Dell 
-	   Inspiron-Laptops abstürzt. Lesen Sie <a 
-	   href="http://bugs.debian.org/509238">Fehler #509238</a> für Details.
-           Eine Möglichkeit, dies zu umgehen, scheint das Booten des Installers
-	   mit dem Parameter <q>vga=771</q> zu sein.</li>
+       </li>
     </ul>
  </dd>
-  <dt>PowerPC: Verschiedene Probleme</dt>
+  <dt>Partitionen mit mehr als 16 TiB werden von Ext4 nicht unterstützt</dt>
   <dd>
-     Die PowerPC-Portierung hat mehrere Probleme in dieser Veröffentlichung:
-     <ul>
-        <li>Disketten-Installationen für OldWorld PowerPC sind defekt, da kein 
-           Geräteknoten für das swim3-Modul erstellt wird und Miboot nicht
-           enthalten ist</li>
-       <li>Das snd-powermac-Modul wird nicht mehr standardmäßig geladen, da
-           es einige Systeme zum Anhalten bringt; Sie müssen es manuell zu
-           <tt>/etc/modules</tt> hinzufügen</li>
-     </ul>
+     Das Dateisystemerstellwerkzeug von Ext4 erlauben nicht die Erstellung
+     von Dateisystemen mit einer Größe von über 16 TiB.
  </dd>
+  <dt>Armel: Root auf RAID Boot-Problem</dt>
+  <dd>
+     Bitte seien Sie darauf vorbereitet, dass es ein Problem gibt, falls Sie
+     auswählen, Root auf RAID zu setzen, da nach der Installation von Debian 
+     Ihre Maschine nicht starten wird. Glücklicherweise können Sie das Problem
+     leicht umgehen: Wenn der Installer Ihnen mitteilt, dass er fertig sei und
+     Sie fragt, ob Sie das System neu starten möchten, wählen Sie <q>Zurück</q>
+     und öffnen eine Shell im Menü. Verwenden Sie dann Nano, um die Datei
+     <tt>/target/usr/share/initramfs-tools/hooks/flash_kernel_set_root</tt> zu
+     bearbeiten. Entfernen Sie dort die Prüfung, die sicherstellt, dass das
+     Root-Gerät existiert. Geben Sie <q>exit</q> ein, wählen Sie <q>Das System
+     bootbar machen</q> und drücken Sie <q>okay</q> bei der <q>Installation
+     abgeschlossen</q>-Nachricht.
+ </dd>
+
   <dt>S390: Nichtunterstützte Funktionalitäten</dt>
   <dd>
      <ul>
         <li>Die Unterstützung für DASD DIAG-Disziplinen ist derzeit nicht
             verfügbar.</li>
-       <li>Die Unterstützung für LCS-Netzwerkschnittstellen ist nicht mehr
-            verfügbar.</li>
-     </ul>
+      </ul>
+ </dd>
+  <dt>Sparc: Silo-Bootloader-Installationsproblem</dt>
+  <dd>
+     Der Silo-Bootloader wird nicht korrekt im Zielsystem installiert. Daher
+     wird ein Systemneustart fehlschlagen. Lesen Sie <a 
+     href="http://bugs.debian.org/565639">#565639</a> für Details. Korrigiert in
+     den täglich gebauten Images.
+ </dd>
+  <dt>kFreeBSD-Images nicht verfügbar</dt>
+  <dd>
+     Die Unterstützung für kFreeBSD wird noch in den Installer integriert und 
+     ist in dieser Veröffentlichung noch nicht verfügbar. Es wird daran
+     gearbeitet, dies für kommende Veröffentlichungen zu korrigieren.
  </dd>
 </dl>
