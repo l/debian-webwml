@@ -1,5 +1,5 @@
-#use wml::debian::template title="Autobuilder-Netz" BARETITLE="true"
-#use wml::debian::translation-check translation="1.19"
+#use wml::debian::template title="Autobuilder-Netz"
+#use wml::debian::translation-check translation="1.22"
 # $Id$
 # Translator: Helge Kreutzmann <debian@helgefjell.de> 2006-04-26
 
@@ -15,7 +15,7 @@
 
 <p>Die Debian-Distribution unterstützt <a href="$(HOME)/ports/">etliche 
    Architekturen</a>, aber die Paket-Betreuer kompilieren Binärversionen
-   gewöhnlich nur für eine einzige Architektur (normalerweise i386). Entwickler
+   gewöhnlich nur für eine einzige Architektur (normalerweise i386 oder Amd64). Entwickler
    für andere Architekturen müssen auf neue Versionen von Paketen aufpassen und
    diese rekompilieren, falls sie aktuell zu der Intel-Distribution bleiben
    wollen.
@@ -34,7 +34,7 @@
    besteht aus einer Reihe von Skripten (die in Perl und Python geschrieben
    sind), die sich im Laufe der Zeit entwickelt haben, um den Portierern bei
    verschiedenen Aufgaben zu helfen. Sie haben sich schließlich in ein System
-   entwickelt, dass in der Lage ist, nicht-i386 Debian-Distributionen fast
+   entwickelt, das in der Lage ist, Debian-Distributionen fast
    automatisch aktuell zu halten.
 </p>
 
@@ -47,7 +47,7 @@
 
 <dl>
 
-<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">wanna-build</a></dt>
+<dt>wanna-build</dt>
 <dd>
    ein Werkzeug, dass bei der Koordination des (Neu-)Bauens über eine Datenbank
    hilft, die eine Liste von Paketen und ihrem Status hält. Dort ist eine
@@ -55,27 +55,28 @@
    und einige andere Informationen aufbewahrt.
 </dd>
 
-<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">buildd</a></dt>
+<dt><a href="http://packages.debian.org/buildd">buildd</a></dt>
 <dd>
    ein Daemon, der periodisch die von <em>wanna-build</em> verwaltete Datenbank
-   überprüft und <em>sbuild</em> aufruft, um Pakete zu bauen. Er behält Fehler
-   und Erfolge beim Bauen im Auge und wird auch das Paket hochladen, nachdem
-   der Bau-Bericht vom Administrator bestätigt wurde.
+   überprüft und <em>sbuild</em> aufruft, um Pakete zu bauen. 
+   Nachdem das Bauprotokoll vom Buildd-Administrator bestätigt wurde, wird er
+   das Paket in das korrekte Archiv hochladen.
 </dd>
 
 <dt><a href="http://packages.debian.org/sbuild">sbuild</a></dt>
 <dd>
    ist für die eigentliche Übersetzung von Paketen in isolierten Chroots
-   zuständig. Es verwendet dafür hauptsächlich normale Debian-Werkzeuge, 
-   kümmert sich aber auch um Quell-Abhängigkeiten und einige andere kleine
-   Macken.
+   zuständig. 
+   Es stellt sicher, dass alle benötigten Quellabhängigkeiten vor dem Bau
+   in die Chroot installiert sind und ruft dann die Standard-Debian-Werkzeuge
+   auf, um den Bauprozess zu starten. Bauprotokolle werden bei der <a 
+   href="http://buildd.debian.org">Bauprotokolldatenbank</a> eingereicht.
 </dd>
 
 <dt><a href="http://packages.debian.org/quinn-diff">quinn-diff</a></dt>
 <dd>
-   Füttert die wanna-build-Datenbank mit neuen Paketen. Es vergleicht die
-   verfügbaren Pakete-Versionen für zwei Architekturen und gibt die
-   Unterschiede aus (vergleicht eine Quell-Datei und eine Paket-Datei). 
+   vergleicht die verfügbaren Paketversionen für zwei Architekturen und gibt
+   die Unterschiede aus (vergleicht die Datei Sources und Packages).
 </dd>
 
 </dl>
@@ -91,15 +92,20 @@
    für alle Architekturen (im Zustand <em>Needs-Build</em>) hinzugefügt.
    Bau-Maschinen fragen die Datenbank nach Paketen in diesem Zustand ab und
    werden routinemäßig Pakete von dieser Liste nehmen. Die Liste wird nach
-   vorherigem Übersetzungszustand, Priorität, Abschnitt und schließlich
-   Paketnamen priorisiert.
+   vorherigem Übersetzungszustand (entweder <em>out-of-date</em> (nicht aktuell)
+   oder <em>uncompiled</em> (unkompiliert)), Priorität, Abschnitt und 
+   schließlich Paketnamen priorisiert. Um das Verhungern von einigen Paketen am
+   Ende der Warteschlange zu vermeiden, werden die Prioritäten dynamisch mit
+   wachsender Wartezeit in der Warteschlange angepasst.</p>
 </p>
 
 <p>Falls der Bau auf allen Architekturen gelingt, braucht der Betreuer nichts
-   zu machen. Alle diese Binärpakete werden auf die Haupt-Site der Architektur
+   zu machen. Alle diese Binärpakete werden in das korrespondierende Archiv 
    hochgeladen. Falls der Bau nicht gelingt, kommt das Paket in einen speziellen
-   Zustand (<em>Failed</em> oder <em>Dep-Wait</em>, falls sie von speziellen
-   Bau-Abhängigkeiten abhängt, die nicht verfügbar sind). Der Administrator
+   Zustand ((<em>Build-Attempted</em> für Baufehler, die noch nicht geprüft 
+   wurden, <em>Failed</em> für geprüfte und eingereichte Fehler im Paket oder
+   <em>Dep-Wait</em>, falls das Paket spezielle Bau-Abhängigkeiten hat, die 
+   nicht verfügbar sind). Der Administrator
    des Autobuilders wird die Pakete, die nicht bauen, durchsehen und wird dies
    dem Betreuer zurückmelden, gewöhnlich indem er einen Fehler in der
    Fehlerdatenbank öffnet.
@@ -107,10 +113,11 @@
 
 <p>Manchmal braucht ein Paket lange, um auf einer gegebenen Architektur zu
    bauen und dies hält das Paket vom Übergang nach <a
-   href="$(HOME)/devel/testing">Testing</a> ab. Unglücklicherweise muss das
-   Paket warten, bis eine Maschine es einsammelt. Buildd-Administratoren
-   werden keine Bitten, den Bau zu beschleunigen, akzeptieren, da die 
-   Prioritäten-Liste bereits festgelegt ist.
+   href="$(HOME)/devel/testing">Testing</a> ab. Falls ein Paket einen Übergang
+   aufhält, werden die Bauprioritäten normalerweise auf Bitten des 
+   Veröffentlichungsteams angepasst. Andere Bitten werden nicht akzeptiert, da
+   die zunehmende Wartezeit bereits automatisch zu einer höheren Baupriorität
+   führt.
 </p>
 
 <p>Sie können den Status verschiedener buildd-Versuche von Paketen, die zu
@@ -176,5 +183,5 @@ Architektur verantwortlich sind, können unter
 <hrline />
 <p><small>Diese Einführung in das Autobuilder-Netz wurde mit Teilen und Stücken
    bereitgestellt von Roman Hodek, Christian T. Steigies, Wouter Verhelst,
-   Andreas Barth, Francesco Paolo Lovergine und Javier 
-   Fernández-Sanguino geschrieben.</small></p>
+   Andreas Barth, Francesco Paolo Lovergine, Javier Fernández-Sanguino und 
+   Philipp Kern geschrieben.</small></p>
