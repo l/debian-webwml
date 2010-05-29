@@ -128,7 +128,7 @@ can be tricky.  More about this later.</p>
 where n is the partition number, so the first partition on the first
 IDE drive will be hd0s1, the third partition on the second SCSI drive
 will be sd1s3, and so on.</p>
-				
+
 <p>GRUB1 has yet another partition naming system. It calls partitions (hdN,n),
 but this time the disk number and partition number are both zero indexed, and
 the disks run in order, all the IDE disks first, and the SCSI ones second.  This
@@ -180,8 +180,12 @@ boots, you need to pass the <code>-s</code> option to the GNU/Mach kernel
 to boot into single user mode, and remove the <code>--readonly</code> option from the
 <code>ext2fs.static</code> command line.
 </p>
-<p>Keep you hands off the keyboard until the boot process has
-completed.</p>
+
+<p>
+THIS IS IMPORTANT, watch the boot messages and note carefully where the
+cdrom is, and keep you hands off the keyboard until the boot process has
+completed.
+</p>
 
 <p><q>/boot/grub/menu.lst</q> or <q>/boot/grub/grub.cfg</q> on the GRUB floppy can be
 edited so your system will boot the way you want.</p>
@@ -190,23 +194,26 @@ edited so your system will boot the way you want.</p>
 <h3>The next steps.</h3>
 
 <ol>
-<li><em>After the system has booted run ./native-install.</em> Reboot
-the system using "reboot".  THIS IS IMPORTANT watch the boot messages
-and note carefully where the cdrom is.  [Second reboot]</li>
+<li><em>After the system has booted, create the necessary devices.</em>
+I.e., for the cdrom, the swap partition and any other HDD partitions.
 
-<li><em>After the reboot has completed run ./native-install a second time.</em>
-This time a whole bundle of packages will be configured.  Reboot yet again. 
-[Third reboot]. You will now have a system to configure.<br />
-Login as root, "login root".</li>
+<p>Eg <kbd>cd /dev</kbd> and <kbd>MAKEDEV hd2 hd0s2 hd0s3</kbd></p>
+</li>
 
-<li><em>cd to /dev.  Make the necessary devices.</em> Ie, for the
-cdrom, the swap partition and any other HDD partitions.
+<li><em>Activate the swap.</em>
+<samp>
+$ /hurd/mach-defpager<br />
+$ swapon /dev/hd0s2
+</samp>
+Check to see that is has worked.  Swap is HIGHLY recommended with the Hurd.</li>
 
-<p>Eg
-"MAKEDEV hd2 hd0s2 hd0s3"</p></li>
+<li><em>Run ./native-install.</em> A whole bundle of packages will be
+configured. Reboot the system using <kbd>reboot</kbd>. [Second reboot].
+You will now have a system to configure.<br />
+Login as root, <kbd>login root</kbd>.</li>
 
-<li><em>Edit /etc/fstab, "nano /etc/fstab"</em>.
-nano is not a bad editor.
+<li><em>Edit /etc/fstab, <kbd>nano /etc/fstab</kbd></em>.
+(nano is not a bad editor.)
 <p>Add the HDD partitions, eg,<br />
 /dev/[Hurd partition name]   none    swap    sw    0       0<br />
 /dev/[Hurd partition name]   /CD1     ext2    rw    1       1<br />
@@ -215,9 +222,6 @@ nano is not a bad editor.
 <p>The Hurd uses the ext2 fs.  "/CD1" is a suggested mount-point for 
 the partition which contains the packages from <cdbasename>-CD1.
 Swap can be shared with Linux.</p></li>
-
-<li><em>Activate the swap "swapon -a".</em>
-Check to see that is has worked.  Swap is HIGHLY recommended with the Hurd.</li>
 
 <li><em>Set up the translator that accesses the cdrom,</em> eg
 <p>
@@ -229,7 +233,7 @@ While this is the GNU way of doing it, "mount /cdrom" will also work.</p></li>
 
 <li><em>You may want to run "/cdrom/upgrade/gui.sh"</em>.
 <p>This will install the X Window System.</p></li>
-				
+
 <li><em>Further packages can be installed using "apt or "dselect".</em>
 <p>If you are unfamiliar with these Debian tools, see 
 "info apt" and "info dselect".</p></li>
