@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; CD di Hurd" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.66" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.67" maintainer="Luca Monducci"
 
 <define-tag cdserie>L1</define-tag>
 <define-tag cdbasetarball>gnu-2009-10-18.tar.gz</define-tag>
@@ -207,8 +207,9 @@ al kernel GNU/Mach per avviare in modalità singolo utente e rimuovere
 l'opzione <code>--readonly</code> dalla riga di comando
 <code>ext2fs.static</code>.</p>
 
-<p>Tenere le mani lontano dalla tastiera fino a quando il processo di
-avvio non è completato.</p>
+<p>QUESTO &Egrave; IMPORTANTE: guardare attentamente i messaggi durante
+l'avvio e prendere nota di dov'è il cdrom. Tenere le mani lontano dalla
+tastiera fino a quando il processo di avvio non è completato.</p>
 
 <p><q>/boot/grub/menu.lst</q> o <q>/boot/grub/grub.cfg</q> sul dischetto
 di GRUB può essere modificato in modo che il sistema si avvii nel modo
@@ -219,43 +220,39 @@ che si desidera.</p>
 
 <ol>
     <li>
-	<em>Dopo che il sistema è stato avviato eseguire ./native-install.</em>
-	Riavviare il sistema usando "reboot". QUESTO &Egrave; IMPORTANTE: guardare
-	i messaggi durante l'avvio e notare attentamente dov'è il cdrom.
-	[Secondo riavvio]</li>
-
-    <li>
-	<em>Dopo che il sistema è stato avviato eseguire ./native-install
-	una seconda volta.</em>
-	Questa volta verrà configurato l'intero insieme dei pacchetti.
-	Riavviare ancora una volta. [Terzo riavvio] Adesso è necessario
-	configurare il sistema.<br />
-	Fare il login come root, "login root".</li>
-
-    <li>
-	<em>Spostarsi nella directory /dev e creare i device necessari.</em>
+	<em>Dopo che il sistema è stato avviato, creare i device necessari.</em>
 	Cioè per il cdrom, per la partizione di swap e per ogni altra
 	partizione dell'hard disk.
 
-	<p>Per esempio "MAKEDEV hd2 hd0s2 hd0s3"</p></li>
+	<p>Per esempio <kbd>cd /dev</kbd> e <kbd>MAKEDEV hd2 hd0s2
+	hd0s3</kbd></p></li>
+
+    <li><em>Attivare lo swap.</em>
+    <samp>
+    $ /hurd/mach-defpager<br />
+    $ swapon /dev/hd0s2
+    </samp>
+	Assicurarsi che il precedente comando abbia funzionato. La swap è
+	ALTAMENTE consigliata con l'Hurd.</li>
 
     <li>
-	<em>Modificare /etc/fstab con "nano /etc/fstab".</em>
-	nano è un editor niente male.
+	<em>Eseguire ./native-install.</em> Verrà configurato l'intero
+	insieme dei pacchetti. Riavviare usando <kbd>reboot</kbd>.
+	[Secondo riavvio]. Adesso è necessario configurare il sistema.<br />
+	Fare il login come root, <kbd>login root</kbd>.</li>
+
+    <li>
+	<em>Modificare /etc/fstab con <kbd>nano /etc/fstab</kbd>.</em>
+	(nano è un editor niente male)
 
 	<p>Aggiungere le partizioni dell'hard disk, per esempio<br />
 	/dev/[Hurd partition name]   none    swap    sw    0       0<br />
 	/dev/[Hurd partition name]    /CD1    ext2    rw    1       1<br />
-	/dev/[GNU drive name]   /cdrom iso9660fs   ro,noauto  1    1</p>  
+	/dev/[GNU drive name]   /cdrom iso9660fs   ro,noauto  1    1</p>
 
 	<p>L'hurd usa il filesystem ext2. "/CD1" è il mount point suggerito
 	per le partizioni che contengono i pacchetti di <cdbasename>-CD1. La
 	partizione di swap può essere condivisa con Linux.</p></li>
-
-    <li>
-	<em>Attivare la swap "swapon -a".</em>
-	Assicurarsi che il precedente comando abbia funzionato. La swap è
-	ALTAMENTE consigliata con l'Hurd.</li>
 
     <li>
 	<em>Impostare un traduttore per accedere al cdrom,</em> per esempio
