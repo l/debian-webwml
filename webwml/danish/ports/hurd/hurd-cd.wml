@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian GNU/Hurd --- Hurd-cd'er" NOHEADER="yes"
-#use wml::debian::translation-check translation="1.66"
+#use wml::debian::translation-check translation="1.67"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
 
 <define-tag cdserie>L1</define-tag>
@@ -173,7 +173,9 @@ Man ved de første starter af systemet, skal du give GNU/Mach-kernen
 <code>--readonly</code>-valgmuligheden fra 
 <code>ext2fs.static</code>-kommandolinjen.</p>
 
-<p>Hold fingrene fra tastaturet indtil startprocessen er afsluttet.</p>
+<p>VIGTIGT: Hold øje med startmeddelelserne, notér omhyggeligt hvilket navn
+cdrom-drevet har fået og hold fingrene fra tastaturet indtil startprocessen er 
+afsluttet.</p>
 
 <p><q>/boot/grub/menu.lst</q> eller <q>/boot/grub/grub.cfg</q> på GRUB-disketten kan 
 redigeres så dit system kan starte, som du ønsker det.</p>
@@ -182,20 +184,23 @@ redigeres så dit system kan starte, som du ønsker det.</p>
 <h3>De næste trin</h3>
 
 <ol>
-<li><em>Når systemet er startet, kør ./native-install.</em> Genstart
-    systemet ved hjælp af reboot.  DETTE ER VIGTIGT: hold øje med 
-    startmeddelelserne og notér dig hvilket navn cd-rom-drevet har fået. [Anden 
-    genstart.]</li>
-<li><em>Når systemet er startet, kør ./native-install en gang 
-    til.</em>  Denne gang vil en hel bunke pakker blive opsat.  Genstart endnu 
-    en gang.  [Tredie genstart.]  Du har nu et system som skal opsættes.
+<li><em>Når systemet er startet, skal de nødvendige enheder oprettes.</em>  Dvs.
+    til cdrom, swappartitionen og evt. andre harddiskpartitioner.
+    <p>Fx <kbd>cd /dev</kbd> og <kbd>MAKEDEV hd2 hd0s2 hd0s3</kbd></p></li>
+<li><em>Aktivér swap.</em>
+    <samp>
+    $ /hurd/mach-defpager<br />
+    $ swapon /dev/hd0s2
+    </samp>
+    Kontroller om det virkede.  Swap anbefales kraftigt i forbindelse med 
+    Hurd.</li>
+<li><em>Kør ./native-install.</em>  En hel bunke pakker blive opsat.  Genstart 
+    systemet med <kbd>reboot</kbd>. [Anden genstart.]  Du har nu et system, som 
+    skal opsættes.
     <br />
-    Log ind som root, <q>login root</q>.</li>
-<li><em>cd til /dev.  Opret de nødvendige enheder.</em> Det
-    vil sige til cd-rom, swap-partition og andre parititioner på harddisken.
-    <p>Eksempelvis <q>MAKEDEV hd2 hd0s2 hd0s3</q></p></li>
-<li><em>Redigér /etc/fstab, <q>nano /etc/fstab</q></em>.  nano er
-    ikke en dårlig editor.
+    Log ind som root, <kbd>login root</kbd>.</li>
+<li><em>Redigér /etc/fstab, <kbd>nano /etc/fstab</kbd></em> (nano er ikke en 
+    dårlig editor.)
     <p>Tilføj harddisk-partitionerne, eksempelvis<br />
     /dev/[navn på Hurd-partition]   none    swap    sw    0       0<br />
     /dev/[navn på Hurd-partition]   /CD1    ext2    rw    1       1<br />
@@ -203,9 +208,6 @@ redigeres så dit system kan starte, som du ønsker det.</p>
     <p>Hurd bruger filsystemet ext2.  <q>/CD1</q> er det anbefalede sted at 
     mount'e partitionen som indeholder pakkerne fra <cdbasename>-CD1.  Swap kan 
     deles med Linux.</p></li>
-<li><em>Aktivér swap <q>swapon -a</q>.</em>
-    Undersøg om det virkede.  Det anbefales KRAFTIGT at anvende swap med 
-    Hurd.</li>
 <li><em>Opsæt den <q>translator</q> som tilgår cd-com-drevet,</em> eksempelvis
     <p><q>settrans -a /cdrom /hurd/iso9660fs /dev/[Hurd-drevnavn]</q><br />
     Dette er GNU-måden at gøre det på, men <q>mount /cdrom</q> virker 
