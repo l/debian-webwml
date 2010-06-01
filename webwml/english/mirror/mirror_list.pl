@@ -1698,6 +1698,8 @@ foreach my $id (0..$#mirror) {
 # but this would be fairly tedious and hardcoded, for no apparent reason
 # because we use this in mirror_sponsors() which doesn't really care
     }
+  } elsif ($mirror[$id]{type} =~/GeoDNS/i) {
+    # TODO these are not currently displayed anywhere
   } else {
     warn "found a mirror without a country, wtf? " . $mirror[$id]{site};
   }
