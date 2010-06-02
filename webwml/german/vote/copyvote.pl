@@ -3,7 +3,7 @@
 # This script copies a set of vote related files named on the command line, 
 # and adds the translation-check header to them. It also will create the
 # destination directory if necessary, and copy the Makefile from the source.
-# Written in 2006-2009 by Helge Kreutzmann <debian@helgefjell.de>
+# Written in 2006-2010 by Helge Kreutzmann <debian@helgefjell.de>
 
 # Based on a script "copyadvisory.pl" by Peter Karlsson <peterk@debian.org>:
 # Written in 2000-2006 by Peter Karlsson <peterk@debian.org>
@@ -71,7 +71,7 @@ if (exists $env{'DEBEMAIL'}) {
 }
 
 
-$year = 2009;
+$year = 2010;
 # Note: you may have to adjust the following path
 $srcdir = "/scr/build/content/debian/web-commit/webwml/english/vote/$year";
 # $srcdir = "../../english/vote/$year";
@@ -219,6 +219,7 @@ while (<SRC>)
 	    s#acknowledgements sent periodically during the voting#und die versandten Bestätigungen gesammelt.#;
             s#sent periodically during the voting period.  Additionally, the#Bestätigungen gesammelt. Zusätzlich würde die Liste der <a#;
 	    s#period.  Additionally, the  <a#Zusätzlich würde die Liste der <a#;
+	    s#Additionally, the list of <a#Zusätzlich würde die Liste der <a#;
 	    # FIXME Does not work?
 	    s#list of##;
 	    s#<a (.*)="(.*)"\s*>voters</a>#$1="$2">Abstimmenden</a> veröffentlicht. Auch#;
