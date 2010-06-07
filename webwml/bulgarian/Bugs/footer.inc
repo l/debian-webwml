@@ -2,9 +2,9 @@
 
 <hrline/>
 <address>
-Debian BTS администратори &lt;<email "owner@bugs.debian.org">&gt;
+Администратори на системата за следене на грешките на Debian &lt;<email "owner@bugs.debian.org">&gt;
 
-<p>Debian система за следене на бъгове<br/>
+<p>Система за следене на грешките в Debian<br/>
 Copyright &copy; 1999 Darren O. Benham, 1997, 2003 nCipher Corporation Ltd,
 1994-1997 Ian Jackson.</p>
 </address>
