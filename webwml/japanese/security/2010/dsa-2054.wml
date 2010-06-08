@@ -1,0 +1,62 @@
+#use wml::debian::translation-check translation="1.1"
+<define-tag description>DNS キャッシュポイゾニング</define-tag>
+<define-tag moreinfo>
+
+<p>複数のキャッシュポイゾニングに繋がる欠陥が BIND に発見されました。これ
+らの欠陥は DNSSEC 検証が有効化されており、トラストアンカーがインストー
+ルされている環境でのみ問題になりますが、このような環境は既定の環境設定
+ではありません。</p>
+
+<p>The Common Vulnerabilities and Exposures project は以下の問題を認識して
+います。</p>
+
+<ul>
+
+<li><p><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0097">CVE-2010-0097</a>
+
+ <p>BIND が適切に DNSSEC NSEC レコードを検証していないため、リモートの攻
+ 撃者が存在するドメインに対する偽の NXDOMAIN レスポンスに対して認証済
+ み (Authenticated Data:AD) のフラグを付加することが可能です。</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0290">CVE-2010-0290</a>
+
+ <p>CNAME や DNAME を含む細工されたレスポンスの処理の際に、BIND は DNS キ
+ ャッシュポイゾニングを許す欠陥があります。これは DNSSEC 検証が有効化
+ されており、トラストアンカーがインストールされている場合のみ発生しま
+ す。</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0382">CVE-2010-0382</a>
+
+ <p>管轄外 (out-of-bailiwick) のデータを含む細工されたレスポンスの処理の
+ 際に、BIND は DNS キャッシュポイゾニングを許す欠陥があります。これは
+ DNSSEC 検証が有効化されており、トラストアンカーがインストールされてい
+ る場合のみ発生します。</p></li>
+
+</ul>
+
+<p>さらに、この更新では、繰り返し DNSSEC 検証が失敗した場合、従来より保守
+的なクエリの挙動を示すように変更されています。これは "roll over and die"
+事象に対応するためです。新しい版ではさらに今後の ICANN DNS ルート証明書
+(RFC5702 に基づく RSASHA256) の暗号アルゴリズムと、一部の署名されたトッ
+プレベルドメインで使用されている NSEC3 安全存在否定(secure denial of
+existence) アルゴリズムのサポートが行われています。</p>
+
+<p>この更新は上流の BIND 9 の更新である 9.6-ESV-R1 を元にしています。変更
+範囲から、この更新のインストールには通常以上の注意が必要です。ABI が変
+更されているため、新しい Debian パッケージが含まれており、更新は
+apt-get dist-upgrade または相当の aptitude コマンドにて行う必要があり
+ます。</p>
+
+<p>安定版 (stable) ディストリビューション (lenny) では、これらの問題はバー
+ジョン 1:9.6.ESV.R1+dfsg-0+lenny1 で修正されています。</p>
+
+<p>不安定版 (unstable) ディストリビューション (sid) では、これらの問題はバ
+ージョン 1:9.7.0.dfsg-1 で修正されています。</p>
+
+<p>直ぐに bind9 パッケージをアップグレードすることを勧めます。</p>
+
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2010/dsa-2054.data"
+# $Id$
