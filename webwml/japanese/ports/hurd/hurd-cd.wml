@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd --- Hurd-CDs" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.66"
+#use wml::debian::translation-check translation="1.67"
 
 
 <define-tag cdserie>L1</define-tag>
@@ -195,34 +195,36 @@ However,
 <code>ext2fs.static</code> コマンドラインから
 <code>--readonly</code> オプションを削除する必要があります。</p>
 
-<p>起動プロセスが完了するまでキーボードから手を離しておいてください。</p>
+<p>ここは重要です。起動メッセージを見て cdrom がどこにあるかを注意して書き留めて、
+起動プロセスが完了するまでキーボードから手を離しておいてください。</p>
 
 <p>システムが望むように起動するように、GRUB フロッピーの 
 <q>/boot/grub/menu.lst</q>または<q>/boot/grub/grub.cfg</q>を、編集することができます。
 </p>
 
-
 <h3>次の段階</h3>
 
 <ol>
-<li><em>
-システムが起動したあとに ./native-install を走らせてください。</em>
-"reboot" を使ってシステムを再起動してください。起動メッセージを見て、
-cdrom がどこにあるかを注意して書き留めてください。[2 度目の再起動]</li>
+<li><em>システムが起動したら、必要なデバイスを作成してください。</em>
+つまり、cdrom、スワップパーティション、他のハードディスクのパーティションなどです。
+<p>例えば、 <kbd>cd /dev</kbd> と <kbd>MAKEDEV hd2 hd0s2 hd0s3</kbd></p>
+</li>
 
-<li><em>再起動が完了したら、再び ./native-install を走らせてください。</em>
-今回は付属しているパッケージの全てが設定されます。もう一度再起動してください。
-[3 度目の再起動]。これでシステムを設定できます。root としてログインするには、
-"login root" としてください。</li>
+<li><em>スワップを有効にしてください。</em>
+<samp>
+$ /hurd/mach-defpager<br />
+$ swapon /dev/hd0s2
+</samp>
+それが動作したか確認してください。スワップは Hurd では非常に推奨されます。</li>
 
-<li><em>/dev に移動してください。必要なデバイスを作成してください。</em>
-例えば、cdrom、スワップパーティション、他のハードディスクのパーティションなどです。
-
-<p>例
-"MAKEDEV hd2 hd0s2 hd0s3"</p></li>
+<li><em>./native-install を走らせてください。</em>
+付属しているパッケージが全て設定されます。
+<kbd>reboot</kbd> を使ってシステムを再起動してください。[2 度目の再起動]。
+これでシステムを設定できます。root としてログインするには、
+<kbd>login root</kbd> としてください。</li>
 
 <li><em>/etc/fstab を編集するには、"nano /etc/fstab" としてください</em>。
-nano はひどいエディタではありません。
+(nano はひどいエディタではありません。)
 <p>ハードディスクのパーティションを追加するには、例えば<br />
 /dev/[Hurd partition name]   none    swap    sw    0       0<br />
 /dev/[Hurd partition name]   /CD1     ext2    rw    1       1<br />
