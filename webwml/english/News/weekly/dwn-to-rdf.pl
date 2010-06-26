@@ -24,6 +24,7 @@ use strict;
 use warnings;
 
 use XML::RSS;
+use Encode qw(decode_utf8);
 
 if (!exists ($ENV{ENGLISHSRCDIR}) ||
     !exists ($ENV{CUR_DIR}) ||
@@ -97,6 +98,22 @@ sub rdf_add
     $body =~ s/\\\n//g;
 
     # Conversion for the content
+    if ($ENV{LANGUAGE} eq 'fr') {
+      $headline =~ s/<q>/« /g;
+      $headline =~ s/<\/q>/ »/g;
+      $body =~ s/<q>/« /g;
+      $body =~ s/<\/q>/ »/g;
+    } elsif ($ENV{LANGUAGE} eq 'it') {
+      $headline =~ s/<q>/«/g;
+      $headline =~ s/<\/q>/»/g;
+      $body =~ s/<q>/«/g;
+      $body =~ s/<\/q>/»/g;
+    } else {
+      $headline =~ s/<q>/"/g;
+      $headline =~ s/<\/q>/"/g;
+      $body =~ s/<q>/"/g;
+      $body =~ s/<\/q>/"/g;
+    }
     $body =~ s/&/&amp;/g;
     $body =~ s/</&lt;/g;
     $body =~ s/>/&gt;/g;
@@ -107,7 +124,7 @@ sub rdf_add
 		    );
 }
 
-my $rss = new XML::RSS (version => '1.0', encoding => charset);
+my $rss = new XML::RSS (version => '1.0', encoding => charset, encode_output => 0);
 
 $rss->channel (title          => 'Debian Project News',
 	       description    => 'Debian Project News '. $current,
@@ -120,8 +137,12 @@ $rss->channel (title          => 'Debian Project News',
 my $count = 0;
 my $headline = '';
 my $body = '';
+my $charset = charset;
+
 if (open (F, $current . '/index.wml')) {
     while (<F>) {
+	# prevent double utf-8 encode by XML::RSS 
+	$_ = decode_utf8($_) if ($charset eq 'utf-8') ;
 	if (/^<p><strong>(.*)<\/strong>(?:<br \/>)?\s*(.*)/) {
 	    $headline = $1;
 	    $body = $2."\n";
