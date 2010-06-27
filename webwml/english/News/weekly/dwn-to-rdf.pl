@@ -108,6 +108,11 @@ sub rdf_add
       $headline =~ s/<\/q>/»/g;
       $body =~ s/<q>/«/g;
       $body =~ s/<\/q>/»/g;
+    } elsif ($ENV{LANGUAGE} eq 'de') {
+      $headline =~ s/<q>/»/g;
+      $headline =~ s/<\/q>/«/g;
+      $body =~ s/<q>/»/g;
+      $body =~ s/<\/q>/«/g;
     } else {
       $headline =~ s/<q>/"/g;
       $headline =~ s/<\/q>/"/g;
