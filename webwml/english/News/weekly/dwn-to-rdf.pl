@@ -167,16 +167,7 @@ if (open (F, $current . '/index.wml')) {
 	} elsif (/(.*)<\/p>/) {
 	    $body .= $1;
 
-	    if ($body !~ /(newpkg_main|removals.txt|<code>wnpp-alert<\/code>|href="mailto:dwn\@debian.org")/
-		&& $headline ne "Security Updates"			# English
-		&& $headline ne "Mises à jour de sécurité"		# French
-		&& $headline ne "¡i¦w¥ş§ó·s¡j"				# Chinese
-		&& $headline ne "Aggiornamenti per la sicurezza"	# Italian
-		&& $headline ne "Atualizaçoes de Segurança"		# Portuguese
-		&& $headline ne "Aktualisierungen zur Systemsicherheit"	# German
-		&& $headline ne "ã‚»ã‚­ãƒ¥ãƒªãƒ†ã‚£ä¸Šã®æ›´æ–°ã€‚"		# Japanese in UTF-8
-		) {
-
+	    if ($body !~ /(main\/newpkg|removals.txt|wnpp\/help_requeste|href="mailto:debian-publicity\@lists.debian.org"|www.debian.org\/security)/) {
 		if (!$headline) {
 		    rdf_add ($rss, $count++, 'Debian Project News '.$current, $body) if ($count == 0);
 		} else {
