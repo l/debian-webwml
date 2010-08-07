@@ -9,3 +9,4 @@ include $(WMLBASE)/Make.lang
 
 
 index.$(LANGUAGE).html: index.wml $(ENGLISHSRCDIR)/international/index.data
+
