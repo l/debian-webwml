@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-#  Copyright 2000 Javier Fernández-Sanguino Peña <jfs@computer.org>
+#  Copyright 2000 Javier Fernández-Sanguino Peña <jfs@debian.org>
 #  Copyright 1998-1999 Christophe Le Bars <clebars@debian.org>
 #  Copyright 1998 Paolo Molaro <lupus@debian.org> for update_db_CVS load_entries check_file
 #
