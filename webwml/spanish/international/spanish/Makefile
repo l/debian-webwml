@@ -13,6 +13,10 @@ NOGENERICINSTDEP := true
 
 include $(WMLBASE)/Make.lang
 
+desarrolladores.$(LANGUAGE).html: desarrolladores.wml spanish/devel.data
+
+# This is old code to publish information and is disabled:
+#
 #$(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
 #	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
 #	@echo copying $(@F) to $(HTMLDIR)
