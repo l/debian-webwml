@@ -114,7 +114,7 @@ do 'documents-bd.pl';
 	'status'		=> 3,
 	'since'			=> '31/01/1999',
 	'translation_name'	=> 'Tutorial de Debian',
-	'translation_maintainer'=> ['Javier Fernández-Sanguino Peña <jfs@computer.org>'],
+	'translation_maintainer'=> ['Javier Fernández-Sanguino Peña <jfs@debian.org>'],
 	'translation_cvs_url' 	=>'http://cvs.debian.org/ddp/manuals.sgml/tutorial/debian-tutorial.es.sgml?cvsroot=debian-doc'
 },
 
@@ -161,7 +161,7 @@ do 'documents-bd.pl';
 	'status'		=> 6,
 	'since'			=> '3/9/1999',
 	'translation_name'	=> 'Guía del Nuevo Desarrollador de Debian',
-	'translation_maintainer'=> ['Javier Fernández-Sanguino Peña <jfs@computer.org>'],
+	'translation_maintainer'=> ['Javier Fernández-Sanguino Peña <jfs@debian.org>'],
 	'translation_dev_url'	=> 'http://www.dat.etsit.upm.es/~jfs/debian/maint-guide-es/',
 	'translation_cvs_url'   => 'http://cvs.debian.org/ddp/manuals.sgml/maint-guide/maint-guide.es.sgml?cvsroot=debian-doc',
 	'translation_package'   => 'maint-guide-es',
@@ -172,7 +172,7 @@ do 'documents-bd.pl';
 	'status'		=> 4,
 	'since'			=> '13/04/1998',
         'translation_name'      => 'Cómo hacer paquetes Debian (nuevos desarrolladores)',
-        'translation_maintainer'=> ['Javier Fernández-Sanguino Peña <jfs@computer.org>'],
+        'translation_maintainer'=> ['Javier Fernández-Sanguino Peña <jfs@debian.org>'],
         'translation_dev_url'   => 'http://www.dat.etsit.upm.es/~jfs/debian/doc/'
 },
 	
