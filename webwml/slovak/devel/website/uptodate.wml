@@ -1,0 +1,103 @@
+#use wml::debian::template title="Keeping web site translations up-to-date"
+#use wml::debian::translation-check translation="1.16" maintainer="Slavko"
+
+<P>Keďže webové stránky nie sú statické, je potrebné uchovávať verziu originálu,
+ktorú príslušný preklad používa, a túto informáciu použiť na kontrolu zmien
+originálov od posledného prekladu. Táto informácia musí byť zahrnutá na začiatku
+dokumentu (avšak pod ostatnými hlavičkami "use") vo formáte:
+
+
+<pre>
+\#use wml::debian::translation-check translation="X.x"
+</pre>
+
+<P>
+kde <var>X.x</var> je číslo verzie CVS originálu (anglického).
+Toto číslo môžete nájsť v CVS/Entries, ktorý je vo formáte:
+<code>/file_name/X.x/date//</code>. Môžete ho tiež zistiť spustením 
+<kbd>cvs status meno_súboru</kbd> v zdrojovom anglickom adresári.
+Ak použijete na vytvorenie prekladu stránky skript <kbd>copypage.pl</kbd> z
+adresára webwml, bude tento riadok pridaný automaticky.
+
+<P>Tento spôsob je užitočný aj preto, že niektoré preklady nemusia byť aktualizované
+dlhší čas, hoci pôvodný jazyk (anglický) áno. Kvôli výberu obsahu stránky, si to
+čitateľ preloženého jazyka nemusí všimnúť, a tak mu môžu chýbať dôležité informácie,
+ktoré sú uvedené v novej verzii originálu. Šablóna <code>translation-check</code>
+obsahuje kód, ktorý kontroluje aktuálnosť prekladu a v prípade neaktuálnosti
+vygeneruje čitateľovi príslušné upozornenie o tejto skutočnosti.
+
+
+<P>Do riadku <code>#use</code> je možné pridať aj ďalšie doplnkové
+parametre:
+
+<dl>
+ <dt><code>original="<var>jazyk</var>"</code>
+ <dd>kde <var>jazyk</var> je meno jazyka, z ktorého prekladáte,
+ ak to nie je angličtina.
+ Meno jazyka musí zodpovedať menu najvyššieho podadresára jazyka v
+ CVS a menu v šablóne <code>languages.wml</code>.
+
+ <dt><code>mindelta="<var>číslo</var>"</code>
+ <dd>ktoré udáva maximálny rozdiel v čísle revízie CVS,
+ kým je preklad označený za
+ neaktuálny. Predvolená hodnota je <var>1</var>.
+ Menej dôležité stránky môžu mať túto hodnotu nastavenú na <var>2</var>,
+ čo znamená,
+ že musia byť urobené dve zmeny, kým je preklad označený za starý.
+
+ <dt><code>maxdelta="<var>číslo</var>"</code>
+ <dd>ktoré udáva maximálny rozdiel v čísle revízie CVS, kým je
+ preklad označený za zastaraný.
+ Predvolená hodnota je <var>5</var>.
+ Pre veľmi dôležité stránky možno túto hodnotu znížiť.
+ Hodnota <var>1</var> znamená, že každá zmena originálu spôsobí označenie prekladu
+ ako zastaraného.
+</dl>
+
+<p>Pomocou tohoto mechanizmu môžeme generovať <a href="stats/">štatistiky prekladov</a>,
+správu o zastaraných prekladoch, spolu s užitočnými odkazmi
+na rozdiely medzi súbormi, ako i zoznam stránok, ktoré ešte
+neboli preložené. Cieľom je pomôcť prekladateľom a prilákať
+nových pomocníkov.
+</p>
+
+<p>
+Aby sme predišli zobrazovaniu veľmi neaktuálnych informácií používateľom,
+preklady, ktoré neboli aktualizované viac ako šesť mesiacov od zmeny originálnej
+stránky, budú automaticky odstránené.
+Prosím pozrite si 
+<a href="http://people.debian.org/~peterk/outdated/">zoznam zastaraných prekladov</a>,
+kde je zoznam prekladov, ktorým hrozí odstránenie.
+</p>
+
+<P>Ďalej, skript <kbd>check_trans.pl</kbd>, ktorý je dostupný v adresári webwml/,
+zobrazuje informácie o stránkach, ktoré potrebujú aktualizáciu:
+
+<pre>
+check_trans.pl <var>jazyk</var>
+</pre>
+
+<P>kde <var>jazyk</var> je meno adresára, ktorý obsahuje vaše
+preklady, napr. "slovak".
+
+<P>Stránky, ktorých preklad chýba, budú zobrazené ako
+"<code>Missing <var>meno_súboru</var></code>",
+a stránky, ktoré nie sú aktualizované s originálom, budú zobrazené ako 
+"<code>NeedToUpdate <var>meno_súboru</var> to version <var>x.y</var></code>".
+
+<P>Ak chcete vidieť, čo presne sa zmenilo, môžete si nechať zobraziť rozdiely
+pridaním voľby príkazového riadku <kbd>-d</kbd> k vyššie spomenutému príkazu.
+Prosím, nezabudnite, že vykonanie tohoto príkazu môže chvíľu trvať a zahŕňa
+niekoľko prístupov k serveru CVS.
+
+<P>Ak chcete aby boli ignorované hlásenia o chýbajúcich súboroch (napríklad staré
+položky noviniek), môžete vytvoriť súbor nazvaný <code>.transignore</code> v adresári,
+v ktorom chcete potlačiť upozornenia. Do tohoto súboru pridajte meno každého
+súboru, ktorý sa nechystáte prekladať, každé meno súboru na samostatnom riadku.
+
+<p>
+K dispozícii je aj podobný skript, určený na udržiavanie prekladov popisov emailových
+konferencií. Prosím, prečítajte si komentáre v skripte
+<code>check_desc_trans.pl</code>
+(namiesto dokumentácie).
+</p>

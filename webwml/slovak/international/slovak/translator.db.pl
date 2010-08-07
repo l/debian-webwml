@@ -37,6 +37,33 @@ sub init_translators {
                         file        => 2,
                         compress    => 'none'
                 },
+                'Matej Kovac' => {
+                        email       => 'matej.kovac@telnet.sk',
+                        summary     => 2,
+                        logs        => 2,
+                        diff        => 2,
+                        tdiff       => 2,
+                        file        => 2,
+                        compress    => 'none'
+                },
+                'Ivan Masar' => {
+                        email       => 'helix84@centrum.sk',
+                        summary     => 2,
+                        logs        => 2,
+                        diff        => 2,
+                        tdiff       => 2,
+                        file        => 2,
+                        compress    => 'none'
+                },
+                'Slavko' => {
+                        email       => 'linux@slavino.sk',
+                        summary     => 2,
+                        logs        => 2,
+                        diff        => 2,
+                        tdiff       => 2,
+                        file        => 2,
+                        compress    => 'none'
+                },
         };
         return $translators;
 }
