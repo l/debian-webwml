@@ -7,6 +7,10 @@
 # Makefiles are not supported anymore for they bear too much space for errors.
 
 # Originally written 2000-02-26 by Peter Krefting <peterk@debian.org>
+#
+# Modified by Javier Fernandez-Sanguino <jfs@debian.org> to support CVS
+# status of files in order to detect removed files or out-of-date CVS copies
+#
 # © Copyright 2000-2008 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
@@ -18,6 +22,8 @@ use lib "$FindBin::Bin/Perl";
 
 use File::Path;
 use Local::VCS qw(vcs_file_info);
+use File::Temp qw/tempfile/;
+
 
 # Declare variables only used in references to avoid warnings
 use vars qw(@iso_8859_2_compat  @iso_8859_3_compat  @iso_8859_4_compat
@@ -226,6 +232,8 @@ sub copy
 	# Retrieve VCS revision number
 	my %vcsinfo = vcs_file_info( $srcfile );
 
+        find_files_attic ( $dstfile ); 
+
 	if ( not %vcsinfo  or  not exists $vcsinfo{'cmt_rev'}  )
 	{
 		die "Could not get revision number for `$srcfile' - bug in script?\n";
@@ -314,4 +322,57 @@ sub decodeentity
 		return chr($i + 160) if $entities[$i] eq $ent;
 	}
 	return $ent;
+}
+
+# Find for old translations in the CVS Attic 
+sub find_files_attic
+{
+        $dstfile =~ s/'//;
+
+        # Create a temporary file for the cvs results
+        my ($tempfh, $tmpfile) = tempfile("cvsinfo.XXXXXX", DIR => File::Spec->tmpdir, UNLINK => 0) ;
+        close $tempfh;
+
+        # Run 'cvs status'. Unfortunately, this is the only way
+        # to look for files in the Attic
+        system "cvs status '$dstfile' >$tmpfile 2>&1";
+
+        # If CVS does not return an error then there is a file in CVS
+        # even if $dstfile is not in the filesystem
+        # There could be two reasons for this:
+        #  - The user has removed it but somebody else put it in CVS
+        #  - It resides in the Attic
+        if ( $? == 0 ) {
+            my $deleted_version = "<latest_version>";
+            my $previous_version = "<version_before_deletion>";
+
+            # Parse the result of cvs status
+            open(TF, $tmpfile) || die ("Cannot open temporary file: $?");
+            while ($line = <TF>) {
+                chomp $line;
+                if ( $line =~ /Repository revision:\s+(\d+)\.(\d+)\s+(.*)$/ )  {
+                    $cvs_location = $3;
+                    $deleted_version = $1.".".$2 ;
+                    $previous_version = $1.".".($2-1);
+                }
+            }
+            close TF;
+            unlink $tmpfile;
+
+            # Now determine in which situation we are in
+            if ( $cvs_location =~ /Attic\// ) {
+                print STDERR "ERROR: An old translation exists in the Attic, you should restore it using:\n";
+                print STDERR "\tcvs update -j $deleted_version -j $previous_version $dstfile\n";
+                print STDERR "\t[Edit and update the file]\n";
+                print STDERR "\tcvs ci $dstfile\n";
+                die ("Old translation found\n");
+            } else {
+                die ("ERROR: A translation already exist in CVS for this file.\nPlease update your CVS copy using 'cvs update'.\n");
+            }
+        }
+
+# Return if cvs returns an error
+        unlink $tmpfile;
+        return 0;
+
 }
