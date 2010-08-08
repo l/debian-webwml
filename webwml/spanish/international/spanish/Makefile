@@ -13,7 +13,7 @@ NOGENERICINSTDEP := true
 
 include $(WMLBASE)/Make.lang
 
-desarrolladores.$(LANGUAGE).html: desarrolladores.wml spanish/devel.data
+#desarrolladores.$(LANGUAGE).html: desarrolladores.wml devel.data
 
 # This is old code to publish information and is disabled:
 #
