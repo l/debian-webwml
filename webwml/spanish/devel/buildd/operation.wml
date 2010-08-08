@@ -1,13 +1,14 @@
 #use wml::debian::template title="Boceto del funcionamiento de la red de autocompilación" BARETITLE="true"
-#use wml::debian::translation-check translation="1.8" maintainer="Fernando Cerezal"
+#use wml::debian::translation-check translation="1.9" maintainer="Fernando Cerezal"
 
-<P>
+<p>
 En el corazón del sistema está la base de datos de <TT>wanna-build</TT>,
 que mantiene un seguimiento de las versiones y estados de los paquetes.
-<TT>quinn-diff</TT> compara las listas de paquetes para la arquitectura 
-requerida con la lista de paquetes fuente cada día y añade los paquetes 
-que necesitan recompilarse a la lista de la base de datos donde entran 
-en el estado <TT>Needs-Build</TT>.
+<TT>quinn-diff</TT> compara las listas de paquetes para la arquitectura
+requerida con la lista de paquetes fuente después de cada actualizar del
+archivo y añade los paquetes que necesitan recompilarse a la lista de la base
+de datos donde entran en el estado <TT>Needs-Build</TT>.
+</p>
 
 <P>
 Todos los demonios de construcción (puede haber más de uno) solicitan
@@ -52,12 +53,11 @@ tiene algunos paquetes que compilar, usa <TT>sbuild</TT> para el
 proceso de compilación real, y por cada compilación se envía un 
 correo con el registro al responsable del demonio. Este revisa el 
 registro y decide qué hacer con el paquete:
-enviarlo, ponerlo como <TT>Failed</TT> o <TT>Dep-Wait</TT>, hacer 
-algunos añadidos a la lista de dependencias de las fuentes y 
-reintentarlo, etc...
-Si se recibe una confirmación positiva, el demonio lo mueve a un 
-directorio de envíos, desde donde se envían todos los paquetes por 
-una tarea del cron.
+enviarlo, ponerlo como <TT>Failed</TT> o <TT>Dep-Wait</TT> y reintentarlo,
+etc...
+Si se recibe una confirmación positiva (un archivo <TT>.changes</TT> firmado),
+el demonio lo mueve a un directorio de envíos, desde donde se envían todos los
+paquetes por una tarea del cron.
 
 <P>
 La única intervención humana en todo el proceso es mirar en el archivo
@@ -73,24 +73,10 @@ construcción. Considero que esto es una agujero de seguridad inaceptable.
 El script de compilación <TT>sbuild</TT> más o menos solo llama a
 algunas herramientas estándar de Debian para compilar las fuentes.
 También ayuda con algunas de las tareas comunes y la contabilidad, 
-pero lo realmente especial es con las dependencias de las fuentes. A 
-veces los paquetes necesitan otros paquetes instalados para compilarse,
-por ejemplo compiladores y bibliotecas. No es práctico tener todos 
-estos paquetes instalados todo el tiempo, y a veces no es posible
-por conflictos. Ahora las fuentes sencillamente cuentan a <TT>sbuild</TT>
-en cada paquete qué paquetes se necesitan. Puede automáticamente 
-instalarlos antes de la construcción y entonces quitarlos de nuevo después.
+así como con la instalación automática de dependencias de compilación
+necesarias mientras se construye el paquete.
 
-<P>
-La lista de dependencias de las fuentes se pueden generar parcialmente
-de forma automática, también, mirando las dependencias de los paquetes 
-binarios por las fuentes. Este es el trabajo de <TT>andrea</TT>, que
-analiza la lista de dependencias del paquete para i386 y mapea los paquetes
-de bibliotecas para el desarrollo de los paquetes nombrados. También 
-fusiona los resultados con los añadidos a mano para las cosas que no 
-se pueden generar de forma automática, como compiladores o herramientas
-especiales.
-
-<HR>
+<hrline />
 <P><small>Contenido desarrollado por Roman Hodek para el
-6º International Linux-Kongress 1999</small></p>
+6º International Linux-Kongress 1999, fue actualizado ligeramente
+para reflejar el estado actual por Philipp Kern en 2009</small></p>
