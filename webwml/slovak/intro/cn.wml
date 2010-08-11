@@ -1,0 +1,352 @@
+#use wml::debian::template title="Webová stránka Debianu v rôznych jazykoch" BARETITLE=true
+#use wml::debian::toc
+#use wml::debian::translation-check translation="1.81"
+
+<define-tag toc-title-formatting endtag="required">%body</define-tag>
+<define-tag toc-item-formatting endtag="required">[%body]</define-tag>
+<define-tag toc-display-begin><p></define-tag>
+<define-tag toc-display-end></p></define-tag>
+<p>Je známe, že nie všetci na svete používajú rovnaký jazyk. Ako sa
+web rozširuje, stáva sa čoraz bežnejšie nájsť stránky, ktoré sú dostupné
+vo viacerých jazykoch. Preto bol zavedený štandard, nazývaný
+<a href="$(HOME)/devel/website/content_negotiation">dohodnutie obsahu stránky</a>,
+ktorý ľuďom umožňuje nastaviť si požadovaný jazyk či jazyky,
+v ktorom chcú mať dokumenty zobrazené. Vlastná verzia dokumentu, ktorá
+sa pošle klientovi, sa dohodne medzi prehliadačom a serverom;
+váš prehliadač pošle svoje nastavenia a server určí, ktorú verziu má poslať,
+na základe vašich nastavení a toho, aké verzie dokumentu sú k dispozícii.</p>
+
+<p>Všimnite si, že výber iného jazyka (z dostupných prekladov
+vypísaných na konci stránky) zobrazí vo vybratom jazyku len aktuálnu stránku.
+Tento výber <em>nemení</em> predvolený jazyk. Ak kliknete na
+odkaz inej stránky, táto sa znova zobrazí v nastavenom jazyku.
+Aby ste zmenili svoj <em>predvolený</em> jazyk, musíte si zmeniť nastavenia jazyka
+v konfigurácii svojho prehliadača, tak ako je vysvetlené nižšie.</p>
+
+<ul>
+<li><a href="#fix">Čo robiť, ak je webová stránka Debianu zobrazená v nesprávnom jazyku</a></li>
+<li><a href="#howtoset">Ako nastaviť jazyk</a></li>
+<li>Kde zmeniť nastavenia pre nasledujúce prehliadače:
+  <toc-display /></li>
+</ul>
+
+<hr />
+
+<h2><a name="fix">Čo robiť, ak je webová stránka Debianu zobrazená v nesprávnom jazyku</a></h2>
+
+<p>Prvou a najčastejšou príčinou, prečo je dokument
+z webového servera Debianu poslaný v zlom jazyku, je nesprávne nastavený prehliadač.
+Prosím, pozrite sa na časť <a href="#howtoset">ako nastaviť požadovaný jazyk</a>,
+ktorá popisuje ako to napraviť.</p>
+
+<p>Druhou príčinou býva poškodená alebo zle nastavená vyrovnávacia pamäť. Toto je
+narastajúci problém, pretože čoraz viac poskytovateľov pripojenia používa vyrovnávaciu
+pamäť ako spôsob zníženia sieťovej prevádzky. Prečítajte si <a href="#cache">poznámku
+o kešovacích webových serveroch</a>, a to i keď si myslíte, že žiadny nepoužívate.</p>
+
+<p>Tretím dôvodom býva, že nastal problém s
+<a href="http://www.debian.org/">www.debian.org</a>.
+Za posledných niekoľko rokov však bolo našim serverom spôsobených len niekoľko
+nahlásených problémov. Aj preto odporúčame aby ste preskúmali
+prvé dva zdroje problémov ešte pred tým, ako nás budete kontaktovať.
+Ak zistíte, že <a href="http://www.debian.org/">http://www.debian.org/</a>
+pracuje, ale niektoré z jeho zrkadiel nie, nahláste to nám a
+my budeme kontaktovať správcov zrkadla.</p>
+
+<p>Po opravení ktoréhokoľvek z týchto problémov odporúčame vymazať si svoju lokálnu
+vyrovnávaciu pamäť (diskovú i v pamäti) prehliadača a až potom skúšať zobraziť stránku znova.
+Odporúčame tiež, aby ste pri testovaní použili <a href="http://packages.debian.org/stable/web/lynx">lynx</a>. Je to jediný prehliadač,
+o ktorom vieme, že je 100% kompatibilný s HTTP špecifikáciou dohodnutia obsahu.</p>
+
+<h3><a name="cache">Potenciálne problémy s proxy servermi</a></h3>
+
+<p>Proxy servery sú vo svojej podstate webové servery, ktoré nemajú svoj
+vlastný obsah. Sú umiestnené uprostred medzi používateľmi a reálnymi webovými servermi. Zachytávajú
+vaše požiadavky na webové stránky a stránku stiahnu. Po jej stiahnutí
+vám ju prepošlú, ale urobia si aj jej lokálnu kópiu, aby mohli obslúžiť neskoršie požiadavky. Takto
+je možné výrazne zredukovať sieťovú prevádzku, ak viacerí používatelia požiadajú o rovnakú
+stránku.</p>
+
+<p>Vo väčšine prípadov je to výborná myšlienka, ale zlyháva, keď má vyrovnávacia pamäť chyby.
+Konkrétne, niektoré staršie proxy servery nerozumejú výberu obsahu, a tak si
+do vyrovnávacej pamäte ukladajú stránku v jedinom jazyku, ktorú potom posielajú používateľom,
+bez ohľadu na nimi požadovaný jazyk. V takomto prípade je jediným riešením aktualizácia alebo nahradenie
+proxy servera.</p>
+
+<p>Kedysi si ľudia museli svoj prehliadač nastaviť tak, aby používal proxy server.
+V súčasnosti to už nie je potrebné a váš poskytovateľ internetu môže, pomocou
+transparentného proxy, presmerovať všetky požiadavky HTTP. Ak takýto proxy
+nesprávne spracuje výber obsahu, používateľ môže dostať uloženú kópiu stránky v zlom
+jazyku. Jediným spôsobom ako opraviť tento problém, je sťažovať sa svojmu poskytovateľovi
+pripojenia a žiadať od neho, aby aktualizoval alebo nahradil svoj softvér.</p>
+
+<hr />
+
+<h2><a name="howtoset">Ako na nastavenie jazyka</a></h2>
+
+<p>Požadovaný jazyk si môžete nastaviť na všetky jazyky, ktoré ovládate,
+v poradí, ktoré sami preferujete. Je dobré, pre istotu, pridať na koniec zoznamu angličtinu („en“),
+pretože originálnym jazykom webových stránok Debianu
+je angličtina a nie všetky dokumenty musia byť preložené do vami požadovaného
+jazyka či jazykov.</p>
+
+# translators can modify the below example to mention their language
+
+<p>Napríklad, ak okrem slovenčiny používate i češtinu, budete asi chcieť nastaviť
+svoje jazyky tak, že prvý bude slovenský jazyk (s označením jazyka „<code>sk</code>“)
+nasledovaný češtinou (s označením „<code>cs</code>“) a na konci bude angličtina (s označením
+jazyka „<code>en</code>“).</p>
+
+<p>Presné inštrukcie ako si <a href="#setting">nastaviť zvolený jazyk v
+príslušnom prehliadači</a> sú nižšie.</p>
+
+<p>Ako môžete vidieť, väčšina prehliadačov poskytuje nejaký typ
+používateľského rozhrania, ktoré skrýva niektoré podrobnosti definovania
+zvoleného jazyka. Ak to nie je váš prípad, prosím všimnite si
+jedno dôležité zjednodušenie v predchádzajúcom odseku: ak
+zadáte len zoznam jazykov, napr. „sk, cs, en“, tým zatiaľ neurčujete
+poradie, ale možnosti s rovnakou prioritou a server sa môže rozhodnúť
+ignorovať ich poradie. Ak chcete skutočne zadať aj prioritu, musíte
+použiť „hodnoty kvality“, ktoré sú vyjadrené desatinným číslom v rozsahu od 0 do 1,
+pričom vyššia hodnota udáva vyššiu prioritu. Takže predchádzajúci príklad
+by mohol vyzerať takto „sk; q=1.0, cs; q=0.7, en; q=0.5“.</p>
+
+<p>Je potrebné dať si pozor na jednu vec, a to na používanie podkategórie jazykov.
+Použitie, napríklad, „sk-SK, cs, en“, neurobí to to, čo väčšina ľudí očakáva (ak nečítali
+špecifikáciu HTTP).</p>
+
+<p><strong>Dôrazne odporúčame nepridávať k jazyku rozšírenie krajiny,
+ak na to nemáte naozaj dobrý dôvod</strong>. Ak ho pridáte, zaistite aby
+bol zahrnutý aj jazyk bez tohoto rozšírenia.</p>
+
+<p>Vysvetlenie: Server, ktorý prijíma požiadavky na dokument s
+požadovaným jazykom „sk-SK, en“ neposkytne slovenskú („sk“) verziu 
+pred anglickou. Poskytol by slovenský dokument len v prípade, 
+že by existovala verzia súboru s príponou jazyka „sk-sk“ .
+</p>
+
+
+<p>Takže by ste si mali nastaviť prehliadač tak, aby posielal „sk-SK, sk, cs-CZ, cs, en“ alebo jednoducho
+len „sk, cs, en“. Avšak, naopak to funguje, čiže server dokáže poslať 
+„sk-sk“, ak sa žiada „sk“.</p>
+
+<p>Ďalšie informácie o nastavení premennej požadovaného jazyka si prečítajte v
+<a href="http://httpd.apache.org/docs/2.2/content-negotiation.html">Dokumentácii Apache
+o dohodnutí obsahu</a>.</p>
+
+<h3><a name="setting">Nastavenie požadovaného jazyka v prehliadači</a></h3>
+
+<p>Požadovaný jazyk vo svojom prehliadači určíte nastavením
+premennej, ktorá sa posiela na webový server. Konkrétny postup závisí
+na prehliadači, ktorý používate.</p>
+
+<dl>
+
+  <dt><strong><toc-add-entry name="mozilla">Mozilla</toc-add-entry> /
+  <toc-add-entry name="netscape">Netscape 4.x</toc-add-entry> a neskoršie
+  verzie</strong></dt>
+  <dd>
+  <pre>
+     Edit -&gt; Preferences -&gt; Navigator -&gt; Languages
+  </pre>
+  Poznámka: pri Netscape 4.x sa uistite, že ste zvolili
+  jazyk z dostupných volieb. Veľa ľudí
+  hlásilo problémy, pretože napísali svoj jazyk ručne.
+  </dd>
+
+  <dt><strong><toc-add-entry name="mozillafirefox">Mozilla Firefox</toc-add-entry></strong></dt>
+  <dd>
+  Verzia 3.0 a novšie:<br />
+  Linux:
+  <pre>
+     Upraviť -&gt; Možnosti -&gt; Obsah -&gt; Jazyky -&gt; Vybrať...
+  </pre>
+  Windows:
+  <pre>
+     Upraviť -&gt; Možnosti -&gt; Obsah -&gt; Jazyky -&gt; Vybrať...
+  </pre>
+
+  <br />
+  Verzia 1.5 a novšie:<br />
+  Linux:
+  <pre>
+     Edit -&gt; Preferences -&gt; Advanced -&gt; General -&gt; Edit Languages
+  </pre>
+  Windows:
+  <pre>
+     Tools -&gt; Options -&gt; Advanced -&gt; General -&gt; Edit Languages
+  </pre>
+
+  <br />
+  Verzia 0.9 a novšie:<br />
+  Linux:
+  <pre>
+     Edit -&gt; Preferences -&gt; General -&gt; Languages
+  </pre>
+  Windows:
+  <pre>
+     Tools -&gt; Options -&gt; General -&gt; Languages
+  </pre>
+
+  V starších verziách musíte prejsť do <kbd>about:config</kbd> a zmeniť
+  hodnotu <kbd>intl.accept_languages</kbd>.
+  </dd>
+
+  <dt><strong><toc-add-entry name="iceweasel">Iceweasel</toc-add-entry></strong></dt>
+  <dd>
+  <pre>
+     Upraviť -&gt; Možnosti -&gt; Obsah -&gt; Jazyky -&gt; Vybrať...
+  </pre>
+  </dd>
+
+  <dt><strong><toc-add-entry name="ie">Internet Explorer</toc-add-entry></strong></dt>
+  <dd>Windows:
+  <pre>
+     Nástroje alebo Zobraziť alebo Extras -&gt; Možnosti internetu -&gt; (Všeobecné) Jazyky
+  </pre>
+  </dd>
+
+  <dd>MacOS:
+  <pre>
+     Edit -&gt; Preferences -&gt; Web Browser -&gt; Language/Fonts
+  </pre>
+  </dd>
+
+  <dt><strong><toc-add-entry name="pie">Pocket Internet Explorer</toc-add-entry></strong></dt>
+  <dd>
+  # Windows Mobile 2003/2003SE/5.0
+  <pre>
+     vytvorte reťazcový kľúč registra <q>AcceptLanguage</q> in
+     HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer\International\\
+     s hodnotou <q>sk; q=1.0, cs; q=0.7, en; q=0.5</q> (bez úvodzoviek).
+  </pre>
+  </dd>
+
+
+  <dt><strong><toc-add-entry name="opera">Opera</toc-add-entry></strong></dt>
+  <dd>Väčšina verzií:
+  <pre>
+     Nástroje -&gt; Nastavenia -&gt; Jazyk -&gt; Podrobnosti...
+  </pre>
+  </dd>
+  <dd>Linux/*BSD verzie 5.x a 6.x:
+  <pre>
+     File -&gt; Preferences -&gt; Document -&gt; Languages
+  </pre>
+  </dd>
+  <dd>Nokia 770 Web Browser:
+     Upravte súbor /home/user/.opera/opera.ini a pridajte nasledujúci
+     riadok do sekcie [Adv User Prefs]:
+  <pre>
+     HTTP Accept Language=sk;q=1.0,cs;q=0.7,en;q=0.5
+  </pre>
+  </dd>
+
+  <dt><strong><toc-add-entry name="galeon">Galeon</toc-add-entry></strong></dt>
+  <dd>
+  <pre>
+     Settings -&gt; Preferences -&gt; Rendering -&gt; Languages
+  </pre>
+  </dd>
+
+  <dt><strong><toc-add-entry name="epiphany">Epiphany</toc-add-entry></strong></dt>
+  <dd>
+  <pre>
+     Edit -&gt; Preferences -&gt; Language -&gt; Languages
+  </pre>
+  </dd>
+
+  <dt><strong><toc-add-entry name="konqueror">Konqueror</toc-add-entry></strong></dt>
+  <dd>
+  Ak chcete používať len jeden jazyk, malo by to byť veľmi jednoduché, hneď ako bude opravená
+  chyba <a href="http://bugs.debian.org/358459">#358459</a>. Jednoducho ho vyberte
+  v Systémových nastaveniach KDE a reštartujte svoju reláciu KDE, aby sa zmeny
+  použili.
+  <br />
+  Ak chcete používať viac jazykov alebo potrebujete dočasne obísť spomínanú chybu,
+  musíte upraviť svoj súbor 
+  <kbd>~/.kde/share/config/kio_httprc</kbd> a zahrnúť do neho nasledujúci
+  riadok:
+  <pre>
+     Languages=sk;q=1.0, cs;q=0.7, en;q=0.5
+  </pre>
+  </dd>
+
+  <dt><strong><toc-add-entry name="lynx">lynx</toc-add-entry></strong></dt>
+  <dd>Môžete buď upraviť premennú <kbd>preferred_language</kbd> vo svojom
+  <kbd>.lynxrc</kbd> alebo ju nastaviť pomocou príkazu „O“ priamo v lynx.
+
+  <p>Napríklad, vo svojom <kbd>.lynxrc</kbd> použite nasledujúci riadok</p>
+
+  <pre>
+  preferred_language=q=1.0, cs;q=0.7, en;q=0.5
+  </pre>
+  </dd>
+
+  <dt><strong><toc-add-entry name="w3">W3</toc-add-entry></strong> (prehliadač založený na emacs)</dt>
+  <dd>
+  <pre>(setq url-mime-language-string  "preferred_language=fr; q=1.0, en; q=0.5")</pre>
+  alebo použite prispôsobený balík (predpokladajúc URL verzie p4.0pre.14):
+  <pre>Hypermedia -&gt; URL -&gt; Mime -&gt; Mime Language String...</pre>
+  </dd>
+
+  <dt><strong><toc-add-entry name="icab">iCab</toc-add-entry></strong></dt>
+  <dd>
+  <pre>
+     Edit -&gt; Preferences -&gt; Browser -&gt; Fonts,Languages
+  </pre>
+  </dd>
+
+  <dt><strong><toc-add-entry name="w3m">W3M</toc-add-entry></strong></dt>
+  <dd>
+  <pre>
+     Options (o) -&gt; Other Behavior -&gt; Accept-Language
+  </pre>
+  </dd>
+
+  <dt><strong><toc-add-entry name="safari">Safari</toc-add-entry></strong></dt>
+  <dd>Safari používa na určenie zvoleného jazyka systémové nastavenia
+  MacOS X:
+  <pre>
+    System preferences -&gt; International -&gt; Language
+  </pre>
+  </dd>
+
+  <dt><strong><toc-add-entry name="elinks">ELinks</toc-add-entry></strong></dt>
+  <dd>Predvolený jazyk rozhrania môžete nastaviť pomocou:
+  <pre>
+    Setup -&gt; Language
+  </pre>
+  Tým zároveň zmeníte požadovaný jazyk webových stránok.
+  Toto správanie môžete zmeniť a prispôsobiť len premennú jazykov
+  HTTP:
+  <pre>
+    Setup -&gt; Options manager -&gt; Protocols -&gt; HTTP
+  </pre>
+  </dd>
+
+  <dt><strong><toc-add-entry name="netscape3">Netscape 3.x</toc-add-entry></strong></dt>
+  <dd>Pridajte
+  <pre>
+     *httpAcceptLanguage: [preferred_language string]
+  </pre>
+  do Netscape súboru app-defaults alebo do <kbd>~/.Xresources</kbd>
+  </dd>
+
+  <dt><strong><toc-add-entry name="ibrowse">IBrowse</toc-add-entry></strong></dt>
+  <dd>Prejdite do Preferences, potom Settings, potom do Network. V časti „Accept
+  language“ pravdepodobne uvidíte predvolené „*“. Ak kliknete na
+  tlačidlo „Locale“, budete si môcť pridať svoj požadovaný jazyk. Alebo ho
+  môžete zadať ručne. Nakoniec kliknite na „OK“.
+  </dd>
+
+  <dt><strong><toc-add-entry name="voyager">Voyager</toc-add-entry></strong></dt>
+  <dd>Prejdite do Settings, potom do Languages. Môžete ho zadať buď manuálne
+  alebo kliknutím na „Get from locale“. Po dokončení kliknite na „OK“.
+  </dd>
+
+</dl>
+
+<p>Ak máte informácie o nastavení prehliadača, ktorý nie je v tomto zozname,
+pošlite ich prosím na adresu
+<a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>.</p>
