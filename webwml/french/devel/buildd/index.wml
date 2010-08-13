@@ -1,5 +1,8 @@
 #use wml::debian::template title="Réseau de serveurs d'empaquetage automatique" BARETITLE="true"
-#use wml::debian::translation-check translation="1.19" maintainer="Mohammed Adnène Trojette"
+#use wml::debian::translation-check translation="1.23" maintainer="David Prévot"
+
+# Translators:
+# Mohammed Adnène Trojette, 2005-2007.
 
 <p>Le réseau de serveurs d'empaquetage automatique est un
 développement de Debian qui permet d'accélérer les empaquetages de
@@ -14,7 +17,7 @@ nécessaire&nbsp;?</h2>
 
 <p>La distribution Debian gère <a href="$(HOME)/ports/">pas mal
 d'architectures</a>, mais les responsables de paquets construisent
-habituellement des versions binaires pour une seule architecture (i386
+habituellement des versions binaires pour une seule architecture (i386 ou amd64
 habituellement). Les développeurs pour les autres architectures doivent
 surveiller les nouvelles versions de paquets et les empaqueter à nouveau
 s'ils souhaitent rester à jour avec la distribution Intel.</p>
@@ -32,7 +35,7 @@ maintenir les distributions non-i386 à niveau.</p>
 Il consiste en une série de scripts (écrits en Perl et Python) qui
 ont évolué à travers le temps pour aider les porteurs dans diverses
 tâches. Ils ont finalement développé un système capable de maintenir
-à niveau quasi automatiquement des distributions non-i386.</p>
+à niveau quasi automatiquement les distributions Debian.</p>
 
 <h2>Comment fonctionne le service d'empaquetage
 «&nbsp;buildd&nbsp;»&nbsp;?</h2>
@@ -43,7 +46,7 @@ est en réalité constitué de différentes parties&nbsp;:</p>
 
 <dl>
 
-<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">wanna-build</a></dt>
+<dt>wanna-build</dt>
 <dd>
 Un outil qui aide à la coordination du (ré)empaquetage de paquet à
 travers une base de données qui maintient une liste des paquets et de
@@ -52,27 +55,30 @@ stocke les états, les versions et quelques autres informations sur les
 paquets.
 </dd>
 
-<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">buildd</a></dt>
+<dt><a href="http://packages.debian.org/buildd">buildd</a></dt>
 <dd>
 Un démon qui vérifie périodiquement la base de données maintenue par
 <em>wanna-build</em> et appelle <em>sbuild</em> pour construire les
-paquets. Il garde trace des échecs et succès d'empaquetage, et envoie
-aussi les paquets dès que l'administrateur a validé le journal 
-d'empaquetage.
+paquets.
+Dès que le journal de construction a été validé par l'administrateur,
+le paquet est envoyé dans l'archive adéquate.
 </dd>
 
 <dt><a href="http://packages.debian.org/sbuild">sbuild</a></dt>
 <dd>
 Il est responsable de la construction effective des paquets dans des
-«&nbsp;chroots&nbsp;». Il utilise principalement des outils standards
-de Debian écrits pour cette fonction, mais tient aussi compte des
-dépendances des sources et de quelques autres bizarreries mineures.
+«&nbsp;chroots&nbsp;».
+Il s'assure que toutes les dépendances nécessaires des sources sont
+installées avant la construction puis appelle les outils standards
+de Debian pour commencer le processus de construction.
+Les journaux de construction sont envoyés sur la <a
+href="http://buildd.debian.org">base de données des journaux de
+construction</a>.
 </dd>
 
 <dt><a href="http://packages.debian.org/quinn-diff">quinn-diff</a></dt>
 <dd>
-Il alimente la base de données de <em>wanna-build</em> avec de
-nouveaux paquets. Il compare les versions disponibles d'un paquet
+Il compare les versions disponibles d'un paquet
 pour deux architectures, et renvoie les différences (en comparant
 les fichiers <em>Sources</em> et <em>Packages</em>).
 </dd>
@@ -91,13 +97,20 @@ architecture donnée), celui-ci est ajouté à la base de données de toutes
 les architectures (dans l'état <em>Needs-Build</em>). Les serveurs
 d'empaquetage enverront des requêtes à la base de données pour les paquets
 qui sont dans cet état, et prendront habituellement les paquets de
-cette liste. La liste est priorisée par précédent état de compilation,
-priorité, section et enfin nom de paquet.</p>
+cette liste. La liste est priorisée par précédent état de compilation
+(soit <em>out-of-date</em>, soit <em>uncompiled</em>),
+priorité, section et nom de paquet.
+De plus, pour éviter de laisser moisir des paquets en fin de queue,
+les priorités sont ajustées dynamiquement en fonction du temps passé
+dans la file d'attente.
+</p>
 
 <p>Si l'empaquetage réussit sur toutes les architectures, les
 responsables n'auront rien à faire. Tous les paquets binaires produits
 seront envoyés sur le site principal de l'architecture. Si l'empaquetage
-échoue, le paquet entrera dans un état spécial (<em>Failed</em> ou
+échoue, le paquet entrera dans un état spécial (<em>Build-Attempted</em>
+en cas d'erreurs de construction qui n'ont pas été vérifiées,
+<em>Failed</em> en cas d'erreurs vérifiées et de bogues soumis au paquet ou
 <em>Dep-Wait</em>, s'ils nécessitent des dépendances spécifiques qui ne
 sont pas disponibles). Les administrateurs des serveurs d'empaquetage
 automatique examineront les paquets dont l'empaquetage échoue et
@@ -106,11 +119,12 @@ d'un bogue dans le système de suivi des bogues.</p>
 
 <p>Parfois, un paquet met du temps à être empaqueté pour
 une architecture donnée et cela bloque son entrée dans <a
-href="$(HOME)/devel/testing"><em>testing</em></a>. Malheureusement, le
-paquet devra attendre que le serveur le reprenne. Les administrateurs
-des serveurs d'empaquetage n'accepteront pas de demande d'accélération
-de l'empaquetage d'un paquet à partir du moment où la liste de priorité
-a déjà été établie.</p>
+href="$(HOME)/devel/testing"><em>testing</em></a>.
+Si un paquet retarde une transition, les priorités sont normalement
+ajustées à la demande de l'équipe en charge de la publication.
+Les autres requêtes seront refusées puisque la priorité augmente
+automatiquement en fonction du temps passé dans la file d'attente.
+</p>
 
 <p>Vous pouvez vérifier le statut des différentes
 tentatives d'empaquetage des paquets qui appartiennent à
@@ -165,7 +179,8 @@ de contournement («&nbsp;work-around&nbsp;»).</li>
 </ul>
 
 <p>Vous pouvez lire plus d'informations sur la méthode de mise en place
-d'un <a href="setting-up">serveur d'empaquetage automatique</a>.</p>
+d'un <a href="http://buildd.debian.org/docs/buildd-setup.txt">serveur
+d'empaquetage automatique</a>.</p>
 
 <h2>Contacter les administrateurs «&nbsp;buildd&nbsp;»</h2>
 
@@ -178,4 +193,4 @@ architecture particulière peuvent être contactés sur
 <p><small>Cette introduction au réseau de serveurs d'empaquetage
 automatique a été écrite à partir d'extraits fournis par Roman Hodek,
 Christian T. Steigies, Wouter Verhelst, Andreas Barth, Francesco Paolo
-Lovergine et Javier Fernández-Sanguino.</small></p>
+Lovergine, Javier Fernández-Sanguino et Philipp Kern.</small></p>
