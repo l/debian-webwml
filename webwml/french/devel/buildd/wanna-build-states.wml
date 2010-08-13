@@ -1,5 +1,8 @@
 #use wml::debian::template title="Les états de wanna-build&nbsp;: une explication" BARETITLE="true"
-#use wml::debian::translation-check translation="1.19" maintainer="Mohammed Adnène Trojette"
+#use wml::debian::translation-check translation="1.21" maintainer="David Prévot"
+
+# Translators:
+# Mohammed Adnène Trojette, 2005-2007.
 
     <p>Cette page tente d'expliquer ce que chaque état
       <tt>wanna-build</tt> signifie et ce qui arrivera à un paquet
@@ -17,9 +20,10 @@
 
 <p>Pour chaque architecture supportée par Debian, une base de données
 <tt>wanna-build</tt> est installée sur buildd.debian.org, avec tous les
-paquets et leur état actuel de compilation. Il y a 7&nbsp;états&nbsp;:
+paquets et leur état actuel de compilation. Il y a huit états&nbsp;:
 <em>needs-build</em>, <em>building</em>, <em>uploaded</em>,
-<em>dep-wait</em>, <em>failed</em>, <em>not-for-us</em>, et
+<em>dep-wait</em>, <em>BD-Uninstallable</em>, <em>failed</em>,
+<em>not-for-us</em>, et
 <em>installed</em>.</p>
 
 <p>Voici leurs significations&nbsp;:</p>
@@ -142,6 +146,36 @@ paquets et leur état actuel de compilation. Il y a 7&nbsp;états&nbsp;:
         <tt>m68k</tt>, l'état <em>dep-wait</em> devra alors être modifié
         par les responsables du portage <tt>m68k</tt> eux-mêmes.
       </dd>
+      <dt><a name="bd-uninstallable">BD-Uninstallable</a></dt>
+      <dd>Pendant la conférence des développeurs Debian 2009, <a
+	href='http://lists.debian.org/debian-wb-team/2009/07/msg00089.html'>Joachim
+	Breitner a émis l'idée</a> d'utiliser edos-debcheck pour vérifier
+	si les dépendances de construction des paquets peuvent être
+	installées, avant de modifier leur état en <em>needs-build</em>.
+	À ce moment, wanna-build a déjà la possibilité de vérifier la
+	la disponibilité immédiate des dépendances de construction ;
+	mais si un paquet ne peut pas être installé parce qu'il possède
+	une dépendance de construction sur a qui dépend de b qui dépend
+	de c (&gt;=1.2.3) et que c est toujours en version 1.2.2, ce ne
+	sera pas détecté, et la construction échouera dès le début à
+	cause des dépendances de construction non disponibles.
+	Se rendre compte de ce genre de cas était un processus non
+	automatique à la charge de l'administrateur du serveur
+	d'empaquetage, et en général, plutôt interminable.
+	Avec le correctif <em>BD-Uninstallable</em>,
+	ce n'est plus un problème.
+	Quand un paquet est en <em>BD-Uninstallable</em>, cela
+	signifie que ses dépendances de construction ne peuvent pas
+	être installées (soit directement, soit parce qu'une partie
+	de son arborescence de dépendances n'est pas disponible).
+	Malheureusement, le correctif <em>BD-Uninstallable</em>,
+	ne fournit pas de renseignements sur le paquet exact qui
+	pose problème ;
+	veuillez utiliser edos-debcheck pour le déterminer.
+	Ce problème, cependant, se réglera de lui-même dès que les
+	dépendances manquantes seront vraiment disponibles, et à ce
+	moment, le paquet sera de nouveau déplacé en <em>needs-build</em>.
+      </dd>
       <dt><a name="wanna-build-state-failed">failed</a></dt>
       <dd>Si une tentative d'empaquetage échoue et que le responsable
         du serveur d'empaquetage automatique décide que cela constitue
@@ -210,7 +244,7 @@ paquets et leur état actuel de compilation. Il y a 7&nbsp;états&nbsp;:
 	quinze minutes, en moyenne.
       </dd>
     </dl>
-    <p>En plus de ces sept états, <em>wanna-build</em> connaît aussi
+    <p>En plus de ces huit états, <em>wanna-build</em> connaît aussi
     deux états de suppression (<q>-removed</q>), qui sont
     vraiment des cas marginaux. Ces deux états sont
     <em>dep-wait-removed</em> et <em>failed-removed</em>. Ils
