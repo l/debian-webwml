@@ -236,6 +236,15 @@ sub init_translators {
                          file        => 0,
                          compress    => 'none'
                  },
+                'David Prévot' => {
+                       email           => 'david@tilapin.org',
+                       summary         => 3,
+                       logs            => 3,
+                       diff            => 3,
+                       tdiff           => 3,
+                       file            => 3,
+                       compress        => 'none'
+                },
                 'Martin Quinson' => {
                         email       => 'debian-l10n-french@lists.debian.org',
                         summary     => 2,
