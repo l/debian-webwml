@@ -242,7 +242,7 @@ sub init_translators {
                        logs            => 3,
                        diff            => 3,
                        tdiff           => 3,
-                       file            => 3,
+                       file            => 0,
                        compress        => 'none'
                 },
                 'Martin Quinson' => {
