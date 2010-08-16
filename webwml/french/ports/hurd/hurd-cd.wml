@@ -1,8 +1,15 @@
-#use wml::debian::template title="Debian GNU/Hurd --- Hurd-CDs" NOHEADER="yes"
+#use wml::debian::template title="Debian GNU/Hurd&nbsp;&ndash;&nbsp;CD Hurd" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.62" maintainer="Jean-Edouard Babin"
+#use wml::debian::translation-check translation="1.67" maintainer="David Prévot"
 
-<define-tag cdserie>K16</define-tag>
+# Translators:
+# Arnaud Fontaine, 2004, 2005.
+# Frédéric Bothamy, 2007.
+# Jean-Édouard Babin, 2009.
+# David Prévot, 2010.
+
+<define-tag cdserie>L1</define-tag>
+<define-tag cdbasetarball>gnu-2009-10-18.tar.gz</define-tag>
 <define-tag cdbasename>debian-<cdserie>-hurd-i386</define-tag>
 
 <h1>Debian GNU/Hurd</h1>
@@ -19,38 +26,41 @@ projet GNU tandis que le noyau Linux est un projet indépendant.</p>
 
 <p>Version actuelle de Debian GNU/Hurd, <cdserie>.</p>
 
-<p>Seules les quatre premières des six images ISO sont disponibles pour
+<p>Seule la première image ISO est disponible pour
 cette version.</p>
 
 <p>Une image de petite taille (<cdbasename>-mini.iso) est disponible, ce qui
 pourrait être utile pour les personnes souhaitant installer Debian
 GNU/Hurd par le réseau.</p>
 
-<p>baseGNU.tgz (une archive du système GNU de base) a été conçue
-spécialement pour ce jeu de cédéroms.</p>
-
-<p><em>Important :</em> Veuillez consulter les <a
-href="http://lists.debian.org/debian-hurd/2007/09/msg00007.html">notes de mise à jour</a>.</p>
+<p>
+  <cdbasetarball> (une archive du système GNU de
+  base) a été conçue spécialement pour ce jeu.
+</p>
 
 <h3>Téléchargement</h3>
 
-<p>Les images <tt>iso</tt> actuelles sont <cdbasename>-CDx.iso. L'ensemble des
-binaires spécifiques au système GNU se trouve sur le premier
-cédérom, ainsi que tous les paquets considérés comme requis,
+<p>
+  Les images <tt>iso</tt> actuelles sont
+  <cdbasename>-DVDx.iso et <cdbasename>-mini.iso.
+
+  L'ensemble des
+  binaires spécifiques au système GNU se trouve sur la première
+  image, ainsi que tous les paquets considérés comme requis,
 importants ou standards. De cette manière, un système GNU de base peut
-être installé en utilisant le premier cédérom.</p>
+  être installé en utilisant la première image.
+</p>
 
 <p>Les sites suivants répliquent habituellement les images, mais
 vérifiez tout de même.</p>
 
 <p>Le site principal est <url "http://ftp.debian-ports.org/debian-cd/"> en France,
 et les miroirs pour ces images sont
-<url "http://www.superunprivileged.org/debian-cd/"> au Canada,
-<url "ftp://ftp.duckcorp.org/hurdfr/hurd/"> et 
-<url "ftp://ftp.eila.jussieu.fr/pub/Debian-CD/"> pour la France.
+<url "http://www.gtlib.gatech.edu/pub/gnuab/debian-cd/"> aux États-Unis
+et <url "ftp://ftp.duckcorp.org/hurdfr/hurd/"> en France.
 </p>
 
-<p>Une recherche sur <url "http://www.filesearching.com/"> pour hurd-K
+<p>Une recherche sur <url "http://www.filesearching.com/"> pour hurd-L
 vous permettra de trouver des sites plus proches géographiquement.</p>
 
 <p>Les instructions pour graver les cédéroms à partir des images sont
@@ -123,7 +133,8 @@ commencer.</p>
 <ol>
 <li><em>Préparer une disquette d'amorçage avec GNU&nbsp;Grub</em>
 <p>
-Installez le paquet grub-disk, il contient une image de disquette GRUB. Vous pouvez
+  Installez le paquet grub-disk ou grub-rescue-pc, ils
+  contiennent une image de disquette GRUB. Vous pouvez
 utiliser «&nbsp;dd&nbsp;» sur GNU/Linux ou rawrite à partir de MS.</p></li>
 
 <li>Essayez de bien comprendre les conventions de nommage des
@@ -147,12 +158,17 @@ Hurd, où n est le numéro de la partition, donc la première partition
 sur le premier disque dur IDE sera hd0s1, la troisième partition sur
 le second disque dur SCSI sera sd1s3, et ainsi de suite.</p>
 
-<p>GRUB possède encore une autre convention de nommage. Il note les
+<p>GRUB 1 possède encore une autre convention de nommage. Il note les
 partitions (hdN,n), mais cette fois-ci, les numéros des disques et
 partitions commencent à zéro, et les disques sont ensuite notés dans
 l'ordre, tous les disques durs IDE en premier, et les disques SCSI dans un
 second temps. Cette fois-ci, la première partition sur le premier
-disque dur IDE sera (hd0,0). De plus, (hd1,2) pourrait désigner le
+disque dur IDE sera (hd0,0).
+
+  GRUB 2 fait la même chose, mais en commençant la numérotation
+  des partitions à un, donc dans ce cas ce serait (hd0,1).
+
+De plus, (hd1,2) pourrait désigner le
 premier périphérique SCSI si vous n'avez qu'un seul périphérique
 IDE, ou cela pourrait aussi désigner le second périphérique IDE. Il
 est donc important que vous ayez bien compris comment se nomment vos
@@ -201,46 +217,65 @@ avec «&nbsp;Reboot the System&nbsp;»</em> (n'oubliez pas de modifier le
 bios). C'est tout&nbsp;! [Premier redémarrage]</li>
 </ol>
 
-<p>Si votre partition GNU/Hurd est «&nbsp;(hd0,0)&nbsp;» [Convention de nommage de
-GRUB] et «&nbsp;sd0s1&nbsp;» [GNU/Hurd], qui désigne la première partition sur le
-premier disque dur SCSI s'il n'y a aucun disque dur IDE, alors le
-système démarrera sans aucune intervention de votre
-part.<br />
+<p>
+  La configuration par défaut de l'image GRUB suppose que
+  votre partition GNU/Hurd est « (hd0,0) » [convention de nommage de
+  GRUB 1], « (hd0,1) » [convention de nommage de GRUB 2]
+  et « sd0s1 » [GNU/Hurd], qui désigne la première partition sur le
+  premier disque dur SCSI s'il n'y a aucun disque dur IDE.
 
-Les images GRUB ont été préfabriquées, donc un minimum d'ajustement
-est nécessaire pour démarrer le système GNU.</p>
+  Cependant, lors des premiers démarrages, il faudra passer l'option
+  <code>-s</code> au noyau GNU/Mach pour démarrer en mode utilisateur
+  unique (« single »), et enlever l'option <code>--readonly</code>
+  de la ligne de commande <code>ext2fs.static</code>.
+</p>
 
-<p>Ne touchez pas au clavier jusqu'à la fin du processus
+<p>
+  Il est <strong>très important</strong> de regarder les
+  messages qui s'affichent durant l'amorçage du système et
+  de noter soigneusement où se trouve le lecteur de cédérom.
+
+  Ne touchez pas au clavier jusqu'à la fin du processus
 d'amorçage.</p>
 
-<p>«&nbsp;/boot/grub/menu.lst&nbsp;» sur la disquette GRUB peut être modifié afin
+<p>
+  <q>/boot/grub/menu.lst</q> ou <q>/boot/grub/grub.cfg</q>
+  sur la disquette GRUB peut être modifié afin
 que le système démarre comme vous le souhaitez.</p>
 
 <h3>La suite</h3>
 
 <ol>
 
-<li><em>Après que le système a démarré, lancez
-./native-install.</em> Redémarrez en tapant «&nbsp;reboot&nbsp;». Il est très
-important de regarder les messages qui s'affichent durant l'amorçage
-du système et de noter soigneusement où se trouve le lecteur de
-cédérom. [Deuxième redémarrage]</li>
-
-<li><em>Après le redémarrage, tapez ./native-install une deuxième
-fois.</em> Cette fois-ci, de nombreux paquets seront
-configurés. Redémarrez encore une troisième fois. [Troisième
-redémarrage]. Vous disposez maintenant d'un système à
-configurer.<br /> Connectez-vous en tant que superutilisateur, «&nbsp;login root&nbsp;».</li>
-
-<li><em>Déplacez-vous dans le répertoire /dev. Créez les fichiers
+<li><em>Une fois que le système est démarré, créez les fichiers
 nécessaires</em> pour le lecteur de cédéroms, la partition d'échange
 et les autres partitions du disque dur.
 
 <p>Par exemple
-«&nbsp;MAKEDEV hd2 hd0s2 hd0s3&nbsp;»</p></li>
-		
-<li><em>Éditez /etc/fstab, «&nbsp;nano /etc/fstab&nbsp;»</em>.
-nano n'est pas un mauvais éditeur.
+<kbd>cd /dev</kbd> et <kbd>MAKEDEV hd2 hd0s2 hd0s3</kbd></p></li>
+
+<li>
+  <em>Activez la zone d'échange.</em>
+<samp>
+$ /hurd/mach-defpager<br />
+$ swapon /dev/hd0s2
+</samp>
+  Vérifiez que cela a fonctionné. La zone d'échange est 
+  <strong>vraiment recommandée</strong> pour le Hurd.
+  </li>
+
+<li>
+  <em>Lancez ./native-install.</em>
+  De nombreux paquets seront configurés.
+  Redémarrez en tapant <kbd>reboot</kbd>.
+  [Deuxième redémarrage].
+  Vous disposez maintenant d'un système à configurer.<br />
+  Connectez-vous en tant que superutilisateur, <kbd>login root</kbd>.
+</li>
+
+<li>
+<em>Modifiez /etc/fstab, <kbd>nano /etc/fstab</kbd></em>.
+(nano n'est pas un mauvais éditeur).
 <p>Ajoutez les partitions du disque dur, par exemple,<br />
 /dev/[Nom de la partition sur Hurd]   none    swap    sw    0       0<br />
 /dev/[Nom de la partition sur Hurd]   /CD1     ext2    rw    1       1<br />
@@ -250,10 +285,6 @@ nano n'est pas un mauvais éditeur.
 suggestion concernant le point de montage pour les partitions qui
 contiennent les paquets de <cdbasename>-CD1. L'espace d'échange peut être
 partagé avec Linux.</p></li>
-					
-<li><em>Activez la zone d'échange «&nbsp;swapon -a&nbsp;».</em>
-Vérifiez que cela a fonctionné. La zone d'échange est vraiment
-recommandée pour le Hurd.</li>
 
 <li><em>Configurez le traducteur qui accède au lecteur de
 cédérom,</em> en saisissant par exemple
