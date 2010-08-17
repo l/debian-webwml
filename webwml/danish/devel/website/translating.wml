@@ -1,6 +1,6 @@
 #use wml::debian::template title="Oversættelse af Debians websider" BARETITLE=true
 #use wml::fmt::verbatim
-#use wml::debian::translation-check translation="1.47"
+#use wml::debian::translation-check translation="1.50"
 
 <p>For at gøre oversætternes arbejde så let som muligt, genereres siderne lidt
 anderledes end mange af dem du måske er vant til. Websiderne genereres faktisk
@@ -78,7 +78,10 @@ er:
 <p>Header'en på websiderne kan nemt fremstilles ved hjælp af skriptet 
 <tt>copypage.pl</tt> i webwmls root-mappe.  Skriptet kopierer siden til dens
 rette placering, opretter mapper og makefiler om nødvendigt, samt tilføjer
-automatisk den nødvendige header.</p>
+automatisk den nødvendige header.  Du får en advarsel, hvis en kopieret side
+allerede findes i arkivet, uanset om det er fordi siden er blevet fjernet 
+(fordi den var for gammel) eller fordi nogen allerede har commit'et en 
+oversættelse og din lokale kopi af arkivet ikke er ajourført.</p>
 
 <p>Når du har kørt for eksempel <kbd>./copypage.pl <var>fil</var>.wml</kbd>,
 oversættes den originale tekst i filen.  Kommentarer i filen angiver hvorvidt
@@ -211,6 +214,34 @@ så send en e-mail, på engelsk, til debian-www, hvor du forklarer hvad du har
 og de andre .wml-filer.  For en liste over filer som først bør oversættes, se 
 <a href="translation_hints">siden med tips</a>.  Oversæt *.wml-filerne som 
 beskrevet <a href="#singlepages">øverst på denne side</a>.</p>
+
+
+<h3>Genoplivelse af forældede oversættelser</h3>
+
+<p>Som beskrevet i <a href="uptodate">hvordan man holder oversættelser 
+ajour</a>, kan forældede oversættelser af webstedet blive fjernet automatisk,
+når der er gået lang tid uden en opdatering.</p>
+
+<p>Hvis du anvender skriptet <tt>copypage.pl</tt> med en fil, der er blevet 
+fjernet fra CVS, vil skripet nægte at kopiere siden og spørge om du vil 
+genoplive den i stedet.  Du kan finde årsagerne til, at filen blev fjernet fra 
+CVS, ved at anvende <tt>cvs log</tt> på den fjernede fil (eller anvende 
+webgrænsefladen, de slettede filer findes i undermappen <q>Attic</q>).</p>
+
+<p>For at genoplive en forældet oversættelse, anvendes <tt>cvs status</tt>
+(eller <tt>cvs log</tt>) for at registrere versionsnummeret på den slettede 
+udgave af filen, og dernæst udføres <q>backwards merge</q>.</p>
+
+<p>Hvis den slettede fil eksempelvis hedder <q>deleted.wml</q>, og den 
+slettede version er 1.7, er versionen før sletningen 1.6 (sletningens 
+versionsnummer minus en).  Du kan genoplive filen ved at køre:
+
+<verbatim>
+   cvs update -j 1.7 -j 1.6 deleted.wml
+</verbatim>
+
+<p>Når du gør det, skal du - selvfølgelig - opdatere filen før den checker 
+den ind igen.  Ellers kan den blive fjernet igen.</p>
 
 
 <h3>Resten af historien</h3>
