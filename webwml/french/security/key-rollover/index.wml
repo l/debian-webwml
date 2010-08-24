@@ -1,0 +1,807 @@
+#use wml::debian::template title="Recouvrement des clefs"
+#use wml::debian::translation-check translation="1.48" maintainer="David Prévot"
+
+<p>
+Dans le <a href="$(HOME)/security/2008/dsa-1571">bulletin d'alerte
+Debian 1571</a>, l'équipe en charge de la sécurité a révélé une
+faiblesse du générateur de nombres aléatoires utilisé par OpenSSL
+sur les systèmes Debian et les distributions dérivées.
+
+Suite à cette faiblesse, certaines clefs de chiffrement sont
+beaucoup moins aléatoires qu'elles ne devraient, permettant
+à un attaquant de deviner la clef avec une attaque par force
+brute à partir d'un minimum de connaissance sur le système.
+
+Cela concerne en particulier l'utilisation des clefs de
+chiffrement dans OpenSSH, OpenVPN et les certificats SSL.
+</p>
+
+<p>
+Cette page explique comment effectuer les procédures de recouvrement des clefs
+pour les paquets dont les clefs sont victimes de la vulnérabilité d'OpenSSL.
+</p>
+
+<ul>
+<li><b><a href="#openssh">OpenSSH</a></b></li>
+<li><b><a href="#openssl">OpenSSL : instructions de création de clef PEM générique</a></b></li>
+
+<li><a href="#bincimap">Binc IMAP</a></li>
+<li><a href="#boxbackup">Box Backup</a></li>
+<li><a href="#cryptsetup">cryptsetup</a></li>
+<li><a href="#dropbear">Dropbear</a></li>
+<li><a href="#ekg">EKG</a></li>
+<li><a href="#ftpd-ssl">ftpd-ssl</a></li>
+<li><a href="#gforge">GForge</a></li>
+<li><a href="#kerberos">MIT Kerberos (krb5)</a></li>
+<li><a href="#nessus">Nessus</a></li>
+<li><a href="#openswan">OpenSWAN et StrongSWAN</a></li>
+<li><a href="#openvpn">OpenVPN</a></li>
+<li><a href="#proftpd">ProFTPD</a></li>
+<li><a href="#puppet">Puppet</a></li>
+<li><a href="#sendmail">sendmail</a></li>
+<li><a href="#ssl-cert">ssl-cert</a></li>
+<li><a href="#telnetd-ssl">telnetd-ssl</a></li>
+<li><a href="#tinc">tinc</a></li>
+<li><a href="#tor">Tor</a></li>
+<li><a href="#xrdp">xrdp</a></li>
+</ul>
+
+<p>
+D'autres logiciels utilisent des clefs cryptographiques, mais
+ne sont <a href="notvuln">pas vulnérables</a> car OpenSSL
+n'est pas utilisé pour créer ou échanger leurs clefs.
+</p>
+
+<ul>
+<li><a href="notvuln#ckermit">ckermit</a></li>
+<li><a href="notvuln#gnupg">GnuPG</a></li>
+<li><a href="notvuln#iceweasel">Iceweasel</a></li>
+<li><a href="notvuln#mysql">MySQL</a></li>
+</ul>
+
+<p>
+Pour les instructions de recouvrement des clefs concernant d'autres
+logiciels, veuillez vous référer aux renseignements fournis
+par les utilisateurs sur <url http://wiki.debian.org/SSLkeys>.
+</p>
+
+
+<h1><a name="openssh">OpenSSH</a></h1>
+
+<p>
+Un paquet mis à jour a été publié avec la <a
+href="$(HOME)/security/2008/dsa-1576">DSA-1576</a>,
+facilitant la transformation de clef.
+</p>
+
+<p>1. Installer les mises à jour de sécurité de DSA-1576</p>
+
+<p>
+Une fois la mise à jour appliquée, les clés d'utilisateur faibles seront
+automatiquement rejetées lorsque c'est possible (elles ne peuvent pas toujours
+être détectées). Si vous utilisez de telles clés pour l'authentification des
+utilisateurs, elles arrêteront immédiatement de fonctionner et devront être
+remplacées (voir étape&nbsp;3).
+</p>
+
+<p>
+Les clés d'hôtes OpenSSH peuvent être régénérées automatiquement lors de
+l'application de la mise à jour de sécurité d'OpenSSH. La mise à jour demandera
+une confirmation avant cette étape.
+</p>
+
+<p>
+2. Mise à jour des fichiers known_hosts d'OpenSSH
+</p>
+
+<p>
+La régénération des clés d'hôte entraînera l'affichage d'un avertissement lors
+de la connexion au système avec SSH jusqu'à ce que la clé d'hôte soit mise à
+jour dans le fichier known_hosts sur le client.
+
+L'avertissement ressemble à ceci :
+</p>
+
+<pre>
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that the RSA host key has just been changed.
+</pre>
+
+<p>
+Dans ce cas, la clé d'hôte a simplement été modifiée, et vous devriez mettre à
+jour le fichier known_hosts correspondant comme indiqué dans le message
+d'avertissement. Il est recommandé d'utiliser un canal sécurisé pour échanger la clé
+du serveur. Elle se trouve dans le fichier /etc/ssh/ssh_host_rsa_key.pub sur le
+serveur&nbsp;; son empreinte peut être affichée avec la commande
+suivante&nbsp;:
+</p>
+
+<p>
+ssh-keygen -l -f /etc/ssh/ssh_host_rsa_key.pub
+</p>
+
+<p>
+En plus des fichiers known_hosts des utilisateurs, il peut y avoir un fichier
+d'hôtes connus au niveau du système /etc/ssh/ssh_known_hosts. Ce fichier est
+utilisé à la fois par le client ssh et par sshd pour la fonctionnalité
+hosts.equiv. Ce fichier doit également être mis à jour.
+</p>
+
+<p>
+3. Vérification de toutes les clés OpenSSH des utilisateurs
+</p>
+
+<p>
+L'action la plus sûre est de régénérer toutes les clés OpenSSH des
+utilisateurs, sauf s'il peut être établi à un
+degré suffisamment élevé de certitude que la
+clé a été générée sur un système non affecté.
+</p>
+
+<p>
+Vérifiez si votre clé a été affectée en lançant l'outil ssh-vulnkey inclus dans
+la mise à jour de sécurité. Par défaut, ssh-vulnkey vérifie les emplacements
+standards des clés d'utilisateur (~/.ssh/id_rsa, ~/.ssh/id_dsa et
+~/.ssh/identity), vos fichiers authorized_keys (~/.ssh/authorized_keys et
+~/.ssh/authorized_keys2), et les clés d'hôte du système
+(/etc/ssh/ssh_host_dsa_key et /etc/ssh/ssh_host_rsa_key).
+</p>
+
+<p>
+Pour vérifier toutes cos clés, en supposant qu'elles sont situées aux
+emplacements standards (~/.ssh/id_rsa, ~/.ssh/id_dsa, ou ~/.ssh/identity)
+utilisez&nbsp;:
+</p>
+
+<p>
+ssh-vulnkey
+</p>
+
+<p>
+Pour vérifier toutes les clés du système&nbsp;:
+</p>
+
+<p>
+sudo ssh-vulnkey -a
+</p>
+
+<p>
+Pour vérifier une clé à un emplacement non standard&nbsp;:
+</p>
+
+<p>
+  ssh-vulnkey /chemin/vers/la/clé
+</p>
+
+<p>
+Si ssh-vulnkey répond <q>Unknown (no blacklist information)</q>, alors il n'y a
+pas d'information sur la vulnérabilité de vos clés.
+
+En cas de doute, détruisez la clé et générez en une nouvelle.
+</p>
+
+<p>
+4. Régénérer les clés des utilisateurs affectées
+</p>
+
+<p>
+Les clés OpenSSH utilisées pour l'authentification des utilisateurs doivent
+être régénérées manuellement, y compris celles qui ont été transférées
+sur d'autres systèmes après avoir été créées.
+</p>
+
+<p>
+De nouvelles clés peuvent être générées avec ssh-keygen, par exemple&nbsp;:
+</p>
+
+<pre>
+   $ ssh-keygen
+   Generating public/private rsa key pair.
+   Enter file in which to save the key (/home/utilisateur/.ssh/id_rsa):
+   Enter passphrase (empty for no passphrase):
+   Enter same passphrase again:
+   Your identification has been saved in /home/utilisateur/.ssh/id_rsa.
+   Your public key has been saved in /home/utilisateur/.ssh/id_rsa.pub.
+   The key fingerprint is:
+   00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00 utilisateur@hote
+</pre>
+
+<p>
+5. Mise à jour des fichiers authorized_keys (si nécessaire)
+</p>
+
+<p>
+Une fois les clés d'utilisateur régénérées, les clés publiques correspondantes
+doivent être propagées dans tous les fichiers authorized_keys (et
+authorized_keys2, si nécessaire) sur les systèmes distants. Assurez-vous de
+bien supprimer les clés concernées.
+</p>
+
+
+<h1><a name="openssl">OpenSSL : instructions de création de clef PEM générique</a></h1>
+
+<p>
+Ce n'est qu'un rappel pour ceux qui (re-)créent les certificats encodés PEM.
+
+Suivant l'endroit où vous êtes, d'autres pratiques probablement
+en place sont à respecter sur la façon de gérer les clefs.
+
+De plus, il vous faudra sans doute obtenir la signature du
+certificat par une autorité de certification (CA) tierce
+plutôt qu'utiliser un certificat auto-signé comme ci dessous :
+</p>
+
+<pre>
+cd /etc/ssl/private
+openssl genrsa 1024 &gt; monsite.pem
+cd /etc/ssl/certs
+openssl req -new -key ../private/monsite.pem -x509 -days 9999 -out monsite.pem
+</pre>
+
+
+<h1><a name="bincimap">Binc IMAP</a></h1>
+
+<p>
+Le paquet bincimap crée automatiquement un certificat
+auto-signé avec la commande openssl pour le service
+bincimap-ssl, et le place dans /etc/ssl/certs/imapd.pem.
+
+Pour le recréer lancer :
+</p>
+
+<pre>
+rm -f /etc/ssl/certs/imapd.pem
+dpkg-reconfigure bincimap
+</pre>
+
+<h1><a name="boxbackup">Box Backup</a></h1>
+
+<p>
+Box Backup n'est pas présent dans Debian stable, seulement dans testing : Lenny.
+</p>
+
+<p>
+Une <a
+href="http://lists.warhead.org.uk/pipermail/boxbackup/2008-May/004476.html">première
+analyse de l'impact des clefs crées sur les systèmes
+avec un générateur de nombres pseudo-aléatoires (PRNG)
+utilisant un aléa insuffisant</a> à été publié en amont.
+</p>
+
+<p>
+Si le PRNG d'OpenSSL ne possédait pas un aléa suffisant, vous devez :
+</p>
+
+<ul>
+  <li>recréer tous les certificats concernés,
+  créés ou signés sur un système affecté ;</li>
+  <li>recréer toutes les clefs de données (*-FileEncKeys.raw) ;</li>
+  <li>détruire les données conservées à un niveau de sécurité inapproprié
+  (écraser avec au moins des zéros, plus si vous êtes paranoïaque) ;</li>
+  <li>envoyer tout de nouveau ;</li>
+  <li>prendre les mesures appropriées avec l'hypothèse d'avoir
+  conservé vos données en texte simple sur un serveur publique sans
+  authentification (c'est-à-dire, repartir du début, en détruisant
+  toute trace de données sauvegardées, et prendre d'autres mesures
+  pour limiter la révélation des données confidentielles.</li>
+</ul>
+
+<h1><a name="cryptsetup">cryptsetup</a></h1>
+
+<p>
+Cryptsetup n'utilise pas lui-même OpenSSL pour le chiffrement (c'est valable
+à la fois pour les périphériques utilisant LUKS et ceux utilisant dm-crypt).
+</p>
+
+<p>
+<em>Si</em> cryptsetup a été configuré pour utiliser des fichiers de
+clef chiffrés par SSL (un réglage personnalisé explicitement configuré
+par l'utilisateur) et qu'une version cassée d'OpenSSL à été utilisée
+pour créer le fichier de clef, le chiffrement du fichier de clef peut
+être plus faible que prévu (car le sel n'est pas vraiment aléatoire).
+</p>
+
+<p>
+La solution est soit de re-chiffrer le fichier de clef (si vous estimez avec
+une confiance suffisante que la clef chiffrée n'a pas été révélée à un tiers)
+ou d'effacer et réinstaller les partitions concernées avec une nouvelle clef.
+</p>
+
+<p>
+Instructions pour for re-chiffrer un fichier de clef.
+</p>
+
+<p>
+Effectuer les opérations suivantes pour chaque fichier de clef chiffré
+par SSL, en remplaçant &lt;chemin_vers_la_clef_chiffré_par_ssl&gt; par
+le vrai chemin vers la clef :
+</p>
+
+<pre>
+tmpclef=\$(tempfile)
+openssl enc -aes-256-cbc -d -salt -in &lt;chemin_vers_la_clef_chiffré_par_ssl&gt; -out "$tmpclef"
+shred -uz &lt;chemin_vers_la_clef_chiffré_par_ssl&gt;
+openssl enc -aes-256-cbc -e -salt -in "$tmpclef" -out &lt;chemin_vers_la_clef_chiffré_par_ssl&gt;
+shred -uz "$tmpclef"
+</pre>
+
+<h1><a name="dropbear">Dropbear</a></h1>
+
+<p>
+Si des clefs /etc/ssh/*host* existent, effacez-les ou
+suivez d'abord les <a href="#openssh">instructions
+OpenSSH</a> avant de mettre à jour les clefs de Dropbear.
+</p>
+
+<p>
+Le script de post-installation convertit les clefs OpenSSH existantes au
+format Dropbear, s'il ne peut pas trouver les clefs d'hôte de Dropbear.
+</p>
+
+<pre>
+rm /etc/dropbear/*_host_key
+dpkg-reconfigure dropbear
+</pre>
+
+<p>
+Remarquez que les clefs crées par Dropbear lui-même ne sont
+pas vulnérables (il utilise libtomcrypt plutôt qu'OpenSSL).
+</p>
+
+<h1><a name="ekg">EKG</a></h1>
+
+<p>
+Les utilisateurs des programmes EKG ou EKG2 (le second n'est disponible
+que dans experimental) qui utilisent la fonctionnalité de chiffrement
+<q>SIM</q>, et qui ont créé une paire de clefs avec la commande <q>/key
+[-g|--generate]</q> (qui utilise libssl pour ce faire), devraient recréer
+leurs clefs, après avoir mis à niveau libssl et redémarré le programme.
+</p>
+
+<p>
+Les développeurs amont ont publié une <a
+href="http://ekg.chmurka.net/index.php">annonce sur leur site</a>.
+</p>
+
+<p>
+Pour obtenir de l'aide, veuillez vous adresser à ekg-users@lists.ziew.org
+ou ekg2-users@lists.ziew.org (en anglais ou en polonais).
+</p>
+
+<h1><a name="ftpd-ssl">ftpd-ssl</a></h1>
+
+<pre>
+rm -f /etc/ftpd-ssl/ftpd.pem /etc/ssl/certs/ftpd.pem
+dpkg-reconfigure ftpd-ssl
+</pre>
+
+<p>
+C'est suffisant pour la configuration par défaut. Si l'administrateur local a
+paramétré l'infrastructure SSL au delà, ces clefs devront aussi être recrées.
+</p>
+
+<h1><a name="gforge">GForge</a></h1>
+
+<p>
+Le paquet gforge-web-apache2 de Sid et Lenny configure le site web
+avec un certificat factice si aucun certificat existant n'est trouvé.
+
+Les utilisateurs sont alors encouragés à le remplacer par un <q>vrai</q>.
+
+Le certificat factice en question est le <q>Snake Oil</q>, il
+devrait donc être considéré faible (même sans le bogue SSL), mais
+certains utilisateurs risquent de l'avoir accepté les yeux fermés.
+</p>
+
+<h1><a name="kerberos">MIT Kerberos (krb5)</a></h1>
+
+<p>
+Aucune partie de MIT Kerberos de Debian 4.0 (<q>Etch</q>) n'utilise
+OpenSSL, aini Kerberos n'est pas concerné du tout dans Debian 4.0.
+</p>
+
+<p>
+Dans Lenny, le paquet binaire krb5-pkinit utilise OpenSSL.
+
+MIT Kerberos ne crée pas lui même de paires de clefs durables quand le
+greffon PKINIT est utilisé, donc toutes les paires de clefs durables
+auront été crées en dehors du programme MIT Kerberos lui-même.
+
+Le greffon PKINIT ne fait référence qu'aux paires de clefs
+existantes, et n'est pas responsable de la gestion des clefs.
+</p>
+
+<p>
+Les paires de clefs durables utilisé avec PKINIT risquent d'être
+concernées si elles ont étés créés sur un système Debian concerné,
+mais de telles créations sont extérieures à MIT Kerberos.
+</p>
+
+<p>
+Cependant, les fonctions de clef aléatoires OpenSSL sont utilisées
+pour l'échange DH lorsque l'authentification PKINIT est utilisée, ce
+qui signifie qu'un attaquant pourrait accéder par force brute à la
+réponse du centre de distribution de clés (KDC) d'une
+authentification PKINIT et par conséquent accéder à n'importe quelle
+session créée avec les tickets de service de cette authentification.
+</p>
+
+<p>
+Toute KDC utilisant le greffon PKINIT de Lenny devraient avoir leur paquet
+libssl0.9.8 immédiatement mis à niveau et le KDC de Kerberos redémarré avec :
+</p>
+
+<pre>
+/etc/init.d/krb5-kdc restart
+</pre>
+
+<p>
+Tous les tickets du service d'émission de tickets (TGT) de Kerberos et
+les sessions résultants d'une authentification PKINIT utilisant un KDC
+de Kerberos avec la libssl affectée doivent être considérés suspects ;
+
+un attaquant ayant capturé des paquets pourrait
+compromettre ces clefs et ces sessions.
+</p>
+
+<h1><a name="nessus">Nessus</a></h1>
+
+<p>
+Le script de post-installation du paquet nessusd (serveur Nessus ) crée quelques
+clefs SSL pour les échanges sécurisés entre un serveur et un client Nessus.
+
+Ce canal de de communication doit être considéré compromis puisqu'un utilisateur
+malintentionné a pu intercepter les renseignements échangés entre le serveur et
+le client (parmi lesquels des renseignements sur les vulnérabilités de l'hôte
+distant) et pourrait envoyer des commandes aux serveurs en se faisant passer
+pour l'utilisateur connecté. 
+</p>
+
+<p>
+De plus, si l'administrateur a créé la clef de CA de Nessus ou un certificat
+utilisateur (avec nessus-mkcert-client) pour les authentifications distantes
+sur un serveur utilisant une version d'OpenSSL concernée par le problème de
+sécurité, ces clef devraient être considérées comme compromises.
+
+Remarquez que les utilisateurs distants ayant accès au serveurs Nessus
+peuvent lancer des attaques sur les serveurs où ils sont autorisés
+pour attaquer et, si activé sur la configuration locale (ce n'est pas
+le réglage par défaut sur Debian), ajouter des greffons qui seront
+exécutés sur le serveur Nessus avec le privilèges du superutilisateur.
+</p>
+
+<p>
+Les scripts de configuration du responsable recréeront les certificats
+OpenSSL lors de la configuration s'il ne sont pas trouvés.
+
+Vous devrez supprimer les certificats et en recréer de nouveaux avec :
+</p>
+
+<pre>
+rm -f /var/lib/nessus/CA/cacert.pem
+rm -f /var/lib/nessus/CA/servercert.pem
+rm -f /var/lib/nessus/private/CA/cakey.pem
+rm -f /var/lib/nessus/private/CA/serverkey.pem
+dpkg-reconfigure nessusd
+</pre>
+
+<p>
+Ensuite, il faudra supprimer les anciennes clefs
+d'utilisateur en /var/lib/nessus/users/NOMDUTILISATEUR/auth
+et les recréer de nouveau avec nessus-mkcert-client.
+
+Les anciennes clés ne seront plus valable une
+fois que la clef de CA aura été supprimée.
+</p>
+
+<p>
+Après avoir recréé la clef de CA, il faudra aussi distribuer le
+nouveau certificat de CA aux utilisateurs, et ils devront accepter
+le nouveau certificat du serveur Nessus quand ils se reconnecteront.
+
+Les configurations du certificat de l'ancien serveur devraient être
+retirées automatiquement mais vous pouvez les enlever vous-même en
+modifiant <code>.nessusrc.cert</code> (si le client Nessus est utilisé)
+ou <code>.openvasrc.cert</code> (si le client OpenVAS est utilisé).
+</p>
+
+
+<h1><a name="openswan">OpenSWAN et StrongSWAN</a></h1>
+
+<pre>
+rm /etc/ipsec.d/private/`nomdhote`Key.pem /etc/ipsec.d/certs/`nomdhote`Cert.pem
+dpkg-reconfigure (open|strong)swan
+/etc/init.d/ipsec restart
+</pre>
+
+<p>
+Attention : le redémarrage de services ipsec termine
+toutes les connections IPSec actuellement ouvertes, elles
+risquent donc de devoir être redémarrées de l'autre côté.
+</p>
+
+
+<h1><a name="openvpn">OpenVPN</a></h1>
+
+<p>
+Sauvegarder les fichiers de clef secrète.
+
+Même si les noms de clef sont arbitraires, ils peuvent être trouver avec :
+</p>
+
+<pre>grep secret /etc/openvpn/*.conf</pre>
+
+<p>
+Recréer les avec :
+</p>
+
+<pre>openvpn --genkey --secret NOM_DE_FICHIER_SECRET</pre>
+
+<p>
+Ensuite, copier clefs secrètes partagées sur les hôtes
+distants et redémarrer le VPN sur chaque hôte avec :
+</p>
+
+<pre>/etc/init.d/openvpn force-reload</pre>
+
+
+<h1><a name="proftpd">ProFTPD</a></h1>
+
+<p>
+le paquet Debian ne s'occupe pas de la création de clefs, donc les étapes
+suivantes ne sont nécessaires sur si les clefs SSJ ont été créées par ailleurs.
+</p>
+
+<p>
+Une mise à niveau de ProFTPD vers unstable contiendra
+un modèle de tls.conf avec les commentaires ci dessous.
+<p>
+
+<p>
+Note that the self-signed certificate generation is bit
+different from that suggested on the general openssl section, in order
+to avoid using of an explicit password at daemon startup.
+</p>
+
+<p>
+Vous pouvez recréer un un certificat auto-signé avec une commande du style :
+</p>
+
+<pre>
+ openssl req -x509 -newkey rsa:1024 \
+         -keyout /etc/ssl/private/proftpd.key -out /etc/ssl/certs/proftpd.crt \
+         -nodes -days 365
+</pre>
+
+<p>
+Les deux fichiers ne doivent être accessibles
+en lecture que pour le superutilisateur.
+
+Les chemins de fichier peuvent être vérifiés et configurés
+en utilisant les directives de configuration suivantes :
+</p>
+
+<pre>
+TLSRSACertificateFile                   /etc/ssl/certs/proftpd.crt
+TLSRSACertificateKeyFile                /etc/ssl/private/proftpd.key
+TLSCACertificateFile                    /etc/ssl/certs/CA.pem
+TLSOptions                              NoCertRequest
+</pre>
+
+
+<h1><a name="puppet">Puppet</a></h1>
+
+<p>
+vous pouvez gérer les certificats de Puppet vous-même ou avec Capistrano.
+</p>
+
+<p>
+Vous pouvez suivre les<a
+href="http://reductivelabs.com/trac/puppet/wiki/RegenerateSSL">instructions
+pour recréer les certificats SSL de Puppet avec Capistrano</a>.
+</p>
+
+<p>
+Si vous préférez procéder par vous-même, suivez le détail des étapes.
+</p>
+
+<ol>
+<li>Supprimer puis recréer les renseignements de CA :
+<pre>
+/etc/init.d/puppetmaster stop
+rm -rf $vardir/ssl/*
+/etc/init.d/puppetmaster start
+</pre>
+<p>
+Cependant, si vous utilisez mongrel, plutôt que de démarrer puppetmaster
+depuis le script d'initialisation, vous devrez d'abord arrêter
+l'interface web à l'écoute (Apache, nginx, etc.) puis exécutez ceci :
+</p>
+<pre>
+puppetmasterd --daemonize ; sleep 30 ; pkill -f 'ruby /usr/sbin/puppetmasterd'
+</pre>
+<p>
+Ce qui précède est nécessaire sinon, lors du fonctionnement
+avec mongrel, puppetmaster ne recréera pas ses CA.
+</p>
+</li>
+<li>Supprimer tous les certificats clients :
+<pre>
+/etc/init.d/puppet stop
+rm $vardir/ssl/*
+</pre> 
+</li>
+<li>Obliger tous les clients à demander un nouveau certificat :
+<pre>
+puppetd --onetime --debug --ignorecache --no-daemonize
+</pre>
+</li>
+<li>Une fois toutes les requêtes arrivées,
+  vous pouvez toutes les signer en une fois :
+<pre>
+puppetca --sign --all
+</pre> 
+</li>
+<li>Démarrer les clients puppet :
+<pre>
+/etc/init.d/puppet start
+</pre>
+</li>
+</ol>
+
+<p>
+Si ça vous convient, vous pouvez également
+activer temporairement l'autosignature.
+</p>
+
+
+<h1><a name="sendmail">sendmail</a></h1>
+
+<p>
+Sendmail (à la fois dans Etch et Lenny) crée de façon optionnelle
+des certificats OpenSSL par défaut lors de l'installation.
+</p>
+
+<p>
+La procédure de recouvrement des clef est triviale :
+</p>
+<pre>
+/usr/share/sendmail/update_tls new
+</pre>
+
+<p>
+Si vous avez personnalisé les modèles de /etc/mail/tls, ces
+valeurs seront réutilisées pour créer les nouveaux certificats.
+</p>
+
+
+<h1><a name="ssl-cert">ssl-cert</a></h1>
+
+<p>
+Le certificat <q>Snake Oil</q>
+/etc/ssl/certs/ssl-cert-snakeoil.pem peut être recréé avec :
+</p>
+
+<pre>make-ssl-cert generate-default-snakeoil --force-overwrite</pre>
+
+
+<h1><a name="telnetd-ssl">telnetd-ssl</a></h1>
+
+<pre>
+rm -f /etc/telnetd-ssl/telnetd.pem /etc/ssl/certs/telnetd.pem
+dpkg-reconfigure telnetd-ssl
+</pre>
+
+<p>
+C'est suffisant pour la configuration par défaut.
+
+Si l'administrateur local a configuré plus profondément
+l'infrastructure SSL, ces clefs devront être recrées également.
+</p>
+
+
+<h1><a name="tinc">tinc</a></h1>
+
+<p>
+Supprimer tous les fichiers de clefs privées et publiques suspects :
+</p>
+
+<ol>
+<li>supprimer rsa_key.priv ;</li>
+<li>modifier tous les fichiers du répertoire hosts/
+  et supprimer les blocs de clefs publiques.</li>
+</ol>
+
+<p>
+Créer une nouvelle paire de clefs public et privée :
+</p>
+<pre>
+tincd -n &lt;netname&gt; -K
+</pre>
+
+<p>
+Échanger le fichier de configuration de l'hôte avec la
+nouvelle clef publique avec les autres membres du VPN.
+
+Ne pas oublier de redémarrer les autres démons tinc.
+</p>
+
+<h1><a name="tor">Tor</a></h1>
+
+<p>
+Tor n'est pas dans stable, mais concerné dans Lenny.
+</p>
+
+<p>
+Les clients en version 0.1.2.x ne sont pas concernés.
+
+Les nœuds Tor ou les fournisseurs de services cachés de toute
+version, ainsi que tout le monde en version 0.2.0.x est concerné.
+</p>
+
+<p>
+Veuillez lire l'<a
+href="http://archives.seul.org/or/announce/May-2008/msg00000.html">annonce
+de vulnérabilité</a> sur la liste de diffusion d'annonces Tor.
+</p>
+
+<p>
+Mettre à niveau vers la version 0.1.2.19-3 (disponible
+dans testing, unstable, backports.org et l'habituel <a
+href="https://wiki.torproject.org/noreply/TheOnionRouter/TorOnDebian">dépôt
+noreply.org</a>) ou 0.2.0.26-rc-1 (disponible dans experimental et l'habituel
+<a href="https://wiki.torproject.org/noreply/TheOnionRouter/TorOnDebian">dépôt
+noreply.org</a>) est recommandé.
+
+Si vous exécutez un relais, ces versions obligeront à recréer
+de nouvelles clefs serveur (/var/lib/tor/keys/secret_*).
+</p>
+
+<p>
+Si vous exécutez un nœud Tor sans utiliser l'infrastructure du paquet
+(utilisateur de debian-tor, DataDirectory configuré en /var/lib/tor,
+etc.), vous devez supprimer vous-même les mauvaises clefs.
+
+Voir l'annonce de vulnérabilité dont le lien est ci-dessus.
+</p>
+
+<p>
+Si vous êtes un fournisseur de service caché, et avez créé
+la clef pendant la période concernées avec une mauvaise
+libssl, veuillez effacer la clef privée du service caché.
+
+Le nom d'hôte du service caché sera modifié et vos
+serveurs risquent de devoir être reconfigurés.
+</p>
+
+<p>
+Si vous utilisez une version 0.2.0.x, une mise à niveau
+est sérieusement recommandée &mdash; la moitié des six
+serveurs d'autorité v3 ont des clefs compromises.
+
+Les anciennes versions 0.2.0.x ne fonctionneront plus d'ici une semaine ou deux.
+</p>
+
+<h1><a name="xrdp">xrdp</a></h1>
+
+<p>
+xrdp utilise des clefs crées.
+
+La plupart des client ne vérifient pas ces clefs par défaut,
+par conséquent les changer est sans grande conséquences.
+
+Il suffit de faire :
+</p>
+
+<pre>
+rm /etc/xrdp/rsakeys.ini
+/etc/init.d/xrdp restart
+</pre>
+
+<p>
+xrdp n'est pas dans stable.
+</p>
