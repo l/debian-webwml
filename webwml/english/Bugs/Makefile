@@ -9,6 +9,11 @@ GETTEXTFILES += bugs.mo
 
 include $(WMLBASE)/Make.lang
 
+ifeq "$(LANGUAGE)" "en"
+clean::
+	rm -f pseudo-packages.description 
+endif
+
 $(ENGLISHDIR)/Bugs/pkgreport-opts.inc: $(TEMPLDIR)/language_names.wml \
   $(TEMPLDIR)/common_tags.wml $(GETTEXTDEP) $(call locale,bugs)
 	touch $@ # because of $(?F)
@@ -23,3 +28,8 @@ server-request.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc $(ENGLI
 pseudo-packages.$(LANGUAGE).html: $(ENGLISHDIR)/Bugs/pseudo-packages.description \
   $(TEMPLDIR)/template.wml otherpages.inc $(ENGLISHDIR)/Bugs/footer.inc \
   $(ENGLISHDIR)/Bugs/pseudo-packages.inc $(GETTEXTDEP)
+
+.PHONY: $(ENGLISHDIR)/Bugs/pseudo-packages.description
+
+$(ENGLISHDIR)/Bugs/pseudo-packages.description:
+	wget -O $(ENGLISHDIR)/Bugs/pseudo-packages.description http://bugs.debian.org/pseudopackages/pseudo-packages.description
