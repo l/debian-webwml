@@ -123,6 +123,8 @@ sub rdf_add
     $body =~ s/</&lt;/g;
     $body =~ s/>/&gt;/g;
 
+		$headline =~ s/<[\/]*[a-z0-9]*>//g;
+
     $rss->add_item (title       => $headline,
 		    description => $body,
 		    link        => $url.'#'.$count,
