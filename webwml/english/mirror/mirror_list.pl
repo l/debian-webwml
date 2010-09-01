@@ -11,7 +11,7 @@ require 5.001;
 my @filter_arches=qw(); # Architectures not to list.
 
 my $officialsiteregex = q{^ftp\d?(?:\.wa)?\...\.debian\.org$};
-my $internalsiteregex = q{^((ftp|www|security|volatile)-master|ftp)\.debian\.org$};
+my $internalsiteregex = q{^((ftp|www|security|volatile|backports)-master|ftp)\.debian\.org$};
 
 use Getopt::Long;
 my ($mirror_source, $output_type, $help);
@@ -55,8 +55,9 @@ sub process_line {
   elsif ($line =~ /^Alias(?:es)?:\s*(.+)\s*$/is) {
     push @{ $mirror[$count-1]{aliases} }, $_ foreach (split("\n", $1));
   }
-  elsif ($line =~ /^Archive-architecture:\s*(.+)\s*$/i && length $1) { 
-    my @arches=split(' ', $1);
+  elsif ($line =~ /^(\w+)-architecture:\s*(.+)\s*$/i && length $2) { 
+    my $key = "$1"."-architecture";
+    my @arches=split(' ', $2);
     foreach my $f (@filter_arches) {
       @arches=grep { ! /^$f$/ } @arches;
     }
@@ -68,7 +69,7 @@ sub process_line {
       @arches=grep { ! /^\!$f$/ } @arches;
     }
     if (@arches) {
-      $mirror[$count-1]{'archive-architecture'}=\@arches;
+      $mirror[$count-1]{$key}=\@arches;
     }
   }
   elsif ($line =~ /^([\w-]+-upstream):\s*(.+)\s*$/s) {
@@ -126,8 +127,8 @@ sub aptlines {
     print "\n";
     foreach my $id (@{ $countries{$country} }) {
       my $archcomm="";
-      if ($mirror[$id]{'archive-architecture'}) {
-        $archcomm=" # ".join(" ", sort @{$mirror[$id]{'archive-architecture'}})."\n";
+      if ($mirror[$id]{'Archive-architecture'}) {
+        $archcomm=" # ".join(" ", sort @{$mirror[$id]{'Archive-architecture'}})."\n";
       }
       if (defined $mirror[$id]{method}{'archive-ftp'}) {
         print "deb ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'} stable main contrib non-free$archcomm\n";
@@ -305,7 +306,7 @@ EOF
 EOF
         }
       }
-      my $archlistsorted = join(" ", sort @{$mirror[$id]{'archive-architecture'}});
+      my $archlistsorted = join(" ", sort @{$mirror[$id]{'Archive-architecture'}});
       if ($html) {
         print "<td valign=top><small><small>$archlistsorted</small></small></td>\n";
       } elsif ($text) {
@@ -542,7 +543,7 @@ END
         die "official mirror " . $mirror[$id]{site} . " does not have archive-http?!";
       }
 
-      my $arches = join(" ", sort @{$mirror[$id]{'archive-architecture'}});
+      my $arches = join(" ", sort @{$mirror[$id]{'Archive-architecture'}});
 
       if ($html) {
         $countryplain =~ s/ /&nbsp;/;
@@ -971,8 +972,8 @@ EOF
         }
         print "<br>" if $wml;
       }
-      if (exists $mirror[$id]{'archive-architecture'}) {
-        print "Includes architectures: ".join(" ", sort @{$mirror[$id]{'archive-architecture'}})."\n";
+      if (exists $mirror[$id]{'Archive-architecture'}) {
+        print "Includes architectures: ".join(" ", sort @{$mirror[$id]{'Archive-architecture'}})."\n";
         print "<br>" if $wml;
       }
       print "Update frequency: ";
@@ -1307,8 +1308,8 @@ sub volatile_mirrors {
       }
       print "</td>\n";
       print "<td>";
-      if (exists $mirror[$id]{'volatile-architecture'}) {
-        print join(" ", sort @{$mirror[$id]{'volatile-architecture'}});
+      if (exists $mirror[$id]{'Volatile-architecture'}) {
+        print join(" ", sort @{$mirror[$id]{'Volatile-architecture'}});
       } else {
         print " all";
       }
@@ -1330,8 +1331,8 @@ sub generate_nsupdate {
   my %arches;
   my %includedsomewhere;
   foreach my $id (0..$#mirror) {
-    if (exists $mirror[$id]{'archive-architecture'}) {
-      foreach my $arch (@{ $mirror[$id]{'archive-architecture'} }) {
+    if (exists $mirror[$id]{'Archive-architecture'}) {
+      foreach my $arch (@{ $mirror[$id]{'Archive-architecture'} }) {
         if ($arch eq 'ALL') {
           warn "found an ALL-architecture entry for $mirror[$id]{site}";
           next;
@@ -1379,8 +1380,8 @@ sub generate_nsupdate {
     }
 
     my @site_arches;
-    if (exists $mirror[$id]{'archive-architecture'}) {
-      @site_arches = @{$mirror[$id]{'archive-architecture'}};
+    if (exists $mirror[$id]{'Archive-architecture'}) {
+      @site_arches = @{$mirror[$id]{'Archive-architecture'}};
     } elsif (exists $mirror[$id]{'x-archive-architecture'}) {
       if (exists $includedsomewhere{$site}) {
         warn "using x-archive-architecture for $site, as it's included somewhere.\n";
