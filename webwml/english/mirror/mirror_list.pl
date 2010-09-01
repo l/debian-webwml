@@ -29,7 +29,7 @@ $mirror_source = 'Mirrors.masterlist' if (! defined $mirror_source);
 my $last_modify = gmtime((stat($mirror_source))[9]);
 
 my (@mirror, %countries, %countries_sorted, %countries_sponsors, %longest);
-my ($count, $nonuscount, $volatilecount, $cdimagecount);
+my ($count, $nonuscount, $volatilecount, $cdimagecount, $backportscount);
 my (%code_of_country, %plain_name_of_country);
 my %includedsites;
 
@@ -1265,19 +1265,22 @@ END
   }
 }
 
+
 # fork of secondary_mirrors
 # Changed for debian-volatile by Francesco Paolo Lovergine, 2005 
-sub volatile_mirrors {
-  print "<h2 class=\"center\">Mirrors of the Debian-volatile archive</h2>\n";
+sub generate_html_matrix {
+  my $archive_name = $_[0];
+  my $archive_name_lc = lc($archive_name);
+  print "<h2 class=\"center\">Mirrors of the Debian-".$archive_name_lc." archive</h2>\n";
   print "<table class=\"volatile\" summary=\"Mirrors sorted by Country\">\n";
   print "<colgroup span=\"5\">\n</colgroup>\n";
   print "<thead><tr><th>HOST NAME</th><th>FTP</th><th>HTTP</th><th>RSYNC</th><th>ARCHITECTURES</th></tr></thead>\n<tbody>\n";
   foreach my $country (sort keys %countries) {
     my %our_mirrors;
     foreach my $id (@{ $countries{$country} }) {
-      if (defined $mirror[$id]{method}{'volatile-ftp'} || 
-          defined $mirror[$id]{method}{'volatile-http'} || 
-          defined $mirror[$id]{method}{'volatile-rsync'}) {
+      if (defined $mirror[$id]{method}{"$archive_name_lc-ftp"} || 
+          defined $mirror[$id]{method}{"$archive_name_lc-http"} || 
+          defined $mirror[$id]{method}{"$archive_name_lc-rsync"}) {
             $our_mirrors{$id} = 1;
       }
     }
@@ -1287,29 +1290,29 @@ sub volatile_mirrors {
       next unless (exists $our_mirrors{$id});
       print "<tr><th>$mirror[$id]{site}</th>";
       print "<td>";
-      if (defined $mirror[$id]{method}{'volatile-ftp'}) {
-        print "<a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{'volatile-ftp'}\">";
-        print $mirror[$id]{method}{'volatile-ftp'};
+      if (defined $mirror[$id]{method}{"$archive_name_lc-ftp"}) {
+        print "<a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{\"$archive_name_lc-ftp\"}\">";
+        print $mirror[$id]{method}{"$archive_name_lc-ftp"};
         print "</a>\n";
       }
       print "</td>\n";
       print "<td>";
-      if (defined $mirror[$id]{method}{'volatile-http'}) {
-        print "<a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{'volatile-http'}\">";
-        print $mirror[$id]{method}{'volatile-http'};
+      if (defined $mirror[$id]{method}{"$archive_name_lc-http"}) {
+        print "<a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{\"$archive_name_lc-http\"}\">";
+        print $mirror[$id]{method}{"$archive_name_lc-http"};
         print "</a>\n";
       }
       print "</td>\n";
       print "<td>";
-      if (defined $mirror[$id]{method}{'volatile-rsync'}) {
-        print "<a href=\"rsync://$mirror[$id]{site}/$mirror[$id]{method}{'volatile-rsync'}\">";
-        print $mirror[$id]{method}{'volatile-rsync'};
+      if (defined $mirror[$id]{method}{"$archive_name_lc-rsync"}) {
+        print "<a href=\"rsync://$mirror[$id]{site}/$mirror[$id]{method}{\"$archive_name_lc-rsync\"}\">";
+        print $mirror[$id]{method}{"$archive_name_lc-rsync"};
         print "</a>\n";
       }
       print "</td>\n";
       print "<td>";
-      if (exists $mirror[$id]{'Volatile-architecture'}) {
-        print join(" ", sort @{$mirror[$id]{'Volatile-architecture'}});
+      if (exists $mirror[$id]{"$archive_name"}) {
+        print join(" ", sort @{$mirror[$id]{$archive_name}});
       } else {
         print " all";
       }
@@ -1678,6 +1681,7 @@ $count = @mirror;
 foreach my $id (0..$#mirror) {
   $nonuscount++ if (defined $mirror[$id]{method}{'nonus-ftp'} || defined $mirror[$id]{method}{'nonus-http'});
   $volatilecount++ if (defined $mirror[$id]{method}{'volatile-ftp'} || defined $mirror[$id]{method}{'volatile-http'});
+  $backportscount++ if (defined $mirror[$id]{method}{'backports-ftp'} || defined $mirror[$id]{method}{'backports-http'});
 }
 
 # Create arrays of countries, with their mirrors.
@@ -1798,8 +1802,11 @@ if ($output_type eq 'html') {
   cdimage_mirrors("httpftp");
 } elsif ($output_type eq 'cdimages-rsync') {
   cdimage_mirrors("rsync");
+} elsif ($output_type eq 'backports-wml') {
+  generate_html_matrix("Backports");
+  footer_stuff('wml', $backportscount);
 } elsif ($output_type eq 'volatile-wml') {
-  volatile_mirrors();
+  generate_html_matrix("Volatile");
   footer_stuff('wml', $volatilecount);
 } elsif ($output_type eq 'nsupdate') {
   generate_nsupdate();
