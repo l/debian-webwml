@@ -79,7 +79,7 @@ sub process_line {
       $mirror[$count-1]{$field} = $2;
     }
   }
-  elsif ($line=~ /^((Archive|NonUS|Security|WWW|CDimage|Jigdo|Old|Volatile)-(\w*)):\s*(.*)\s*$/i) {
+  elsif ($line=~ /^((Archive|NonUS|Security|WWW|CDimage|Jigdo|Old|Volatile|Backports)-(\w*)):\s*(.*)\s*$/i) {
     my $type = lc $1;
     my $value = $4;
     $mirror[$count-1]{method}{$type} = $value;
