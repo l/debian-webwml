@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Draft//EN">
+<HTML>
+<HEAD>
+<TITLE>Debian libc5 to libc6 Mini-HOWTO: Concerns</TITLE>
+</HEAD>
+<BODY>
+<A HREF="libc5-libc6-Mini-HOWTO-3.html">Previous</A>
+Next
+<A HREF="libc5-libc6-Mini-HOWTO.html#toc4">Contents</A>
+<HR>
+<H2><A NAME="s4">4. Concerns</A></H2>
+
+<H2><A NAME="ss4.1">4.1 Upgrading to libc6_2.0.5c-0.1</A>
+</H2>
+
+<P>Due to a change in the vthunk handling code in libc6 and libg++, you must
+upgrade to at least libg++272_2.7.2.8-0.1 when upgrading libc6.
+<P>
+<H2><A NAME="ss4.2">4.2 /sbin/e2fsck</A>
+</H2>
+
+<P>The e2fsck program in e2fsprogs_1.10-4 has a bug in it which will cause it
+to destroy data on partitions above 2GB in size.  The version in
+e2fsprogs_1.10-7 has fixed this bug.  <EM>IMPORTANT: If you run the older
+libc6-based e2fsck on a 2 GB or greater partition, YOU WILL LOSE DATA.</EM>
+<P>
+<H2><A NAME="ss4.3">4.3 /usr/bin/gencat</A>
+</H2>
+
+<P>Note also that both the man-db and the libc6-dev packages currently include
+<CODE>/usr/bin/gencat</CODE>.  The version of gencat in libc6-dev has been
+reported to cause segfault problems with man-db, you may wish to reinstall
+man-db after libc6-dev if you experience these problems.
+<P>
+<H2><A NAME="ss4.4">4.4 /etc/nsswitch.conf (NIS/YP)</A>
+</H2>
+
+<P>Handling of NIS/YP has changed slightly with libc6.  If you are using NIS,
+you will probably need to change <CODE>/etc/nsswitch.conf</CODE>, the <CODE>compat</CODE>
+option will preserve the libc5 behavior.  You should also change the
+<CODE>networks</CODE> line from <CODE>files dns</CODE> to <CODE>files</CODE>.  This will prevent
+network configuation programs from attempting to resolve hostnames.
+<P>
+<H2><A NAME="ss4.5">4.5 Upgrading to unstable by FTP</A>
+</H2>
+
+<P>The directory structure of the ftp site has been slightly modified, placing
+the contrib and non-free sections of the archive alongside the main section,
+to avoid contrib and non-free getting out of sync with earlier portions of
+the archives.  You must have dpkg-ftp_1.4.9 or greater to update your
+machine using dpkg-ftp.  If you are updating your machine via ftp, the
+proper information to give dpkg-ftp is:
+<P>
+<UL>
+<LI>Enter debian directory: <CODE>/debian</CODE></LI>
+<LI>Enter space seperated list of distributions to get:
+<CODE>dists/unstable/main dists/unstable/non-free dists/unstable/contrib</CODE></LI>
+</UL>
+<P>
+<H2><A NAME="ss4.6">4.6 libc5_5.4.33-6</A>
+</H2>
+
+<P>Debian 1.3.1r4 included an update to libc5 which conflicts with libc6.  The
+conflict was added because of problems with locales and the format of the
+utmp/wtmp files.  An older version of libc5 which doesn't conflict, as well
+as the development librarys, is saved at 
+<A HREF="ftp://ftp.gate.net/pub/users/storm/">ftp://ftp.gate.net/pub/users/storm/</A>.
+<P>
+<HR>
+<A HREF="libc5-libc6-Mini-HOWTO-3.html">Previous</A>
+Next
+<A HREF="libc5-libc6-Mini-HOWTO.html#toc4">Contents</A>
+</BODY>
+</HTML>

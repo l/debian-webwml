@@ -1,0 +1,139 @@
+                           README-autoup.sh
+
+Robert D. Hilliard <hilliard@debian.org> 25 March 1998
+
+     Debian 2.0 is based on the Gnu libc6 library, while earlier
+Debian versions were based on the libc5 library.  Programs compiled
+to dynamically link with the libc5 libraries will not run with the the
+libc6 libraries, and vice versa.  Debian has developed a method to
+permit binaries compiled for both libraries to coexist on a system,
+and to permit development under either library to be done.
+
+     Because certain libc6 packages are incompatible with some libc5
+packages, it is necessary to remove some libc5 packages and to install
+some libc6 packages before starting the upgrade.  These removals and
+installations must be done in the correct order or the system may be
+left in an unstable state.  Scott Ellis' "Debian libc5 to libc6
+Mini-HOWTO" (available from the Developer's Corner on www.debian.org)
+describes this process, and the user is urged to read and understand
+this document, and to read the text of the script before starting an
+upgrade.  FAILURE TO FOLLOW THESE INSTRUCTIONS CAREFULLY MAY LEAVE
+YOUR SYSTEM IN AN UNSTABLE STATE!  YOU HAVE BEEN WARNED!
+
+     The latest versions of the following packages from hamm are
+required for the upgrade:
+
+    ldso, libc5, libc6, timezones, locales, ncurses3.0, ncurses3.4,
+    libreadline2, libreadlineg2, bash, libg++272, dpkg, dpkg-dev,
+    dpkg-ftp, dpkg-mountable, libgdbm1, libgdbmg1, perl-base, and
+    perl.
+
+     You must 1.) have these packages available in the current
+directory, 2.) have a local or remote mirror mounted, or 3.) have an
+internet connection to get them by ftp from a mirror.
+
+     If you are upgrading from a buzz (1.1.x) system, the packages in
+the current directory (for option 1.) must include dpkg, version 1.4
+or higher, from a bo mirror or CD.  For options 2.) and 3.) the mirror
+selected must include bo as well as hamm.
+
+     If you plan to use a mounted mirror, you must be prepared to
+enter the full path to your debian mirror when asked.
+
+     If you choose the ftp option, you will be asked to select a US
+mirror (ftp.debian.org), a European mirror (ftp.infodrom.north.de), or
+to enter an alternate site.  If you select an alternate site, you must
+be prepared to enter the path to be used (debian/hamm/hamm/binary-i386
+for many sites; pub/debian/hamm/hamm/binary-i386 for many others).
+
+     Before starting the actual upgrade, this script removes a number
+of packages that, for one reason or another, interfere with the
+upgrade.  Some of these will be replaced with hamm packages by the
+script, others must be reinstalled with dselect after the script has
+run.  The script will write a file "removed-<today's date>" to the
+current directory listing all files that were removed. This file may
+be used as a guide in selecting packages to be installed with
+dselect.  
+
+     It is strongly recommended that you use /usr/bin/script to record
+a transcript of the session - in fact, it is a good idea to use script
+to record any dselect session and anything else that it is desirable
+to record.  Then if any problems develop, you can see what happened.
+script will write this transcript to the file specified as an argument
+- 'script -myfilename', or to the default filename 'typescript'.
+
+     The script must be run with superuser privileges, so either login
+as root or use su or sudo to gain superuser privileges.  Then cd to
+the directory containing the package files (if you are using option
+1), make sure your network connection (ppp or ethernet) is up (if you
+are using optiom 3), enter script '<filename>', then
+'<path-to-autoup.sh>/autoup.sh'.
+
+     Then answer the questions when asked (certain of the newly
+installed programs have interactive configuration scripts).  If the
+required packages are on your local file system it will take about 5
+minutes to run; if they must be obtained by ftp it may take much
+longer, depending on the speed of your network connection.
+
+     When the script finishes, it displays an informative message,
+which is repeated here for ready reference:
+
+libc6 is now installed.  Now run dselect to upgrade the rest of your
+system.[1]  When that's done, reboot with "shutdown -r now" for the
+utmp/wtmp wrapper functions in the upgraded libc5 to take effect.
+
+BTW, if you aren't using it already, check out dselect's "mountable"
+access method.  It's much faster than the standard "mounted" method, and
+it logs everything that happens in /var/log/dpkg-mountable.  You'll want
+to set "Allow overwriting repeated files?" to yes, and for extra speed
+set "Enable MD5 checksumming?" to no.
+
+If you are installing manually using dpkg, remember that all libc6 (g)
+libraries conflict with all the versions of their libc5 (non-g)
+counterparts prior to a certain version which placed libc5 libs in
+/usr/lib/libc5-compat.  This means that they conflict with your bo
+versions of libc5-linked libraries, but not the hamm versions.  For
+example, if you are installing xlib6g, you should install xlib6 from
+hamm first before installing xlib6g unless you have nothing that depends
+on xlib6 in which case you can safely remove it.
+
+All development packages (-dev, -dbg, and -pic) and a number of other
+incompatible packages have been removed during this upgrade procedure
+due to conflicts between libc5 and libc6 versions.  A list of the
+removed packages are in file "removed-<today's date>" in this
+directory.  You will have to re-install any of these packages you
+need.
+
+Finally, remember to fix up wtmp and utmp, otherwise last and
+who and sac, etc. won't work. Here's what Miquel van Smoorenburg
+<miquels@cistron.nl> had to say about this recently in debian-user
+mailing list:
+
+    > 1. You need to update ALL your packages to hamm
+    > 2. Reboot if you haven't done that already
+    > 3. You need to move the wtmp file and truncate the utmp file:
+    >    cd /var/log
+    >    mv wtmp wtmp.libc5
+    >    touch wtmp
+    >    cd /var/run
+    >    cp /dev/null utmp
+    > 4. You might want to reboot again to make sure
+    >
+    > This is because the "struct utmp" and thus the utmp and wtmp
+    > "databases" are different between libc5 and libc6
+
+[1]  Note the following from the libc5-libc6-Mini-HOWTO:
+4.5.  Upgrading to unstable by FTP
+
+  The directory structure of the ftp site has been slightly modified,
+  placing the contrib and non-free sections of the archive alongside the
+  main section, to avoid contrib and non-free getting out of sync with
+  earlier portions of the archives.  You must have dpkg-ftp_1.4.9 or
+  greater to update your machine using dpkg-ftp.  If you are updating
+  your machine via ftp, the proper information to give dpkg-ftp is:
+
+  o  Enter debian directory: /debian
+
+  o  Enter space separated list of distributions to get:
+     dists/frozen/main dists/frozen/non-free dists/frozen/contrib
+
