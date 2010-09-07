@@ -1,0 +1,222 @@
+TODO: (probably by somebody else.  this script is mostly good enough imo)
+  - this script _still_ needs more error checking :-)
+  - use tee to log what happens.
+
+Revision History:
+
+v0.00: 1998-01-08 (morning)
+  - a rough transcript of scott's doc and my own experiences
+
+v0.01: 1998-01-08 (night)
+  - a few bugfixes
+  - i got unlazy and put in the right subdirectories for each package. 
+    should run a lot faster.
+  - now checks for failure at critical points and exits with a different
+    exit code for each failure.
+  - now uses 'binary-$(dpkg --print-installation-architecture)' instead 
+    of 'binary-i386'.
+
+v0.02: 1998-01-09 
+  - fixed the perl-base/perl install (thanks Lindsay!)
+  - improved the DEVPACKAGES=$(dpkg --get-selections...) and added -dbg
+    packages.
+
+v0.03: 1998-01-09 (p.m.)
+  - fixed some directories
+  - changed "-iB" to "-iBE" so that if the script fails and is run again
+    it will not disturb things already in place.
+  - added a final "dpkg --configure --pending".
+  - sanity check that we are in the right place added
+
+v0.04: 1998-01-10 (Igor Grobman)
+  - made it possible to place all packages in current dir.
+  - added -pic packages to removal list.
+  - make sure dpkg-dev does not get selected for removal.
+  - moved dpkg-ftp and dpkg-mounted to the end.      
+
+v0.05: 1998-01-10 (Igor Grobman)
+  - added a note about upgrading libraries 
+
+v0.06: 1998-01-11 (Craig Sanders)
+  - restructured code to avoid code duplication. 
+  - cleaned up a few things
+  - prints advisory notes telling user what's happening.
+  - added some more instructions on what to do about development packages.
+  - added code to guess some obvious locations for the mirror, otherwise
+    ask user.
+
+v0.07: 1998-01-11 (Craig Sanders)
+  - uh oh.  i hard-coded in binary-i386.  quick...better release another
+    version before James notices.
+
+v0.08: 1998-01-11 (Craig Sanders)
+  - added libpthread0 to the remove list.
+  - fixed PKGS_LIBGPP (i mistyped it as PKGS_GPP)
+  - some old version of perl's postrm didn't delete a .packlist file
+    from /usr/lib/perl5/i486-linux/5.003/auto/Mail/.packlist.  check for
+    it and delete if found before installing perl.
+
+v0.09: 1998-01-13 (Craig Sanders)
+  - added datadumper and libnet-perl to be installed/upgraded before
+    dpkg-ftp.  Thanks, Igor.
+  - changed ` ... ` backticks to $( ... ) for DPKG & LDCONFIG
+    variables at top of script.
+
+v0.10: 1998-01-14 (Craig Sanders)
+  - two reports that xslib depends on xlib6-dev and splay depends on
+    libpthread0. added them to the remove list.
+  - wrote a dependancy checker using my debian sgrep macros and found
+    that the boot-floppies package depends on libc5-pic. added it to
+    remove list.
+  - added "../$ARCH" to $TRY.
+
+v0.11: 1998-01-17 (Craig Sanders)
+  - a user reported that localebin conflicted with libc6.  added to remove
+    list.
+  - fixed potential globbing problem reported by Kirk Hilliard
+    <kirk@ghoti.com>
+  - fixed 'or just hit enter to use "$DEFAULT"' problem reported by 
+    "Robert D. Hilliard" <hilliard@metrolink.net>.  there must be a 
+    Hilliard Conspiracy :-)
+
+v0.12: 1998-01-19 (Robert D. Hilliard <hilliard@metrolink.net>)
+  - modified to fix errors encountered when upgrading a rex filesystem:
+    - force removal of essential package timezone before installing 
+      timezones  
+    - remove xmanpages (if they are present before removing xlib6-dev.)
+    - remove perl-suid and perl-debug before upgrading perl-base and perl.)
+    - install ldso with a separate command from installing libc6 so ldso 
+      will be setup before libc6 is installed.
+    - remove exit-on-error from installation of perl-base and perl
+    - configure --pending after perl installation.
+  - saved names of removed packages in a file
+
+v0.13: 1998-01-21 (Craig Sanders)
+  - fixed globbing problem again for PKGS_LDSO and PKGS_LIBC6
+  - some cosmetic changes 
+  - i didn't like the idea of redirecting error messages to /dev/null
+    so i got rid of it.  I may use tee to save the output of this
+    script in a log file in some hypotherical future version.
+  - '|| exit 9' on the 'dpkg  --configure --pending' line after installing
+     perl.
+
+v0.14: 1998-01-26 (Craig Sanders)
+  - in v0.12, localebin was accidentally deleted from list of packages
+    to be removed.   fixed.
+
+v0.15: 1998-01-26 (Craig Sanders)
+  - i should have checked rob's changes more thoroughly.  yet another fix:
+    added $PKGS_LDSO to ALL_PKGS so that the script checks to see if the
+    ldso package is available to install.  this bug nearly killed someone's
+    system today and i am pissed off.
+  - made the script use --force-overwrite because @^@%@$!^@&^#$ dpkg 1.4.0.20
+    doesn't do it by default anymore.   this also pisses me off.
+  - don't run 'dpkg -r' if there's nothing to remove.
+
+v0.16 1998-01-27 (Craig Sanders)
+  - really added localebin to remove list.
+  - defined $DATE variable.
+  - moved the changelong into a separate file
+
+v0.17: 1998-01-28 (Turbo Fredriksson)
+  - added possibility to download the files via FTP _BEFORE_ attempting to
+    install packages...
+  - buggfixes in the FTP downloading
+
+v0.18: 1998-02-06 (Craig Sanders)
+  - four packages have moved to new subdirs.  fixed
+
+v0.19: 1998-02-07 (Craig Sanders)
+  - fixed "" quotes around $RM_LIST on the dpkg --remove line.
+
+v0.20: 1998-02-14 (Craig Sanders)
+  - added stuff to upgrade libc5 first and upgrade dpkg to bo's latest
+    version in case we are upgrading a buzz system.
+
+v0.21: 1998-02-14 (David Welton <davidw@gate.cks.com>)
+  - David made a whole bunch of changes to 0.19 to support alternate ftp
+    programs. i've just hacked his changes into 0.20.
+
+v0.21.1.3: 1998-03-11 (Robert D. Hilliard <hilliard@metrolink.net>)
+  - Robert fixed the ftp stuff, including the PKGS_LIBC5 problem.
+
+v0.22: 1998-03-26 (Craig Sanders)
+  there were still problems with ncftp. probably caused by the fact that
+  i have ncftp 3.0.0 beta 9 installed. anyway, i decided that futzing
+  around with ncftp was waste of time when plain old ftp was good enough
+  to do the job. i rewrote the ftp stuff like so:
+ - removed the ncftp stuff
+ - rewrote the ftp function so that it first creates an ftp script
+   file which gets fed into ftp -i -n
+ - got rid of the ftpftp function definition and $FTP_FUNC stuff and 
+   shuffled code around so that all the ftp stuff is inside the f)
+   case.
+ - deleted some cruft which didn't seem to be in use
+   (e.g.  stuff for lftp and wget, and the $ERROR_FILES variable)
+also:
+ - Rob H wrote a good readme for autoup.  i'll be including it on the autoup
+   home page from now on. http://debian.vicnet.net.au/autoup/ is the
+   fastest and most up-to-date site. http://taz.net.au/autoup/ is also
+   always up-to-date but much slower.
+
+v0.23: 1998-03-27 (Miquel van Smoorenburg <miquels@cistron.nl>)
+ - Miquel fixed several things, including a few really dumb mistakes i made:
+   - libgdbm1g is in base/, not in devel/
+   - __EOF__ needs to be at the start of the line
+   - `tempfile' is not present on a bo system ..
+   - libc5@libc6 is not a valid password for anonymous on most systems
+   - Install latest libg++27 otherwise libc5-dev cannot be removed
+   - Don't debug, really install
+   - Actually remove -dev packages
+
+v0.24: 1998-04-21 (Craig Sanders)
+ - added libstdc++, libslang0.99.34 (libc5), libslang0.99.38 (libc6),
+   netbase, and netstd to the list of packages to install.
+ - changed 'unstable' to 'frozen' in various places.
+ - sysman@tonelli.sns.it reported that the downloading the files to
+   /var/lib/dpkg/methods/ftp messes up the ftp method somehow.  changed
+   TRY to /tmp/autoup.
+
+v0.25: 1998-04-21 (Craig Sanders)
+ - remembered to disable debugging stuff so that the script actually 
+   does something.
+
+v0.26: 1998-05-29 (Craig Sanders)
+ - slang has moved from libs to base.
+ - netbase must be installed before netstd, not on same line.
+ - ALLPKGS was defined twice. once at start of script, and once
+   when SEDSCRIPT had been set. so, existence of netstd and netbase
+   wasn't being checked. changed to just process ALLPKGS with SEDSCRIPT.
+ - merged in functionality of make-tarfiles.sh so i don't have to update
+   it every time autoup gets updated.  This will make no difference to
+   most users, it is only useful for people maintaining autoup mirror
+   sites.
+
+v0.27: 1998-05-29 (Craig Sanders)
+ - changed 'ln' to 'ln -s' and 'tar cfz' to 'tar chfz' so that the
+   tarball can be created even if the local debian mirror and the
+   autoup directory are on different filesystems.
+
+v0.28: 1998-07-23 (Craig Sanders)
+ - libstdc++2.8 has moved from libs/ to base/
+ - libnet-perl has moved from interpreters/ to base/
+
+v0.29: 1998-08-15 (Craig Sanders)
+ - changed all directory references from 'frozen' to 'stable'
+ - fixed PKGS_NET problem (should have been $PKGS_NETBASE and $PKGS_NETSTD)
+ - changed RMFILE to "/root/autoup.removed-$DATE"
+ - fixed search for bo dpkg (for buzz upgrades).  dpkg 1.4.0.8 lives in 
+   .../debian/dists/stable/main/upgrade-i386 now.  note: still doesn't work for
+   ftp upgrade.   TODO.
+ - fixed $FTP_DIR_2
+ - changed "^ii" search pattern to "^.i" when searching for installed -dev pkgs
+
+v0.30: 1998-08-15 (Craig Sanders)
+ - really changed "^ii" search pattern to "^.i"
+
+v0.31: 1998-08-27 (Craig Sanders)
+ - --force-hold added to $DPKG_ARGS and to the "$DPKG --remove" line
+
+v0.32: 1998-08-27 (Craig Sanders)
+ - changed the displayed packages list as noted by Rob Hilliard.  
+

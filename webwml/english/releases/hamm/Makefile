@@ -3,7 +3,7 @@
 
 WMLBASE=../..
 CUR_DIR=releases/hamm
-SUBS=
+SUBS=autoup
 
 include $(WMLBASE)/Make.lang
 
