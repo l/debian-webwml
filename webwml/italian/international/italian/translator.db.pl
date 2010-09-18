@@ -64,7 +64,15 @@ sub init_translators {
 			file		=> 0,
 			compress	=> 'none'
 		},
-                
+		'Luca Monducci' => {
+			email		=> 'luca.mo@tiscali.it',
+			summary		=> 3,
+			logs		=> 0,
+			diff		=> 0,
+			tdiff		=> 0,
+			file		=> 0,
+			compress	=> 'none'
+		},                
                 # Below are special users, used to handle special cases
                 #     default:      default values
                 #     untranslated: pages not translated
