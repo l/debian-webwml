@@ -1,6 +1,6 @@
 #use wml::debian::template title="翻譯 Debian 網頁" BARETITLE=true
 #use wml::fmt::verbatim
-#use wml::debian::translation-check translation="1.47"
+#use wml::debian::translation-check translation="1.50"
 
 <P>為了讓翻譯人員的工作更加容易，在這些頁面的生成方式和您過去所熟知的之間存在
 一些差異。實際上這些網頁是通過由 <a
@@ -69,7 +69,9 @@ webwml/<var>language</var>/international/<var>language</var>/translator.db.pl
 
 <p>通過使用 webwml 根目錄中的 <tt>copypage.pl</tt> 腳本可以很容易的產生一個網
 頁的頁頭信息。這個腳本將復制頁面到合適的位置，在必要時創建目錄以及生成
-makefile，並且自動添加所需的頁頭信息。</p>
+makefile，並且自動添加所需的頁頭信息。
+您可能會收到警告該頁面已經存在倉庫中，表示該頁面可能曾經翻譯過但過期太久而被移除，
+或是因為已經有人在您之前提交新的翻譯。</p>
 
 <p>當您執行過 <kbd>./copypage.pl <var>file</var>.wml</kbd> 之後，便可以對這個
 文件中的原始內容進行翻譯了。文件中的注釋用于標示一些不需要被翻譯的條目，請保留
@@ -171,6 +173,29 @@ href="mailto:webmaster@debian.org">webmaster@debian.org</a>。
 <p>當模板框架完成之後，您就可以開始前端頁面和其它 *.wml 文件的翻譯工作了。那些
 應當被優先翻譯的文件列表，請看 <a href="translation_hints">指點頁面</a>。*.wml
 頁面的翻譯事項就像 <a href="#singlepages">本頁面開頭</a> 描述過的那樣。
+
+<h3>重建過期的翻譯</h3>
+
+<p>如前面<a href="uptodate">保持翻譯的時效性</a>所說，過期的翻譯可能在很長一段時間
+沒有更新之後，自動被系統回收。</p>
+
+<p>如果您使用 <tt>copypage.pl</tt> 腳本來開始某個曾經被移除過的頁面，它會提示您
+使用舊有的資料來開始。您可以檢查為何該頁會被移除，如透過對此檔案下 <tt>cvs log</tt>
+命令或是使用網頁介面，曾被刪除的檔案存放在 "Attic" 子目錄下。
+</p>
+
+<p>為了取回這個過期的翻譯，先使用 <tt>cvs status</tt>
+(或是 <tt>cvs log</tt>) 來取得被刪除檔案的修訂號碼，然後進行<q>反方向的合併</q>。</p>
+
+<p>例如，如果被刪除的檔案名為 "deleted.wml"，而被刪除時的修訂號碼是 1.7，則被刪除前的
+修訂號碼則是 1.6 (減一)。您可以用以下命令來取回：
+
+<verbatim>
+   cvs update -j 1.7 -j 1.6 deleted.wml
+</verbatim>
+
+<p>在這之後，您就必須先更新這個頁面才能提交了。否則它還是會被系統移除的。</p>
+
 
 <h3>剩下來的故事</h3>
 
