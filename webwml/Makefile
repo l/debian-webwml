@@ -10,7 +10,7 @@ LANGUAGES-install := $(addsuffix -install,$(LANGUAGES))
 LANGUAGES-clean := $(addsuffix -clean,$(LANGUAGES))
 
 .SUFFIXES: 
-.PHONY: install all clean $(LANGUAGES) $(LANGUAGES-install)
+.PHONY: install all clean $(LANGUAGES) $(LANGUAGES-install) $(LANGUAGES-clean) list-languages
 
 all: $(LANGUAGES)
 
@@ -26,3 +26,6 @@ $(LANGUAGES-clean):
 
 $(LANGUAGES):
 	$(MAKE) -C $@
+
+list-languages:
+	@echo $(LANGUAGES)
