@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd -- Hurd-CDs" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.66"
+#use wml::debian::translation-check translation="1.67"
 # $Id$
 # Translator: Gerfried Fuchs <alfie@debian.org>  2001-09-07
 
@@ -209,7 +209,9 @@ keine IDE-Platten vorhanden. Bei den ersten Boot-Läufen müssen Sie aber die
   Einzelbenutzermodus zu starten, und die Option <code>--readonly</code> 
   von der Kommandozeile von <code>ext2fs.static</code> entfernen.</p>
 
-<p>Nehmen Sie die Hände von der Tastatur, bis der boot-Prozess beendet ist.</p>
+<p>WICHTIG: Beobachten Sie die Meldungen beim Booten und notieren Sie sich
+    sorgfältig, wo sich die CD-ROM befindet und halten Sie die Hände von der 
+    Tastatur entfernt, bis der boot-Prozess beendet ist.</p>
 
 <p><q>/boot/grub/menu.lst</q> oder <q>/boot/grub/grub.cfg</q> auf der 
    GRUB-Diskette kann editiert werden, damit
@@ -219,23 +221,25 @@ Ihr System so bootet, wie Sie es wünschen.</p>
 <h3>Die nächsten Schritte.</h3>
 
 <ol>
-<li><em>Nachdem das System gestartet hat, führen Sie ./native-install aus.</em>
-Starten Sie das System mittels <q>reboot</q> neu. DAS IST WICHTIG &ndash; beachten Sie
-die Start-Meldungen und merken Sie sich sorgfältig, wo das CD-ROM Laufwerk
-liegt. [Zweiter Neustart]</li>
+<li><em>Nachdem das System gestartet hat, erzeugen Sie die notwendigen 
+    Geräte.</em>
+    D.h. für das CD-ROM-Laufwerk, die Swap-Partition und alle anderen 
+    Festplatten-Partitionen.
+    <p>Z.B. <kbd>cd /dev</kbd> und <kbd>MAKEDEV hd2 hd0s2 hd0s3</kbd></p></li>
 
-<li><em>Nach dem Neustart führen Sie ./native-install ein zweites Mal aus.</em>
+<li><em>Swap aktivieren.</em>
+<samp>
+$ /hurd/mach-defpager<br />
+$ swapon /dev/hd0s2
+</samp>
+    Prüfen Sie, ob es funktioniert hat. Swap wird NACHDRÜCKLICH mit dem Hurd
+    empfohlen.</li>
+<li><em>./native-install. ausführen</em>
 Dieses mal wird eine ganze Reihe von Paketen konfiguriert. Starten Sie jetzt
-neu [Dritter Neustart]. Sie werden nun ein System zu konfigurieren haben.<br />
-Melden Sie sich als root an, <q>login root</q>.</li>
-
-<li><em>Wechseln Sie mit cd /dev das Verzeichnis. Legen Sie die notwendigen
-Devices an.</em> Das ist das CD-ROM Laufwerk, die swap-Partition und alle
-anderen Festplatten-Partitionen.
-
-<p>Z.B.
-<q>MAKEDEV hd2 hd0s2 hd0s3</q></p></li>
-
+    mit <kbd>reboot</kbd> neu [Zweiter Neustart]. Sie werden nun ein System zu 
+    konfigurieren haben.<br />
+Melden Sie sich als root an, <kbd>login root</kbd>.</li>
+    
 <li><em>Editieren Sie /etc/fstab, <q>nano /etc/fstab</q></em>.
 nano ist kein schlechter Editor.
 <p>Fügen Sie die Festplatten-Partitionen ein, z.B.<br />
@@ -246,10 +250,6 @@ nano ist kein schlechter Editor.
 <p>Der Hurd verwendet das ext2-Dateisystem. <q>/CD1</q> ist ein vorgeschlagener
 mount-Punkt für die Partition, die die Pakete von <cdbasename>-CD1 beinhaltet.
 Swap kann mit Linux mitbenutzt werden.</p></li>
-
-<li><em>Aktivieren Sie den Swap mit <q>swapon -a</q>.</em>
-Überprüfen Sie, ob das funktioniert hat. Swap wird für den Hurd STARK
-empfohlen.</li>
 
 <li><em>Setzen Sie den Übersetzer, der auf das CD-ROM Laufwerk zugreift,
 auf,</em> z.B.
