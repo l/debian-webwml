@@ -1,6 +1,7 @@
 #use wml::debian::template title="Tradurre le pagine" BARETITLE=true
 #use wml::fmt::verbatim
-#use wml::debian::translation-check translation="1.47" maintainer="Johan Haggi"
+#use wml::debian::translation-check translation="1.50" maintainer="Francesca Ciceri"
+#first translator and maintainer="Johan Haggi"
 
 <P>Per rendere più semplice il lavoro dei traduttori le pagine sono generate
 in un modo leggermente differente da quello al quale si è normalmente
@@ -77,10 +78,15 @@ traduttore. I differenti tipi di informazione sono:
                 },
 </verbatim>
 
-<p>L' header della pagina web pu&ograve; essere fatto semplicemente usando lo script
+<p>L'header della pagina web pu&ograve; essere fatto semplicemente usando lo script
 <tt>copypage.pl</tt> posto nella directory radice webwml. Lo script
 copier&agrave; la pagina al posto giusto, creando directory e
-makefile (se necessari) e aggiungendo automaticamente gli header richiesti.</p>
+makefile (se necessari) e aggiungendo automaticamente gli header richiesti.
+Si verrà avvisati nel caso in cui una pagina da copiare esista nel repository, o perché
+la pagina è stata rimossa dal repository (a causa del fatto che era troppo datata)
+oppure perché qualcuno ha già inviato un commit con la traduzione e la copia locale
+del proprio repository non è aggiornata.</p>
+
 
 <p>In altre parole dopo aver eseguito <kbd>./copypage.pl <var>file</var>.wml</kbd>,
 tradurre il testo originale del file. Commenti nei file indicheranno
@@ -105,9 +111,9 @@ Se funziona, si controlli la validità della sintassi con
 <p>Le pagine web saranno ricostruite dal CVS sul server www-master e
 questo processo è in grado di superare la maggior parte degli errori. Comunque, se si
 fa il commit di un file errato nel top level della traduzione (p.e. il
-file top-level index.wml), si potrebbe interrompere il processo di costruzione e mandare in stallo tutti
-gli altri aggiornamenti del sito web. Bisogna porre una particolare attenzione a questi
-file.</p>
+file top-level index.wml), si potrebbe interrompere il processo di costruzione e 
+mandare in stallo tutti gli altri aggiornamenti del sito web. Bisogna porre una 
+particolare attenzione a questi file.</p>
 
 <p>Una volta che si è controllata la pagina, si può fare il commit nel CVS. Se si hanno
 i permessi per farlo da soli, eseguire <kbd>cvs commit</kbd>; altrimenti,
@@ -123,7 +129,7 @@ nuova lingua, mandare un'email (in inglese) a
 <p>Prima di tutto, assicurarsi di aver fatto un esatto <i>checkout</i> del nostro albero
 dei sorgenti, come descritto <a href="using_cvs">nella nostra pagina di introduzione al CVS</a>.</p>
 
-<p>Dopo aver fatto il checked out delle directory webwml/ (almeno)
+<p>Dopo aver fatto il check out delle directory webwml/ (almeno)
 webwml/english/, cominciare creando una nuova directory per la traduzione,
 accanto ad english/ e alle altre. Il nome della directory con la traduzione deve
 essere in inglese ed interamente in caratteri minuscoli (p.e. "italian" non "Italiano").</p>
@@ -141,7 +147,7 @@ le seguenti cose:</p>
       file <tt>.wmlrc</tt>. Aggiungere CUR_LOCALE a questo file se avete bisogno di fare
       degli ordinamenti alfabetici.
 
-  <li>Alcune lingua potrebbero richiedere del lavoro extra per gestire un diverso insieme
+  <li>Alcune lingue potrebbero richiedere del lavoro extra per gestire un diverso insieme
       di caratteri. Questo pu&ograve; essere fatto usando le opzioni --prolog e --epilog
       di wml. Usare le variabili WMLPROLOG e WMLEPILOG in <tt>Make.lang</tt> per questo fine.
  
@@ -195,7 +201,7 @@ sezione di pagine web che la richiedono.</p>
 
 <p>Lo scopo dei file in po/ &egrave; di rendere pi&ugrave; facili le cose ai traduttori, in modo
 che non debbano (quasi) mai modificare nulla nella
-directory <tt>english/template/debian</tt> .
+directory <tt>english/template/debian</tt>.
 Se si trova qualsiasi errore nel modo in cui qualcosa &egrave;
 impostata nella directory template, ci si assicuri che il problema abbia
 una soluzione generale (si chieda pure a qualcun altro di farlo per voi),
@@ -213,6 +219,33 @@ pagina iniziale e degli altri file *.wml. Per una lista dei file che
 dovrebbero essere tradotti prima, si legga <a href="translation_hints">Suggerimenti utili per
 la traduzione</a>. Si traducano le pagine *.wml come descritto <a href="#singlepages">all'inizio
 di questa pagina</a>.</p>
+
+<h3>Rimettere in uso traduzioni datate</h3>
+
+<p>Come descritto alla pagina <a href="uptodate">Mantenere le traduzioni del sito web aggiornate</a>,
+le traduzioni troppo datate vengono rimosse automaticamente dopo che è passato 
+un certo periodo di tempo senza che vi sia stato alcun aggiornamento.</p>
+
+<p>Se si utilizza <tt>copypage.pl</tt> con un file che è stato rimosso
+da CVS, lo script si rifiuterà di copiare la pagina e chiederà invece se si desidera
+rimetterla in uso. Si può quindi controllare perché il file è stato tolto da cvs
+usando <tt>cvs log</tt> sul file rimosso (oppure mediante l'interfaccia web: i file
+cancellati si possono trovare nella sottodirectory "Attic").</p>
+
+<p>Per rimettere in uso la pagina utilizzare <tt>cvs status</tt> (o <tt>cvs log</tt>)
+per conoscere il numero di versione della pagina cancellata e quindi eseguire un
+<q>backwards merge</q>.</p>
+
+<p>Ad esempio, nel caso in cui il file cancellato fosse "deleted.wml" e la versione cancellata 
+la 1.7, la versione precedente alla cancellazione sarebbe la 1.6 (ovvero la versione
+cancellata meno uno). Si potrebbe quindi ripristinare questo file eseguendo:
+
+<verbatim>
+   cvs update -j 1.7 -j 1.6 deleted.wml
+</verbatim>
+
+<p>Una volta fatto questo si deve, naturalmente, aggiornare il documento prima di verificare di nuovo. In caso contrario potrebbe essere rimosso.
+
 
 <h3>Il resto della storia</h3>
 
