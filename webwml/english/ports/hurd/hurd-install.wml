@@ -16,30 +16,26 @@ It is based in Neal H. Walfield's <q>The Hurd Installation Guide</q>.
 Many thanks to Neal for his contribution.
 </p>
 
-<!--
-<p>
-Note that some points in this manual are a bit inconvenient because they take a
-lot of time and may cause problems. You may prefer the installation over the
-<a href="hurd-cd">prepared CD images</a>, especially if you are a beginner.
-Even if they are outdated, they usually work. You can still get updates from
-the online repositories.
-</p>
--->
+#<p>
+#Note that some points in this manual are a bit inconvenient because they take a
+#lot of time and may cause problems. You may prefer the installation over the
+#<a href="hurd-cd">prepared CD images</a>, especially if you are a beginner.
+#Even if they are outdated, they usually work. You can still get updates from
+#the online repositories.
+#</p>
 
 <h2> 1. Overview </h2>
 
-<!--
-<p>
-The Debian GNU/Hurd distribution, unlike distributions of other operating
-systems, does not have a nice installation program. One day it will and maybe
-you will help design and implement it; however, until that day, installing
-Debian GNU/Hurd requires another operating system, specifically, another
-Unix-like system. Users have indicated successful installations using different
-flavors of GNU/Linux as well as the BSDs. The minimum requirements of the
-bootstrap operating system are the ability: to create an ext2 file system; to
-extract a tar archive on to it; and to install GNU Grub.
-</p>
--->
+#<p>
+#The Debian GNU/Hurd distribution, unlike distributions of other operating
+#systems, does not have a nice installation program. One day it will and maybe
+#you will help design and implement it; however, until that day, installing
+#Debian GNU/Hurd requires another operating system, specifically, another
+#Unix-like system. Users have indicated successful installations using different
+#flavors of GNU/Linux as well as the BSDs. The minimum requirements of the
+#bootstrap operating system are the ability: to create an ext2 file system; to
+#extract a tar archive on to it; and to install GNU Grub.
+#</p>
 
 <p>
 GNU is similar in nature to any Unix-like system: after logging in, the user is
@@ -70,476 +66,469 @@ report them, along with any other suggestions or criticisms, to him; all are
 gladly accepted.
 </p>
 
-<!--
-
-<h2> 2. Real Estate or Finding A Home </h2>
-
-<p>
-If you do not have an available partition or an extra hard drive, this can be
-the longest step. In this case, you will need to repartition the hard drive.
-One solution is to use GNU's partition editor,
-<a href="http://packages.debian.org/parted">Parted</a>. It features not only
-basic partition editing but also partition resizing and moving functionality.
-The manual is quite complete and includes several tutorials. Note that also
-there is a <code>63 GNU HURD or SysV</code> partition type, it should not be
-used or else the installation CD will not find it. Just use <code>83
-Linux</code>
-</p>
-
-<p>
-The Hurd supports several extensions to the ext2fs filesystem format. Foremost
-among these are passive translators and a fourth set of permission bits for
-unknown users (users without an identity--not the other user). To use these
-extensions, the owner of the partition must be set to <code>hurd</code>.
-<code>mke2fs</code>, unless specifically overridden on the command line, will
-set the owner to whatever kernel it is running on. As the Hurd will diligently
-respect this setting, care must be taken to set this appropriately or the Hurd
-will fail in subtle ways. Be aware that even if a file system is owned by a
-particular kernel, others may still use it; they just may not be able to use
-certain extensions.
-</p>
-
-<p>
-To create a filesystem, use <code>mke2fs</code> and pass it <q><var>-b 4096
--I 128 -o hurd</var></q> to designate the Hurd as the owner of the new file
-system. For instance, assuming the partition is <tt><q>/dev/hda1</q></tt>:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
- \# mke2fs -b 4096 -I 128 -o hurd /dev/hda1
-</pre></td></tr></table>
-
-
-<h2> 3. The Boot Loader </h2>
-
-<p>
-The bootloader of the GNU system is Grub, the GRand Unified Boot loader,
-and it is its main purpose to boot the GNU system core (Mach and the Hurd).
-Any boot loader that supports the multiboot standard, though, may be used to
-load Mach and the Hurd. At the moment (that we're aware of), GNU Grub is the
-only bootloader that supports such standard.
-</p>
-
-<p>
-A word about Grub. Unlike traditional boot loaders on the x86, such as LILO,
-Grub is very powerful. It has a command line interface, bootp, dummy terminal
-support and a plethora of other features. In addition, it can boot almost any
-kernel. If you have ever booted an alpha or sparc, you will understand what
-Grub can do. Therefore, do not be scared: Grub is better. You will like it.
-You will not go back.
-</p>
-
-<p>
-It is probably better if you install
-<a href="http://packages.debian.org/grub2">Grub</a> before installing the
-Hurd, but you can always install it onto your hard drive at a later date.
-</p>
-
-
-<h2> 4. Cross Install </h2>
-
-<p>
-The next step is to get a base system. There are several alternatives, if you
-are running a Debian system you can use the package crosshurd. Otherwise you
-can get an updated base system tarball from any of the mirrors listed at
-<url "http://wiki.debian.org/DebianPorts/Mirrors" />.
-</p>
-
-<p>
-The tarball is set up to extract everything into the current directory.
-After the filesystem is mounted, the archive can be extracted.
-Assuming that the filesystem is on <tt><q>/dev/hda2</q></tt>, the mount point
-is <tt><q>/gnu</q></tt> and archive is in current user's home directory, the
-following is required:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
- \# mount -t ext2 /dev/hda2 /gnu
- \# cd /gnu
- \# tar --same-owner -xvjpf ~/gnu.tar.bz2
-</pre></td></tr></table>
-
-
-<h2> 5. Booting GNU/Hurd </h2>
-
-<p>
-All is now in readiness to boot GNU/Hurd for the first time. Note that depending
-on your version of GRUB, small details with vary. Please make sure whether you
-have GRUB1 (aka legacy aka 0.95 and later up to 0.97), or GRUB2 (aka 1.95 and
-later). Examples below will provide both versions, make sure to pick the right
-one.
-</p>
-
-<p>
-Please also note that some problems have been reported when booting with only
-128MB memory, because of swap not being setup yet at this stage. Make sure to
-provide at least 256MB memory.
-</p>
-
-<p>
-If your system already has GRUB installed, just reboot it. Else, you need to use
-a Grub boot disk. On Debian, the grub-disk (grub1) or grub-rescue-pc (grub2)
-packages provides CD and Floppy disk images. Make sure that the Grub boot disk
-is in the drive, reboot. If all goes well, either a Grub menu or command line
-will be displayed. If the menu has a <tt><q>GNU/Hurd</q></tt> entry, you will
-probably be able to just reuse it to save a lot of typing burden. For now, if
-presented with a menu, press <kbd>c</kbd> to go to the command line.
-</p>
-
-<p>
-First, GNU Mach needs to be loaded. This requires knowing the filesystem
-and the path to GNU Mach. Grub uses a partition nomenclature that is a bit
-different from both Linux and the Hurd: both IDE and SCSI drives are named
-<tt><q>(hdN,M)</q></tt>. <code>N</code> is the drive number (zero based) as
-enumerated by the BIOS. That is, Grub makes no distinction between IDE and SCSI
-disks. <code>M</code> identifies the partition on the drive. It is zero based
-in grub1 but one based in grub2. If this sounds confusing, relax:  Grub is also
-helpful.
-</p>
-
-<p>
-To determine on which filesystem a particular file resides, Grub provides the
-<code>find</code> command. When this command is issued along with a filename,
-Grub searches on each filesystem for the specified file and prints where it was
-found. For example, to search for the kernel, <tt><q>/boot/gnumach.gz</q></tt>:
-</p>
-
-<table>
-<tr><td>&nbsp;</td><td class=example><pre>
-   grub1&#62; find /boot/gnumach.gz
-   (hd0,0)
-</pre></td></tr>
-<tr><td>&nbsp;</td><td class=example><pre>
-   grub2&#62; search -f /boot/gnumach.gz
-   (hd0,1)
-</pre></td></tr>
-</table>
-
-<p>
-Here, Grub1 indicates that <tt><q>/boot/gnumach.gz</q></tt> is on
-<tt><q>(hd0,0)</q></tt> and Grub2, on <tt><q>(hd0,1)</q></tt> (remember the difference
-in partition numbering between Grub1 and Grub2).  To save you a couple of
-typing, set Grub's root to that value:
-</p>
-
-<table>
-<tr><td>&nbsp;</td><td class=example><pre>
-   grub1&#62; root (hd0,0)
-</pre></td></tr>
-<tr><td>&nbsp;</td><td class=example><pre>
-   grub2&#62; set root=(hd0,1)
-</pre></td></tr>
-</table>
-
-<p>
-Before loading the kernel, at least one option, the root partition, must be
-specified on the command line. This will be used by the Hurd itself (i.e. not
-Grub). As such, it must be in terms that the Hurd can understand.
-</p>
-
-<p>
-GNU Mach enumerates disks starting at zero. IDE drives are prefixed with
-<code>hd</code>, while SCSI disks are prefixed with <code>sd</code>. Like
-Linux, drives are number by their position on the controller. For instance, the
-primary master is <code>hd0</code> and the secondary slave is <code>hd3</code>.
-Partitions use the BSD slice naming convention and append <code>sM</code> to the
-drive name to indicate a given partition. Note that <code>M</code> is a one, not
-zero, based index. The slice number is simple to calculate: if you have Grub2,
-just reuse the same index, if you have Grub1, just increment what was used for
-Grub1 by one.
-</p>
-
-<p>
-Since the Hurd has not yet been configured, it must be started in single user
-mode. Adding a <q><var>-s</var></q> to the kernel command line is all that is
-required.
-</p>
-
-<p>
-To sum it up, assuming that the first drive (i.e. <tt><q>(hd0)</q></tt>) is the
-master on the master controller, we would have:
-</p>
-
-<table>
-<tr><td>&nbsp;</td><td class=example><pre>
-   grub1&#62; kernel /boot/gnumach.gz root=device:hd0s1 -s
-   [Multiboot-elf, ...]
-</pre></td></tr>
-<tr><td>&nbsp;</td><td class=example><pre>
-   grub2&#62; multiboot /boot/gnumach.gz root=device:hd0s1 -s
-</pre></td></tr>
-</table>
-
-<p>
-Next, the root filesystem server and the <code>exec</code> server must be
-loaded. This is done using Grub's boot module capability. The ${var} are
-filled in by GNU Mach. The arguments are used by the Hurd to indicate what
-type of information is being provided. Since the ext2fs command line is very
-long, it can be broken up by escaping the newline character in the normal Unix
-fashion. Be sure that there is not space after the antislash at the end of each
-line. Also be sure to differentiate <kbd>{</kbd> and <kbd>}</kbd> from <kbd>
-(</kbd> and <kbd>)</kbd>. Mind the subttle differences between Grub1 and
-Grub2: Grub2 needs that the filename be repeated and quotes need
-to be used. Note that at this stage the --readonly option of
-<code>ext2fs.static</code> must not be passed.
-</p>
-
-<table>
-<tr><td>&nbsp;</td><td class=example><pre>
-  grub1&#62; module /hurd/ext2fs.static \
-   --multiboot-command-line=${kernel-command-line} \
-   --host-priv-port=${host-port} \
-   --device-master-port=${device-port} \
-   --exec-server-task=${exec-task} -T typed ${root} \
-   $(task-create) $(task-resume)
-    [Multiboot-module  0x1c4000, 0x2cfe6a bytes]
-  grub1&#62; module /lib/ld.so.1 /hurd/exec $(exec-task=task-create)
-    [Multiboot-module  0x494000, 0x27afe bytes]
-</pre></td></tr>
-<tr><td>&nbsp;</td><td class=example><pre>
-  grub2&#62; module /hurd/ext2fs.static ext2fs \
-   --multiboot-command-line='${kernel-command-line}' \
-   --host-priv-port='${host-port}' \
-   --device-master-port='${device-port}' \
-   --exec-server-task='${exec-task}' -T typed '${root}' \
-   '$(task-create)' '$(task-resume)'
-  grub2&#62; module /lib/ld.so.1 exec /hurd/exec '$(exec-task=task-create)'
-</pre></td></tr>
-</table>
-
-<p>
-Alternatively, you can throw these lines into a <tt><q>menu.lst</q></tt> (Grub1) or <tt><q>grub.cfg</q></tt> (Grub2) configuration file in the partition, and load it by using <tt><q>configfile /path/to/menu.lst</q></tt> (Grub1) or <tt><q>configfile /path/to/grub.cfg</q></tt> (Grub2) from the grub prompt. You can of course also simply install grub in some MBR and point it to there.
-</p>
-
-<p>
-GNU/Hurd can be now booted:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
-grub&#62; boot
-</pre></td></tr></table>
-
-<p>
-If GNU/Hurd fails to boot, it could be due to shared IRQs: GNU Mach does not
-play well with these. You can verify your situation by looking at, for
-instance, the <tt><q>/proc/interrupts</q></tt> file under GNU/Linux. Also, as GNU
-Mach does not support loadable kernel modules, many of the drivers are compiled
-into the default kernel. If there are old peripherals, this can be a problem: a
-device may incorrectly respond to a probe intended for a completely unrelated
-device and thereby cause a crash. Building a new kernel with only the required
-device drivers will usually solve this problem. GNU Mach is easily cross
-compiled. If you are running Debian, install the <tt><q>mig</q></tt> package,
-and your stock <tt><q>gcc</q></tt> should do.
-</p>
-
-<p>
-If this does not help, ask on the appropriate mailing list.
-</p>
-
-
-<h2> 6. Native Install </h2>
-
-<p>
-Once you are presented with a shell prompt, and any time that the Hurd is in
-single user mode, it is necessary to set the terminal type:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
- \# export TERM=mach
-</pre></td></tr></table>
-
-<p>
-Be warned that <kbd>CONTROL-C</kbd> and family will not work in single user
-mode.
-</p>
-
-<p>
-We can now run the <code>native-install</code> script. This will configure the
-packages and set up several important translators:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
- \# ./native-install
-</pre></td></tr></table>
-
-<p>
-Before the script terminates, it will indicate that you can now reboot and enter
-multi-user mode. Do so, this is the Hurd, welcome!
-</p>
-
-
-<h2> 7. Configuration </h2>
-
-<h3> 7.1 The Network </h3>
-
-<p>
-First, make sure that your network card is recognized by GNU Mach:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
- \# devprobe eth0
- eth0
-</pre></td></tr></table>
-
-<p>
-If <code>devprobe eth0</code> does not return <code>eth0</code>, the kernel
-didn't detect your network board and you need to try another board. For
-instance, qemu's e1000 board is not supported, the pcnet one should work:
-<code>-net nic,model=pcnet -net user</code>
-</p>
-
-<p>
-To configure the network, the pfinet translator must be configured. This is
-done using the <code>settrans</code> command to attach a translator to a given
-filesystem node. When programs access the node by, for example sending an RPC,
-the operating system will transparently start the server to handle the request.
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
- \# settrans -fgap /servers/socket/2 /hurd/pfinet -i eth0 \
-   -a a.b.c.d -g e.f.g.h -m i.j.k.l
-</pre></td></tr></table>
-
-<p>
-Here, <code>settrans</code> is passed several options. The first two,
-<q><var>fg</var></q>, force any existing translator to go away. The next two,
-<q><var>ap</var></q>, make both active and passive translators. By making the
-translator active, we will immediately see any error messages on
-<tt><q>stderr</q></tt>. The latter saves the translator and arguments in the node
-so it can be transparently restarted later (i.e. making the setting persistent
-across reboots). The options are followed by the node to which the translator
-is to be attached, then the program (i.e. translator) to run and any arguments
-to give it. The <q><var>-i</var></q> option is the interface <code>pfinet</code>
-will listen on, <q><var>-a</var></q> is the IP address, <q><var>-g</var></q> is the
-gateway and <q><var>-m</var></q> is the network mask.
-</p>
-
-<p>
-Be sure to add name servers to your <tt><q>/etc/resolv.conf</q></tt> file:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
-  nameserver 192.168.1.1
-</pre></td></tr></table>
-
-<p>
-To test the configuration, <code>ping -c2 gateway</code>. The
-<q><var>-c</var></q> is important to limit the number of pings; recall,
-<kbd>CONTROL-C</kbd> does not work in single user mode.
-</p>
-
-<p>
-DHCP does not yet work on the Hurd. This is due to limitations of pfinet: it is
-based on the Linux' TCP/IP code and unable to listen on <tt><q>0.0.0.0</q></tt>.
-</p>
-
-<p>
-Help on <code>settrans</code> can be obtained by passing it the
-<q><var>--help</var></q> option. Help on a specific translator can be gotten by
-invoking it from the command line with the same argument, e.g.:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
- \# /hurd/pfinet --help
-</pre></td></tr></table>
-
-<p>
-As there can be a lot of output, consider piping this through a pager such as
-<code>less</code>.
-</p>
-
-
-<h3> 7.2 Other File Systems </h3>
-
-<p>
-Next, edit <tt><q>/etc/fstab</q></tt> to add any additional filesystems as well as
-swap space. It is <em>very important</em> that swap space be used; the Hurd
-will be an order of magnitude more stable. Note that the Hurd can transparently
-share a swap partition with Linux but will happily page to any device including
-a raw partition such as your home partition. By default, <code>nano</code> is
-the only editor installed by the base distribution.
-</p>
-
-<p>
-Here is an example <tt><q>/etc/fstab</q></tt> file:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
-\# &#60;file system&#62; &#60;mount point&#62;   &#60;type&#62;  &#60;options&#62;  &#60;dump&#62;  &#60;pass&#62;
-/dev/hd0s1      /               ext2    rw         0       1
-/dev/hd0s2      /home           ext2    rw         0       2
-/dev/hd0s3      none            swap    sw         0       0
-</pre></td></tr></table>
-
-<p>
-Remember to create any devices using the <code>MAKEDEV</code> command:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
- \# cd /dev
- \# ./MAKEDEV hd0s1 hd0s2 hd0s3
-</pre></td></tr></table>
-
-<p>
-To mount an nfs filesystem, <code>/hurd/nfs</code> translator is used. When
-run as non-root, the translator will connect to the server using a port above
-1023. By default, GNU/Linux will reject this. To tell GNU/Linux to accept
-connections originating from a non-reserved port, add the
-<q><var>insecure</var></q> option to the export line. Here is an example
-<tt><q>/etc/exports</q></tt> file assuming the client's ip address is
-<tt><q>192.168.1.2</q></tt>:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
-  /home  192.168.1.2(rw,insecure)
-</pre></td></tr></table>
-
-<p>
-To mount this from a GNU box and assuming that nfs server's ip address is
-<tt><q>192.168.1.1</q></tt>:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
-\# settrans -cgap /mount/point /hurd/nfs 192.168.1.1:/home
-</pre></td></tr></table>
-
-
-<h3> 7.3 Rebooting </h3>
-
-<p>
-Finally, reboot into multiuser mode, i.e. in the same way single user mode was
-brought up minus the <q><var>-s</var></q> option when loading the kernel. For
-details, see section 5. Booting GNU/Hurd.
-</p>
-
-<p>
-Happy Hacking!
-</p>
-
--->
+#<h2> 2. Real Estate or Finding A Home </h2>
+#
+#<p>
+#If you do not have an available partition or an extra hard drive, this can be
+#the longest step. In this case, you will need to repartition the hard drive.
+#One solution is to use GNU's partition editor,
+#<a href="http://packages.debian.org/parted">Parted</a>. It features not only
+#basic partition editing but also partition resizing and moving functionality.
+#The manual is quite complete and includes several tutorials. Note that also
+#there is a <code>63 GNU HURD or SysV</code> partition type, it should not be
+#used or else the installation CD will not find it. Just use <code>83
+#Linux</code>
+#</p>
+#
+#<p>
+#The Hurd supports several extensions to the ext2fs filesystem format. Foremost
+#among these are passive translators and a fourth set of permission bits for
+#unknown users (users without an identity--not the other user). To use these
+#extensions, the owner of the partition must be set to <code>hurd</code>.
+#<code>mke2fs</code>, unless specifically overridden on the command line, will
+#set the owner to whatever kernel it is running on. As the Hurd will diligently
+#respect this setting, care must be taken to set this appropriately or the Hurd
+#will fail in subtle ways. Be aware that even if a file system is owned by a
+#particular kernel, others may still use it; they just may not be able to use
+#certain extensions.
+#</p>
+#
+#<p>
+#To create a filesystem, use <code>mke2fs</code> and pass it <q><var>-b 4096
+#-I 128 -o hurd</var></q> to designate the Hurd as the owner of the new file
+#system. For instance, assuming the partition is <tt><q>/dev/hda1</q></tt>:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# mke2fs -b 4096 -I 128 -o hurd /dev/hda1
+#</pre></td></tr></table>
+#
+#
+#<h2> 3. The Boot Loader </h2>
+#
+#<p>
+#The bootloader of the GNU system is Grub, the GRand Unified Boot loader,
+#and it is its main purpose to boot the GNU system core (Mach and the Hurd).
+#Any boot loader that supports the multiboot standard, though, may be used to
+#load Mach and the Hurd. At the moment (that we're aware of), GNU Grub is the
+#only bootloader that supports such standard.
+#</p>
+#
+#<p>
+#A word about Grub. Unlike traditional boot loaders on the x86, such as LILO,
+#Grub is very powerful. It has a command line interface, bootp, dummy terminal
+#support and a plethora of other features. In addition, it can boot almost any
+#kernel. If you have ever booted an alpha or sparc, you will understand what
+#Grub can do. Therefore, do not be scared: Grub is better. You will like it.
+#You will not go back.
+#</p>
+#
+#<p>
+#It is probably better if you install
+#<a href="http://packages.debian.org/grub2">Grub</a> before installing the
+#Hurd, but you can always install it onto your hard drive at a later date.
+#</p>
+#
+#
+#<h2> 4. Cross Install </h2>
+#
+#<p>
+#The next step is to get a base system. There are several alternatives, if you
+#are running a Debian system you can use the package crosshurd. Otherwise you
+#can get an updated base system tarball from any of the mirrors listed at
+#<url "http://wiki.debian.org/DebianPorts/Mirrors" />.
+#</p>
+#
+#<p>
+#The tarball is set up to extract everything into the current directory.
+#After the filesystem is mounted, the archive can be extracted.
+#Assuming that the filesystem is on <tt><q>/dev/hda2</q></tt>, the mount point
+#is <tt><q>/gnu</q></tt> and archive is in current user's home directory, the
+#following is required:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# mount -t ext2 /dev/hda2 /gnu
+# \# cd /gnu
+# \# tar --same-owner -xvjpf ~/gnu.tar.bz2
+#</pre></td></tr></table>
+#
+#
+#<h2> 5. Booting GNU/Hurd </h2>
+#
+#<p>
+#All is now in readiness to boot GNU/Hurd for the first time. Note that depending
+#on your version of GRUB, small details with vary. Please make sure whether you
+#have GRUB1 (aka legacy aka 0.95 and later up to 0.97), or GRUB2 (aka 1.95 and
+#later). Examples below will provide both versions, make sure to pick the right
+#one.
+#</p>
+#
+#<p>
+#Please also note that some problems have been reported when booting with only
+#128MB memory, because of swap not being setup yet at this stage. Make sure to
+#provide at least 256MB memory.
+#</p>
+#
+#<p>
+#If your system already has GRUB installed, just reboot it. Else, you need to use
+#a Grub boot disk. On Debian, the grub-disk (grub1) or grub-rescue-pc (grub2)
+#packages provides CD and Floppy disk images. Make sure that the Grub boot disk
+#is in the drive, reboot. If all goes well, either a Grub menu or command line
+#will be displayed. If the menu has a <tt><q>GNU/Hurd</q></tt> entry, you will
+#probably be able to just reuse it to save a lot of typing burden. For now, if
+#presented with a menu, press <kbd>c</kbd> to go to the command line.
+#</p>
+#
+#<p>
+#First, GNU Mach needs to be loaded. This requires knowing the filesystem
+#and the path to GNU Mach. Grub uses a partition nomenclature that is a bit
+#different from both Linux and the Hurd: both IDE and SCSI drives are named
+#<tt><q>(hdN,M)</q></tt>. <code>N</code> is the drive number (zero based) as
+#enumerated by the BIOS. That is, Grub makes no distinction between IDE and SCSI
+#disks. <code>M</code> identifies the partition on the drive. It is zero based
+#in grub1 but one based in grub2. If this sounds confusing, relax:  Grub is also
+#helpful.
+#</p>
+#
+#<p>
+#To determine on which filesystem a particular file resides, Grub provides the
+#<code>find</code> command. When this command is issued along with a filename,
+#Grub searches on each filesystem for the specified file and prints where it was
+#found. For example, to search for the kernel, <tt><q>/boot/gnumach.gz</q></tt>:
+#</p>
+#
+#<table>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub1&#62; find /boot/gnumach.gz
+#   (hd0,0)
+#</pre></td></tr>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub2&#62; search -f /boot/gnumach.gz
+#   (hd0,1)
+#</pre></td></tr>
+#</table>
+#
+#<p>
+#Here, Grub1 indicates that <tt><q>/boot/gnumach.gz</q></tt> is on
+#<tt><q>(hd0,0)</q></tt> and Grub2, on <tt><q>(hd0,1)</q></tt> (remember the difference
+#in partition numbering between Grub1 and Grub2).  To save you a couple of
+#typing, set Grub's root to that value:
+#</p>
+#
+#<table>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub1&#62; root (hd0,0)
+#</pre></td></tr>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub2&#62; set root=(hd0,1)
+#</pre></td></tr>
+#</table>
+#
+#<p>
+#Before loading the kernel, at least one option, the root partition, must be
+#specified on the command line. This will be used by the Hurd itself (i.e. not
+#Grub). As such, it must be in terms that the Hurd can understand.
+#</p>
+#
+#<p>
+#GNU Mach enumerates disks starting at zero. IDE drives are prefixed with
+#<code>hd</code>, while SCSI disks are prefixed with <code>sd</code>. Like
+#Linux, drives are number by their position on the controller. For instance, the
+#primary master is <code>hd0</code> and the secondary slave is <code>hd3</code>.
+#Partitions use the BSD slice naming convention and append <code>sM</code> to the
+#drive name to indicate a given partition. Note that <code>M</code> is a one, not
+#zero, based index. The slice number is simple to calculate: if you have Grub2,
+#just reuse the same index, if you have Grub1, just increment what was used for
+#Grub1 by one.
+#</p>
+#
+#<p>
+#Since the Hurd has not yet been configured, it must be started in single user
+#mode. Adding a <q><var>-s</var></q> to the kernel command line is all that is
+#required.
+#</p>
+#
+#<p>
+#To sum it up, assuming that the first drive (i.e. <tt><q>(hd0)</q></tt>) is the
+#master on the master controller, we would have:
+#</p>
+#
+#<table>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub1&#62; kernel /boot/gnumach.gz root=device:hd0s1 -s
+#   [Multiboot-elf, ...]
+#</pre></td></tr>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub2&#62; multiboot /boot/gnumach.gz root=device:hd0s1 -s
+#</pre></td></tr>
+#</table>
+#
+#<p>
+#Next, the root filesystem server and the <code>exec</code> server must be
+#loaded. This is done using Grub's boot module capability. The ${var} are
+#filled in by GNU Mach. The arguments are used by the Hurd to indicate what
+#type of information is being provided. Since the ext2fs command line is very
+#long, it can be broken up by escaping the newline character in the normal Unix
+#fashion. Be sure that there is not space after the antislash at the end of each
+#line. Also be sure to differentiate <kbd>{</kbd> and <kbd>}</kbd> from <kbd>
+#(</kbd> and <kbd>)</kbd>. Mind the subttle differences between Grub1 and
+#Grub2: Grub2 needs that the filename be repeated and quotes need
+#to be used. Note that at this stage the --readonly option of
+#<code>ext2fs.static</code> must not be passed.
+#</p>
+#
+#<table>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#  grub1&#62; module /hurd/ext2fs.static \
+#   --multiboot-command-line=${kernel-command-line} \
+#   --host-priv-port=${host-port} \
+#   --device-master-port=${device-port} \
+#   --exec-server-task=${exec-task} -T typed ${root} \
+#   $(task-create) $(task-resume)
+#    [Multiboot-module  0x1c4000, 0x2cfe6a bytes]
+#  grub1&#62; module /lib/ld.so.1 /hurd/exec $(exec-task=task-create)
+#    [Multiboot-module  0x494000, 0x27afe bytes]
+#</pre></td></tr>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#  grub2&#62; module /hurd/ext2fs.static ext2fs \
+#   --multiboot-command-line='${kernel-command-line}' \
+#   --host-priv-port='${host-port}' \
+#   --device-master-port='${device-port}' \
+#   --exec-server-task='${exec-task}' -T typed '${root}' \
+#   '$(task-create)' '$(task-resume)'
+#  grub2&#62; module /lib/ld.so.1 exec /hurd/exec '$(exec-task=task-create)'
+#</pre></td></tr>
+#</table>
+#
+#<p>
+#Alternatively, you can throw these lines into a <tt><q>menu.lst</q></tt> (Grub1) or <tt><q>grub.cfg</q></tt> (Grub2) configuration file in the partition, and load it by using <tt><q>configfile /path/to/menu.lst</q></tt> (Grub1) or <tt><q>configfile /path/to/grub.cfg</q></tt> (Grub2) from the grub prompt. You can of course also simply install grub in some MBR and point it to there.
+#</p>
+#
+#<p>
+#GNU/Hurd can be now booted:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+#grub&#62; boot
+#</pre></td></tr></table>
+#
+#<p>
+#If GNU/Hurd fails to boot, it could be due to shared IRQs: GNU Mach does not
+#play well with these. You can verify your situation by looking at, for
+#instance, the <tt><q>/proc/interrupts</q></tt> file under GNU/Linux. Also, as GNU
+#Mach does not support loadable kernel modules, many of the drivers are compiled
+#into the default kernel. If there are old peripherals, this can be a problem: a
+#device may incorrectly respond to a probe intended for a completely unrelated
+#device and thereby cause a crash. Building a new kernel with only the required
+#device drivers will usually solve this problem. GNU Mach is easily cross
+#compiled. If you are running Debian, install the <tt><q>mig</q></tt> package,
+#and your stock <tt><q>gcc</q></tt> should do.
+#</p>
+#
+#<p>
+#If this does not help, ask on the appropriate mailing list.
+#</p>
+#
+#
+#<h2> 6. Native Install </h2>
+#
+#<p>
+#Once you are presented with a shell prompt, and any time that the Hurd is in
+#single user mode, it is necessary to set the terminal type:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# export TERM=mach
+#</pre></td></tr></table>
+#
+#<p>
+#Be warned that <kbd>CONTROL-C</kbd> and family will not work in single user
+#mode.
+#</p>
+#
+#<p>
+#We can now run the <code>native-install</code> script. This will configure the
+#packages and set up several important translators:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# ./native-install
+#</pre></td></tr></table>
+#
+#<p>
+#Before the script terminates, it will indicate that you can now reboot and enter
+#multi-user mode. Do so, this is the Hurd, welcome!
+#</p>
+#
+#
+#<h2> 7. Configuration </h2>
+#
+#<h3> 7.1 The Network </h3>
+#
+#<p>
+#First, make sure that your network card is recognized by GNU Mach:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# devprobe eth0
+# eth0
+#</pre></td></tr></table>
+#
+#<p>
+#If <code>devprobe eth0</code> does not return <code>eth0</code>, the kernel
+#didn't detect your network board and you need to try another board. For
+#instance, qemu's e1000 board is not supported, the pcnet one should work:
+#<code>-net nic,model=pcnet -net user</code>
+#</p>
+#
+#<p>
+#To configure the network, the pfinet translator must be configured. This is
+#done using the <code>settrans</code> command to attach a translator to a given
+#filesystem node. When programs access the node by, for example sending an RPC,
+#the operating system will transparently start the server to handle the request.
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# settrans -fgap /servers/socket/2 /hurd/pfinet -i eth0 \
+#   -a a.b.c.d -g e.f.g.h -m i.j.k.l
+#</pre></td></tr></table>
+#
+#<p>
+#Here, <code>settrans</code> is passed several options. The first two,
+#<q><var>fg</var></q>, force any existing translator to go away. The next two,
+#<q><var>ap</var></q>, make both active and passive translators. By making the
+#translator active, we will immediately see any error messages on
+#<tt><q>stderr</q></tt>. The latter saves the translator and arguments in the node
+#so it can be transparently restarted later (i.e. making the setting persistent
+#across reboots). The options are followed by the node to which the translator
+#is to be attached, then the program (i.e. translator) to run and any arguments
+#to give it. The <q><var>-i</var></q> option is the interface <code>pfinet</code>
+#will listen on, <q><var>-a</var></q> is the IP address, <q><var>-g</var></q> is the
+#gateway and <q><var>-m</var></q> is the network mask.
+#</p>
+#
+#<p>
+#Be sure to add name servers to your <tt><q>/etc/resolv.conf</q></tt> file:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+#  nameserver 192.168.1.1
+#</pre></td></tr></table>
+#
+#<p>
+#To test the configuration, <code>ping -c2 gateway</code>. The
+#<q><var>-c</var></q> is important to limit the number of pings; recall,
+#<kbd>CONTROL-C</kbd> does not work in single user mode.
+#</p>
+#
+#<p>
+#DHCP does not yet work on the Hurd. This is due to limitations of pfinet: it is
+#based on the Linux' TCP/IP code and unable to listen on <tt><q>0.0.0.0</q></tt>.
+#</p>
+#
+#<p>
+#Help on <code>settrans</code> can be obtained by passing it the
+#<q><var>--help</var></q> option. Help on a specific translator can be gotten by
+#invoking it from the command line with the same argument, e.g.:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# /hurd/pfinet --help
+#</pre></td></tr></table>
+#
+#<p>
+#As there can be a lot of output, consider piping this through a pager such as
+#<code>less</code>.
+#</p>
+#
+#
+#<h3> 7.2 Other File Systems </h3>
+#
+#<p>
+#Next, edit <tt><q>/etc/fstab</q></tt> to add any additional filesystems as well as
+#swap space. It is <em>very important</em> that swap space be used; the Hurd
+#will be an order of magnitude more stable. Note that the Hurd can transparently
+#share a swap partition with Linux but will happily page to any device including
+#a raw partition such as your home partition. By default, <code>nano</code> is
+#the only editor installed by the base distribution.
+#</p>
+#
+#<p>
+#Here is an example <tt><q>/etc/fstab</q></tt> file:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+#\# &#60;file system&#62; &#60;mount point&#62;   &#60;type&#62;  &#60;options&#62;  &#60;dump&#62;  &#60;pass&#62;
+#/dev/hd0s1      /               ext2    rw         0       1
+#/dev/hd0s2      /home           ext2    rw         0       2
+#/dev/hd0s3      none            swap    sw         0       0
+#</pre></td></tr></table>
+#
+#<p>
+#Remember to create any devices using the <code>MAKEDEV</code> command:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# cd /dev
+# \# ./MAKEDEV hd0s1 hd0s2 hd0s3
+#</pre></td></tr></table>
+#
+#<p>
+#To mount an nfs filesystem, <code>/hurd/nfs</code> translator is used. When
+#run as non-root, the translator will connect to the server using a port above
+#1023. By default, GNU/Linux will reject this. To tell GNU/Linux to accept
+#connections originating from a non-reserved port, add the
+#<q><var>insecure</var></q> option to the export line. Here is an example
+#<tt><q>/etc/exports</q></tt> file assuming the client's ip address is
+#<tt><q>192.168.1.2</q></tt>:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+#  /home  192.168.1.2(rw,insecure)
+#</pre></td></tr></table>
+#
+#<p>
+#To mount this from a GNU box and assuming that nfs server's ip address is
+#<tt><q>192.168.1.1</q></tt>:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+#\# settrans -cgap /mount/point /hurd/nfs 192.168.1.1:/home
+#</pre></td></tr></table>
+#
+#
+#<h3> 7.3 Rebooting </h3>
+#
+#<p>
+#Finally, reboot into multiuser mode, i.e. in the same way single user mode was
+#brought up minus the <q><var>-s</var></q> option when loading the kernel. For
+#details, see section 5. Booting GNU/Hurd.
+#</p>
+#
+#<p>
+#Happy Hacking!
+#</p>
 
 <h2> 8. Final Words </h2>
 
 
-<!--
-<h3> 8.1 The Grub Menu </h3>
-
-<p>
-Having to always load the kernel by hand can be very tedious. Edit the
-<tt><q>/boot/grub/menu.lst</q></tt> for Grub1 or
-<tt><q>/boot/grub/grub.cfg</q></tt> for Grub2 and tailor it appropriately;
-booting will become much quicker and easier.
-</p>
-
-
-<h3> 8.2 Adding Devices </h3>
-
-<p>
-By default, only a few devices are created in the <tt><q>/dev</q></tt> directory.
-Use the <code>MAKEDEV</code> script to create any needed device nodes.
-</p>
-
--->
+#<h3> 8.1 The Grub Menu </h3>
+#
+#<p>
+#Having to always load the kernel by hand can be very tedious. Edit the
+#<tt><q>/boot/grub/menu.lst</q></tt> for Grub1 or
+#<tt><q>/boot/grub/grub.cfg</q></tt> for Grub2 and tailor it appropriately;
+#booting will become much quicker and easier.
+#</p>
+#
+#
+#<h3> 8.2 Adding Devices </h3>
+#
+#<p>
+#By default, only a few devices are created in the <tt><q>/dev</q></tt> directory.
+##Use the <code>MAKEDEV</code> script to create any needed device nodes.
+#</p>
 
 <h3> 8.3 Installing More Packages </h3>
 
