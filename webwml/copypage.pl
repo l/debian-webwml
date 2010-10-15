@@ -327,7 +327,8 @@ sub decodeentity
 # Find for old translations in the CVS Attic 
 sub find_files_attic
 {
-        $dstfile =~ s/'//;
+        my ($file) = @_;
+        $file =~ s/'//;
 
         # Create a temporary file for the cvs results
         my ($tempfh, $tmpfile) = tempfile("cvsinfo.XXXXXX", DIR => File::Spec->tmpdir, UNLINK => 0) ;
@@ -335,7 +336,7 @@ sub find_files_attic
 
         # Run 'cvs status'. Unfortunately, this is the only way
         # to look for files in the Attic
-        system "cvs status '$dstfile' >$tmpfile 2>&1";
+        system "cvs status '$file' >$tmpfile 2>&1";
 
         # If CVS does not return an error then there is a file in CVS
         # even if $dstfile is not in the filesystem
@@ -345,6 +346,7 @@ sub find_files_attic
         if ( $? == 0 ) {
             my $deleted_version = "<latest_version>";
             my $previous_version = "<version_before_deletion>";
+            my $cvs_location = "";
 
             # Parse the result of cvs status
             open(TF, $tmpfile) || die ("Cannot open temporary file: $?");
@@ -360,18 +362,28 @@ sub find_files_attic
             unlink $tmpfile;
 
             # Now determine in which situation we are in
-            if ( $cvs_location =~ /Attic\// ) {
-                print STDERR "ERROR: An old translation exists in the Attic, you should restore it using:\n";
-                print STDERR "\tcvs update -j $deleted_version -j $previous_version $dstfile\n";
-                print STDERR "\t[Edit and update the file]\n";
-                print STDERR "\tcvs ci $dstfile\n";
-                die ("Old translation found\n");
-            } else {
-                die ("ERROR: A translation already exist in CVS for this file.\nPlease update your CVS copy using 'cvs update'.\n");
-            }
-        }
+            if ( $cvs_location ne "" ) {
+            # We need CVS information to continue here
+                if ( $cvs_location =~ /Attic\// ) {
+                # Situation 1 - There is a translation in the Attic
+                # Give information on how to restore
+                    print STDERR "ERROR: An old translation exists in the Attic, you should restore it using:\n";
+                    print STDERR "\tcvs update -j $deleted_version -j $previous_version $dstfile\n";
+                    print STDERR "\t[Edit and update the file]\n";
+                    print STDERR "\tcvs ci $dstfile\n";
+                 die ("Old translation found\n");
+                } else {
+                # Situation 2 - There is already a file in CVS with this
+                # name, since it does not exist in the local copy maybe
+                # the local copy is not up to date
+                     die ("ERROR: A translation already exist in CVS for this file.\nPlease update your CVS copy using 'cvs update'.\n");
+                } # of if $cvs_location Attic
+            } # of if $cvs_location ne ""
+         } # of if $?
+# Nothing to do if cvs returns an error, maybe its because we have
+# no network access
 
-# Return if cvs returns an error
+# Cleanup
         unlink $tmpfile;
         return 0;
 
