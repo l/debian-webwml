@@ -336,7 +336,7 @@ sub find_files_attic
 
         # Run 'cvs status'. Unfortunately, this is the only way
         # to look for files in the Attic
-        system "cvs status '$file' >$tmpfile 2>&1";
+        system "LC_ALL=C cvs status '$file' >$tmpfile 2>&1";
 
         # If CVS does not return an error then there is a file in CVS
         # even if $dstfile is not in the filesystem
