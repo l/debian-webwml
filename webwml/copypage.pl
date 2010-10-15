@@ -23,6 +23,7 @@ use lib "$FindBin::Bin/Perl";
 use File::Path;
 use Local::VCS qw(vcs_file_info);
 use File::Temp qw/tempfile/;
+use Getopt::Std;
 
 
 # Declare variables only used in references to avoid warnings
@@ -70,15 +71,24 @@ die "Language not defined in DWWW_LANG or language.conf\n"
 # Check usage.
 if ($#ARGV == -1)
 {
-	print "Usage: $0 page ...\n\n";
+	print "Usage: $0 [-n] page ...\n\n";
 	print "Copies the page from the english/ directory to the $language/ directory\n";
 	print "and adds the translation-check header with the current revision,\n";
 	print "optionally adds also the maintainer name.\n";
 	print "If the directory does not exist, it will be created, and the Makefile\n";
-	print "copied or created, depending on your language.conf setting.\n\n";
-	print "The 'english/' part of the input path is optional.\n";
+	print "copied or created, depending on the setting of your language.conf file.\n\n";
+	print "The 'english/' part of the input path is optional.\n\n";
+        print "If the file already exists in the $language/ repository either\n";
+        print "because it was removed (and is in the Attic) or has been removed\n";
+        print "locally the program will abort and warn the user (unless '-n' is used)\n";
+        print "Options:\n";
+        print "\t-n\tDoes not check status of target files in CVS\n";
 	exit;
 }
+
+# Options
+our ($opt_n);
+getopts('n'); 
 
 # Table of entities used when copying to non-latin1 encodings
 @entities = (
@@ -232,7 +242,7 @@ sub copy
 	# Retrieve VCS revision number
 	my %vcsinfo = vcs_file_info( $srcfile );
 
-        find_files_attic ( $dstfile ); 
+        find_files_attic ( $dstfile ) if ! $opt_n;
 
 	if ( not %vcsinfo  or  not exists $vcsinfo{'cmt_rev'}  )
 	{
@@ -329,6 +339,7 @@ sub find_files_attic
 {
         my ($file) = @_;
         $file =~ s/'//;
+        print "Checking CVS information for $file...\n";
 
         # Create a temporary file for the cvs results
         my ($tempfh, $tmpfile) = tempfile("cvsinfo.XXXXXX", DIR => File::Spec->tmpdir, UNLINK => 0) ;
@@ -338,7 +349,8 @@ sub find_files_attic
         # to look for files in the Attic
         system "LC_ALL=C cvs status '$file' >$tmpfile 2>&1";
 
-        if ( $? != 0 ) {
+        if ( $? != 0 ) 
+        {
         # CVS returns an error, then cleanup and return
         # Do not complain because this might happen just because we
         # have no network access, just cleanup the temporary file
@@ -370,14 +382,16 @@ sub find_files_attic
 
         # Now determine in which situation we are in:
 
-        if ( $cvs_location eq "" ) {
+        if ( $cvs_location eq "" ) 
+        {
 # Situation 0 - This happens when the return text is
 # "Repository revision: No revision control file"
             return 0; # Nothing to do here
 
         } 
         
-        if ( $cvs_location =~ /Attic\// ) {
+        if ( $cvs_location =~ /Attic\// ) 
+        {
 # Situation 1 - There is a translation in the Attic
 # Give information on how to restore
 
