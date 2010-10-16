@@ -37,7 +37,8 @@ $opt_v = 0;
 $opt_d = "u";
 $opt_l = undef;
 $opt_b = ""; # Base URL, if not debian.org
-getopts('h:w:b:p:t:vd:l:') || die;
+$opt_f = undef; # File lines: "1299999 /doc/index\n"
+getopts('h:w:b:p:t:vd:l:f:') || die;
 #  Replace filename globbing by Perl regexps
 $opt_p =~ s/\./\\./g;
 $opt_p =~ s/\?/./g;
@@ -50,6 +51,7 @@ $opt_p =~ s/$/\$/g;
 	   'title'   => $opt_t,
 	   'verbose' => $opt_v,
 	   'difftype'=> $opt_d,
+           'hit_file'=> $opt_f,
 	   );
 
 my $l = Webwml::Langs->new($opt_w);
@@ -267,7 +269,32 @@ print "done.\n" if ($config{'verbose'});
 # =============== Create HTML files ===============
 mkdir ($config{'htmldir'}, 02775) if (! -d $config{'htmldir'});
 
-my @filenames = sort keys %files;
+# Read website hit statistics, if available
+my %hits;
+my $file_sorter;
+if ($config{'hit_file'}) {
+    open(HITS, $config{'hit_file'}) or die sprintf("Opening hit file [%s] failed: $!", $config{'hit_file'});
+    printf "Reading hit file [%s]\n", $config{'hit_file'} if ($config{'verbose'});
+    foreach my $hit_line (<HITS>) {
+	chomp $hit_line;
+        $hit_line =~ /^\s*(\d+)\s+(.*)/ or warn sprintf("unrecognized hit file [%s] line [%s]", $config{'hit_file'}, $hit_line);
+	my ($count, $url) = ($1, $2);
+        last if $count < 3; # URLS with 2 or 1 hits are most likely mistakes; let's not waste RAM on them
+        $hits{substr($url, 1)} = $count;
+    }
+    close(HITS) or die sprintf("Closing hit file [%s] failed: $!", $config{'hit_file'});
+    $file_sorter = sub($$) {
+        my ($a, $b) = @_;
+        $a =~ s/\.wml$//o;
+        $b =~ s/\.wml$//o;
+        $hits{$b} <=> $hits{$a}
+    };
+} else {
+    print "No hit file specified. Tables will be sorted alphabetically.\n" if ($config{'verbose'});
+    $file_sorter = sub($$) { $_[0] cmp $_[1] };
+}
+
+my @filenames = sort $file_sorter keys %files;
 my $nfiles = scalar @filenames;
 $nsize += $sizes{$_} foreach (@filenames);
 
@@ -303,6 +330,8 @@ foreach $lang (@search_in) {
         # get stats about files
         foreach $file (@filenames) {
             next if ($file eq "");
+            (my $base = $file) =~ s/\.wml$//;
+            my $hits = exists $hits{$base} ? $hits{$base}.' hits' : 'hit count N/A';
             # Translated pages
             if (index ($wmlfiles{$lang}, " $file ") >= 0) {
                 $translated{$lang}++;
@@ -316,8 +345,7 @@ foreach $lang (@search_in) {
                         || ($file eq "devel/wnpp/wnpp.wml")) {
                         $o_body .= sprintf "<td>%s</td>", $file;
                     } else {
-                        (my $base = $file) =~ s/\.wml$//;
-                        $o_body .= sprintf "<td><a href=\"$opt_b/%s.%s.html\">%s</a></td>", $base, $l, $base;
+                        $o_body .= sprintf "<td><a title=\"%s\" href=\"$opt_b/%s.%s.html\">%s</a></td>", $hits, $base, $l, $base;
                     }
                     $o_body .= sprintf "<td>%s</td>", $transversion{"$lang/$file"};
                     $o_body .= sprintf "<td>%s</td>", $version{"$orig/$file"};
@@ -343,8 +371,7 @@ foreach $lang (@search_in) {
                         || ($file eq "devel/wnpp/wnpp.wml")) {
                         $t_body .= sprintf "<li>%s</li>\n", $file;
                     } else {
-                        (my $base = $file) =~ s/\.wml$//;
-                        $t_body .= sprintf "<li><a href=\"$opt_b/%s.%s.html\">%s</a></li>\n", $base, $l, $base;
+                        $t_body .= sprintf "<li><a title=\"%s\" href=\"$opt_b/%s.%s.html\">%s</a></li>\n", $hits, $base, $l, $base;
                     }
                 }
             }
@@ -355,8 +382,7 @@ foreach $lang (@search_in) {
                     || ($file eq "devel/wnpp/wnpp.wml")) {
                     $u_tmp = sprintf "<tr><td>%s</td><td>&nbsp;</td></tr>\n", $file;
                 } else {
-                    (my $base = $file) =~ s/\.wml$//;
-                    $u_tmp = sprintf "<tr><td><a href=\"$opt_b/%s\">%s&nbsp;&nbsp;(%s)</a></td><td align=\"right\">%d</td><td>(%.2f&nbsp;&permil;)</td></tr>\n", $base, $base, $version{"$orig/$file"}, $sizes{$file}, $sizes{$file}/$nsize * 1000;
+                    $u_tmp = sprintf "<tr><td><a title=\"%s\" href=\"$opt_b/%s\">%s&nbsp;&nbsp;(%s)</a></td><td align=\"right\">%d</td><td>(%.2f&nbsp;&permil;)</td></tr>\n", $hits, $base, $base, $version{"$orig/$file"}, $sizes{$file}, $sizes{$file}/$nsize * 1000;
                 }
 		if (($file =~ /international\//) &&
 		    (($file !~ /international\/index.wml$/) ||
