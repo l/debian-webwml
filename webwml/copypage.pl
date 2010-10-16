@@ -81,7 +81,7 @@ die "Language not defined in DWWW_LANG or language.conf\n"
 # Check usage.
 if ($#ARGV == -1)
 {
-	print "Usage: $0 [-n] [-m maintainer] page ...\n\n";
+	print "Usage: $0 [-n] [-l language] [-m maintainer] page ...\n\n";
 	print "Copies the page from the english/ directory to the $language/ directory\n";
 	print "and adds the translation-check header with the current revision,\n";
 	print "optionally adds also the maintainer name.\n";
