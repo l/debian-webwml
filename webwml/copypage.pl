@@ -61,6 +61,16 @@ if (exists $ENV{DWWW_MAINT})
 	$maintainer = $ENV{DWWW_MAINT};
 }
 
+# Values overwritten by commandline
+if (defined $opt_m)
+{
+        $maintainer = $opt_m;
+}
+if (defined $opt_l)
+{
+        $language = $opt_l;
+}
+
 die "Language not defined in DWWW_LANG or language.conf\n"
 	if not defined $language;
 
@@ -71,7 +81,7 @@ die "Language not defined in DWWW_LANG or language.conf\n"
 # Check usage.
 if ($#ARGV == -1)
 {
-	print "Usage: $0 [-n] page ...\n\n";
+	print "Usage: $0 [-n] [-m maintainer] page ...\n\n";
 	print "Copies the page from the english/ directory to the $language/ directory\n";
 	print "and adds the translation-check header with the current revision,\n";
 	print "optionally adds also the maintainer name.\n";
@@ -81,14 +91,21 @@ if ($#ARGV == -1)
         print "If the file already exists in the $language/ repository either\n";
         print "because it was removed (and is in the Attic) or has been removed\n";
         print "locally the program will abort and warn the user (unless '-n' is used)\n";
+        print "Environment variables:\n";
+        print "\tDWWW_LANG\tSets the language for the translation\n";
+        print "\t\t(overwrites language.conf definition\n";
+        print "\tDWWW_MAINT\tSets maintainer for the translation\n";
         print "Options:\n";
         print "\t-n\tDoes not check status of target files in CVS\n";
-	exit;
+        print "\t-m\tSets the maintainer for the translation (overwrites environment)\n";
+        print "\t-l\tSets the language for the translation (overwrites environment)\n";
+        print "\n";
+
 }
 
 # Options
-our ($opt_n);
-getopts('n'); 
+our ($opt_n, $opt_t, $opt_l);
+getopts('nm:l:'); 
 
 # Table of entities used when copying to non-latin1 encodings
 @entities = (
