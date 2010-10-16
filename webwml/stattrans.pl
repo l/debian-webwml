@@ -668,7 +668,7 @@ print HTMLI "</table>\n";
 print HTMLI "<h2>Translated templates (gettext files)</h2>\n";
 printf HTMLI "<p>There are %d strings to translate.</p>\n",$po_total{'total'};
 # print HTMLI $border_head;
-print HTMLI "<table summary=\"Gettext Translation Statistiks\"class=\"stattrans\">\n";
+print HTMLI "<table summary=\"Gettext Translation Statistics\"class=\"stattrans\">\n";
 # print HTMLI "<table width=\"100%\" border=0 bgcolor=\"#cdc9c9\">\n";
 print HTMLI "<colgroup span=\"1\"width=\"28%\">\n";
 print HTMLI "</colgroup>";
