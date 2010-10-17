@@ -1,5 +1,5 @@
 #use wml::debian::ddp title="SVN för Debian Documentation Project"
-#use wml::debian::translation-check translation="1.30"
+#use wml::debian::translation-check translation="1.32"
 #use wml::debian::toc
 
 # <h1>CVS-åtkomst till DDP-dokument</h1>
@@ -44,7 +44,7 @@ in i katalogen <strong>manuals</strong> och kör kommandot:</p>
   <code>svn export --force svn://svn.debian.org/svn/ddp/manuals</code>
 </p>
 
-<h3>Ansluta mot svn-server med uppdateringsprivilegier</h3>
+<h3>Ansluta mot svn-server med uppdateringsprivilegier (svn)</h3>
 
 <p>Innan du ansluter till svn-servern med denna metod måste du först få
 skrivåtkomst till den.
@@ -64,7 +64,30 @@ uppdateringsprivilegier först.</p>
 in i katalogen <strong>manuals</strong> och kör kommandot:</p>
 
 <p style="margin-left: 2em">
-  <code>svn update</code>
+  <code>svn export --force svn://svn.debian.org/svn/ddp/manuals</code>
+</p>
+
+<h3>Ansluta mot svn-server med uppdateringsprivilegier (git-svn)</h3>
+
+<p>Innan du ansluter till svn-servern med denna metod måste du först få
+skrivåtkomst till den.
+Läs mer om hur du
+<a href="#obtaining">efterfrågar</a>
+uppdateringsprivilegier först.</p>
+
+<p>Använd detta kommando för att hämta alla filer:</p>
+
+<p style="margin-left: 2em">
+  <code>git svn clone -s -rHEAD svn+ssh://svn.debian.org/svn/ddp/manuals manuals</code>
+</p>
+
+<p>Detta kommer att skapa och fylla alla kataloger rekursivt. Det kommer också skapa ett lokelt git-arkiv utan äldre historia som kan följa alioths svn-server.</p>
+
+<p>För att uppdatera din lokala kopia med ändringar gjorda av andra går du
+in i katalogen <strong>manuals</strong> och kör kommandot:</p>
+
+<p style="margin-left: 2em">
+  <code>git svn rebase</code>
 </p>
 
 <toc-add-entry name="obtaining">Få uppdateringsprivilegier</toc-add-entry>
@@ -83,8 +106,6 @@ Så snart din förfrågan godkänts kommer du bli en del av <a
 href="http://alioth.debian.org/projects/ddp/"><q>ddp</q>-projektet</a> (och
 -Unix-gruppen) på Alioth.
 </p>
-
-<hr />
 
 # Disabled (obsolete)
 # <toc-add-entry name="organization">Filernas organisation</toc-add-entry>
@@ -125,6 +146,9 @@ Underkatalogen makefiles bygger på
 <p>Loggfilerna som genereras av uppdateringsskriptet finns på
 <url "http://www-master.debian.org/build-logs/ddp/">
 </p>
+
+<p>Skriptet kör <kbd>svn export --force svn://svn.debian.org/svn/ddp/manuals</kbd> och sedan
+<kbd>make -C trunk publish</kbd>.</p>
 
 <p>
 Observera att proceduren skapar katalogen <code>/doc/manuals/</code>.
