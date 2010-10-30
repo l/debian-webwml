@@ -1,23 +1,51 @@
 #use wml::debian::template title="Debian-Installer errata"
 #use wml::debian::recent_list
 
-<h1 id="squeeze-alpha1">Errata for squeeze release alpha 1</h1>
+<h1 id="squeeze-beta1">Errata for squeeze release beta 1</h1>
 
 <p>
-This is a list of known problems in the squeeze alpha 1 release of
+This is a list of known problems in the squeeze beta 1 release of
 Debian Installer. If you do not see your problem listed here,
 please send us an <a href="report-template">installation report</a>
 describing the problem.
 </p>
 
 <dl class="gloss">
-	<dt>Auto-assembly of RAID arrays in rescue mode can corrupt data</dt>
+	<dt>Network/Graphic/Storage card doesn't work properly</dt>
 	<dd>
-		Rescue mode should be used with great care when software RAID
-		arrays were in use on the system to rescue. The rescue mode scripts
-		automatically assemble arrays, which could lead to data corruption in
-		the presence of invalid or obsolete RAID superblocks.
-		Fixed in daily built images.
+	There is several hardware, notably network cards, graphic cards and storage controllers, that require binary non-free firmware to work properly.<br />
+	Debian is commited to free software values and never make the system require non-free software (see Debian's <a href="http://www.debian.org/social_contract">Social Contract</a>). So, non-free firmware is not included in the installer.<br />
+	But if you want to load any external firmware during installation you are free to do it. The process is documented in the installation manual.
+	</dd>
+	<dt>zipl installation problem that makes s390 uninstalable</dt>
+	<dd>
+	If created a dedicated partition for the /boot directory system-boot 
+	fails after installation.</br >
+	See <a href="http://bugs.debian.org/519254">#519254</a>.
+	</dd>
+	<dt>os-prober causes data corruption on a SAN setup</dt>
+	<dd>
+	os-prober causes data corruption on a SAN setup; 
+	Mounts SAN volumes that are already mounted on a different host.
+	See <a href="http://bugs.debian.org/599203">#599203</a>.
+	</dd>
+	<dt>Failed to install on powerpc NewWorld with added disk controller</dt>
+	<dd>
+	yaboot: failed to install boot loader with addon Promise card
+	as disk controller on powerpc NewWorld.
+	See <a href="http://bugs.debian.org/589701">#589701</a>.
+	</dd>
+	<dt>Speakup doesn't get automatically configured</dt>
+	<dd>
+	When installing with speakup enabled, speakup doesn't get 
+	automatically configured on the installed system. Workaround:<br />
+	When the installation is done at the "I'm finished, will reboot" 
+	prompt swith to VT2 and type:
+	<br />
+	<tt>echo speakup_foobar >> /target/etc/modules</tt>
+	<br />
+	where foobar is replaced by the name of the desired speakup driver. Then
+	come back to VT1 to let d-i finish and reboot.
 	</dd>
 	<dt>Buggy routers may cause network problems</dt>
 	<dd>
@@ -56,11 +84,9 @@ describing the problem.
 
 	<dt>Some USB keyboards may not work</dt>
 	<dd>
-	Some USB keyboards require specific kernel modules for proper
-	support. Those are missing in current installer. See 
-	<a href="http://bugs.debian.org/561036">#561036</a>, 
-	<a href="http://bugs.debian.org/567431">#567431</a>.
-	Fixed in daily built images.
+	Some USB keyboards, like the Genius Comfy KB 16e, don't work with 
+	current kernel.
+	See <a href="http://bugs.debian.org/588742">#588742</a>. 
 	</dd>
 	<dt>i386: few issues</dt>
 	<dd>
@@ -103,12 +129,5 @@ describing the problem.
 	Because of this the reboot will fail. See
 	<a href="http://bugs.debian.org/565639">#565639</a> for details.
 	Fixed in daily built images.
-	</dd>
-
-	<dt>kFreeBSD images not available</dt>
-	<dd>
-	The support for kFreeBSD is still being integrated into the installer
-	and is not available in this release. Work is being done to fix it
-	in the upcoming releases.
 	</dd>
   </dl>
