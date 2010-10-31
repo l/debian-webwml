@@ -1,26 +1,66 @@
 #use wml::debian::template title="Errata corrige dell'Istallatore Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.131" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.133" maintainer="Luca Monducci"
 
-<h1 id="lenny-rc1">Errata per la release squeeze alpha 1</h1>
+<h1 id="lenny-rc1">Errata per la release squeeze beta 1</h1>
 
 <p>
-Questa è una lista dei problemi conosciuti nella versione squeeze alpha 1
+Questa è una lista dei problemi conosciuti nella versione squeeze beta 1
 dell'Installatore Debian. Se si riscontra un problema che non è presente
 in questa pagina, inviare un <a href="report-template">resoconto
 dell'installazione</a> in cui si descrive il proprio problema.
 </p>
 
 <dl class="gloss">
-    <dt>L'assemblamento automatico degli array RAID della modalità di ripristino può corrompere i dati</dt>
-    <dd>
-    La modalità di ripristino deve essere usata con moltissima cautela
-    se sul sistema da ripristinare sono in uso degli array in RAID software.
-    Infatti gli script della modalità di ripristino assemblano automaticamente
-    gli array, questo può comportare la corruzione dei dati se sono presenti
-    dei superblocchi RAID non validi o obsoleti.
-	<br />Problema risolto nelle immagini generate quotidianamente.
-    </dd>
+
+	<dt>Alcune schede di rete/grafiche/memorizzazione non funzionano correttamente</dt>
+ 	<dd>
+	Esiste dell'hardware, principalmente schede di rete, schede grafiche e
+	controller per dischi, che richiede l'uso di firmware binario per
+	funzionare correttamente.<br/>
+	Debian è fedele ai valori del software libero e non realizza un sistema
+	che necessita di software non-libero (si veda il
+	<a href="http://www.debian.org/social_contract">Contratto Sociale</a> di
+	Debian). Quindi il firmware non-libero non è incluso nell'installatore.<br />
+	Se si vuole, è possibile, durante l'installazione, caricare qualsiasi
+	firmware esterno. Il processo è documentato nella guida all'installazione.
+	</dd>
+
+	<dt>Problema nell'installazione di zipl che rende impossibile installare su s390</dt>
+	<dd>
+	Se è stata creata una partizione dedicata per la directory /boot,
+	è impossibile avviare il sistema dopo l'installazione.
+	Si veda <a href="http://bugs.debian.org/519254">#519254</a>.
+	</dd>
+
+	<dt>os-prober danneggia i dati su SAN</dt>
+	<dd>
+	os-prober provoca il danneggiamento dei dati su SAN;
+	infatti monta anche i volumi SAN già montati da altri sistemi.
+	Si veda <a href="http://bugs.debian.org/599203">#599203</a>.
+	</dd>
+
+	<dt>Impossibile installare su powerpc NewWorld se è stato aggiunto un controller del disco</dt>
+	<dd>
+	yaboot: non è possibile installare il boot loader se si usa la
+	scheda controller del disco Promise su powerpc NewWorld.
+	Si veda <a href="http://bugs.debian.org/589701">#589701</a>.
+	</dd>
+
+	<dt>Speakup non viene configurato autometicamente</dt>
+	<dd>
+	Quando l'installazione avviene con speakup attivo, speakup non
+	viene configurato automaticamente sul sistema installato.
+	Soluzione:<br/>
+	quando l'installazione è finita e viene mostrata la scritta
+	<q>Installazione completata, riavvio del nuvo sistema</q> passare
+	al VT2 e digitare:
+	<br />
+	<tt>echo speakup_nome >> /target/etc/modules</tt>
+	<br />
+	nome deve essere sostituito con il nome del driver speakup appropriato.
+	Poi tornare sul VT1 per permettere al d-i di concludere e riavviare.
+ 	</dd>
 
     <dt>Router difettosi possono causare problemi di rete</dt>
     <dd>
@@ -68,11 +108,9 @@ dell'installazione</a> in cui si descrive il proprio problema.
 
     <dt>Alcune tastiere USB potrebbero non funzionare</dt>
     <dd>
-    Alcune tastiere USB richiedono dei moduli del kernel specifici.
-    Questi moduli mancano nell'installatore. Si vedano i bug
-    <a href="http://bugs.debian.org/561036">#561036</a> e
-    <a href="http://bugs.debian.org/567431">#567431</a>.
-    Corretto nelle immagini create quotidianamente.
+    Alcune tastiere USB, per esempio le Genius Comfy KB 16e,
+	non funzionano con l'attuale kernel.
+    Si veda il bug <a href="http://bugs.debian.org/588742">#588742</a>. 
     </dd>
 
     <dt>i386: qualche problema</dt>
@@ -117,12 +155,5 @@ dell'installazione</a> in cui si descrive il proprio problema.
     finale. A causa di questo problema, il riavvio fallisce. Si veda il
     bug <a href="http://bugs.debian.org/565639">#565639</a> per i
     dettagli. Corretto nelle immagini create quotidianamente.
-    </dd>
-
-    <dt>Le immagini per kFreeBSD non sono disponibili</dt>
-    <dd>
-    È in corso l'integrazione del supporto per kFreeBSD nell'installatore
-    e non è disponibile in questo rilascio. Dovrebbe esserre corretto con
-    il prossimo rilascio.
     </dd>
 </dl>
