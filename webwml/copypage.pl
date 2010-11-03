@@ -61,6 +61,10 @@ if (exists $ENV{DWWW_MAINT})
 	$maintainer = $ENV{DWWW_MAINT};
 }
 
+# Options
+our ($opt_n, $opt_t, $opt_l);
+getopts('nm:l:'); 
+
 # Values overwritten by commandline
 if (defined $opt_m)
 {
@@ -70,13 +74,6 @@ if (defined $opt_l)
 {
         $language = $opt_l;
 }
-
-die "Language not defined in DWWW_LANG or language.conf\n"
-	if not defined $language;
-
-#warn "Maintainer name not defined in DWWW_MAINT or language.conf\n"
-#	if not defined $maintainer;
-
 
 # Check usage.
 if ($#ARGV == -1)
@@ -103,9 +100,12 @@ if ($#ARGV == -1)
 
 }
 
-# Options
-our ($opt_n, $opt_t, $opt_l);
-getopts('nm:l:'); 
+die "Language not defined in DWWW_LANG or language.conf\n"
+	if not defined $language;
+
+#warn "Maintainer name not defined in DWWW_MAINT or language.conf\n"
+#	if not defined $maintainer;
+
 
 # Table of entities used when copying to non-latin1 encodings
 @entities = (
