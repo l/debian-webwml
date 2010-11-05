@@ -52,6 +52,10 @@
        color: rgb(136, 125, 107);
        text-align: center;
          }
+     
+      .Ignored th {
+       width: 16.6%
+         }
 
      p.note                   {
          color: green;
