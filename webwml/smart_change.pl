@@ -70,7 +70,7 @@ my $substitute = eval "sub { \$_ = shift; $eval_opt_s; die \$@ if \$@; return \$
 die "Invalid -s option" if $@;
 
 foreach my $argfile (@ARGV) {
-        $argfile =~ m+^(english.*)/(.*\.wml)+ or die "unknown path '$argfile'";
+        $argfile =~ m+^(english.*)/(.*\.(wml|src))+ or die "unknown path '$argfile'";
         my ($path, $file) = ($1, $2);
 
         verbose("File: $argfile");
