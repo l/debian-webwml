@@ -8,7 +8,7 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-DOMAINS = templates bugs cdimage consultants countries date debian-cdd distrib doc l10n langs legal mailinglists newsevents organization ports search security vendors vote wnpp others
+DOMAINS = templates bugs cdimage consultants countries date distrib doc l10n langs legal mailinglists newsevents organization ports search security vendors vote wnpp others
 
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
 cdimage_FILES   = $(TEMPLDIR)/cdimage.wml
@@ -16,7 +16,6 @@ consultants_FILES = $(TEMPLDIR)/consultant.wml \
   $(ENGLISHDIR)/consultants/consultant.defs
 countries_FILES = $(TEMPLDIR)/countries.wml
 date_FILES      = $(TEMPLDIR)/ctime.wml
-debian-cdd_FILES = $(TEMPLDIR)/debian-cdd.wml
 distrib_FILES	= $(ENGLISHDIR)/distrib/search_packages-form.inc \
   $(ENGLISHDIR)/distrib/search_contents-form.inc
 doc_FILES       = $(ENGLISHDIR)/doc/books.def $(ENGLISHDIR)/doc/manuals.defs
@@ -66,7 +65,6 @@ SOURCEFILES = \
   $(consultants_FILES)          \
   $(countries_FILES)            \
   $(date_FILES)                 \
-  $(debian-cdd_FILES)           \
   $(distrib_FILES)              \
   $(doc_FILES)                  \
   $(l10n_FILES)                 \
@@ -103,9 +101,6 @@ $(ENGLISHDIR)/po/countries.pot: # $(countries_FILES)
 
 $(ENGLISHDIR)/po/date.pot: # $(date_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl date $(date_FILES) > $@
-
-$(ENGLISHDIR)/po/debian-cdd.pot: # $(debian-cdd_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl debian-cdd $(debian-cdd_FILES) > $@
 
 $(ENGLISHDIR)/po/distrib.pot: # $(date_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl distrib $(distrib_FILES) > $@
