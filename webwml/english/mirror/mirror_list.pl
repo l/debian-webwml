@@ -166,7 +166,7 @@ sub secondary_mirrors {
     print "</h2>\n\n" if $html;
     if ($html) {
       print <<END;
-<table border="0" align="center">
+<table border="0" class="center">
 <tr>
   <th>Host name</th>
   <th>FTP</th>
@@ -508,9 +508,9 @@ sub primary_mirrors {
   if ($html) {
     print <<END;
 
-<h2 align="center">Primary Debian mirror sites</h2>
+<h2 class="center">Primary Debian mirror sites</h2>
 
-<table border="0" align="center">
+<table border="0" class="center">
 <tr>
   <th>Country</th>
   <th>Site</th>
@@ -790,7 +790,7 @@ sub trailer {
 # this is likely obsolete
 sub access_methods {
   print <<END;
-<h1 align="center">Debian worldwide mirror sites</h1>
+<h1 class="center">Debian worldwide mirror sites</h1>
 
 <p>This is a <strong>complete</strong> list of mirrors of Debian. For each
 site, the different types of material available are listed, along with the
