@@ -817,7 +817,7 @@ access method for each type.
 </dl>
 
 <p>The following access methods are possible:
-<dl compact>
+<dl>
 <dt><strong>HTTP</strong>
   <dd>Standard web access, but it can be used for downloading files.
 <dt><strong>FTP</strong>
@@ -829,7 +829,7 @@ access method for each type.
 </dl>
 
 <p>The 'Type' entry is one of:
-<dl compact>
+<dl>
 <dt><strong>leaf</strong>
   <dd>These comprise the bulk of the mirrors.
 <dt><strong>Push-Secondary</strong>
@@ -861,7 +861,7 @@ sub full_listing {
   my $wml = 1 if ($format eq 'wml');
 
   if ($html) {
-    print "\n<hr noshade size=\"1\">\n";
+    print "\n<hr style=\"height:1\">\n";
     print "<p>Jump directly to a country on the list:<br>\n";
   }
   if ($html) {
@@ -906,7 +906,7 @@ foreach my \$country (sort langcmp keys \%countrylist) {
 EOF
   }
   if ($html || $wml) {
-    print "\n<hr noshade size=\"1\">\n";
+    print "\n<hr style=\"height:1\">\n";
   }
   print "<pre>\n" if $html;
   foreach my $country (sort keys %countries) {
