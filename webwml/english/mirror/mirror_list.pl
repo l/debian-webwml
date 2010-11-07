@@ -341,7 +341,7 @@ my \%sawcountry = {};
 foreach my \$country (sort langcmp keys \%secondaries) {
   unless (\$sawcountry{\$country}) {
     print <<EOM;
-<tr><td colspan="4"><hr size="1"></td></tr>
+<tr><td colspan="4"><hr style="height:1"></td></tr>
 <tr><td colspan="4"><big><strong>\$country</strong></big></td></tr>
 EOM
   }
