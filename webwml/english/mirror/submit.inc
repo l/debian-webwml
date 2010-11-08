@@ -7,12 +7,16 @@
   <gettext domain="others">same as the above</gettext>
 </define-tag>
 
+<define-tag form-action>
+<form method=post action="%2" onsubmit="giveau('%1')">
+</define-tag>
+
 <define-tag tablerow>
 	<tr><td>%0: </td><td><input type="text" name="%1" id="%1" size="%2"></td></tr>
 </define-tag>
 
 <define-tag tr-upstream-give>
-  <tr><td>%0: </td><td><input type="text" name="%1" id="%1" size="%2" onchange="giveau('%1')" onsubmit="giveau('%1')"></td></tr>
+  <tr><td>%0: </td><td><input type="text" name="%1" id="%1" size="%2" onchange="giveau('%1')"></td></tr>
 </define-tag>
 
 <define-tag tr-upstream-take>
