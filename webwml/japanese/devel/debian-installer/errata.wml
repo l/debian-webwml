@@ -1,22 +1,82 @@
 #use wml::debian::template title="Debian-Installer 正誤表"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.131"
+#use wml::debian::translation-check translation="1.140"
 
-<h1 id="squeeze-alpha1">squeeze リリース alpha 1 の正誤表</h1>
+<h1 id="squeeze-alpha1">squeeze リリース beta 1 の正誤表</h1>
 
 <p>
-これは Debian Installer の squeeze alpha 1 における既知の問題のリストです。
+これは Debian Installer の squeeze beta 1 における既知の問題のリストです。
 ここに挙げていない問題を見つけた場合、問題を記述した<a
 href="report-template">インストールレポート</a>を送ってください。
 </p>
 
 <dl class="gloss">
-<dt>rescue モードでの RAID アレイの自動構成がデータの損失を招く可能性があります</dt>
+<dt>kFreeBSD でパーティション作業に失敗する</dt>
 <dd>
-rescue モードは、ソフトウェア RAID アレイが使われているシステムでの救出作業の場合には、非常に注意して使う必要があります。
-rescue モードのスクリプトが自動的にアレイを構成するため、不正な状態な、あるいは使われなくなった RAID
-スーパーブロックが存在している場合にデータの損失を招く可能性があります。
-日次ビルドでは修正されています。</dd>
+kFreeBSD でパーティション作業に失敗する報告が出ています。
+問題はパーティションの配置や拡張に関係があるようです。<br />
+<a href="http://bugs.debian.org/593733">#593733</a>,
+<a href="http://bugs.debian.org/597088">#597088</a> および
+<a href="http://bugs.debian.org/602129">#602129</a> を見てください。
+</dd>
+
+<dt>lvm 上に swap があると休止が働かない</dt>
+<dd>
+swap が lvm 上にあると休止状態からの再開が動作しません。
+initramfs が /etc/initramfs-tools/conf.d/resume
+で swap パーティションの uuid を認識しません。
+<a href="http://bugs.debian.org/568877">#568877</a> を見てください。
+</dd>
+
+<dt>ネットワーク/グラフィック/ストレージのカードが適切に動作しない</dt>
+<dd>
+複数のハードウェア、特にネットワークカード、グラフィックカード、
+ストレージコントローラで、バイナリのフリーではないファームウェアを
+必要とするものが適切に動作しません。<br />
+Debian はフリーソフトウェアの価値に誓って、
+フリーではないソフトウェアをシステムが要求するようにはしません (Debian
+の<a href="http://www.debian.org/social_contract">社会契約</a>を見てください)。
+なので、フリーではないファームウェアはインストーラには含まれません。
+<br />
+但し、インストール作業の間に外部のファームウェアをロードしたい場合は自由に行って構いません。
+この処置についてはインストールのマニュアルに記述されています。
+</dd>
+
+<dt>zipl のインストールの問題により s390 にインストールできない</dt>
+<dd>
+/boot ディレクトリに専用のパーティションを作成した場合、/boot が /
+よりも先にマウントされるとインストール後にシステムの起動が失敗します。<br/ >
+<a href="http://bugs.debian.org/519254">#519254</a> を見てください。
+</dd>
+
+<dt>ファイルシステムが他のホストにより使用中の場合に os-prober がデータを破壊する</dt>
+<dd>
+他のホストによりマウントされているファイルシステムで
+os-prober がデータ破壊を引き起こします。この問題は SAN
+が準備されたマシンと、既存の論理ボリュームを使用する仮想マシンで確認されています。
+<a href="http://bugs.debian.org/599203">#599203</a> および
+<a href="http://bugs.debian.org/556739">#556739</a> を見てください。
+</dd>
+
+<dt>powerpc で NewWorld にディスクコントローラを増設している場合にインストールに失敗する</dt>
+<dd>
+yaboot:  powerpc NewWorld にディスクコントローラとして Promise
+カードを増設しているとブートローダのインストールに失敗します。
+<a href="http://bugs.debian.org/589701">#589701</a> を見てください。
+</dd>
+
+<dt>Speakup が自動的に設定されない</dt>
+<dd>
+speakup を有効にしてインストールしている場合に、インストール先のシステムに
+speakup が自動的に設定されません。対処法:<br />
+インストール作業が終わって "I'm finished, will reboot"
+と表示されたら VT2 に移動して:
+<br />
+<tt>echo speakup_foobar &gt;&gt; /target/etc/modules</tt>
+<br />
+と打ち込みます。foobar には希望の speakup ドライバの名前が入ります。
+それから VT1 に戻って d-i を完了させて再起動します。
+</dd>
 
 <dt>バグのあるルータがネットワークの問題を引き起こす可能性があります</dt>
 <dd>
@@ -54,10 +114,9 @@ i386 でうまくインストールするのに最低限必要なメモリ容量
 
 <dt>USB キーボードに動作しないものがあります</dt>
 <dd>
-USB キーボードの中には正常な動作に特定のカーネルモジュールを必要とするものがあります。
-現行のインストーラには入っていません。
-<a href="http://bugs.debian.org/561036">#561036</a>,
-<a href="http://bugs.debian.org/567431">#567431</a> を見てください。
+USB キーボードの中には、Genius Comfy KB 16e
+など現在のカーネルで動作しないものがあります。
+<a href="http://bugs.debian.org/588742">#588742</a> を見てください。
 これはデイリービルドイメージでは解決しています。
 </dd>
 
@@ -99,11 +158,5 @@ silo ブートローダが対象のシステムに正常にインストールさ
 このために再起動が失敗します。詳細については
 <a href="http://bugs.debian.org/565639">#565639</a> を見てください
 これはデイリービルドイメージでは解決しています。
-</dd>
-
-<dt>kFreeBSD イメージが利用可能になっていません</dt>
-<dd>
-kFreeBSD のサポートはインストーラにも現在進行形で取り込まれてはいますが、
-このリリースでは利用できません。次期リリースで解決できるように作業しています。
 </dd>
 </dl>
