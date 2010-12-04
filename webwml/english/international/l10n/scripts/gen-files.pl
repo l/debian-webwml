@@ -197,6 +197,7 @@ sub get_stats_po4a {
                 foreach $line (@{$data->po4a($pkg)}) {
                         my ($po4afile, $lang, $stat, $link,$translator,$team) = @{$line};
                         $link =~ s/:/\%3a/g;
+                        $link =~ s/#/\%23/g;
                         $translator = transform_translator($translator);
                         $team = transform_team($team);
                         if ($lang eq '_') {
@@ -334,6 +335,7 @@ sub get_stats_po {
                 foreach $line (@{$data->po($pkg)}) {
                         my ($pofile, $lang, $stat, $link,$translator,$team) = @{$line};
                         $link =~ s/:/\%3a/g;
+                        $link =~ s/#/\%23/g;
                         $translator = transform_translator($translator);
                         $team = transform_team($team);
                         if ($lang eq '_') {
@@ -484,7 +486,9 @@ sub get_stats_templates {
                         ($template, $lang, $stat, $link_trans, $link_orig) = @{$line};
                         $link_orig ||= '';
                         $link_trans =~ s/:/\%3a/g;
+                        $link_trans =~ s/#/\%23/g;
                         $link_orig  =~ s/:/\%3a/g;
+                        $link_orig  =~ s/#/\%23/g;
                         if ($lang eq '_') {
                                 push(@untranslated, $link_trans);
 			        if ($stat =~ m/(\d+)t/) {
@@ -759,6 +763,7 @@ sub get_stats_podebconf {
 
                         $pofile =~ s#^debian/(po/)?##;
                         $link =~ s/:/\%3a/g;
+                        $link =~ s/#/\%23/g;
                         $addorig .= " [<a href=\"".
                                 ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root).
                                 ($pofile eq 'templates.pot' ? 'po' : 'templates').
@@ -784,6 +789,7 @@ sub get_stats_podebconf {
 
                         $pofile =~ s#^debian/po/##;
                         $link =~ s/:/\%3a/g;
+                        $link =~ s/#/\%23/g;
                         $lang = uc($lang) || 'UNKNOWN';
                         $list{$lang} = 1;
                         my $color = get_color(percent_stat($stat));
