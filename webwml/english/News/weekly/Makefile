@@ -199,7 +199,3 @@ $(HTMLDIR)/dwn.$(LANGUAGE).rdf: $(HTMLDIR)/%: %
 .PHONY:	dwn.$(LANGUAGE).rdf
 endif
 
-# Generate the mail for posting to debian-news. Requires the web page already
-# be updated.
-mail:
-	@./makemail.pl
