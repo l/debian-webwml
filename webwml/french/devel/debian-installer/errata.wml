@@ -1,6 +1,6 @@
 #use wml::debian::template title="Errata pour l'installateur Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.148" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.150" maintainer="David Prévot"
 
 # Translators:
 # Nicolas Bertolissio, 2003-2008
@@ -9,11 +9,11 @@
 # David Prévot, 2010
 
 
-<h1 id="squeeze-alpha1"><i>Errata</i> de la première version bêta
+<h1 id="squeeze-alpha1"><i>Errata</i> de la deuxième version bêta
 pour Squeeze</h1>
 
 <p>
-Voici une liste des problèmes connus dans la première version alpha
+Voici une liste des problèmes connus dans la deuxième version alpha
 de l'installateur Debian pour Squeeze. Si vous n'y voyez pas le
 problème que vous rencontrez, veuillez nous envoyer un <a
 href="report-template">compte-rendu d'installation</a> (en anglais) décrivant
@@ -22,19 +22,16 @@ le problème.
 
 <dl class="gloss">
 <dt>
-Aucune activité à l'écran lors de l'installation de paquets (VirtualBox)
+Non fonctionnement de la synthèse vocale en session utilisateur
 </dt>
 <dd>
-Lors de l'étape de téléchargement et d'installation de paquets, il n'y a aucune
-activité à l'écran et la barre de progression habituelle n'apparaît pas.
+Lors de l'installation de la tâche <q>desktop</q> en
+anglais avec accessibilité (braille ou speech) activée,
+la synthèse vocale fonctionne lors de la connexion avec
+gdm, mais ne fonctionne plus en session utilisateur.
 
-La progression de l'installation est visible sur le quatrième terminal virtuel.
-
-Le problème n'a pour l'instant été confirmé
-que sur les machines virtuelles VirtualBox.
-<br/>
-Consultez les bogues <a href="http://bugs.debian.org/603021">nº 603021</a>
-et <a href="http://bugs.debian.org/604239">nº 604239</a>.
+Un contournement possible est de se connecter dans
+un terminal texte et d'enlever le paquet festival.
 </dd>
 
 <dt>
@@ -52,43 +49,6 @@ Consultez le bogue <a href="http://bugs.debian.org/604134">nº 604134</a>.
 </dd>
 
 <dt>
-Microprogramme non chargé au moment attendu
-</dt>
-<dd>
-Des réseaux non fonctionnels ont été signalés à cause de
-pilotes ayant besoin de microprogramme (« firmware ») lors
-de l'activation du lien, alors que l'installateur s'attend
-à ce que ce soit fait lors du chargement du module.
-
-Cela a été corrigé dans hw-detect 1.82 seulement
-disponible dans les images créées quotidiennement.
-<br/>
-Consultez le bogue <a href="http://bugs.debian.org/537502">nº 537502</a>.
-</dd>
-
-<dt>
-Caractères chinois, japonais et coréens manquants dans
-le menu « Choix de votre situation géographique »
-</dt>
-<dd>
-Certains caractères chinois, japonais et coréens sont absents
-de ttf-cjk-compact pour l'installateur graphique, à cause
-d'un problème de configuration de l'outil de mise à jour.
-<br/>
-Consultez le bogue <a href="http://bugs.debian.org/603685">nº 603685</a>.
-</dd>
-
-<dt>
-Échec du partitionnement manuel si la langue turque est sélectionnée
-</dt>
-<dd>
-Lors d'une installation en langue turque, la modification d'une valeur
-par défaut du partitionnement manuel fait échouer le partitionnement.
-<br/>
-Consultez le bogue <a href="http://bugs.debian.org/603456">nº 603456</a>.
-</dd>
-
-<dt>
 Échec de partitionnement sur kFreeBSD
 </dt>
 <dd>
@@ -100,19 +60,6 @@ partitions sur les partitions étendues.
 Consultez les bogues <a href="http://bugs.debian.org/593733">nº 593733</a>,
 <a href="http://bugs.debian.org/597088">nº 597088</a> et
 <a href="http://bugs.debian.org/602129">nº 602129</a>.
-</dd>
-
-<dt>
-Hibernation non fonctionnelle avec l'espace d'échange sur lvm
-</dt>
-<dd>
-Le démarrage après une hibernation ne fonctionne
-pas si l'espace d'échange (« swap ») est sur lvm.
-
-L'initramfs ne reconnaît pas l'UUID de la partition
-d'échange dans /etc/initramfs-tools/conf.d/resume.
-
-Consultez le bogue <a href="http://bugs.debian.org/568877">nº 568877</a>.
 </dd>
 
 <dt>
@@ -147,21 +94,6 @@ Consultez le bogue <a href="http://bugs.debian.org/519254">nº 519254</a>.
 </dd>
 
 <dt>
-os-prober provoque une corruption de données si le
-système de fichiers est déjà utilisé par un autre hôte
-</dt>
-<dd>
-os-prober provoque une corruption de données sur les configurations
-où les systèmes de fichiers sont déjà montés sur d'autres hôtes.
-
-Ce problème a été identifié avec une configuration de réseau de stockage
-SAN sur une machine virtuelle qui utilise un volume logique existant.
-
-Consultez les bogues <a href="http://bugs.debian.org/599203">nº·599203</a> et
-<a href="http://bugs.debian.org/556739">nº 556739</a>.
-</dd>
-
-<dt>
 Échec d'installation sur powerpc NewWorld
 avec un contrôleur de disque supplémentaire
 </dt>
@@ -170,26 +102,6 @@ Yaboot échoue à l'installation du programme d'amorçage avec une
 carte Promise ajoutée en contrôleur de disque dur powerpc NewWorld.
 
 Consultez le bogue <a href="http://bugs.debian.org/589701">nº 589701</a>.
-</dd>
-
-<dt>
-Speakup n'est pas configuré automatiquement
-</dt>
-<dd>
-En installant avec Speakup activé, Speakup n'est pas
-configuré automatiquement sur le système installé.
-
-Contournement :
-<br/>
-à la fin de l'installation, à l'affichage de « Installation terminée »,
-basculez vers la deuxième console virtuelle et exécutez la commande :
-<br/>
-<tt>echo speakup_bidule >> /target/etc/modules</tt>
-<br/>
-en remplaçant « bidule » par le nom du pilote de Speakup à utiliser.
-
-Ensuite, revenez à l'écran du processus principal pour
-autoriser l'installateur à terminer et redémarrer.
 </dd>
 
     <dt>Problèmes de réseau possibles avec des routeurs bogués</dt>
@@ -212,13 +124,6 @@ autoriser l'installateur à terminer et redémarrer.
     <tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_wmem</tt>
     </dd>
 
-<dt>Pays non triés par ordre alphabétique en anglais</dt>
-<dd>
-Lors du choix du miroir, la liste des pays est triée par code pays au lieu 
-du nom du pays. Il peut être plus difficile de trouver certains pays dans la
-liste. Ce problème n'affecte que les installations effectuées en anglais. 
-</dd>
-
 <!-- conservé pour une possible utilisation ultérieure...
   <dt>Architecture i386&nbsp;: plus de 32&nbsp;Mo requis pour
     l'installation</dt>
@@ -230,13 +135,6 @@ liste. Ce problème n'affecte que les installations effectuées en anglais.
     architectures&nbsp;;
     </dd>
 -->
-<dt>Certains claviers USB peuvent ne pas fonctionner</dt>
-<dd>
-Certains claviers USB, comme le Genius Comfy KB 16e,
-ne fonctionnent pas avec le noyau actuel.
-
-Consultez le bogue <a href="http://bugs.debian.org/588742">nº 588742</a>.
-</dd>
 
   <dt>Architectures i386 : peu de problèmes</dt>
     <dd>
@@ -274,14 +172,6 @@ Tapez <q>exit</q>, choisissez <q>Rendre le système amorçable</q>, puis confirm
         actuellement pas disponible.</li>
     </ul>
     </dd>
-
-<dt>Architecture sparc : problèmes dans l'installation du programme d'amorçage silo</dt>
-<dd>
-Le programme d'amorçage silo n'est pas correctement installé, ce qui fait
-échouer le redémarrage.
-Consultez le bogue <a href="http://bugs.debian.org/565639">nº 565639</a> pour plus de détails.
-Ce problème est corrigé dans les images construites quotidiennement.
-</dd>
 
 </dl>
 
