@@ -90,6 +90,15 @@ $spokendateform =~ s/\[%\]/%/g;
 $spokendateform_noyear = '<gettext domain="date">q{[%]d [%]s}, $mday, $mon_str</gettext>';
 $spokendateform_noyear =~ s/\[%\]/%/g;
 
+# $spokendateform_noday: Date format (sprintf) for "spoken" dates
+# (such a conference event), without the day.
+# Available variables are: $mon = month number,
+# $mon_str = month string (from @longmoy), $year = year number.
+# Percent signs are escaped because they are special during pass 2,
+# replace all % by [%]
+$spokendateform_noday = '<gettext domain="date">q{[%]s [%]s}, $mon_str, $year</gettext>';
+$spokendateform_noday =~ s/\[%\]/%/g;
+
 # $rangeform_samemonth: Date format (sprintf) for date ranges
 # (used mainly for events pages), for ranges within the same month.
 # Any special cases (such as the st/nd/rd/th suffixes in English) are
@@ -202,11 +211,13 @@ sub spokendate {
 	my ($year, $mon, $mday) = split /-/, $_[0];
 	my $appday;
 	# Make sure the date is in the YYYY-MM-DD format
-	return $_[0] unless $mday;
+	return $_[0] unless $mon;
 	return $_[0] if ($year < 1900);
 
 	# Expand month string
 	$mon_str = $longmoy[$mon - 1];
+
+	return eval("sprintf($spokendateform_noday)") unless $mday;
 
 	# Return translated date
 	if ($CUR_ISO_LANG eq "en")
