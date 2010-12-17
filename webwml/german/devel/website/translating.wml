@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian-Webseiten übersetzen" BARETITLE=true
 #use wml::fmt::verbatim
-#use wml::debian::translation-check translation="1.47"
+#use wml::debian::translation-check translation="1.51"
 # $Id$
 
 <p>Um die Arbeit für die Übersetzer so einfach wie möglich zu machen, werden
@@ -54,6 +54,9 @@ Original-Datei zu notieren, von der übersetzt wurde, damit das
 <a href="uptodate">Aktualisieren einfacher ist</a>. Die Zeile sieht wie folgt
 aus:
 <kbd>#use wml::debian::translation-check translation="<var>x.y</var>"</kbd>
+Das Skript <tt>copypage.pl</tt> führt dies automatisch durch, wenn Sie die
+Umgebungsvariable <tt>DWWW_MAINT</tt> setzen oder den Befehlszeilenschalter
+<tt>-m</tt> verwenden.</p>
 
 <p>Einige Übersetzungsteams verwenden diese Zeile ebenfalls, um den
 offiziellen Übersetzer für jede Webseite zu notieren. Falls Sie dies tun,
@@ -106,7 +109,20 @@ Informationen sind:</p>
 <tt>copypage.pl</tt> Skript aus dem webwml Wurzelverzeichnis verwendet. Das
 Skript wird die Seite an den richtigen Platz kopieren, Verzeichnisse und
 Makefiles falls notwendig erstellen, und die notwendige Kopfzeile automatisch
-hinzufügen.</p>
+hinzufügen. Sie erhalten eine Warnung, falls die zu kopierende Datei bereits
+im Depot existiert, entweder weil die Datei aus dem Depot entfernt wurde (weil
+sie zu veraltet war) oder weil jemand bereits eine Übersetzung kopiert hat und
+ihre lokale Kopie nicht aktuell ist.</p>
+
+<p>Bevor Sie <tt>copypage.pl</tt> verwenden, sollten Sie zuerst die Datei
+   <tt>language.conf</tt> konfigurieren, die vom Skript benutzt wird, um die
+   Sprache zu bestimmen, in die Sie übersetzen. Diese Datei benötigt nur eine
+   Zeile mit dem Sprachnamen, das wars. Sie können die Sprache auch über die
+   Umgebungsvariable <tt>DWWW_LANG</tt> setzen und die Umgebungsvariable
+   <tt>DWWW_MAINT</tt> verwenden, um Ihren Namen hinzuzufügen, so dass dieser
+   in den Kopfzeilen der erstellten WML-Dateien als Betreuer dieser Übersetzung
+   eingetragen wird. Es gibt weitere Funktionalitäten im Skript, führen Sie es
+   einfach ohne Optionen aus, um Hilfe zu erhalten.</p>
 
 <p>Nachdem Sie z.B. <kbd>./copypage.pl <var>datei</var>.wml</kbd> aufgerufen
 haben, übersetzen Sie den ursprünglichen Text in der Datei. Kommentare in
@@ -256,6 +272,39 @@ der Dateien, die Sie zuerst übersetzen sollten, prüfen Sie
 <a href="translation_hints">die Hinweis-Seite</a>. Übersetzen Sie die
 *.wml-Dateien, wie es <a href="#singlepages">am Anfang dieser Seite</a>
 beschrieben ist.</p>
+
+<h3>Veraltete Übersetzungen wiederbeleben</h3>
+
+<p>Wie in <q><a href="uptodate">Website-Übersetzungen aktuell halten</a></q> 
+   beschrieben, können veraltete Übersetzungen automatisch von der Website
+   entfernt werden, wenn eine längere Periode ohne Aktualisierung verstrichen
+   ist.</p>
+
+<p>Falls Sie das Skript <tt>copypage.pl</tt> mit einer entfernten Datei 
+   aufrufen, wird es das Kopieren der Seite verweigern und Sie bitten, 
+   stattdessen die veraltete Seite wiederzubeleben. Sie können die Gründe für
+   die Entfernung der Datei mittels <tt>cvs log</tt> ermitteln (oder alternativ
+   über die Webschnittstelle die gelöschten Dateien im Unterverzeichnis 
+   <q>Attic</q> finden).</p>
+
+<p>Um die veraltete Übersetzung wiederzubeleben, verwenden Sie <tt>cvs 
+   status</tt> (oder <tt>cvs log</tt>), um sich die Versionsnummer der
+   gelöschten Datei zu merken und führen dann eine 
+   <q>Rückwärtszusammenführung</q> durch.</p>
+
+<p>Heißt beispielsweise die gelöschte Datei <q>deleted.wml</q> und ist die
+   gelöschte Version 1.7, die Version vor der Löschung 1.6 (die gelöschte
+   Version minus 1), dann können Sie die Datei mittels
+
+<verbatim>
+   cvs update -j 1.7 -j 1.6 deleted.wml
+</verbatim>
+
+   wiederherstellen.</p>
+
+<p>Sobald Sie dies durchgeführt haben, müssen Sie natürlich das Dokument
+   aktualisieren, bevor Sie es wieder einpflegen. Andernfalls könnte es 
+   ansonsten wieder entfernt werden.</p>
 
 
 <h3>Der Rest der Geschichte</h3>
