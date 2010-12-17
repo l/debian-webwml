@@ -24,6 +24,3 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml $(TEMPLDIR)/release_in
 
 misc.$(LANGUAGE).html: misc.wml $(TEMPLDIR)/cdimage.wml $(GETTEXTDEP)
 	$(WML) $(<F)
-
-install::
-	[ -L $(HTMLDIR)/images ] || ln -sf . $(HTMLDIR)/images
