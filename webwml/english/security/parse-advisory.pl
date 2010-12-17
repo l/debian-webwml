@@ -119,7 +119,7 @@ $moreinfo =~ s/\n\n$/\n/s;
 $moreinfo =~ s/\n<p>\n$//;
 $moreinfo =~ s/\n\n/<\/p>\n\n/sg;
 $moreinfo =~ s|\n<p>((CAN\|CVE)-\d+-\d+[^\n]*)</p>\n|\n<li>$1\n|g;
-$moreinfo =~ s|((CAN\|CVE)-\d+-\d+)|<a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=$1">$1</a>|g;
+$moreinfo =~ s|((CAN\|CVE)-\d+-\d+)|<a href="http://security-tracker.debian.org/tracker/$1">$1</a>|g;
 $moreinfo =~ s|<p>(\s+)|$1<p>|g;
 $moreinfo =~ s|<p><p>|<p>|g;
 $moreinfo =~ s|</p>\n\n<li>|</p></li>\n\n<li>|g;
