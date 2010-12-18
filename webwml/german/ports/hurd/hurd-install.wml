@@ -1,43 +1,46 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; Installation" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.64"
+#use wml::debian::translation-check translation="1.72"
 # $Id$
 # Translator: Helge Kreutzmann <debian@helgefjell.de>  2005-07-17
 
 
-<h1>Debian GNU/Hurd-Installation</h1>
+<h1>Debian GNU/Hurd-Installation von Hand</h1>
 <p>
 Dieses Dokument hat als Ziel, einen einfachen und relativ schmerzlosen Satz an
-Instruktionen zu vermitteln, wie man mit einem minimalen Aufwand Debian GNU/Hurd
-zum Laufen bekommt.
+Instruktionen zu vermitteln, wie man von Hand mit einem minimalen Aufwand 
+   Debian GNU/Hurd zum Laufen bekommt. Beachten Sie, dass der Debian-Installer 
+   jetzt funktioniert, schauen Sie auf die <a href="hurd-cd">vorbereiteten
+   CD-Images</a>. Dann werden die folgenden Schritte für eine korrekte
+   Konfiguration benötigt.
 </p>
 
 <p>Es basiert auf Neal H. Walfields <q>Hurd Installations-Anleitung</q>.
    Vielen Dank an Neal für seinen Beitrag.
 </p>
 
-<p>
-Beachten Sie, dass einige Punkte in diesem Handbuch ein bisschen unbequem sind,
-da sie eine lange Zeit in Anspruch nehmen und Probleme verursachen können. Sie könnten
-die Installation über die <a href="hurd-cd">vorbereiteten CD-Images</a>
-bevorzugen, insbesondere wenn Sie ein Anfänger sind. Selbst wenn sie veraltet
-sind, funktionieren sie in der Regel. Sie können Aktualisierungen immer noch
-aus den Online-Depots erhalten.
-</p>
+#<p>
+#Beachten Sie, dass einige Punkte in diesem Handbuch ein bisschen unbequem sind,
+#da sie eine lange Zeit in Anspruch nehmen und Probleme verursachen können. Sie könnten
+#die Installation über die <a href="hurd-cd">vorbereiteten CD-Images</a>
+#bevorzugen, insbesondere wenn Sie ein Anfänger sind. Selbst wenn sie veraltet
+#sind, funktionieren sie in der Regel. Sie können Aktualisierungen immer noch
+#aus den Online-Depots erhalten.
+#</p>
 
 <h2>Überblick</h2>
 
-<p>
-Die Debian GNU/Hurd-Distribution hat, anders als Distributionen anderer
-Betriebssysteme, kein nettes Installationsprogramm. Eines Tages mag es dies
-haben, und Sie werden beim Design und der Implementation helfen; bis zu diesem
-Tag wird die Installation von Debian GNU/Hurd ein anderes Betriebssystem,
-speziell ein Unix-artiges System, benötigen. Die Benutzer haben erfolgreiche
-Installationen über verschiedene Arten von GNU/Linux sowie BSDs gemeldet. Die
-minimalen Anforderungen an das ur-ladende Betriebssystem sind die Fähigkeiten:
-ein ext2-Dateisystem zu erzeugen; ein Tar-Archiv darauf zu extrahieren und
-GNU Grub zu installieren.
-</p>
+#<p>
+#Die Debian GNU/Hurd-Distribution hat, anders als Distributionen anderer
+#Betriebssysteme, kein nettes Installationsprogramm. Eines Tages mag es dies
+#haben, und Sie werden beim Design und der Implementation helfen; bis zu diesem
+#Tag wird die Installation von Debian GNU/Hurd ein anderes Betriebssystem,
+#speziell ein Unix-artiges System, benötigen. Die Benutzer haben erfolgreiche
+#Installationen über verschiedene Arten von GNU/Linux sowie BSDs gemeldet. Die
+#minimalen Anforderungen an das ur-ladende Betriebssystem sind die Fähigkeiten:
+#ein ext2-Dateisystem zu erzeugen; ein Tar-Archiv darauf zu extrahieren und
+#GNU Grub zu installieren.
+#</p>
 
 <p>
 GNU ist von der Art ähnlich zu jedem Unix-artigen System: nach dem Einloggen
@@ -71,501 +74,501 @@ mit anderen Vorschlägen und Kritik; sie werden alle dankend entgegengenommen.
 </p>
 
 
-<h2>2. Grundstück oder ein Zuhause finden</h2>
-
-<p>
-Falls Sie keine verfügbare Partition oder extra Festplatte haben, kann dies
-der längste Schritt sein. In diesem Fall müssen Sie Ihre Festplatte neu
-partitionieren. Eine Möglichkeit ist es, GNUs Partitions-Editor,
-<a href="http://packages.debian.org/parted">Parted</a>, zu
-verwenden. Er bietet nicht nur grundlegende Partitionseditierung, sondern auch
-Partitionsgrößenveränderungs- und -verschiebe-Funktionalität. Das Handbuch ist
-recht vollständig und enthält mehrere Anleitungskurse. Beachten Sie, dass es
-  auch den Partitionstyp <code>63 GNU HURD or SysV</code> gibt, er sollte nicht
-  verwandt werden, da ansonsten die Installations-CD sie nicht finden wird. 
-  Verwenden Sie einfach <code>83 Linux</code>.
-</p>
-
-<p>
-Der Hurd unterstützt mehrere Erweiterungen des ext2fs-Dateisystem-Formats. 
-Zuallererst sind darunter die passiven Übersetzer und ein vierter Satz an 
-Rechte-Bits für unbekannte Benutzer (Benutzer ohne eine Identität &ndash; nicht
-der <q>other</q>-Benutzer). Um diese Erweiterungen zu benutzen, muss der Eigentümer
-der Partition auf <code>hurd</code> gesetzt werden. <code>mke2fs</code> setzt
-den Eigentümer auf den aktuell laufenden Kernel, wenn dies nicht explizit auf
-der Befehlszeile aufgehoben wird. Da der Hurd diese Einstellung fleißig 
-respektieren wird, muss darauf geachtet werden, diese zutreffend zu setzen, oder
-der Hurd wird auf subtile Art versagen. Beachten Sie, dass selbst ein 
-Dateisystem, das einem bestimmten Kernel gehört, noch von anderen benutzt
-werden kann; Sie können u.U. nur einige Erweiterungen nicht benutzen.
-</p>
-
-<p>
-Um ein Dateisystem zu erzeugen, benutzen Sie <code>mke2fs</code> und übergeben
-Sie <q><var>-b 4096 -I 128 -o hurd</var></q>, um dem Hurd anzuzeigen, dass er der neue
-Eigentümer des Dateisystems ist. Wenn beispielsweise Ihre Partition 
-<tt><q>/dev/hda1</q></tt> ist:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
- \# mke2fs -b 4096 -I 128 -o hurd /dev/hda1
-</pre></td></tr></table>
-
-
-<h2>3. Das Boot-Lade-Programm</h2>
-
-<p>
-Das Boot-Lade-Programm des GNU-Systems ist Grub, der <q>GRand Unified Boot 
-loader</q>, und es ist seine Hauptaufgabe, den Kern des GNU-Systems (Mach und
-den Hurd) zu booten. Allerdings kann jedes Boot-Lade-Programm, das den
-Multiboot-Standard unterstützt, dazu verwendet werden, Mach und den Hurd zu
-laden. Momentan (soweit uns das bewusst ist) ist der GNU Grub das einzige 
-Boot-Lade-Programm, das so einen Standard unterstützt.
-</p>
-
-<p>
-Ein Wort über Grub. Anders als traditionelle Boot-Lade-Programme auf x86, wie
-LILO, ist Grub sehr mächtig. Es hat eine Kommandozeilenschnittstelle, bootp,
-dummy-Terminal-Unterstützung und eine Fülle an anderen Funktionen. Zusätzlich
-kann er fast jeden Kernel booten. Falls Sie jemals eine Alpha oder Sparc
-gebootet haben, werden Sie verstehen, was Grub machen kann. Daher seien Sie nicht
-verängstigt: Grub ist besser. Sie werden ihn mögen. Sie werden nicht 
-zurückkehren.
-</p>
-
-<p>
-Es ist wahrscheinlich besser, dass Sie 
-<a href="http://packages.debian.org/grub2">Grub</a> vor der Installation von
-Hurd installieren. Sie können es aber auch zu jedem späteren Zeitpunkt auf Ihre Festplatte installieren.
-</p>
-
-
-<h2>4. Cross-Installation</h2>
-
-<p>
-Der nächste Schritt ist das Erhalten des Basis-Systems. Es gibt mehrere 
-Alternativen, falls Sie ein Debian-System verwenden, können Sie das Paket
-<q>crosshurd</q> verwenden. Andernfalls können Sie ein aktualisiertes
-Basissystem-Tar-Archiv von einem beliebigen unter
-<url "http://wiki.debian.org/DebianPorts/Mirrors" />
-aufgeführten Spiegel holen.
-</p>
-
-<p>
-Das Tar-Archiv ist so aufgesetzt, dass alles in das aktuelle Verzeichnis
-extrahiert wird. Nachdem das Dateisystem eingehängt ist, kann das Archiv
-extrahiert werden. Ist das Dateisystem beispielsweise auf <tt><q>/dev/hda2</q></tt>,
-der Einhängepunkt <tt><q>/gnu</q></tt> und das Archiv im aktuellen Home-Verzeichnis
-des Benutzers, dann wird das Folgende benötigt:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
- \# mount -t ext2 /dev/hda2 /gnu
- \# cd /gnu
- \# tar --same-owner -xvjpf ~/gnu.tar.bz2
-</pre></td></tr></table>
-
-
-<h2>5. GNU/Hurd booten</h2>
-
-<p>
-  Alles ist nun in Bereitschaft, um GNU/Hurd zum ersten Mal zu booten. Beachten
-  Sie, dass abhängig von der Version von GRUB sich kleine Details unterscheiden
-  werden. Bitte stellen Sie sicher, ob Sie GRUB1 (auch <q>legacy</q> oder
-  0.95 oder neuer bis 0.97) oder GRUB2 (auch 1.95 oder neuer) haben. Die 
-  folgenden Beispiele berücksichtigen beide Versionen, wählen Sie die richtige
-  aus. 
-</p>
-<p>
-  Beachten Sie bitte weiterhin, dass einige Fehler gemeldet wurden, wenn mit nur
-  128 MB gebootet wird, da zu diesem Zeitpunkt noch kein Swap eingerichtet ist.
-  Stellen Sie sicher, dass mindestens 256 MB Arbeitsspeicher zur Verfügung stehen.
-</p>
-<p>
-  Falls auf Ihrem System bereits GRUB installiert ist, starten Sie das 
-  System einfach neu. Andernfalls müssen Sie ein Grub-Boot-Medium benutzen. 
-  Unter Debian stellen die Pakete grub-disk (grub1) bzw. grub-rescue-pc (grub2)
-  CD- und Disketten-Images bereit. Stellen Sie sicher, dass das Grub-Boot-Medium
-  im Laufwerk ist und starten Sie das System neu. Falls alles klappt, wird
-  entweder ein Grub-Menü oder eine Befehlszeile angezeigt. Falls im Menü ein
-  <tt><q>GNU/Hurd</q></tt>-Eintrag vorliegt, können Sie es wahrscheinlich 
-  benutzen, um viele Tipparbeit zu sparen. Erstmal drücken Sie <kbd>c</kbd>,
-  falls Ihnen das Menü angezeigt wird, um auf die Befehlszeile zu wechseln.
-</p>
-
-<p>
-Zuerst muss der GNU Mach geladen werden. Dies benötigt das Wissen über das
-Dateisystem und den Pfad zu GNU Mach. Grub benutzt eine Partitions-Nomenklatur,
-die sich ein bisschen von Linux und dem Hurd unterscheidet: sowohl IDE als auch
-SCSI-Laufwerke werden <tt><q>(hdN,M)</q></tt> benannt. <code>N</code> ist die
-Laufwerksnummer (mit Null beginnend) wie sie vom BIOS durchnummeriert wird.
-Das bedeutet, Grub unterscheidet nicht zwischen IDE- und SCSI-Platten. 
-<code>M</code> identifiziert die Partition auf dem Laufwerk. Bei Grub1 ist dies
-  auch ein bei Null beginnender Index, bei Grub2 beginnt er mit 1.
-  Falls dies verwirrend klingt, entspannen Sie sich: Der
-Grub ist auch hilfsbereit.
-</p>
-
-<p>
-Um zu bestimmen, auf welchem Dateisystem eine bestimmte Datei liegt, bietet
-Grub den <code>find</code>-Befehl. Wenn dieser Befehl zusammen mit einem 
-Dateinamen geäußert wird, sucht Grub auf jedem Dateisystem nach der 
-spezifizierten Datei und gibt aus, wo sie gefunden wurde. Um zum Beispiel nach
-dem Kernel <tt><q>/boot/gnumach.gz</q></tt> zu suchen:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>  
-   grub1&#62; find /boot/gnumach.gz
-   (hd0,0)
-</pre></td></tr>
-<tr><td>&nbsp;</td><td class=example><pre>
-   grub2&#62; search -f /boot/gnumach.gz
-   (hd0,1)
-</pre></td></tr>
-</table>
-
-<p>
-Hier gibt Grub1 an, dass <tt><q>/boot/gnumach.gz</q></tt> auf 
-  <tt><q>(hd0,0)</q></tt> ist und Grub2, dass es auf <tt><q>(hd0,1)</q></tt>
-  ist (denken Sie an die Unterschiede in der Partitionsnummerierung zwischen
-  Grub1 und Grub2). Um Ihnen Tipparbeit zu sparen, setzen Sie Grubs Wert für 
-  root auf diesen Wert:
-</p>
-
-<table>
-<tr><td>&nbsp;</td><td class=example><pre>
-   grub1&#62; root (hd0,0)
-</pre></td></tr>
-<tr><td>&nbsp;</td><td class=example><pre>
-   grub2&#62; set root=(hd0,1)
-</pre></td></tr>
-</table>
-
-<p>
-Vor dem Laden des Kernels muss mindestens eine Option, die Wurzel-Partition, auf
-der Befehlszeile spezifiziert werden. Dies wird vom Hurd selber (d.h. nicht von
-Grub) verwendet. Als solche muss sie so bezeichnet sein, dass der Hurd sie
-verstehen kann.
-</p>
-
-<p>
-GNU Mach nummeriert Platten beginnend bei Null. IDE-Laufwerke haben das Präfix
-<code>hd</code> während SCSI-Platten das Präfix <code>sd</code> haben. Wie bei
-Linux werden die Laufwerke entsprechend Ihrer Position am Kontroller nummeriert.
-Zum Beispiel ist der primäre Master <code>hd0</code> und der sekundäre Slave
-<code>hd3</code>. Partitionen benutzen die BSD-<q>Slice</q>-Namenskonvention und
-hängen <code>sM</code> an den Laufwerksnamen an, um eine bestimmte Partition
-anzuzeigen. Die Slice-Zahl ist einfach zu berechnen: falls Sie Grub2 einsetzen,
-  verwenden Sie den gleichen Index, im Falle von Grub1 erhöhen Sie einfach die
-von Grub verwendete Zahl um eins.
-</p>
-
-<p>
-Da der Hurd noch nicht konfiguriert wurde, muss er im Einzelbenutzermodus
-gestartet werden. Hierzu reicht die Ergänzung von <q><var>-s</var></q> auf der
-Kernel-Befehlszeile.
-</p>
-
-<p>
-  In Summe hätten wir unter der Annahme, dass das erste Laufwerk (d.h. 
-  <tt><q>(hd0)</q></tt>) der Master auf dem sekundären Kontroller ist:
-</p>
-
-<table>
-<tr><td>&nbsp;</td><td class=example><pre>
-   grub1&#62; kernel /boot/gnumach.gz root=device:hd0s1 -s
-   [Multiboot-elf, ...]
-</pre></td></tr>
-<tr><td>&nbsp;</td><td class=example><pre>
-   grub2&#62; multiboot /boot/gnumach.gz root=device:hd0s1 -s
-</pre></td></tr>
-</table>
-
-<p>
-Als nächstes muss der Wurzeldateisystem-Server und der <code>exec</code>-Server
-geladen werden. Dies geschieht mittels Grubs Boot-Modul Lademöglichkeit. Die
-${var} werden von GNU Mach eingefüllt. Die Argumente werden vom Hurd verwendet
-um anzugeben, was für eine Art von Information bereitgestellt wird. Da die 
-ext2fs-Befehlszeile sehr lang ist, kann Sie durch Schützen des 
-Zeilenumbruchzeichens in normaler Unix-Manier umgebrochen werden. Stellen Sie
-sicher, dass nach dem umgedrehten Schrägstrich am Zeilenende kein Leerzeichen folgt. Stellen
-Sie auch sicher, <kbd>{</kbd> und <kbd>}</kbd> von <kbd>(</kbd> und <kbd>)</kbd>
-zu unterscheiden. Beachten Sie die subtilen Unterschiede zwischen Grub1 und
-  Grub2: Bei Grub2 muss der Dateiname wiederholt und Anführungszeichen verwandt
-  werden. Beachten Sie, dass in dieser Stufe die Option <q>--readonly</q> von
-  <code>ext2fs.static</code> nicht übergeben werden darf.
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>  
-  grub1&#62; module /hurd/ext2fs.static \
-   --multiboot-command-line=${kernel-command-line} \
-   --host-priv-port=${host-port} \
-   --device-master-port=${device-port} \
-   --exec-server-task=${exec-task} -T typed ${root} \
-   $(task-create) $(task-resume)
-    [Multiboot-module  0x1c4000, 0x2cfe6a bytes]
-  grub1&#62; module /lib/ld.so.1 /hurd/exec $(exec-task=task-create)
-    [Multiboot-module  0x494000, 0x27afe bytes]
-</pre></td></tr>
-<tr><td>&nbsp;</td><td class=example><pre>
-  grub2&#62; module /hurd/ext2fs.static ext2fs \
-   --multiboot-command-line='${kernel-command-line}' \
-   --host-priv-port='${host-port}' \
-   --device-master-port='${device-port}' \
-   --exec-server-task='${exec-task}' -T typed '${root}' \
-   '$(task-create)' '$(task-resume)'
-  grub2&#62; module /lib/ld.so.1 exec /hurd/exec '$(exec-task=task-create)'
-</pre></td></tr>
-</table>
-
-<p>
-  Als Alternative können Sie diese Befehle auch in die Konfigurationsdatei 
-  <tt><q>menu.lst</q></tt> (Grub1) oder <tt><q>grub.cfg</q></tt> (Grub2) eintragen
-  und dann mittels <tt><q>configfile /pfad/zu/menu.lst</q></tt> (Grub1) oder 
-  <tt><q>configfile /pfad/zu/grub.cfg</q></tt> (Grub2) von der
-  grub-Eingabeaufforderung aktivieren. Sie können natürlich grub auch einfach in den 
-  <acronym lang="en" title="Master Boot Record">MBR</acronym> installieren und dann daraufhin verweisen.
-</p>
-
-<p>
-GNU/Hurd kann nun gebootet werden:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
-grub&#62; boot
-</pre></td></tr></table>
-
-<p>
-Falls der GNU/Hurd nicht bootet, könnte dies an geteilten IRQs liegen: GNU Mach
-arbeitet nicht gut mit diesen. Sie können Ihre Situation bestätigen, indem Sie
-beispielsweise in die <tt><q>/proc/interrupts</q></tt>-Datei unter Linux schauen. 
-Da der GNU Mach auch keine ladbaren Kernelmodule unterstützt, sind viele Treiber
-in den Standardkernel einkompiliert. Falls es alte Peripherie gibt, kann dies ein
-Problem sein: Ein Gerät könnte auf eine Sondierung für ein komplett anderes
-Gerät ohne Bezug reagieren und dadurch einen Absturz hervorrufen. Das Bauen
-eines neuen Kernels mit nur den benötigten Gerätetreibern löst normalerweise
-dieses Problem. GNU Mach kann einfach cross-kompiliert werden. Falls Sie Debian
-betreiben, versuchen Sie das <tt><q>mig</q></tt>-Paket zu installieren und der
-normale <tt><q>gcc</q></tt> sollte es erledigen.
-</p>
-
-<p>
-Falls dies nicht hilft fragen Sie auf der angemessenen Mailingliste.
-</p>
-
-
-<h2>6. Native Installation</h2>
-
-<p>
-Sobald Ihnen eine Shell-Eingabeaufforderung präsentiert wird, und immer wenn
-der Hurd im Einzelbenutzermodus ist, ist es notwendig, den Terminaltyp 
-einzustellen:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
-\# export TERM=mach
-</pre></td></tr></table>
-
-<p>
-Seien Sie gewarnt, dass <kbd>CONTROL-C</kbd> und Freunde im Einzelbenutzermodus
-nicht funktionieren.
-</p>
-
-<p>
-Wir können nun das <code>native-install</code>-Skript laufen lassen. Dies wird
-die Pakete konfigurieren und mehrere wichtige Übersetzer einrichten:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
-\# ./native-install
-</pre></td></tr></table>
-
-<p>
-Bevor sich das Skript beendet, wird es angeben, dass es ein zweites Mal laufen
-muss. Folgen Sie den Anweisungen und rebooten Sie mittels des
-<code>reboot</code>-Befehls. Gehen Sie wieder in den Einzelbenutzermodus und 
-lassen Sie <code>./native-install</code> laufen.
-</p>
-
-
-<h2>7. Konfiguration</h2>
-
-
-<h3>7.1 Das Netz</h3>
-
-<p>
-  Stellen Sie zuerst sicher, dass Ihre Netzwerkkarte von GNU-Mach erkannt wird:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
- \# devprobe eth0
- eth0
-</pre></td></tr></table>
-
-<p>
-  Falls <code>devprobe eth0</code> nicht <code>eth0</code> liefert, hat der
-  Kernel Ihre Netzwerkkarte nicht erkannt und Sie müssen eine andere
-  ausprobieren. Beispielsweise ist wird die Karte e1000 von Qemu nicht
-  unterstützt, die Pcnet sollte aber funktionieren:
-  <code>-net nic,model=pcnet -net user</code>
-</p>
-
-<p>
-Um das Netz zu konfigurieren muss der pfinet-Übersetzer konfiguriert werden. 
-Dies geschieht über den <code>settrans</code>-Befehl, der einen Übersetzer an
-einen gegebenen Dateisystemknoten einhängt. Falls Programme auf den Knoten,
-beispielsweise durch Senden eines RPC, zugreifen, wird das Betriebssystem
-transparent den Server starten, um die Anfrage zu bearbeiten.
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
-\# settrans -fgap /servers/socket/2 /hurd/pfinet -i eth0 \
-   -a a.b.c.d -g e.f.g.h -m i.j.k.l
-</pre></td></tr></table>
-
-<p>
-Hier werden <code>settrans</code> mehrere Optionen übergeben. Die ersten zwei,
-<q><var>fg</var></q>, erzwingen, dass existierende Übersetzer verschwinden. Die
-nächsten zwei, <q><var>ap</var></q>, erzeugen sowohl aktive als auch passive
-Übersetzer. Indem wir aktive Übersetzer erzeugen, sehen wir sofort jede 
-Fehlermeldung auf <tt><q>stderr</q></tt>. Der letztere speichert den Übersetzer und
-die Befehle im Knoten, so dass er transparent neu gestartet werden kann (d.h.
-die Einstellungen bleiben persistent über Neustarts hinweg erhalten). Die
-Optionen werden vom Knoten, an den der Übersetzer angehängt werden soll, dann
-dem zu startenden Programm (d.h. dem Übersetzer) und jedem Argument, das Sie
-ihm übergeben, gefolgt. Die <q><var>-i</var></q>-Option ist die Schnittstelle, auf
-der <code>pfinet</code> horchen wird, <q><var>-a</var></q> ist die IP-Adresse,
-<q><var>-g</var></q> ist das Gateway und <q><var>-m</var></q> ist die Netzmaske.
-</p>
-
-<p>
-Stellen Sie sicher, dass Sie Name-Server zu Ihrer 
-<tt><q>/etc/resolv.conf</q></tt>-Datei hinzufügen:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
-  nameserver 192.168.1.1
-</pre></td></tr></table>
-
-<p>
-Um diese Konfiguration zu testen: <code>ping -c2 gateway</code>. Das
-<q><var>-c</var></q> ist wichtig, um die Anzahl der pings zu begrenzen; erinnern
-Sie sich, dass <kbd>CONTROL-C</kbd> im Einzelbenutzermodus nicht funktioniert.
-</p>
-
-<p>
-DHCP funktioniert noch nicht im Hurd. Dies ist in Beschränkungen von pfinet
-begründet: es basiert auf Linux TCP/IP-Code und kann nicht auf 
-<tt><q>0.0.0.0</q></tt> lauschen.
-</p>
-
-<p>
-Hilfe über <code>settrans</code> kann durch Übergabe der 
-<q><var>--help</var></q>-Option erhalten werden. Hilfe über einen speziellen
-Übersetzer kann erhalten werden, indem er von der Befehlszeile mit dem gleichen
-Argument aufgerufen wird, z.B.:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
-\# /hurd/pfinet --help
-</pre></td></tr></table>
-
-<p>
-Da es viel an Ausgabe geben kann, überlegen Sie, diese durch ein
-seitenbasiertes Anzeige-Programm wie <code>less</code> zu leiten.
-</p>
-
-
-<h3>7.2 Andere Dateisysteme</h3>
-
-<p>
-Als nächstes editieren Sie <tt><q>/etc/fstab</q></tt>, um weitere Dateisysteme sowie
-Auslagerungs-Bereich (<q>swap space</q>) hinzuzufügen. Es ist <em>sehr wichtig</em>,
-dass ein Auslagerungsbereich verwendet wird; der Hurd wird um eine Größenordnung
-stabiler sein. Beachten Sie, dass sich der Hurd transparent eine 
-Auslagerungspartition mit Linux teilen kann, aber in jedes Gerät auslagern kann,
-darunter in rohe Partitionen wie beispielsweise Ihre Home-Partition. 
-Standardmäßig ist <code>nano</code> der einzige Editor, der in der
-Basisdistribution installiert ist.
-</p>
-
-<p>
-Hier ist eine <tt><q>/etc/fstab</q></tt>-Datei als Beispiel:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
-\# &#60;file system&#62; &#60;mount point&#62;   &#60;type&#62;  &#60;options&#62;  &#60;dump&#62;  &#60;pass&#62;
-/dev/hd0s1      /               ext2    rw         0       1
-/dev/hd0s2      /home           ext2    rw         0       2
-/dev/hd0s3      none            swap    sw         0       0
-</pre></td></tr></table>
-
-<p>
-Denken Sie daran, jedes Gerät mit dem <code>MAKEDEV</code>-Befehl anzulegen:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
- \# cd /dev
- \# ./MAKEDEV hd0s1 hd0s2 hd0s3
-</pre></td></tr></table>
-
-<p>
-Um ein NFS-Dateisystem einzuhängen, wird der <code>/hurd/nfs</code>-Übersetzer
-verwendet. Falls er nicht als root läuft, wird er sich am Server mit einer 
-Port-Nummer oberhalb von 1023 anmelden. Standardmäßig wird GNU/Linux dies
-ablehnen. Um GNU/Linux mitzuteilen, Verbindungen aus nicht-reservierten Ports
-zu akzeptieren, ergänzen Sie die <q><var>insecure</var></q>-Option zu der 
-export-Zeile. Hier ist eine <tt><q>/etc/exports</q></tt>-Datei als Beispiel, die 
-annimmt, dass die IP-Adresse des Clients <tt><q>192.168.1.2</q></tt> ist:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
-  /home  192.168.1.2(rw,insecure)
-</pre></td></tr></table>
-
-<p>
-Um dies von einer GNU-Kiste einzuhängen und unter der Annahme, dass die 
-IP-Adresse des NFS-Servers <tt><q>192.168.1.1</q></tt> ist:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
-\# settrans -cgap /mount/point /hurd/nfs 192.168.1.1:/home
-</pre></td></tr></table>
-
-
-<h3>7.3 Neustart</h3>
-
-<p>
-Schließlich rebooten Sie in den Mehrbenutzermodus, d.h. auf die gleiche Art, wie
-der Einzelbenutzermodus hochgebracht wurde ohne die <q><var>-s</var></q>-Option
-beim Laden des Kernels. Für Details lesen Sie den Abschnitt 5 <q>GNU/Hurd booten</q>.
-</p>
-
-<p>
-Lustiges Hacken!
-</p>
+#<h2>2. Grundstück oder ein Zuhause finden</h2>
+#
+#<p>
+#Falls Sie keine verfügbare Partition oder extra Festplatte haben, kann dies
+#der längste Schritt sein. In diesem Fall müssen Sie Ihre Festplatte neu
+#partitionieren. Eine Möglichkeit ist es, GNUs Partitions-Editor,
+#<a href="http://packages.debian.org/parted">Parted</a>, zu
+#verwenden. Er bietet nicht nur grundlegende Partitionseditierung, sondern auch
+#Partitionsgrößenveränderungs- und -verschiebe-Funktionalität. Das Handbuch ist
+#recht vollständig und enthält mehrere Anleitungskurse. Beachten Sie, dass es
+#  auch den Partitionstyp <code>63 GNU HURD or SysV</code> gibt, er sollte nicht
+#  verwandt werden, da ansonsten die Installations-CD sie nicht finden wird. 
+#  Verwenden Sie einfach <code>83 Linux</code>.
+#</p>
+#
+#<p>
+#Der Hurd unterstützt mehrere Erweiterungen des ext2fs-Dateisystem-Formats. 
+#Zuallererst sind darunter die passiven Übersetzer und ein vierter Satz an 
+#Rechte-Bits für unbekannte Benutzer (Benutzer ohne eine Identität &ndash; nicht
+#der <q>other</q>-Benutzer). Um diese Erweiterungen zu benutzen, muss der Eigentümer
+#der Partition auf <code>hurd</code> gesetzt werden. <code>mke2fs</code> setzt
+#den Eigentümer auf den aktuell laufenden Kernel, wenn dies nicht explizit auf
+#der Befehlszeile aufgehoben wird. Da der Hurd diese Einstellung fleißig 
+#respektieren wird, muss darauf geachtet werden, diese zutreffend zu setzen, oder
+#der Hurd wird auf subtile Art versagen. Beachten Sie, dass selbst ein 
+#Dateisystem, das einem bestimmten Kernel gehört, noch von anderen benutzt
+#werden kann; Sie können u.U. nur einige Erweiterungen nicht benutzen.
+#</p>
+#
+#<p>
+#Um ein Dateisystem zu erzeugen, benutzen Sie <code>mke2fs</code> und übergeben
+#Sie <q><var>-b 4096 -I 128 -o hurd</var></q>, um dem Hurd anzuzeigen, dass er der neue
+#Eigentümer des Dateisystems ist. Wenn beispielsweise Ihre Partition 
+#<tt><q>/dev/hda1</q></tt> ist:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# mke2fs -b 4096 -I 128 -o hurd /dev/hda1
+#</pre></td></tr></table>
+#
+#
+#<h2>3. Das Boot-Lade-Programm</h2>
+#
+#<p>
+#Das Boot-Lade-Programm des GNU-Systems ist Grub, der <q>GRand Unified Boot 
+#loader</q>, und es ist seine Hauptaufgabe, den Kern des GNU-Systems (Mach und
+#den Hurd) zu booten. Allerdings kann jedes Boot-Lade-Programm, das den
+#Multiboot-Standard unterstützt, dazu verwendet werden, Mach und den Hurd zu
+#laden. Momentan (soweit uns das bewusst ist) ist der GNU Grub das einzige 
+#Boot-Lade-Programm, das so einen Standard unterstützt.
+#</p>
+#
+#<p>
+#Ein Wort über Grub. Anders als traditionelle Boot-Lade-Programme auf x86, wie
+#LILO, ist Grub sehr mächtig. Es hat eine Kommandozeilenschnittstelle, bootp,
+#dummy-Terminal-Unterstützung und eine Fülle an anderen Funktionen. Zusätzlich
+#kann er fast jeden Kernel booten. Falls Sie jemals eine Alpha oder Sparc
+#gebootet haben, werden Sie verstehen, was Grub machen kann. Daher seien Sie nicht
+#verängstigt: Grub ist besser. Sie werden ihn mögen. Sie werden nicht 
+#zurückkehren.
+#</p>
+#
+#<p>
+#Es ist wahrscheinlich besser, dass Sie 
+#<a href="http://packages.debian.org/grub2">Grub</a> vor der Installation von
+#Hurd installieren. Sie können es aber auch zu jedem späteren Zeitpunkt auf Ihre Festplatte installieren.
+#</p>
+#
+#
+#<h2>4. Cross-Installation</h2>
+#
+#<p>
+#Der nächste Schritt ist das Erhalten des Basis-Systems. Es gibt mehrere 
+#Alternativen, falls Sie ein Debian-System verwenden, können Sie das Paket
+#<q>crosshurd</q> verwenden. Andernfalls können Sie ein aktualisiertes
+#Basissystem-Tar-Archiv von einem beliebigen unter
+#<url "http://wiki.debian.org/DebianPorts/Mirrors" />
+#aufgeführten Spiegel holen.
+#</p>
+#
+#<p>
+#Das Tar-Archiv ist so aufgesetzt, dass alles in das aktuelle Verzeichnis
+#extrahiert wird. Nachdem das Dateisystem eingehängt ist, kann das Archiv
+#extrahiert werden. Ist das Dateisystem beispielsweise auf <tt><q>/dev/hda2</q></tt>,
+#der Einhängepunkt <tt><q>/gnu</q></tt> und das Archiv im aktuellen Home-Verzeichnis
+#des Benutzers, dann wird das Folgende benötigt:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# mount -t ext2 /dev/hda2 /gnu
+# \# cd /gnu
+# \# tar --same-owner -xvjpf ~/gnu.tar.bz2
+#</pre></td></tr></table>
+#
+#
+#<h2>5. GNU/Hurd booten</h2>
+#
+#<p>
+#  Alles ist nun in Bereitschaft, um GNU/Hurd zum ersten Mal zu booten. Beachten
+#  Sie, dass abhängig von der Version von GRUB sich kleine Details unterscheiden
+#  werden. Bitte stellen Sie sicher, ob Sie GRUB1 (auch <q>legacy</q> oder
+#  0.95 oder neuer bis 0.97) oder GRUB2 (auch 1.95 oder neuer) haben. Die 
+#  folgenden Beispiele berücksichtigen beide Versionen, wählen Sie die richtige
+#  aus. 
+#</p>
+#<p>
+#  Beachten Sie bitte weiterhin, dass einige Fehler gemeldet wurden, wenn mit nur
+#  128 MB gebootet wird, da zu diesem Zeitpunkt noch kein Swap eingerichtet ist.
+#  Stellen Sie sicher, dass mindestens 256 MB Arbeitsspeicher zur Verfügung stehen.
+#</p>
+#<p>
+#  Falls auf Ihrem System bereits GRUB installiert ist, starten Sie das 
+#  System einfach neu. Andernfalls müssen Sie ein Grub-Boot-Medium benutzen. 
+#  Unter Debian stellen die Pakete grub-disk (grub1) bzw. grub-rescue-pc (grub2)
+#  CD- und Disketten-Images bereit. Stellen Sie sicher, dass das Grub-Boot-Medium
+#  im Laufwerk ist und starten Sie das System neu. Falls alles klappt, wird
+#  entweder ein Grub-Menü oder eine Befehlszeile angezeigt. Falls im Menü ein
+#  <tt><q>GNU/Hurd</q></tt>-Eintrag vorliegt, können Sie es wahrscheinlich 
+#  benutzen, um viele Tipparbeit zu sparen. Erstmal drücken Sie <kbd>c</kbd>,
+#  falls Ihnen das Menü angezeigt wird, um auf die Befehlszeile zu wechseln.
+#</p>
+#
+#<p>
+#Zuerst muss der GNU Mach geladen werden. Dies benötigt das Wissen über das
+#Dateisystem und den Pfad zu GNU Mach. Grub benutzt eine Partitions-Nomenklatur,
+#die sich ein bisschen von Linux und dem Hurd unterscheidet: sowohl IDE als auch
+#SCSI-Laufwerke werden <tt><q>(hdN,M)</q></tt> benannt. <code>N</code> ist die
+#Laufwerksnummer (mit Null beginnend) wie sie vom BIOS durchnummeriert wird.
+#Das bedeutet, Grub unterscheidet nicht zwischen IDE- und SCSI-Platten. 
+#<code>M</code> identifiziert die Partition auf dem Laufwerk. Bei Grub1 ist dies
+#  auch ein bei Null beginnender Index, bei Grub2 beginnt er mit 1.
+#  Falls dies verwirrend klingt, entspannen Sie sich: Der
+#Grub ist auch hilfsbereit.
+#</p>
+#
+#<p>
+#Um zu bestimmen, auf welchem Dateisystem eine bestimmte Datei liegt, bietet
+#Grub den <code>find</code>-Befehl. Wenn dieser Befehl zusammen mit einem 
+#Dateinamen geäußert wird, sucht Grub auf jedem Dateisystem nach der 
+#spezifizierten Datei und gibt aus, wo sie gefunden wurde. Um zum Beispiel nach
+#dem Kernel <tt><q>/boot/gnumach.gz</q></tt> zu suchen:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>  
+#   grub1&#62; find /boot/gnumach.gz
+#   (hd0,0)
+#</pre></td></tr>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub2&#62; search -f /boot/gnumach.gz
+#   (hd0,1)
+#</pre></td></tr>
+#</table>
+#
+#<p>
+#Hier gibt Grub1 an, dass <tt><q>/boot/gnumach.gz</q></tt> auf 
+#  <tt><q>(hd0,0)</q></tt> ist und Grub2, dass es auf <tt><q>(hd0,1)</q></tt>
+#  ist (denken Sie an die Unterschiede in der Partitionsnummerierung zwischen
+#  Grub1 und Grub2). Um Ihnen Tipparbeit zu sparen, setzen Sie Grubs Wert für 
+#  root auf diesen Wert:
+#</p>
+#
+#<table>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub1&#62; root (hd0,0)
+#</pre></td></tr>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub2&#62; set root=(hd0,1)
+#</pre></td></tr>
+#</table>
+#
+#<p>
+#Vor dem Laden des Kernels muss mindestens eine Option, die Wurzel-Partition, auf
+#der Befehlszeile spezifiziert werden. Dies wird vom Hurd selber (d.h. nicht von
+#Grub) verwendet. Als solche muss sie so bezeichnet sein, dass der Hurd sie
+#verstehen kann.
+#</p>
+#
+#<p>
+#GNU Mach nummeriert Platten beginnend bei Null. IDE-Laufwerke haben das Präfix
+#<code>hd</code> während SCSI-Platten das Präfix <code>sd</code> haben. Wie bei
+#Linux werden die Laufwerke entsprechend Ihrer Position am Kontroller nummeriert.
+#Zum Beispiel ist der primäre Master <code>hd0</code> und der sekundäre Slave
+#<code>hd3</code>. Partitionen benutzen die BSD-<q>Slice</q>-Namenskonvention und
+#hängen <code>sM</code> an den Laufwerksnamen an, um eine bestimmte Partition
+#anzuzeigen. Die Slice-Zahl ist einfach zu berechnen: falls Sie Grub2 einsetzen,
+#  verwenden Sie den gleichen Index, im Falle von Grub1 erhöhen Sie einfach die
+#von Grub verwendete Zahl um eins.
+#</p>
+#
+#<p>
+#Da der Hurd noch nicht konfiguriert wurde, muss er im Einzelbenutzermodus
+#gestartet werden. Hierzu reicht die Ergänzung von <q><var>-s</var></q> auf der
+#Kernel-Befehlszeile.
+#</p>
+#
+#<p>
+#  In Summe hätten wir unter der Annahme, dass das erste Laufwerk (d.h. 
+#  <tt><q>(hd0)</q></tt>) der Master auf dem sekundären Kontroller ist:
+#</p>
+#
+#<table>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub1&#62; kernel /boot/gnumach.gz root=device:hd0s1 -s
+#   [Multiboot-elf, ...]
+#</pre></td></tr>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub2&#62; multiboot /boot/gnumach.gz root=device:hd0s1 -s
+#</pre></td></tr>
+#</table>
+#
+#<p>
+#Als nächstes muss der Wurzeldateisystem-Server und der <code>exec</code>-Server
+#geladen werden. Dies geschieht mittels Grubs Boot-Modul Lademöglichkeit. Die
+#${var} werden von GNU Mach eingefüllt. Die Argumente werden vom Hurd verwendet
+#um anzugeben, was für eine Art von Information bereitgestellt wird. Da die 
+#ext2fs-Befehlszeile sehr lang ist, kann Sie durch Schützen des 
+#Zeilenumbruchzeichens in normaler Unix-Manier umgebrochen werden. Stellen Sie
+#sicher, dass nach dem umgedrehten Schrägstrich am Zeilenende kein Leerzeichen folgt. Stellen
+#Sie auch sicher, <kbd>{</kbd> und <kbd>}</kbd> von <kbd>(</kbd> und <kbd>)</kbd>
+#zu unterscheiden. Beachten Sie die subtilen Unterschiede zwischen Grub1 und
+#  Grub2: Bei Grub2 muss der Dateiname wiederholt und Anführungszeichen verwandt
+#  werden. Beachten Sie, dass in dieser Stufe die Option <q>--readonly</q> von
+#  <code>ext2fs.static</code> nicht übergeben werden darf.
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>  
+#  grub1&#62; module /hurd/ext2fs.static \
+#   --multiboot-command-line=${kernel-command-line} \
+#   --host-priv-port=${host-port} \
+#   --device-master-port=${device-port} \
+#   --exec-server-task=${exec-task} -T typed ${root} \
+#   $(task-create) $(task-resume)
+#    [Multiboot-module  0x1c4000, 0x2cfe6a bytes]
+#  grub1&#62; module /lib/ld.so.1 /hurd/exec $(exec-task=task-create)
+#    [Multiboot-module  0x494000, 0x27afe bytes]
+#</pre></td></tr>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#  grub2&#62; module /hurd/ext2fs.static ext2fs \
+#   --multiboot-command-line='${kernel-command-line}' \
+#   --host-priv-port='${host-port}' \
+#   --device-master-port='${device-port}' \
+#   --exec-server-task='${exec-task}' -T typed '${root}' \
+#   '$(task-create)' '$(task-resume)'
+#  grub2&#62; module /lib/ld.so.1 exec /hurd/exec '$(exec-task=task-create)'
+#</pre></td></tr>
+#</table>
+#
+#<p>
+#  Als Alternative können Sie diese Befehle auch in die Konfigurationsdatei 
+#  <tt><q>menu.lst</q></tt> (Grub1) oder <tt><q>grub.cfg</q></tt> (Grub2) eintragen
+#  und dann mittels <tt><q>configfile /pfad/zu/menu.lst</q></tt> (Grub1) oder 
+#  <tt><q>configfile /pfad/zu/grub.cfg</q></tt> (Grub2) von der
+#  grub-Eingabeaufforderung aktivieren. Sie können natürlich grub auch einfach in den 
+#  <acronym lang="en" title="Master Boot Record">MBR</acronym> installieren und dann daraufhin verweisen.
+#</p>
+#
+#<p>
+#GNU/Hurd kann nun gebootet werden:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+#grub&#62; boot
+#</pre></td></tr></table>
+#
+#<p>
+#Falls der GNU/Hurd nicht bootet, könnte dies an geteilten IRQs liegen: GNU Mach
+#arbeitet nicht gut mit diesen. Sie können Ihre Situation bestätigen, indem Sie
+#beispielsweise in die <tt><q>/proc/interrupts</q></tt>-Datei unter Linux schauen. 
+#Da der GNU Mach auch keine ladbaren Kernelmodule unterstützt, sind viele Treiber
+#in den Standardkernel einkompiliert. Falls es alte Peripherie gibt, kann dies ein
+#Problem sein: Ein Gerät könnte auf eine Sondierung für ein komplett anderes
+#Gerät ohne Bezug reagieren und dadurch einen Absturz hervorrufen. Das Bauen
+#eines neuen Kernels mit nur den benötigten Gerätetreibern löst normalerweise
+#dieses Problem. GNU Mach kann einfach cross-kompiliert werden. Falls Sie Debian
+#betreiben, versuchen Sie das <tt><q>mig</q></tt>-Paket zu installieren und der
+#normale <tt><q>gcc</q></tt> sollte es erledigen.
+#</p>
+#
+#<p>
+#Falls dies nicht hilft fragen Sie auf der angemessenen Mailingliste.
+#</p>
+#
+#
+#<h2>6. Native Installation</h2>
+#
+#<p>
+#Sobald Ihnen eine Shell-Eingabeaufforderung präsentiert wird, und immer wenn
+#der Hurd im Einzelbenutzermodus ist, ist es notwendig, den Terminaltyp 
+#einzustellen:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+#\# export TERM=mach
+#</pre></td></tr></table>
+#
+#<p>
+#Seien Sie gewarnt, dass <kbd>CONTROL-C</kbd> und Freunde im Einzelbenutzermodus
+#nicht funktionieren.
+#</p>
+#
+#<p>
+#Wir können nun das <code>native-install</code>-Skript laufen lassen. Dies wird
+#die Pakete konfigurieren und mehrere wichtige Übersetzer einrichten:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+#\# ./native-install
+#</pre></td></tr></table>
+#
+#<p>
+#Bevor sich das Skript beendet, wird es angeben, dass es ein zweites Mal laufen
+#muss. Folgen Sie den Anweisungen und rebooten Sie mittels des
+#<code>reboot</code>-Befehls. Gehen Sie wieder in den Einzelbenutzermodus und 
+#lassen Sie <code>./native-install</code> laufen.
+#</p>
+#
+#
+#<h2>7. Konfiguration</h2>
+#
+#
+#<h3>7.1 Das Netz</h3>
+#
+#<p>
+#  Stellen Sie zuerst sicher, dass Ihre Netzwerkkarte von GNU-Mach erkannt wird:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# devprobe eth0
+# eth0
+#</pre></td></tr></table>
+#
+#<p>
+#  Falls <code>devprobe eth0</code> nicht <code>eth0</code> liefert, hat der
+#  Kernel Ihre Netzwerkkarte nicht erkannt und Sie müssen eine andere
+#  ausprobieren. Beispielsweise ist wird die Karte e1000 von Qemu nicht
+#  unterstützt, die Pcnet sollte aber funktionieren:
+#  <code>-net nic,model=pcnet -net user</code>
+#</p>
+#
+#<p>
+#Um das Netz zu konfigurieren muss der pfinet-Übersetzer konfiguriert werden. 
+#Dies geschieht über den <code>settrans</code>-Befehl, der einen Übersetzer an
+#einen gegebenen Dateisystemknoten einhängt. Falls Programme auf den Knoten,
+#beispielsweise durch Senden eines RPC, zugreifen, wird das Betriebssystem
+#transparent den Server starten, um die Anfrage zu bearbeiten.
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+#\# settrans -fgap /servers/socket/2 /hurd/pfinet -i eth0 \
+#   -a a.b.c.d -g e.f.g.h -m i.j.k.l
+#</pre></td></tr></table>
+#
+#<p>
+#Hier werden <code>settrans</code> mehrere Optionen übergeben. Die ersten zwei,
+#<q><var>fg</var></q>, erzwingen, dass existierende Übersetzer verschwinden. Die
+#nächsten zwei, <q><var>ap</var></q>, erzeugen sowohl aktive als auch passive
+#Übersetzer. Indem wir aktive Übersetzer erzeugen, sehen wir sofort jede 
+#Fehlermeldung auf <tt><q>stderr</q></tt>. Der letztere speichert den Übersetzer und
+#die Befehle im Knoten, so dass er transparent neu gestartet werden kann (d.h.
+#die Einstellungen bleiben persistent über Neustarts hinweg erhalten). Die
+#Optionen werden vom Knoten, an den der Übersetzer angehängt werden soll, dann
+#dem zu startenden Programm (d.h. dem Übersetzer) und jedem Argument, das Sie
+#ihm übergeben, gefolgt. Die <q><var>-i</var></q>-Option ist die Schnittstelle, auf
+#der <code>pfinet</code> horchen wird, <q><var>-a</var></q> ist die IP-Adresse,
+#<q><var>-g</var></q> ist das Gateway und <q><var>-m</var></q> ist die Netzmaske.
+#</p>
+#
+#<p>
+#Stellen Sie sicher, dass Sie Name-Server zu Ihrer 
+#<tt><q>/etc/resolv.conf</q></tt>-Datei hinzufügen:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+#  nameserver 192.168.1.1
+#</pre></td></tr></table>
+#
+#<p>
+#Um diese Konfiguration zu testen: <code>ping -c2 gateway</code>. Das
+#<q><var>-c</var></q> ist wichtig, um die Anzahl der pings zu begrenzen; erinnern
+#Sie sich, dass <kbd>CONTROL-C</kbd> im Einzelbenutzermodus nicht funktioniert.
+#</p>
+#
+#<p>
+#DHCP funktioniert noch nicht im Hurd. Dies ist in Beschränkungen von pfinet
+#begründet: es basiert auf Linux TCP/IP-Code und kann nicht auf 
+#<tt><q>0.0.0.0</q></tt> lauschen.
+#</p>
+#
+#<p>
+#Hilfe über <code>settrans</code> kann durch Übergabe der 
+#<q><var>--help</var></q>-Option erhalten werden. Hilfe über einen speziellen
+#Übersetzer kann erhalten werden, indem er von der Befehlszeile mit dem gleichen
+#Argument aufgerufen wird, z.B.:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+#\# /hurd/pfinet --help
+#</pre></td></tr></table>
+#
+#<p>
+#Da es viel an Ausgabe geben kann, überlegen Sie, diese durch ein
+#seitenbasiertes Anzeige-Programm wie <code>less</code> zu leiten.
+#</p>
+#
+#
+#<h3>7.2 Andere Dateisysteme</h3>
+#
+#<p>
+#Als nächstes editieren Sie <tt><q>/etc/fstab</q></tt>, um weitere Dateisysteme sowie
+#Auslagerungs-Bereich (<q>swap space</q>) hinzuzufügen. Es ist <em>sehr wichtig</em>,
+#dass ein Auslagerungsbereich verwendet wird; der Hurd wird um eine Größenordnung
+#stabiler sein. Beachten Sie, dass sich der Hurd transparent eine 
+#Auslagerungspartition mit Linux teilen kann, aber in jedes Gerät auslagern kann,
+#darunter in rohe Partitionen wie beispielsweise Ihre Home-Partition. 
+#Standardmäßig ist <code>nano</code> der einzige Editor, der in der
+#Basisdistribution installiert ist.
+#</p>
+#
+#<p>
+#Hier ist eine <tt><q>/etc/fstab</q></tt>-Datei als Beispiel:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+#\# &#60;file system&#62; &#60;mount point&#62;   &#60;type&#62;  &#60;options&#62;  &#60;dump&#62;  &#60;pass&#62;
+#/dev/hd0s1      /               ext2    rw         0       1
+#/dev/hd0s2      /home           ext2    rw         0       2
+#/dev/hd0s3      none            swap    sw         0       0
+#</pre></td></tr></table>
+#
+#<p>
+#Denken Sie daran, jedes Gerät mit dem <code>MAKEDEV</code>-Befehl anzulegen:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# cd /dev
+# \# ./MAKEDEV hd0s1 hd0s2 hd0s3
+#</pre></td></tr></table>
+#
+#<p>
+#Um ein NFS-Dateisystem einzuhängen, wird der <code>/hurd/nfs</code>-Übersetzer
+#verwendet. Falls er nicht als root läuft, wird er sich am Server mit einer 
+#Port-Nummer oberhalb von 1023 anmelden. Standardmäßig wird GNU/Linux dies
+#ablehnen. Um GNU/Linux mitzuteilen, Verbindungen aus nicht-reservierten Ports
+#zu akzeptieren, ergänzen Sie die <q><var>insecure</var></q>-Option zu der 
+#export-Zeile. Hier ist eine <tt><q>/etc/exports</q></tt>-Datei als Beispiel, die 
+#annimmt, dass die IP-Adresse des Clients <tt><q>192.168.1.2</q></tt> ist:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+#  /home  192.168.1.2(rw,insecure)
+#</pre></td></tr></table>
+#
+#<p>
+#Um dies von einer GNU-Kiste einzuhängen und unter der Annahme, dass die 
+#IP-Adresse des NFS-Servers <tt><q>192.168.1.1</q></tt> ist:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+#\# settrans -cgap /mount/point /hurd/nfs 192.168.1.1:/home
+#</pre></td></tr></table>
+#
+#
+#<h3>7.3 Neustart</h3>
+#
+#<p>
+#Schließlich rebooten Sie in den Mehrbenutzermodus, d.h. auf die gleiche Art, wie
+#der Einzelbenutzermodus hochgebracht wurde ohne die <q><var>-s</var></q>-Option
+#beim Laden des Kernels. Für Details lesen Sie den Abschnitt 5 <q>GNU/Hurd booten</q>.
+#</p>
+#
+#<p>
+#Lustiges Hacken!
+#</p>
 
 
 <h2>Abschließende Worte</h2>
 
 
-<h3>8.1 Das Grub-Menü</h3>
-
-<p>
-Immer den Kernel von Hand zu laden kann sehr ermüdend werden. Editieren Sie
-  <tt><q>/boot/grub/menu.lst</q></tt> für Grub1 bzw. 
-  <tt><q>/boot/grub/grub.cfg</q></tt> für Grub2 und passen Sie sie entsprechend
-  an; das Booten
-wird viel schneller und leichter werden.
-</p>
-
-
-<h3>8.2 Geräte ergänzen</h3>
-
-<p>
-Standardmäßig sind nur einige Geräte im <tt><q>/dev</q></tt>-Verzeichnis angelegt.
-Benutzen Sie das <code>MAKEDEV</code>-Skript, um jedes benötigte Gerät anzulegen.
-</p>
+#<h3>8.1 Das Grub-Menü</h3>
+#
+#<p>
+#Immer den Kernel von Hand zu laden kann sehr ermüdend werden. Editieren Sie
+#  <tt><q>/boot/grub/menu.lst</q></tt> für Grub1 bzw. 
+#  <tt><q>/boot/grub/grub.cfg</q></tt> für Grub2 und passen Sie sie entsprechend
+#  an; das Booten
+#wird viel schneller und leichter werden.
+#</p>
+#
+#
+#<h3>8.2 Geräte ergänzen</h3>
+#
+#<p>
+#Standardmäßig sind nur einige Geräte im <tt><q>/dev</q></tt>-Verzeichnis angelegt.
+#Benutzen Sie das <code>MAKEDEV</code>-Skript, um jedes benötigte Gerät anzulegen.
+#</p>
 
 
 <h3>8.3 Weitere Pakete installieren</h3>
@@ -632,20 +635,13 @@ zurückverbinden können.
 
 <p>
 X.Org ist portiert worden und alle Grafikkarten, die es unterstützt und die
-kein Kernelmodul erfordern, sollten funktionieren.
+kein Kernelmodul oder DRM erfordern, sollten funktionieren.
 </p>
 
 <p>
-Sie müssen in der Hurd-Konsole sein und Repeater aufgesetzt haben, wie dies
-in dem obigen Abschnitt 8.4 gezeigt ist. Da X.Org <code>/dev/kbd</code> als
-Gerät für Ihre Tastatur hartkodiert hat, müssen Sie einen Symlink erstellen:
+  Die Hurd-Konsole muss bereits laufen und die Repeater müssen eingerichtet
+  sein, wie dies in dem vorherigen Abschnitt beschrieben ist.
 </p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
- \# cd /dev
- \# ln -s cons/kbd kbd
- \# ln -s cons/mouse mouse
-</pre></td></tr></table>
 
 <p>
 Sie werden mehrere X-Pakete benötigen. <code>x-window-system-core</code>, 
@@ -654,21 +650,8 @@ Sie werden mehrere X-Pakete benötigen. <code>x-window-system-core</code>,
 </p>
 
 <p>
-Debconf kann zur Konfiguration von X.Org verwendet werden, allerdings hat er
-keine Hurd-Kenntnisse und die Konfigurationsdatei muss angepasst werden. Nach
-der Konfiguration ändern Sie den <q>Pointer</q>-Abschnitt in folgende Form:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
-Section "Pointer"
-  Protocol "osmouse"
-  Device "/dev/mouse"
-EndSection
-</pre></td></tr></table>
-
-<p>
-<q><var>Emulate3Buttons</var></q> und <q><var>ZAxisMapping</var></q> müssen beide
-deaktiviert sein.
+  X.Org sollte sofort ohne eine Konfigurationsdatei funktionieren. Allerdings
+  könnte in manchen Fällen die Verwendung des VESA-Treibers notwendig sein.
 </p>
 
 <p>
