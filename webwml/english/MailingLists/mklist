@@ -459,9 +459,16 @@ END
 			print OUT "\n</tr>\n" unless ($count < 3);
 			print OUT "\n<tr>\n";
 		    }
-		    printf OUT "\t<td><input type=\"checkbox\" name=\"unsubscribe\" ".
-                               "value=\"%s\">\n\t<strong><a name=\"%s\" href=\"http://lists.debian.org/%s/\">%s</a></strong>".
-                               "<br>\n", $slist, $slist, $slist, $slist;
+		    # Use similar hack used to fix #445010 to take care of #522324
+		    if($slist =~ /\Aother\-(.+?)\z/) {
+			printf OUT "\t<td><input type=\"checkbox\" name=\"unsubscribe\" ".
+				   "value=\"%s\">\n\t<strong><a name=\"%s\" href=\"http://lists.debian.org/%s/\">%s</a></strong>".
+				   "<br>\n", $slist, $1, $1, $1;
+		    } else {
+			printf OUT "\t<td><input type=\"checkbox\" name=\"unsubscribe\" ".
+				   "value=\"%s\">\n\t<strong><a name=\"%s\" href=\"http://lists.debian.org/%s/\">%s</a></strong>".
+				   "<br>\n", $slist, $slist, $slist, $slist;
+		    }
 		    if (exists $list{$l}->{'Digest'}) {
 			$slist = $list{$l}->{'Digest'}; $slist =~ s/@.*//;
 			if (! ($count++ % 3) ) {
