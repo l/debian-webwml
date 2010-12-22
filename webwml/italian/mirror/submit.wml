@@ -1,0 +1,265 @@
+#use wml::debian::template title="Inviare informazioni sui mirror"
+#use wml::debian::translation-check translation="1.73" maintainer="skizzhg"
+#include "$(ENGLISHDIR)/mirror/submit.inc"
+
+<p>Se si desidera inviare informazioni su un mirror di Debian, è
+possibile farlo utilizzando il modulo seguente. La maggior parte delle
+informazioni fornite verranno visualizzate nell'elenco dei mirror.
+</p>
+
+<p>In caso non si sappia come procedere, a fondo pagina ci sono degli 
+<a href="#examples">esempi</a>.</p>
+
+<p>Si noti che tutti i mirror presentati devono seguire le 
+<a href="ftpmirror">regole e le indicazioni della nostra documentazione</a>.</p>
+
+<form-action "" archive-upstream http://cgi.debian.org/cgi-bin/submit_mirror.pl>
+
+<h2>Informazioni di base</h2>
+
+<p>
+<input type="radio" name="submissiontype" value="new" checked>
+Inserimento nuovo mirror
+&nbsp; &nbsp; &nbsp;
+<input type="radio" name="submissiontype" value="update">
+Aggiornamento di un mirror esistente
+</p>
+
+<p>Si prega di inserire nel campo <em>Sito</em> il nome con cui si
+desidera sia elencato il mirror.</p>
+
+<p>
+Sito: <input type="text" name="site" size="30"></p>
+
+<p>Se il server dispone di altri nomi, inserirli nel campo <em>Alias</em> 
+separati da una virgola (,).
+</p>
+
+<p>Alias: <input type="text" name="aliases" size="60"></p>
+
+<h2>Tipi di mirror e modalità di accesso</h2>
+
+<p>Immettere nei campi sottostanti i percorsi per il mirror Debian del
+vostro sito. Lasciare vuoti i campi non pertinenti.</p>
+
+<table>
+<tablerow "Archivio dei pacchetti, tramite HTTP"   archive-http   30>
+<tablerow "Archivio dei pacchetti, tramite FTP"    archive-ftp    30>
+<tablerow "Archivio dei pacchetti, tramite rsync"  archive-rsync  30>
+<tablerow "Pacchetti Backport, tramite HTTP"  backports-http  30>
+<tablerow "Pacchetti Backport, tramite FTP"   backports-ftp   30>
+<tablerow "Pacchetti Backport, tramite rsync" backports-rsync 30>
+<!-- <tablerow "Security updates, over HTTP"   security-http  30> -->
+<!-- <tablerow "Security updates, over FTP"    security-ftp   30> -->
+<!-- <tablerow "Security updates, over rsync"  security-rsync 30> -->
+<tablerow "Immagini CD/DVD, tramite HTTP"      cdimage-http   30>
+<tablerow "Immagini CD/DVD, tramite FTP"       cdimage-ftp    30>
+<tablerow "Immagini CD/DVD, tramite rsync"     cdimage-rsync  30>
+<tablerow "Pacchetti Volatile, tramite HTTP"  volatile-http  30>
+<tablerow "Pacchetti Volatile, tramite FTP"   volatile-ftp   30>
+<tablerow "Pacchetti Volatile, tramite rsync" volatile-rsync 30>
+<tablerow "Vecchie versioni di Debian, tramite HTTP"  old-http     30>
+<tablerow "Vecchie versioni di Debian, tramite FTP"   old-ftp      30>
+<tablerow "Vecchie versioni di Debian, tramite rsync" old-rsync    30>
+</table>
+
+<p>Supporto IPv6:
+<input type="radio" name="ipv6" value="yes">
+sì
+&nbsp;
+<input type="radio" name="ipv6" value="no" checked>
+no
+</p>
+
+<h2>Informazioni sul sito mirror</h2>
+
+<table>
+<tr-upstream-give "Mirror principale aggiornato da"          archive-upstream   30>
+<tr-upstream-take "Mirror Backports aggiornato da"     backports-upstream   30>
+<tr-upstream-take "Mirror Volatile aggiornato da"      volatile-upstream  30>
+<!-- <tr-upstream-take "Security mirror is updated from"      security-upstream  30> -->
+<tr-upstream-take "Mirror immagini CD/DVD aggiornato da"  cdimage-upstream   30>
+<tr>
+<td>Frequenza di mirroring:</td>
+<td>
+<select name="updates">
+<option value="never">Si prega di selezionare...</option>
+<option value="push">innescato con il push</option>
+<option value="twice">due volte al giorno</option>
+<option value="once">giornalmente</option>
+<option value="lessoften">meno spesso</option>
+</select>
+</td>
+</tr>
+<tr>
+<td>Architetture disponibili:
+<td>
+<label><input type=checkbox name=architectures id="allarch" value="ALL" onclick="allarches()">&nbsp;<em>tutte (ovvero nessuna esclusa)</em></label><br>
+<archlist>
+</td></tr>
+</table>
+
+<table>
+<tablerow "Nome del responsabile del sito"         maint_name    30>
+<tablerow "Indirizzo email pubblico del responsabile del sito"              maint_public_email    30>
+<tr><td>&nbsp;</td><td>
+<small>
+L'indirizzo email pubblico del responsabile sarà disponibile a tutti gli utenti.
+</small>
+</td></tr>
+<tr><td>Paese del sito:  <td><select name="country">
+<countrylist>
+</select>
+<tablerow "Indirizzo email privato del responsabile del sito (facoltativo)"  maint_private_email   30>
+<tr><td>&nbsp;</td><td>
+<small>
+Se si inserisce un indirizzo privato, questo sarà disponibile solo ai
+manutentori dell'elenco dei mirror Debian, per consentire loro di contattarvi
+con importanti novità o segnalazioni di bug.
+</small>
+</td></tr>
+<tablerow "Ubicazione del sito (facoltativo)"     location      30>
+<tablerow "Nome dello sponsor del sito (facoltativo)" sponsor_name  30>
+<tablerow "URL del sito dello sponsor (facoltativo)"  sponsor_url   30>
+</table>
+
+<table><tr>
+<td valign="top">Commento:</td>
+<td><textarea name="comment" cols=40 rows=7></textarea></td>
+</tr></table>
+
+<p>Nota: se c'è più di uno sponsor, aggiungere gli altri nel commento.
+Si può anche annotare se il mirror viene aggiornato meno frequentemente
+di una volta al giorno e quanto è veloce il sito (la sua larghezza di
+banda massima).
+</p>
+
+<p>
+<input type="submit" value="Submit"> <input type="reset" value="Clear form">
+</p>
+</form>
+
+<p>Il sito dovrebbe apparire nell'elenco entro una settimana,
+appena sarà verificato e incluso da un operatore. In caso di problemi con
+quanto inviato potremmo contattarvi tramite email.</p>
+
+<p>Se non si ottiene risposta entro due settimane potete contattarci
+all'indirizzo <email mirrors@debian.org>.</p>
+
+<h2><a name="examples">Esempi</a></h2>
+
+<p>Le seguenti informazioni sarebbero per un server denominato
+debian.example.com, che può inoltre essere raggiunto mediante
+e1.example.com. Questi sono ovviamente nomi fittizi.</p>
+
+<div class="centerblock">
+<p>
+Sito: <code>debian.example.com</code><br>
+Alias: <code>e1.example.com</code>
+</p>
+</div>
+
+<p>Il mirror dell'archivio Debian è nella directory /debian/ del server web:</p>
+
+<div class="centerblock">
+<p>
+Archivio dei pacchetti, tramite HTTP: <code>/debian/</code>
+</p>
+</div>
+
+<p>Questo è per ftp://debian.example.com/debian/:</p>
+     
+<div class="centerblock">
+<p>
+Archivio dei pacchetti, tramite FTP: <code>/debian/</code>
+</p>
+</div>
+
+<p>La directory usata per l'accesso rsync, debian.example.com::debian/:</p>
+
+<div class="centerblock">
+<p>
+Archivio dei pacchetti, tramite rsync: <code>debian/</code>
+</p>
+</div>
+
+<p>Il mirror viene aggiornato da ftp.xy.debian.org, perciò si aggiungerà:</p>
+
+<div class="centerblock">
+<p>
+Il mirror è aggiornato da: <code>ftp.xy.debian.org</code>
+</p>
+</div>
+
+<p>Informazioni sul responsabile:</p>
+
+<div class="centerblock">
+<p>
+Nome del responsabile del sito: <code>John Doe</code><br>
+Indirizzo email pubblico del responsabile del sito:
+<code>indirizzo.va@qui.example.com</code>
+</p>
+</div>
+
+<p>Generalmente questo indirizzo non verrà mostrato negli elenchi
+pubblici, ma è necessario affinché i manutentori e gli utenti possono
+contattarvi in caso di problemi. Si prega di inserirne uno corretto.</p>
+
+<p>L'unica altra informazione necessaria è il paese.
+Esempio:</p>
+
+<div class="centerblock">
+<p>
+Paese: <code>Stati Uniti [US]</code><br>
+</p>
+</div>
+
+<p>È inoltre possibile aggiungere facoltivamente:</p>
+
+<div class="centerblock">
+<p>
+Indirizzo email privato del responsabile del sito (facoltativo):
+<code>indirizzo@privato.qui</code><br>
+Ubicazione del sito (facoltativo): <code>Città, nome della regione</code><br>
+Nome dello sponsor del sito (facoltativo): <code>Nome dello sponsor</code><br>
+URL del sito dello sponsor (facoltativo):
+<code>http://nome.dello.sponsor.tld/</code><br>
+Commento: <code>qualsiasi informazione si ritenga utile</code><br>
+</p>
+</div>
+
+<p>Qui è possibile specificare un indirizzo email personale che verrà
+inviato solo a un numero limitato di manutentori dell'elenco dei mirror,
+nel caso vogliate fornirne uno più diretto ma siete riluttanti a
+pubblicarlo. Si può anche ringraziare lo sponsor e fornire altre
+informazioni specifiche sul vostro sito.</p>
+
+<p>L'esempio seguente descrive il mirror su ftp.uk.debian.org:</p>
+
+<div class="centerblock">
+<p>
+Sito: <code>ftp.uk.debian.org</code><br>
+Alias: <code>open.hands.com</code><br>
+Archivio dei pacchetti, tramite HTTP: <code>/debian/</code><br>
+Archivio dei pacchetti, tramite FTP: <code>/debian/</code><br>
+Archivio dei pacchetti, tramite rsync: <code>debian/</code><br>
+Nome del responsabile del sito: <code>Philip Hands</code><br>
+Indirizzo email del responsabile del sito: <code>abc@indirizzo.va.qui</code><br>
+Paese: <code>Regno Unito [GB]</code>
+</p>
+</div>
+
+<p>Se si mantengono copie di vecchie versioni di Debian, le voci sarebbero
+simili a queste:</p>
+
+<div class="centerblock">
+<p>
+Sito: <code>archive.debian.org</code><br>
+Vecchie versioni di Debian, tramite HTTP: <code>/debian-archive/</code><br>
+Vecchie versioni di Debian, tramite FTP: <code>/debian-archive/</code><br>
+Vecchie versioni di Debian, tramite rsync: <code>debian-archive/</code><br>
+Nome del responsabile del sito: <code>Debian FTP admins</code><br>
+Indirizzo email del responsabile del sito: <code>abc@indirizzo.va.qui</code><br>
+Paese: <code>Stati Uniti [US]</code><br>
+</p>
+</div>
