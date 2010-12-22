@@ -1,0 +1,40 @@
+#use wml::debian::translation-check translation="1.1"
+<define-tag description>buffertspill</define-tag>
+
+<define-tag moreinfo>
+<p>Ett problem har upptäckts i OpenSSL:s TLS-servers kod som tolkar filändelser.
+Problemet kan skapa ett buffertspill,
+som tillåter en angripare att orsaka en applikationskrasch eller möjligen
+exekvera godtycklig kod.</p>
+
+<p>Alla OpenSSL-baserade SSL/TLS-servrar är dock inte sårbara: En server
+is vulnerable if it is multi-threaded and uses OpenSSL's internal caching
+är sårbar om den är flertrådad och använder OpenSSL:s interna cachemekanism.
+Bland de servrar som INTE är sårbara finns
+Apaches HTTP-server (som aldrig använder OpenSSL:s
+interna cache) och Stunnel (som kringgår problemet).</p>
+
+<p>Denna uppgradering rättar detta problem. Efter uppgraderingen måste de tjänster
+som använder openssl-bibliotek startas om. Skriptet checkrestart från
+paketet debian-goodies eller lsof kan hjälpa till att ta reda på vilka tjänster
+som behöver startas om.</p>
+
+<p>Användare av tor-paketen från Debians bakåtporteringar eller
+det instabila arkivet bör notera följande:
+Denna openssl-uppdatering orsakar problem med några versioner av tor.
+Ni behöver uppdatera till tor 0.2.1.26-4~bpo50+1 eller 0.2.1.26-1~lennyvolatile2
+beroende på vilket arkiv ni använder.
+Version 0.2.0.35-1~lenny2 v tor-paketet från Debians stabila utgåva
+påverkas inte av dessa problem.</p>
+
+<p>För den stabila utgåvan (Lenny) har problemet rättats i
+openssl version 0.9.8g-15+lenny9.</p>
+
+<p>För uttestningsutgåvan (Squeeze) och den instabila utgåvan
+(Sid) har detta problem rättats i version 0.9.8o-3.</p>
+
+<p>Vi rekommenderar att ni uppgraderar era openssl-paket.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2010/dsa-2125.data"
