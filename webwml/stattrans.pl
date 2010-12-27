@@ -27,6 +27,19 @@ use Webwml::Langs;
 use Webwml::TransCheck;
 use Webwml::TransIgnore;
 
+BEGIN {
+    $udd_available = 0;
+    eval {
+        require JSON;
+        require LWP::Simple;
+        LWP::Simple->import;
+        $udd_available = 1;
+    }; if ($@) {
+        warn "One or more modules required for DDE support failed to load: $@\n";
+    }
+}
+
+
 $| = 1;
 
 $opt_h = "/org/www.debian.org/www/devel/website/stats";
@@ -37,7 +50,8 @@ $opt_v = 0;
 $opt_d = "u";
 $opt_l = undef;
 $opt_b = ""; # Base URL, if not debian.org
-$opt_f = undef; # File lines: "1299999 /doc/index\n"
+# URL of JSON data or path to plaintext file with lines: "1299999 /doc/index\n"
+$opt_f = "http://dde.debian.net/dde/q/static/porridge/stats?t=json";
 getopts('h:w:b:p:t:vd:l:f:') || die;
 #  Replace filename globbing by Perl regexps
 $opt_p =~ s/\./\\./g;
@@ -271,27 +285,49 @@ mkdir ($config{'htmldir'}, 02775) if (! -d $config{'htmldir'});
 
 # Read website hit statistics, if available
 my %hits;
-my $file_sorter;
+my $file_sorter = sub($$) { $_[0] cmp $_[1] };
+if ($config{'hit_file'} and $config{'hit_file'} =~ m{^(f|ht)tps?://} and ! $udd_available) {
+    warn "Disabling fetching of hit data.\n";
+    $config{'hit_file'} = undef;
+}
 if ($config{'hit_file'}) {
-    open(HITS, $config{'hit_file'}) or die sprintf("Opening hit file [%s] failed: $!", $config{'hit_file'});
-    printf "Reading hit file [%s]\n", $config{'hit_file'} if ($config{'verbose'});
-    foreach my $hit_line (<HITS>) {
-	chomp $hit_line;
-        $hit_line =~ /^\s*(\d+)\s+(.*)/ or warn sprintf("unrecognized hit file [%s] line [%s]", $config{'hit_file'}, $hit_line);
-	my ($count, $url) = ($1, $2);
-        last if $count < 3; # URLS with 2 or 1 hits are most likely mistakes; let's not waste RAM on them
-        $hits{substr($url, 1)} = $count;
+    if ($config{'hit_file'} =~ m{^(f|ht)tps?://}) {
+        printf("Retrieving hit data from [%s].\n", $config{'hit_file'}) if ($config{'verbose'});
+        my $json = LWP::Simple::get($config{'hit_file'});
+        if ($json) {
+            my $perl = JSON::from_json($json, {utf8 => 1});
+            foreach my $e (@{$perl->{'r'}}) {
+                my ($count, $url) = @$e;
+                last if $count < 3; # URLS with 2 or 1 hits are most likely mistakes; let's not waste RAM on them
+                $hits{substr($url, 1)} = $count;
+            }
+        } else {
+            warn "Retrieving hit data failed.\n";
+        }
+    } else {
+        open(HITS, $config{'hit_file'}) or die sprintf("Opening hit file [%s] failed: $!", $config{'hit_file'});
+        printf "Reading hit file [%s]\n", $config{'hit_file'} if ($config{'verbose'});
+        foreach my $hit_line (<HITS>) {
+    	chomp $hit_line;
+            $hit_line =~ /^\s*(\d+)\s+(.*)/ or warn sprintf("unrecognized hit file [%s] line [%s]", $config{'hit_file'}, $hit_line);
+    	my ($count, $url) = ($1, $2);
+            last if $count < 3; # URLS with 2 or 1 hits are most likely mistakes; let's not waste RAM on them
+            $hits{substr($url, 1)} = $count;
+        }
+        close(HITS) or die sprintf("Closing hit file [%s] failed: $!", $config{'hit_file'});
     }
-    close(HITS) or die sprintf("Closing hit file [%s] failed: $!", $config{'hit_file'});
-    $file_sorter = sub($$) {
-        my ($a, $b) = @_;
-        $a =~ s/\.wml$//o;
-        $b =~ s/\.wml$//o;
-        $hits{$b} <=> $hits{$a}
-    };
+    if (%hits) {
+        $file_sorter = sub($$) {
+            my ($a, $b) = @_;
+            $a =~ s/\.wml$//o;
+            $b =~ s/\.wml$//o;
+            $hits{$b} <=> $hits{$a}
+        };
+    } else {
+        print "Tables will be sorted alphabetically.\n" if ($config{'verbose'});
+    }
 } else {
     print "No hit file specified. Tables will be sorted alphabetically.\n" if ($config{'verbose'});
-    $file_sorter = sub($$) { $_[0] cmp $_[1] };
 }
 
 my @filenames = sort $file_sorter keys %files;
@@ -499,6 +535,10 @@ foreach $lang (@search_in) {
                 print HTML "<li><a href=\"#gettext\">Translation of templates (gettext files)</a></li>\n";
             }
             print HTML "</ul>\n";
+
+            if (%hits) {
+                print HTML "<p>Note: The lists of pages are sorted by popularity. Hover over the page name to see the number of hits.</p>\n";
+            }
 
             # outputs the content
             if ($o_body) {
