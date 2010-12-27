@@ -1,0 +1,108 @@
+#!/usr/bin/python
+
+# get-www-stats - Debian web site popularity statistics
+# Copyright 2010 Marcin Owsiany <porridge@debian.org>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+# This program is run daily on a Debian website mirror like this:
+#
+#   get-www-stats > stats.txt-pending && mv stats.txt-pending stats.txt
+#
+# The output is then exported via DDE (see http://wiki.debian.org/DDE) and used
+# by the stattrans.pl script to sort the page lists in the Debian web site
+# translation statistics pages.
+
+try:
+  import json
+except ImportError:
+  import simplejson as json
+
+from gzip import open as gzopen
+import logging
+import os
+import re
+import sys
+
+#logging.basicConfig(level=logging.INFO)
+
+logs_dir = '/var/log/apache2'
+logs_prefix = 'www.debian.org-access.log'
+logs_count = 10
+
+logs = []
+for f in os.listdir(logs_dir):
+  if not f.startswith(logs_prefix):
+    continue
+  parts = f.split('-')
+  if len(parts) == 2:
+    logs.append((99999999, f, False))
+  elif len(parts) == 3:
+    if f.endswith('.gz'):
+      gzipped = True
+      stamp = parts[2][:-3]
+    else:
+      gzipped = False
+      stamp = parts[2]
+    logs.append((int(stamp), f, gzipped))
+  else:
+    logging.warn('Skipping unexpected filename [%s].' % f)
+
+counts = {}
+
+for n, f, gzipped in sorted(logs)[-logs_count:]:
+  logfile = os.path.join(logs_dir, f)
+  logging.info('Reading %s.' % logfile)
+  opener = gzipped and gzopen or open
+  for line in opener(logfile):
+    line = line.rstrip()
+    tokens = line.split()
+    url = tokens[6]
+    url = re.sub(r'\...\.html$', '', url)
+    url = re.sub(r'/$', '/index', url)
+    if url in counts:
+      counts[url] += 1
+    else:
+      counts[url] = 1
+  
+if '/index' not in counts:
+  raise Exception('No data for /index')
+elif counts['/index'] < 50000:
+  logging.warn('Less than 50k hits for /index')
+elif counts['/index'] < 10000:
+  raise Exception('Less than 10k hits for /index')
+
+json.dump(sorted([(v, k) for (k, v) in counts.iteritems() if v > 2], reverse=True),
+          sys.stdout,
+          indent=2)
+
+# for v, k in sorted([(v, k) for (k, v) in counts.iteritems()], reverse=True):
+#   print '%8d %s' % (v, k)
+#   if v < 3:
+#     break
+
+# Perl original:
+# @f=split;
+# $s = $f[6];
+# $s =~ s,\...\.html,,;
+# $s =~ s,/$,/index,;
+# $S{$s} += 1;
+# END{
+#   printf "%d normalized URLs\n", scalar keys %S;
+#   foreach my $k (sort { $S{$b} <=> $S{$a} } keys %S) {
+#     printf "%8d %s\n", $S{$k}, $k
+#   }
+# }
+
