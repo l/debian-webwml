@@ -1,6 +1,6 @@
 #use wml::debian::template title="T³umaczenie stron Debiana" BARETITLE=true
 #use wml::fmt::verbatim
-#use wml::debian::translation-check translation="1.47"
+#use wml::debian::translation-check translation="1.51"
 
 <P>Aby maksymalnie u³atwiæ pracê t³umaczom, strony s± generowane
 nieco inaczej ni¿ wielu z was przywyk³o. Strony web s±
@@ -31,16 +31,18 @@ zapisie <code>#use</code>w oryginalnym pliku dokumentuj±c± dok³adn± wersjê
 oryginalnego pliku, który zosta³ przet³umaczony.  Dodanie zapisu <a href="uptodate">
 powoduje, ¿e dokonywanie aktualizacji jest ³atwiejsze</a>. Linia ta powinna wygl±daæ
 tak:
-<kbd>#use wml::debian::translation-check translation="<var>x.y</var>"</kbd>
+<kbd>#use wml::debian::translation-check translation="<var>x.y</var>"</kbd>.
 
 <p>Niektóre grupy zajmuj±ce siê t³umaczeniem u¿ywaj± tej linii do oznaczenia
 oficjalnego t³umacza ka¿dej strony. Postêpuj±c w ten sposób otrzymasz automatycznie
 maile kiedy strony którymi siê opiekujesz zosta³y zaktualizowane w jêzyku angielskim
 i powiniene¶ zwróciæ uwagê na uaktualnienie t³umaczenia. Aby to uczyniæ dodaj swoje
 nazwisko jako opiekuna strony na koñcu sekcji <code>#use</code>. Dodana linia powinna
-wygl±daæ tak
-
-<kbd>#use wml::debian::translation-check translation="<var>x.y</var>" maintainer="<var>Twoje nazwisko</var>"</kbd>
+wygl±daæ tak: 
+<kbd>#use wml::debian::translation-check translation="<var>x.y</var>"
+maintainer="<var>Twoje Imiê i Nazwisko</var>"</kbd>. Skrypt
+<tt>copypage.pl</tt> zrobi to automatycznie je¶li ustawisz zmienn± ¶rodowiskow±
+<tt>DWWW_MAINT</tt> lub u¿yjesz opcji <tt>-m</tt> w linii polecenia.
 </p>
 
 <p>Powiniene¶ równie¿ wyja¶niæ automatom zarz±dzaj±cym t³umaczeniami kim jeste¶,
@@ -81,11 +83,27 @@ Ró¿nymi rodzajami informacji s±:
 <p>Nag³ówek strony web ³atwo mo¿e byæ utworzony przy u¿yciu skryptu
 <tt>copypage.pl</tt> w katalogu webwml. Skrypt skopiuje stronê we w³a¶ciwe
 miejsce, utworzy katalogi i pliki makefile je¶li jest to konieczne i doda 
-wymagane nag³ówki automatycznie.</p>
+wymagane nag³ówki automatycznie.
+
+Zostaniesz ostrze¿ony, je¶li strona, któr± zamierzasz skopiowaæ znajduje siê ju¿
+w repozytorium &mdash; czy to dlatego ¿e zosta³a usuniêta (z powodu zbytniej
+dezaktualizacji), czy te¿ dlatego ¿e kto¶ wys³a³ ju¿ t³umaczenie, a Twoja
+lokalna kopia repozytorium jest nieaktualna.
+</p>
+
+<p>Aby zacz±æ korzystaæ z <tt>copypage.pl</tt> nale¿y najpierw skonfigurowaæ
+plik <tt>language.conf</tt>, na podstawie którego skrypt okre¶li na jaki jêzyk
+t³umaczysz. Plik ten powinien zawieraæ liniê z nazw± jêzyka, to wszystko.
+Mo¿esz tak¿e ustawiæ jêzyk przy pomocy zmiennej ¶rodowiskowej
+<tt>DWWW_LANG</tt>, i u¿ywaæ zmiennej <tt>DWWW_MAINT</tt> by podaæ swoje imiê i
+nazwisko do dodania do nag³ówka generowanych plików wml, jako opiekun
+t³umaczenia. Skrypt ma te¿ inne funkcje &mdash; uruchom go bez ¿adnych
+argumentów aby zobaczyæ pomoc.
+</p>
 
 <p>Po uruchomieniu np. <kbd>./copypage.pl <var>nazwa_pliku</var>.wml</kbd> 
 przet³umacz oryginalny tekst w pliku. Komentarze w pliku poka¿±, je¿eli
-istniej± jakikolwiek pozycje które nie powinne byæ t³umaczone; przestrzegaj
+istniej± jakikolwiek pozycje, które nie powinne byæ t³umaczone; przestrzegaj
 tych zapisów. Nie rób ¿adnych zbêdnych zmian w formatowaniu; je¶li co¶ wymaga
 poprawki powinno to byæ poprawione w oryginalnym pliku.</p>
 
@@ -218,6 +236,35 @@ listê plików jaka powinna byæ przet³umaczona, sprawd¼ stronê
 T³umacz strony *.wml, jak zosta³o to opisane
 <a href="#singlepages">na górze tej strony</a>.</p>
 
+<h3>Wznawianie zdezaktualizowanych t³umaczeñ</h3>
+
+<p>Jak to opisano w dziale <a href="uptodate">jak zachowywaæ aktualno¶æ
+t³umaczeñ</a>, zdezaktualizowane t³umaczenia stron WWW mog± byæ usuwane
+automatycznie je¶li nie bêd± aktualizowane przez d³u¿szy czas.</p>
+
+<p>Je¶li u¿yjesz pliku <tt>copypage.pl</tt> z plikiem który zosta³ usuniêty z
+CVS, odmówi on skopiowania pliku i poprosi ciê w zamian o jego odtworzenie. 
+Mo¿esz sprawdziæ powód usuniêcia pliku uruchamiaj±c na nim <tt>cvs log</tt>
+(lub u¿ywaj±c interfejsu WWW, usuniête pliki mo¿na znale¼æ w podkatalogu
+"Attic").
+</p>
+
+<p>Aby wznowiæ zdezaktualizowane t³umaczenie nale¿y u¿yæ komendy <tt>cvs
+status</tt> (lub <tt>cvs log</tt>) w celu odczytania numeru skasowanej wersji,
+a nastêpnie wykonaæ <q>odwrotne scalenie</q>.</p>
+
+<p>Je¶li na przyk³ad usuniêty plik nosi³ nazwê "deleted.wml", a skasowana
+wersja to 1.7, to poprzedzaj±c± wersj± jest 1.6 (skasowana minus jeden), to
+plik mo¿na odtworzyæ przy pomocy komendy:
+
+<verbatim>
+cvs update -j 1.7 -j 1.6 deleted.wml
+</verbatim>
+
+<p>Nastêpnie nale¿y oczywi¶cie zaktualizowaæ dokument przed wys³aniem go do
+repozytorium &mdash; w przeciwnym wypadku mozne znów zostaæ usuniêty.</p>
+
+
 <h3>Reszta opowie¶ci</h3>
 
 <p>Powy¿szy opis bêdzie prawdopodobnie wystarczaj±cym do rozpoczêcia.
@@ -227,7 +274,7 @@ Potem mo¿esz chcieæ dowiedzieæ siê czego¶ wiêcej z nastêpuj±cych ¼róde³ informac
 <li>Liczne <a href="examples">przyk³ady</a> przedstawiaj± w prosty i czytelny
 	sposób, jak zacz±æ.</li>
 <li>Jest strona, która odpowiada na wiele powtarzaj±cych siê pytañ i odpowiedzi
-	oraz zawiera <a href="translation_hints">u¿yteczne porady</a>.<li>
+	oraz zawiera <a href="translation_hints">u¿yteczne porady</a>.</li>
 <li>Mamy mechanizm wspomagaj±cy <a href="uptodate">aktualizowanie t³umaczeñ</a>.</li>
 <li>Status t³umaczeñ i porównanie z innymi jêzykami znajduje siê na stronie
 	<a href="stats/">statystyk</a>.</li>
@@ -235,4 +282,4 @@ Potem mo¿esz chcieæ dowiedzieæ siê czego¶ wiêcej z nastêpuj±cych ¼róde³ informac
 
 <p>Mamy nadziejê, ¿e nasza praca uczyni t³umaczenie stron tak ³atwym, jak to jest tylko mo¿liwe.
 Jak ju¿ zosta³o wcze¶niej wspomniane, je¶li masz jakikolwiek pytania, mo¿esz je zadaæ
-na <a href="mailto:debian-www@lists.debian.org">debian-www</a> li¶cie mailingowej.</p>
+na li¶cie dyskusyjnej <a href="mailto:debian-www@lists.debian.org">debian-www</a>.</p>
