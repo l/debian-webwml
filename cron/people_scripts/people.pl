@@ -21,7 +21,7 @@ my @special_maintainer = (
 	"Debian GNU/kFreeBSD",
 );
 my $special_maintainer_regex = qr(.*? (?:[Mm]aintainers|[Tt]eam|[Gg]roup|[Dd]evelopers));
-
+my $quality_assurance = "http://qa.debian.org/developer.php?login=";
 
 # put the auxilliary functions first to shut up perl >= 5.6
 
@@ -41,7 +41,9 @@ sub print_maintainer {
 	if ($ppl_ref{lc($lastname)}) {
            print "$lastname";
 	} else {
- 	   print "<a name=\"$lastname\">$lastname</a>";
+	   my $lastname_underscore = $lastname;
+	   $lastname_underscore =~ s/ /_/g; # get rid of spaces in tag in order to shut tidy up
+ 	   print "<a name=\"$lastname_underscore\">$lastname</a>";
            $ppl_ref{lc($lastname)} = 1;
 	}
 	if ($lastname ne "Wookey") {
@@ -51,8 +53,13 @@ sub print_maintainer {
 	if ($People{$names}{email} ne "") {
 		print "&nbsp;<a href=\"mailto:$People{$names}{email}\">&lt;$People{$names}{email}&gt;</a>\n";
 	}
+	# create link to QA page
+	if (defined $People{$names}{email}) {
+		my $qa = join "", $quality_assurance, $People{$names}{email};
+		print "&nbsp;(<a href=\"$qa\">QA page</a>)\n";
+	}
 	if (defined $People{$names}{homepage}) {
-		print "(<a href=\"$People{$names}{homepage}\">home page</a>)\n";
+		print " (<a href=\"$People{$names}{homepage}\">home page</a>)\n";
 	}
 	if (defined $People{$names}{main}) {
 		print_package_list("main", sort @{$People{$names}{main}});
