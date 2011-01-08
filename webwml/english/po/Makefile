@@ -17,7 +17,8 @@ consultants_FILES = $(TEMPLDIR)/consultant.wml \
 countries_FILES = $(TEMPLDIR)/countries.wml
 date_FILES      = $(TEMPLDIR)/ctime.wml
 distrib_FILES	= $(ENGLISHDIR)/distrib/search_packages-form.inc \
-  $(ENGLISHDIR)/distrib/search_contents-form.inc
+  $(ENGLISHDIR)/distrib/search_contents-form.inc \
+  $(ENGLISHDIR)/releases/squeeze/release.data
 doc_FILES       = $(ENGLISHDIR)/doc/books.def $(ENGLISHDIR)/doc/manuals.defs
 l10n_FILES      = $(ENGLISHDIR)/international/l10n/dtc.def \
   $(ENGLISHDIR)/international/l10n/menu.def
