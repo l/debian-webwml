@@ -19,7 +19,7 @@
 <perl>
 #
 # emits a bunch of li (list items)
-#   assumes %arches and $indirect_object_conjoiner
+#   assumes %arches, @arches and $indirect_object_conjoiner
 #
 sub permute_as_list {
     my($file, $name, @exts) = @_;
@@ -31,9 +31,9 @@ sub permute_as_list {
 #      $name = q{<installationguide>};
 #    }
 
-    %arches || die "%arches is not set\n";
+    @arches || die "@arches is not set\n";
 
-    foreach $arch (sort keys %arches) {
+    foreach $arch (@arches) {
 	print "<li> <a href=\"$arch/$file\">";
 	printf q{<name_for_arch>}, $name, $arches{$arch};
 	print "</a>";
@@ -50,7 +50,7 @@ sub permute_as_list {
 #
 # emits an HTML table matrix:
 #   | arch | format | lang1, lang2, lang3 |
-#   assumes %arches and %formats
+#   assumes %arches, @arches and %formats
 #
 sub permute_as_matrix {
     my($file, @langs) = @_;
@@ -62,7 +62,7 @@ sub permute_as_matrix {
     @cur_dir = split('/', '$(WML_SRC_DIRNAME)');
     $release = pop @cur_dir;
 
-    %arches || die "%arches is not set\n";
+    @arches || die "@arches is not set\n";
     %formats || die "%formats is not set\n";
 
     if ($file =~ /release-notes/) {
@@ -76,7 +76,7 @@ sub permute_as_matrix {
     foreach (@langs) {
       $sorted_langs{$trans{$(CUR_ISO_LANG)}{$_}} = $_;
     }
-    foreach $arch (sort keys %arches) {
+    foreach $arch (@arches) {
 	$ctr++;
 	my $first = 1;
 
@@ -142,7 +142,7 @@ sub permute_as_matrix_new {
     my $html_file = $options{html_file} || $file;
     my %langs = %{$options{langs}}
         or die "permute_as_matrix: langs argument is required";
-    my %arches = %{$options{arches}}
+    my @arches = @{$options{arches}}
         or die "permute_as_matrix: arches argument is required";
     my %formats = %{$options{formats}}
         or die "permute_as_matrix: formats argument is required";
@@ -167,7 +167,7 @@ sub permute_as_matrix_new {
     foreach (keys %langs) {
       $sorted_langs{$trans{$(CUR_ISO_LANG)}{$_}} = $_;
     }
-    foreach $arch (sort keys %arches) {
+    foreach $arch (@arches) {
 	$ctr++;
 	my $first = 1;
 
