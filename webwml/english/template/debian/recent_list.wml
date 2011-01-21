@@ -256,7 +256,9 @@ sub grab_titles {
 	if ($content =~ /^<define-tag pagetitle>\s*(.*?)\s*<\/define-tag>$/ms) {
 	    $title = qq/$1/; }      # all
 	if ($content =~ /^<define-tag release_date>(.*?)<\/define-tag>$/ms) {
-	    $date = qq/$1/; }       # News
+	    $date = qq/$1/; }       # News, news.XX.rdf
+	if ($content =~ /^<p>(.*?)<\/p>$/ms) {
+            $moreinfo = qq/$1/; }   # news.XX.rdf  Should catch the first paragraph
 	if ($content =~ /^<define-tag where>(.*?)<\/define-tag>$/ms) {
 	    $where = qq/$1/; }      # events
 	if ($content =~ /^<define-tag date>(.*?)<\/define-tag>$/ms) {
@@ -417,10 +419,76 @@ sub grab_titles {
                 ."$l_name &ndash; $free<br />$elemrealfoot\n";
         }
 	elsif ($title && $date && !$is_events) { # for News/ and not events/
-	    $date = newsdate($date);
-	    $str1 = "$elemhead<tt>[$date]</tt> "
-		."<strong><a href=\"$base\">$title</a></strong><br />"
-		."$elemrealfoot\n";
+            # read in datafile
+            open DATAFILE, "$eng_dir/$base.wml"
+		or do {
+		    warn "couldn't open $eng_dir/$base.wml: $!\n";
+		    next;
+		};
+	    <protect pass=2>
+	     foreach my $l (<DATAFILE>) {
+		 if ($l =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/)
+		 { $title = qq/$1/; }
+		 elsif ($l =~ /^<define-tag release_date>(.*)<\/define-tag>$/)
+		 { $rdate = qq/$1/; }
+	     }
+	    </protect>
+	    close DATAFILE;
+
+	    @hdate = split ',', $rdate;
+	    $hdate = $hdate[0];
+	    $isodate = sprintf("%04d-%02d-%02d", split '-', $hdate[-1]);
+	    $rdate = newsdate($hdate);
+	    @rdate = map( newsdate($_), @hdate );
+	    @isodate = map( sprintf("%04d-%02d-%02d", split '-', $_), @hdate );
+	    # we need absolute paths for rdf
+	    (my $rdfbase = $base) =~ s/^News\///;
+            if ($format =~ /\brdflong\b/) {
+                # $moreinfo is WML/HTML; we need to strip tags here
+                <protect pass=2>
+                # HTML entities
+                $moreinfo =~ s/(&[^#;]+;)/&decodehtmlentity($1)/ge;
+                # <email "xxx"> <url "xxx">
+                $moreinfo =~ s#<email "?([^>"]+)"?>#<a href="mailto:$1">$1</a>#g;
+                $moreinfo =~ s#<url "([^>]+)">#<a href="$1">$1</a>#g;
+                # HTML tags
+                $moreinfo =~ s/</&lt;/g;
+                $moreinfo =~ s/>/&gt;/g;
+                $moreinfo =~ s/"/&quot;/g; #"
+                # WML continuation
+                $moreinfo =~ s/\\\n//g;
+                </protect>
+		foreach (@isodate)
+		{
+		    push @str1, "\n"
+			."<item rdf:about=\"http://www.debian.org"
+			."/News/$rdfbase\">\n"
+			."  <title>$title - $desc</title>\n"
+			."  <link>http://www.debian.org"
+			."/News/$rdfbase</link>\n"
+			."  <description>\n"
+			."    $moreinfo\n"
+			."  </description>\n"
+			."  <dc:date>$_</dc:date>\n"
+			."</item>\n";
+		}
+	        $str1 = @str1[0];
+	    } elsif ($format =~ /\brdfseq/){
+		foreach (@isodate)
+		{
+<protect pass=2>
+		    push @str1, "<rdf:li resource=\"http://www.debian.org"
+                        ."/News/$rdfbase\" />\n";
+</protect>
+		}
+		$str1 = $str1[0];
+	        $str1 = @str1[0];
+	    } else {
+	        $date = newsdate($date);
+	        $str1 = "$elemhead<tt>[$date]</tt> "
+		  ."<strong><a href=\"$base\">$title</a></strong><br />"
+		  ."$elemrealfoot\n";
+           }
 	}
 
 	elsif ($title && $status) { # for vote/
