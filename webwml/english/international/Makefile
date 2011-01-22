@@ -3,7 +3,7 @@
 
 WMLBASE=..
 CUR_DIR=international
-SUBS=Catalan Chinese Croatian Danish German l10n Polish Swedish 
+SUBS=Catalan Chinese Croatian Danish German l10n Polish Slovak Swedish
 
 # Note: we cannot use LANGUAGE here since it is defined in Make.lang
 # and we cannot move Make.lang up since SUBS is used to define variables
