@@ -15,3 +15,6 @@ index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*/*.wml) \
      $(ENGLISHSRCDIR)/events/index.include \
      $(wildcard $(ENGLISHSRCDIR)/events/[0-9]*/*.wml) \
      $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml
+
+talks.$(LANGUAGE).html: index.wml $(ENGLISHSRCDIR)/events/talks.data \
+	$(ENGLISHSRCDIR)/events/talks.defs
