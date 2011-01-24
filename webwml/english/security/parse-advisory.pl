@@ -192,9 +192,10 @@ print DATA "<define-tag secrefs>@dbids</define-tag>\n" if @dbids;
 print DATA "<define-tag packages>$package</define-tag>\n";
 print DATA "<define-tag isvulnerable>yes</define-tag>\n";
 print DATA "<define-tag fixed>yes</define-tag>\n";
+print DATA "<define-tag fixed-section>no</define-tag>\n"; # Kaare, 2011-01-24: Line added because the "fixed in" section is no longer available
 print DATA "\n#use wml::debian::security\n\n";
 print DATA "$files\n\n</dl>\n";
-print DATA "\n<p><md5sums $dsaLink /></p>\n";
+# print DATA "\n<p><md5sums $dsaLink /></p>\n"; # Kaare, 2011-01-24: Commented out because md5sums are no longer available. Should perhaps be replaced by a link to the original advisory, not mentioning md5sums.
 close DATA;
 
 open WML, ">$wml";
