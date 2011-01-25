@@ -18,7 +18,11 @@ packages.$(LANGUAGE).html: packages.wml $(TEMPLDIR)/release_info.wml \
 pre-installed.$(LANGUAGE).html: pre-installed.wml $(TEMPLDIR)/countries.wml \
   $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/CD/vendors/vendors.CD.def
 
-netinst.$(LANGUAGE).html: netinst.wml $(TEMPLDIR)/template.wml \
+index.$(LANGUAGE).html: index.wml \
+  $(TEMPLDIR)/release_info.wml \
+  $(TEMPLDIR)/release_images.wml \
+
+netinst.$(LANGUAGE).html: netinst.wml \
   $(TEMPLDIR)/toc.wml \
   $(TEMPLDIR)/release_info.wml \
   $(TEMPLDIR)/release_images.wml \
