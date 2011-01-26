@@ -3,14 +3,7 @@
 
 WMLBASE=..
 CUR_DIR=international
-SUBS=Catalan Chinese Croatian Danish German l10n Polish Slovak Swedish
-
-# Note: we cannot use LANGUAGE here since it is defined in Make.lang
-# and we cannot move Make.lang up since SUBS is used to define variables
-# in Makefile.common, so we are stuck with this crude hack
-ifneq (,$(findstring french/,$(CURDIR)))
-SUBS += french
-endif
+SUBS=Catalan Chinese Croatian Danish french German l10n Polish Slovak Swedish
 
 ifneq (,$(findstring spanish/,$(CURDIR)))
 SUBS += spanish
