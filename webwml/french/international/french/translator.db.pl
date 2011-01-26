@@ -137,6 +137,15 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
 		},
+		'Étienne Gilli' => {
+			email       => 'etienne.gilli@gmail.com',
+			summary     => 3,
+			logs        => 3,
+			diff        => 3,
+			tdiff       => 0,
+			file        => 0,
+			compress    => 'none'
+		},
                 'Thomas Huriaux' => {
                         email       => 'debian-l10n-french@lists.debian.org',
                         summary     => 2,
