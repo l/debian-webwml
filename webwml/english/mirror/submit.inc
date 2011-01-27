@@ -62,13 +62,14 @@ function giveau(element) {
 </script>
 
 #include "$(ENGLISHDIR)/releases/sid/archive.data"
+#include "$(ENGLISHDIR)/releases/arches.data"
 
 <define-tag archlist>
 <div id="archlist">
 <:
-my $na = scalar keys %arches; $na = int($na / 4 + .5);
+my $na = scalar @arches; $na = int($na / 4 + .5);
 my $i = 0;
-foreach my $a (sort keys %arches) {
+foreach my $a (@arches) {
   my $aname = $arches{$a}; $aname =~ s, ,\&nbsp\;,g;
   print "<label id=arch_".$a." style=\"white-space: pre\"><input type=checkbox id=cbarch_".$a." name=architectures value=".$a.">&nbsp;".$aname."&nbsp;[".$a."]</label>";
   $i++;
@@ -93,14 +94,14 @@ function allarches() {
     al.style.color = "#000000";
     al.style.backgroundColor = "#ffffff";
   }
-  var arches = new Object();
+  var locarches = new Object();
 <: 
-  foreach my $a (sort keys %arches) {
-    print "  arches[\'$a\'] = \'cbarch_$a\';\n";
+  foreach my $a (@arches) {
+    print "  locarches[\'$a\'] = \'cbarch_$a\';\n";
   }
 :>
-  for ( a in arches ) {
-    ele = document.getElementById(arches[a]);
+  for ( a in locarches ) {
+    ele = document.getElementById(locarches[a]);
     if (ele.checked == false)
       ele.checked = true;
   }
