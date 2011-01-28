@@ -26,7 +26,7 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml $(GETTEXTDEP) \
 		$(wildcard News/$(CUR_YEAR)/[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/[0-9]*.wml) \
 		$(wildcard security/$(CUR_YEAR)/dsa-[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-[0-9]*.wml) \
 		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
-		$(TEMPLDIR)/release_info.wml
+		$(TEMPLDIR)/release_info.wml $(TEMPLDIR)/release_images.wml
 	$(WML) index.wml
 
 $(SITEMAP): $(ENGLISHDIR)/sitemap.wml $(TEMPLDIR)/card.wml \
