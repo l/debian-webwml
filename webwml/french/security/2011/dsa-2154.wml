@@ -1,0 +1,94 @@
+#use wml::debian::translation-check translation="1.2" maintainer="David Prévot"
+<define-tag description>Augmentation de privilèges</define-tag>
+<define-tag moreinfo>
+
+<p>
+Un défaut de conception (<a
+href="http://security-tracker.debian.org/tracker/CVE-2010-4345">CVE-2010-4345</a>)
+d'exim4 permettait à l'utilisateur local Debian-exim d'obtenir les droits du
+superutilisateur en indiquant un fichier de configuration différent avec
+l'option -C ou en utilisant la fonctionnalité macro d'écrasement (option -D).
+
+Si vous utilisez les options -C ou -D, ou utilisez la fonctionnalité
+de filtre système, vous devriez faire soigneusement le point des
+modifications et adapter votre configuration en conséquence.
+
+La configuration par défaut de Debian n'est pas concernée par les modifications.
+</p>
+
+<p>
+La liste détaillée des modifications est
+décrite dans le ficher NEWS.Debian du paquet.
+
+Une traduction de la partie en question est proposée ci-dessous.
+</p>
+
+<p>
+De plus, le manque de gestion d'erreur pour les appels système setuid ou
+setgid permettait à l'utilisateur Debian-exim d'amener le superutilisateur
+à ajouter les données de journalisation dans un fichier arbitraire (<a
+href="http://security-tracker.debian.org/tracker/CVE-2011-0017">CVE-2011-0017</a>).
+</p>
+
+<p>
+Pour la distribution stable (Lenny), ces problèmes ont été corrigés dans la version
+4.69-9+lenny3.
+</p>
+    
+<p>
+Pour la distribution testing (Squeeze) et la distribution unstable (Sid),
+ces problèmes ont été corrigés dans la version
+4.72-4.
+</p>
+
+<p>
+Proposition de traduction de la dernière entrée du fichier NEWS.Debian
+des paquets exim4-daemon-light et exim4-daemon-heavy :
+</p>
+
+<blockquote><pre>
+Les versions d'Exim jusqu'à 4.72 comprise sont vulnérables à
+CVE-2010-4345. C'est un problème d'augmentation de privilèges qui
+permet à l'utilisateur d'exim d'obtenir les droits du superutilisateur
+en indiquant un autre fichier de configuration avec l'option -C. La
+fonctionnalité macro d'écrasement (-D) pourrait aussi être détournée
+dans ce but.
+
+En réponse à cette vulnérabilité de sécurité, les développeurs amont
+ont procédé à un certain nombre de modifications visibles aux
+utilisateurs. Ce paquet comprend ces changements.
+
+Si exim est appelé avec l'option -C ou -D, le démon ne reprendra pas
+les droits du superutilisateur à la réexécution. C'est pourtant
+normalement nécessaire pour la distribution locale. Par conséquent, il
+n'est généralement plus possible d'éxécuter le démon exim avec les
+options -D ou -C.
+
+Toutefois, cette version d'exim a été construite avec
+TRUSTED_CONFIG_LIST=/etc/exim4/trusted_configs. TRUSTED_CONFIG_LIST
+définit une liste de fichiers de configuration de confiance. Si un
+fichier appartient au superutilisateur et correspond à un nom de
+chemin de la liste, alors il peut être appelé par l'utilisateur d'Exim
+au moment de la construction sans qu'Exim lui refuse les droits du
+superutilisateur.
+
+Afin de ne pas casser les installations existantes de scanneur de
+courrier, WHITELIST_D_MACROS=OUTGOING a aussi été configuré. Ainsi, il
+est toujours possible de démarrer exim avec -DOUTGOING et continuer à
+distribuer localement.
+
+Si vous utilisiez auparavant des options -D, vous devrez adapter votre
+configuration pour utiliser un fichier de configuration séparé. Le
+mécanisme « .include » facilite cela.
+
+Le filtre système est par défaut exécuté en tant qu'exim_user au lieu
+du superutilisateur. Si votre configuration exige les droits du
+superutilisateur lors de l'exécution du filtre système, vous devrez
+configurer l'option de principale d'exim system_filter_user.
+</pre>
+</blockquote>
+
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2011/dsa-2154.data"
