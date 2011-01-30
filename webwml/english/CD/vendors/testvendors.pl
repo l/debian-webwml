@@ -51,7 +51,7 @@ sub test_vendor(@)
 $filename = $ARGV[0];
 if ($filename eq "") 
 {
-    print "Usage $0 <filename>";
+    print "Usage $0 <filename>\n";
     exit
 }
 open IN, $filename or die "Cannot open $filename : $!";
