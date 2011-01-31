@@ -1,7 +1,7 @@
 #use wml::debian::template title="Mirror del sito web Debian"
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/mirror/webmirrors.data"
-#use wml::debian::translation-check translation="1.42" maintainer="Giuseppe Sacco"
+#use wml::debian::translation-check translation="1.46" maintainer="Giuseppe Sacco"
 
 <toc-display />
 
@@ -227,7 +227,7 @@ DirectoryIndex index index.html
 </pre>
 
 <p>Apache deve essere istruito per mandare il Content-type corretto
-di favicon.ico che Ã¨ image/x-icon:</p>
+di favicon.ico che è image/x-icon:</p>
 
 <pre>
 AddType image/x-icon .ico
@@ -240,7 +240,26 @@ deve essere istruito all'uso del tipo application/rss+xml, cos&igrave;:
 AddType application/rss+xml .rdf
 </pre>
 
-<p>Per avitare problemi con la negoziazione dei contenuti delle pagine
+<p>Per inviare l'intestazione contente il corretto Content-Type per le
+traduzione in spagnolo dei file HTML, PDF e di testo semplice, Apache deve
+essere istruito sull'uso del tipo corretto in questo modo:</p>
+
+<pre>
+&lt;Files *.html.es>
+  ForceType text/html
+&lt;/Files>
+
+&lt;Files *.pdf.es>
+  ForceType application/pdf
+&lt;/Files>
+
+&lt;Files *.txt.es>
+  ForceType text/plain
+&lt;/Files>
+</pre>
+
+
+<p>Per evitare problemi con la negoziazione dei contenuti delle pagine
 in <a href="../events/">/events</a>, i file &ldquo;calendar&rdquo; devono
 avere una priorit&agrave; pi&ugrave; bassa di text/html:</p>
 
@@ -266,3 +285,15 @@ Redirect /search http://search.debian.org
 Redirect /Packages http://packages.debian.org
 Redirect /lintian http://lintian.debian.org
 </pre>
+
+<h4>Host virtuali</h4>
+
+<p>Il sito web Debian, cui si accede tramite <a
+href="$(HOME)">www.debian.org</a> e svariati altri nomi, sfrutta delle
+impostazioni GeoDNS per gestire il carico e selezionare il mirror più vicino
+all'utente</p>
+
+<p>Di conseguenza, Apache deve rendere il sito Debian disponibile attraverso
+vari host virtuali, in questo modo:</p>
+
+<pre>ServerAlias www.debian.org www.debian.com debian.org www.*.debian.org</pre>
