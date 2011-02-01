@@ -1,0 +1,72 @@
+#use wml::debian::translation-check translation="1.2" mindelta="1"
+<define-tag description>rettighedsforøgelse</define-tag>
+<define-tag moreinfo>
+
+<p>En designfejl 
+(<a href="http://security-tracker.debian.org/tracker/CVE-2010-4345">CVE-2010-4345</a>)
+i exim4 gjorde det muligt for den lokale Debian-exim-bruger at få rootrettigheder 
+ved at angive en alternativ opsætningsfil ved anvendelse af parameteret -C eller 
+ved hjælp af muligheden for at overtrume makroer (parameteret -D).  Desværre er
+det ikke muligt at retter sårbarheden unden at foretage ændringer i hvordan 
+exim4 opfører sig.  Hvis du anvender parametrene -C eller -D eller mulighed for 
+at lave systemfiltre, bør du nøje gennemse ændringerne og tilpasse din opsætning
+tilsvarende.  Debians standardopsætning er ikke påvirket af ændringerne.</p>
+
+<p>Den detaljerede liste over ændringer er beskrevet i filen NEWS.Debian i
+pakkerne.  De relevante afsnit er også gengivet herunder.</p>
+
+<p>Desuden medførte manglende fejlhåndtering af systemkaldene setuid/setgid det
+muligt for Debian-exim-brugeren at få root til at tilføje logdata til vilkårlige
+filer 
+(<a href="http://security-tracker.debian.org/tracker/CVE-2011-0017">CVE-2011-0017</a>).</p>
+
+<p>I den stabile distribution (lenny), er disse problemer rettet i version 
+4.69-9+lenny3.</p>
+
+<p>I distributionen testing (squeeze) og i den ustabile distribution (sid), 
+er disse problemer rettet i version 4.72-4.</p>
+
+<p>Ikke-oversat uddrag fra filen NEWS.Debian, fra pakkerne exim4-daemon-light
+og exim4-daemon-heavy:</p>
+
+<blockquote><pre>
+Exim versions up to and including 4.72 are vulnerable to
+CVE-2010-4345. This is a rettighedsforøgelse issue that allows the
+exim user to gain root privileges by specifying an alternate
+configuration file using the -C option. The macro override facility
+(-D) might also be misused for this purpose.
+
+In reaction to this security vulnerability upstream has made a number
+of user visible changes. This package includes these changes.
+
+If exim is invoked with the -C or -D option the daemon will not regain
+root privileges though re-execution. This is usually necessary for
+local delivery, though. Therefore it is generally not possible anymore
+to run an exim daemon with -D or -C options.
+
+However this version of exim has been built with
+TRUSTED_CONFIG_LIST=/etc/exim4/trusted_configs. TRUSTED_CONFIG_LIST
+defines a list of configuration files which are trusted; if a config
+file is owned by root and matches a pathname in the list, then it may
+be invoked by the Exim build-time user without Exim relinquishing root
+privileges.
+
+As a hotfix to not break existing installations of mailscanner we have
+also set WHITELIST_D_MACROS=OUTGOING. i.e. it is still possible to
+start exim with -DOUTGOING while being able to do local deliveries.
+
+If you previously were using -D switches you will need to change your
+setup to use a separate configuration file. The ".include" mechanism
+makes this easy.
+
+The system filter is run as exim_user instead of root by default.  If
+your setup requies root privileges when running the system filter you
+will need to set the system_filter_user exim main configuration
+option.
+</pre>
+</blockquote>
+
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2011/dsa-2154.data"
