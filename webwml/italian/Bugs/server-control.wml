@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS &mdash; server di controllo" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.78" maintainer="Giuseppe Sacco"
+#use wml::debian::translation-check translation="1.90" maintainer="Giuseppe Sacco"
 
 <h1>Introduzione al server di posta di controllo e gestione bug</h1>
 
@@ -19,7 +19,7 @@ degli errori e causino problemi mentre provano solo a richiedere informazioni.
 
 <p>
 Poich&eacute; i comandi del server di controllo vanno a cambiare
-lo stato di una segnalazione, un email di notifica viene mandato ai
+lo stato di una segnalazione, una email di notifica viene mandata ai
 curatori dei pacchetti coinvolti. Inoltre il messaggio inviato al
 server e le modifiche effettuate vengono registrate nella segnalazione
 e sono quindi disponibili tramite le pagine WWW.
@@ -61,6 +61,8 @@ comando <code>refcard</code>.
           <dt><a href="#tag">tags</a></dt>
           <dt><a href="#retitle">retitle</a></dt>
           <dt><a href="#submitter">submitter</a></dt>
+	  <dt><a href="#affects">affects</a></dt>
+	  <dt><a href="#summary">summary</a></dt>
         </dl>
       </td>
       <!-- Versioning -->
@@ -168,6 +170,8 @@ comando <code>refcard</code>.
     <p>
     Segna che il bug numero <var>bugnumber</var> &egrave; stato riscontrato
     in una certa versione del pacchetto al quale &egrave; assegnato.
+    <var>version</var> può essere una versione nella forma
+    <var>nomepacchettosorgente</var>.
     </p>
 
     <p>
@@ -182,14 +186,17 @@ comando <code>refcard</code>.
     Se non viene specificata la <var>versione</var> allora l'elenco delle
     versioni corrette viene azzerato. Questo &egrave; lo stesso comportamento
     che si ha con <code>reopen</code>.
+    <var>version</var> può essere una versione nella forma
+    <var>nomepacchettosorgente</var>.
     </p>
 
     <p>
     Questo comando marcher&agrave; la segnalazione come non chiusa se
     non viene specificata alcuna versione; oppure se la <var>versione</var>
-    marcata &egrave; la stessa <var>versione</var> che &egrave; stata
-    marcata fixed per ultima. (Se si &egrave; certi di non voler chiudere la
-    segnalazione, utilizzare <code>reopen</code> con <code>found</code>.)
+    marcata &egrave; la stessa o superiore della più alta <var>versione</var> 
+    che &egrave; stata marcata fixed per ultima. (Se si &egrave; certi 
+    di non voler chiudere la segnalazione, utilizzare <code>reopen</code> 
+    con <code>found</code>.)
     </p>
 
     <p>
@@ -207,6 +214,8 @@ comando <code>refcard</code>.
     Cancella la registrazione che il bug numero <var>bugnumber</var> sia
     presente nella versione <var>versione</var> del pacchetto al quale &egrave;
     assegnato.
+    <var>version</var> può essere una versione nella forma
+    <var>nomepacchettosorgente</var>.
     </p>
 
     <p>
@@ -224,6 +233,8 @@ comando <code>refcard</code>.
     Indica che il bug numero <var>bugnumber</var> &egrave; stato
     corretto nella <var>versione</var> del pacchetto al quale &egrave;
     assegnato.
+    <var>version</var> può essere una versione nella forma
+    <var>nomepacchettosorgente</var>.
     </p>
 
     <p>
@@ -234,19 +245,26 @@ comando <code>refcard</code>.
     </p>
   </dd>
 
-  <dt><a name="nofixed"><code>notfixed</code> <var>bugnumber</var>
+  <dt><a name="notfixed"><code>notfixed</code> <var>bugnumber</var>
       <var>versione</var></a></dt>
   <dd>
     <p>
     Cancella l'indicazione che il bug numero <var>bugnumber</var> sia
     stato risolto nella specifica <var>versione</var>.
+    <var>version</var> può essere una versione nella forma
+    <var>nomepacchettosorgente</var>.
     </p>
 
     <p>
     Questo comando &egrave; equivalente al comando <code>found</code> seguito
     dal comando <code>notfound</code> (il <code>found</code> rimuove il
     <code>fixed</code> in una versione specifica, mentre il <code>notfound</code>
-    rimuove il <code>found</code>).
+    rimuove il <code>found</code>) con l'eccezione che il bug non viene
+    riaperto se la versione trovata è superiore di ogni altra versione in cui
+    sia stato risolto. È stato pensato per correggere eventuali errori di
+    registrazione effettuati dopo aver risolto il bug; nella maggior parte dei
+    casi in realtà si desidererà utilizzare <code>found</code> invece che
+    <code>notfixed</code>.
     </p>
   </dd>
 
@@ -313,15 +331,10 @@ comando <code>refcard</code>.
     <p>
     Modifica il titolo di un rapporto di bug in quello specificato
     (il default è l'intestazione <code>Subject</code>) dal rapporto originale.
+    Verrà cambiato anche il titolo di tutti i rapporti di bug con i quali
+    questo è collegato.
     </p>
 
-    <p>
-    Contrariamente alla maggior parte degli altri comandi di gestione
-    dei bug, quando usato su uno dei rapporti di un insieme di rapporti
-    collegati (merged), 
-    questo cambierà solo il titolo del bug individuale richiesto
-    e non tutti quelli collegati con esso.
-    </p>
   </dd>
 
   <dt><a name="severity"><code>severity</code> <var>bugnumber</var>
@@ -342,6 +355,40 @@ comando <code>refcard</code>.
     Per <a href="Developer#severities">il loro significato</a> 
     consulta la documentazione generale dello sviluppatore
     per il sistema dei bug.
+    </p>
+  </dd>
+
+  <dt><a name="affects"><code>affects</code> <var>bugnumber</var>
+      [ <code>+</code> | <code>-</code> | <code>=</code>
+      ] <var>package</var> [ <var>package</var> ... ]</a></dt>
+  <dd>
+    <p>
+      Indica che un bug colpisce anche un altro pacchetto. Nel caso in cui
+      <var>bugnumber</var> causi una rottura in <var>package</var> anche
+      se il bug è effettivamente presente nel pacchetto al quale è stato
+      assegnato, ciò farà sì che il bug sia elencato in maniera predefinita
+      nell'elenco del pacchetto <var>package</var>. Questo dovrebbe accadere
+      laddove il bug è abbastanza grave da causare segnalazioni multiple dagli
+      utenti che lo assegnano al pacchetto sbagliato.
+    </p>
+  </dd>
+
+  <dt><a name="summary"><code>summary</code> <var>bugnumber</var>
+      [<var>message number</var>]</a></dt>
+  <dd>
+    <p>
+      Seleziona un messaggio da usare come sommario del bug. Il primo
+      paragrafo non-pseudoheader di tale messaggio viene analizzato e 
+      configurato come sommario del bug onde venir poi mostrato in cima alla
+      pagina della segnalazione del bug. Ciò è utile nei casi in cui la
+      segnalazione originale non descrive correttamente il problema oppure il
+      bug contiene un gran numero di messaggi che rendono difficoltoso
+      identificare il reale problema.
+    </p>
+    <p>
+      Se <var>message number</var> non è fornito, il sommario viene
+      cancellato. <var>message number</var> è il numero del messaggio come
+      elencato nell'output dello script cgi di bugreport.
     </p>
   </dd>
 
@@ -423,8 +470,8 @@ comando <code>refcard</code>.
       <var>bugnumber</var> ...</a></dt>
   <dd>
     <p>
-    Forza il collegamento tra due o pi&ugrave; segnalazioni. Il primo
-    viene elencato come principale e le sue caratteristiche (quelle che devono corrispondere per il <code>merge</code>)
+    Forza il collegamento tra due o pi&ugrave; segnalazioni. Le
+    caratteristiche del primo bug elencato (quelle che devono corrispondere per il <code>merge</code>)
     vengono assegnate alle altre segnalazioni. Per evitare sviste, &egrave;
     necessario che tutte le segnalazioni siano relative allo stesso pacchetto. Leggere il testo precedente
     per informazioni sul significato di merge.
@@ -461,15 +508,16 @@ comando <code>refcard</code>.
 
   <dt><a name="tag"><code>tags</code> <var>bugnumber</var> [ <code>+</code>
       | <code>-</code> | <code>=</code> ] <var>tag</var> [
-      <var>tag</var> ... ]</a></dt>
+      <var>tag</var> ... ][ <code>+</code> | <code>-</code> | <code>=</code> <var>tag</var> ... ] ]</a></dt>
   <dd>
     <p>
     Imposta un particolare tag per il rapporto su bug #<var>bugnumber</var> al valore
     <var>tag</var>. Nessuna notifica è inviata all'utente che ha riportato
-    il bug. <code>+</code> significa aggiungi, 
-    <code>-</code> significa sottrai, e
-    <code>=</code> significa ignora i tag correnti e impostali da zero.
-    L'azione di default è aggiungi.
+    il bug. <code>+</code> significa aggiungi ciascun <var>tag</var> successivo, 
+    <code>-</code> significa sottrai ciascun <var>tag</var> successivo e
+    <code>=</code> significa imposta i tag successivi all'elenco fornito. I
+    <code>+</code>, <code>-</code>, <code>=</code> interposti cambiano
+    l'azione per il tag successivo. L'azione predefinita è aggiungi.
     </p>
 
     <p>
@@ -491,6 +539,9 @@ comando <code>refcard</code>.
 
         \# imposta esattamente i tag 'moreinfo' e 'unreproducible'
         tags 123456 = moreinfo unreproducible
+
+	\# rimuove il tag 'moreinfo' e aggiunge il tag 'patch'
+	tags 123456 -moreinfo + patch
     </pre>
 
     <p>
@@ -624,7 +675,11 @@ comando <code>refcard</code>.
     archiviata. Questa operazione va in genere associata alla riapertura
     o ai tag found/fixed. Le segnalazioni estratte dall'archivio possono
     essere riarchiviate con il tag archive anche se non hanno raggiunto
-    il requisito temporale.
+    il requisito temporale. Non si dovrebbe usare <code>unarchive</code> per
+    effettuare modifiche banali ai bug archiviati, come ad esempio cambiare
+    l'originatore del bug; lo scopo principale di <code>unarchive</code> è di
+    permettere la riapertura di bug che sono stati archiviati senza dover
+    chiedere l'intervento degli amministratori di BTS.
     </p>
   </dd>
 
