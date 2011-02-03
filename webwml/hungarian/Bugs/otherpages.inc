@@ -1,26 +1,23 @@
-#use wml::debian::translation-check translation="1.2"
+#use wml::debian::translation-check translation="1.3"
 
-<hr>
-További oldalak:
+<p>TovÃ¡bbi oldalak:</p>
 <ul>
 
-<li><A href="./">A hibakövetõ rendszer fõ oldala</A>
-<li><a href="Reporting">Hogyan lehet hibát bejelenteni?</a>
-<li><A href="Access">A hibakövetõ rendszer naplóinak
-elérése</A>
-<li><A href="Developer">Információk a hibafeldolgozó
-rendszerrõl fejlesztõk részére</A>
-<li><a href="server-control">A hibafeldolgozás vezérlése e-mailen keresztül</a>
-<li><a href="server-refcard">A levelezõszerverek referenciakártyája</a>
-<li><a href="server-request">A hibabejelentések lekérdezése e-mailen keresztül</a>
-#<li><A href="db/ix/full.html">A kiemelkedõ ("outstanding") és
-#legújabb ("recent") hibalapok teljes felsorolása</A>
+<li><a href="./">A hibakÃ¶vetÅ‘ rendszer fÅ‘ oldala</a></li>
+<li><a href="Reporting">Hogyan lehet hibÃ¡t bejelenteni?</a></li>
+<li><a href="Access">A hibakÃ¶vetÅ‘ rendszer naplÃ³inak elÃ©rÃ©se</a></li>
+<li><a href="Developer">InformÃ¡ciÃ³k a hibafeldolgozÃ³ rendszerrÅ‘l fejlesztÅ‘k rÃ©szÃ©re</a></li>
+<li><a href="server-control">A hibafeldolgozÃ¡s vezÃ©rlÃ©se e-mailen keresztÃ¼l</a></li>
+<li><a href="server-refcard">A levelezÅ‘szerverek referenciakÃ¡rtyÃ¡ja</a></li>
+<li><a href="server-request">A hibabejelentÃ©sek lekÃ©rdezÃ©se e-mailen keresztÃ¼l</a></li>
+#<li><A href="db/ix/full.html">A kiemelkedÅ‘ ("outstanding") Ã©s
+#legÃºjabb ("recent") hibalapok teljes felsorolÃ¡sa</a></li>
 #
-#<li><A href="db/ix/packages.html">Csomagok hibalappal</A>
+#<li><A href="db/ix/packages.html">Csomagok hibalappal</a></li>
 #
 #<li><A href="db/ix/maintainers.html">Hibalapos csomagok
-#karbantartói</A>
+#karbantartÃ³i</a></li>
 #
-#<li><A href="../">A Debian GNU/Linux kezdõoldala.</A>
+#<li><A href="../">A Debian GNU/Linux kezdÅ‘oldala.</a></li>
 #
 </ul>
