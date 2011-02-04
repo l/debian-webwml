@@ -1,6 +1,6 @@
 #use wml::debian::template title="Errata pour l'installateur Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.154" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.159" maintainer="David Prévot"
 
 # Translators:
 # Nicolas Bertolissio, 2003-2008
@@ -21,6 +21,92 @@ le problème.
 </p>
 
 <dl class="gloss">
+
+<dt>
+Certains systèmes sparc ne peuvent pas être installés par CD
+</dt>
+<dd>
+L'installateur Debian de Squeeze ne contient pas les pilotes PATA dans le
+noyau, ce qui rend impossible l'installation à partir de CD sur les
+systèmes ayant besoin de ces pilotes pour accéder au lecteur de CD
+(Ultra 10 par exemple), car l'installateur échouera lors de sa détection.
+
+Le problème peut être contourné en utilisant l'installation par le
+réseau, évitant ainsi tout accès au lecteur de CD pendant l'installation.
+<br/>
+Consultez le bogue <a href="http://bugs.debian.org/610906">nº 610906</a>.
+<br/>
+Ce problème sera corrigé lors de la publication
+de la prochaine mise à jour de Squeeze (6.0.1).
+</dd>
+
+<dt>
+Périphériques brailles USB détectés éventuellement non fonctionnels
+</dt>
+<dd>
+En laissant l'installateur Debian détecter un périphérique
+braille branché en USB, ce dernier risque de ne montrer que
+<q>screen not in text mode</q> (l'écran n'est pas en mode texte).
+
+La cause est une potentielle situation de compétition entre la
+détection et le démarrage du tampon vidéo (<q>frame buffer</q>).
+
+Un contournement possible est de fournir <tt>brltty</tt>
+à la ligne de commande du noyau pour forcer sa détection.
+<br />
+Consultez le bogue <a href="http://bugs.debian.org/611648">nº 611648</a>.
+</dd>
+
+<dt>
+Pas de pilote réseau pour Sparc T2+
+</dt>
+<dd>
+Le pilote réseau niu, nécessaire aux derniers systèmes Sparc T2+, n'est pas
+intégré à l'installateur, rendant l'installation impossible sur ces systèmes
+avec des méthodes qui dépendent d'une configuration réseau au plus tôt.
+
+Le pilote est intégré dans les paquets du noyau, donc le
+réseau devrait fonctionner normalement après l'installation.
+<br />
+Consultez le bogue <a href="http://bugs.debian.org/608516">nº 608516</a>.
+</dd>
+
+<dt>
+Risque de démarrage incorrect des systèmes utilisant des cartes graphiques aty
+</dt>
+<dd>
+Les systèmes utilisant des cartes graphiques aty (Ultra 10 par
+exemple) risquent de ne pas démarrer l'installateur correctement,
+avec un gel du noyau au début du processus de démarrage avec comme
+dernier message <q>console [tty0] enabled, bootconsole disabled</q>.
+
+Il s'agit d'un bogue du noyau, pour lequel il existe un
+correctif, mais qui pourrait néanmoins être insuffisant.
+<br />
+Le problème peut être contourné en ajoutant le paramètre
+<q>video=atyfb:off</q> au démarrage du noyau pour désactiver le tampon
+vidéo (<q>frame buffer</q>) pendant le démarrage, ce qui permet à
+l'installateur (et au noyau normal) d'être démarré sur ces systèmes.
+<br />
+Consultez le bogue <a href="http://bugs.debian.org/609466">nº 609466</a>.
+</dd>
+
+
+<dt>
+Sélection de clavier dans l'installateur graphique
+non fonctionnelle pour certaines dispositions
+</dt>
+<dd>
+La présélection de clavier ne fonctionne pas dans l'installateur graphique
+pour certaines combinaisons (bulgare, suisse allemand, suédois et brésilien).
+
+La disposition choisie n'est alors pas prise en compte, et le système
+est configuré en anglais américain par défaut (/etc/default/keyboard).
+<br/>
+Consultez le bogue <a href="http://bugs.debian.org/609624">nº 609624</a>.
+</dd>
+
+
 <dt>
 Problèmes d'installation possibles avec les cartes réseau de type RTL8169
 </dt>
