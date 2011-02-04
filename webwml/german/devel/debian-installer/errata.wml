@@ -1,28 +1,137 @@
 #use wml::debian::template title="Debian-Installer-Errata"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.131"
+#use wml::debian::translation-check translation="1.161"
 # $Id$
 # Original-Translator: Frank Lichtenheld <frank@lichtenheld.de>, 2003-11-11
 # Translator: Helge Kreutzmann <debian@helgefjell.de>, 2005-11-12 ff.
 
-<h1 id="squeeze-alpha1">Errata für Squeeze-Veröffentlichung Alpha1</h1>
+<h1 id="squeeze-alpha1">Errata für Squeeze-Veröffentlichungskandidat 2</h1>
 
 <p>
-Dies ist eine Liste der bekannten Probleme in der Squeeze-Alpha1-Veröffentlichung des
+Dies ist eine Liste der bekannten Probleme in der Squeeze-Veröffentlichungskandidaten 2 des
 Debian-Installers. Falls Sie Ihr Problem hier nicht aufgeführt finden,
 senden Sie uns bitte einen <a href="report-template">\
 Installationsbericht</a>, der das Problem beschreibt.
 </p>
 
 <dl class="gloss">
-  <dt>Selbst-Aufbau von RAID-Verbünden kann im Rettungsmodus Daten beschädigen</dt>
+  <dt>Einige SPARC-Systeme können nicht via CD-ROM installiert werden</dt>
   <dd>
-     Der Rettungsmodus sollte beim Einsatz von Software-RAID auf dem zu 
-     rettenden System mit großer Vorsicht verwandt werden, da die Skripte des
-     Rettungsmodus RAID-Verbünde automatisch aufbauen. Dies könnte Daten
-     beschädigen, falls ungültige oder veraltete RAID-Superblöcke vorhanden
-     sind. Dies ist in den täglich gebauten Images behoben.
- </dd>
+     Der Debian-Installer für Squeeze enthält keine PATA-Kerneltreiber, wodurch
+     es unmöglich wird, die Installation von CD-Medien auf Systemen zu beenden,
+     die diese Treiber für den Zugriff auf das CD-ROM-Laufwerk benötigen
+     (beispielsweise Ultra 10), da der Installer diese nicht erkennt. Das 
+     Problem kann über einen Netzboot des Installers umgangen werden, wodurch
+     der Zugriff auf das CD-ROM-Laufwerk während der Installation unnötig wird.
+     <br />
+     Lesen Sie <a href="http://bugs.debian.org/610906">#610906</a>.<br />
+     Dies wird in der nächsten Zwischenveröffentlichung von Squeeze (6.0.1)
+     behoben.</dd>
+
+  <dt>Möglicherweise nicht funktionierende erkannte USB-Braille-Geräte</dt>
+  <dd>Wird der Debian-Installer gebeten, ein eingestöpseltes USB-Braille-Gerät
+      zu erkennen, könnte letzteres nur dazu führen, dass <q lang="en">screen 
+      not in text mode</q> angezeigt wird.
+      Dies entsteht aufgrund einer Race-Condition zwischen der Erkennung und
+      dem Start des Framebuffers. Um dies zu umgehen, fügen Sie <tt>brltty</tt>
+      zu der Kernel-Befehlszeile hinzu, um die Erkennung zu erzwingen.<br />
+      Lesen Sie <a href="http://bugs.debian.org/611648">#611648</a></dd>
+
+  <dt>Kein Netztreiber für Sparc T2+</dt>
+  <dd>Der Netztreiber <q>niu</q>, der von neueren T2+-Sparc-Systemen benötigt
+      wird, ist nicht Teil von d-i. Dadurch wird es unmöglich, eine 
+      Installation auf diesen Rechnern durchzuführen, wenn darin früh die
+      Einrichtung des Netzes benötigt wird. Der Treiber ist im Kernelpaket
+      enthalten, daher wird erwartet, dass das Netz nach dem Abschluss der
+      Installation normal arbeitet.<br />
+      Lesen Sie <a href="http://bugs.debian.org/608516">#608516</a>.</dd>
+
+  <dd>Systeme, die die Aty-Graphikkarten verwenden, könnten den Installer nicht
+      korrekt starten</dt>
+  <dd>
+     Systeme, die die aty-Graphikkarten verwenden (beispielsweise Ultra 10)
+     könnten den Installer nicht korrekt starten, der Kernel friert früh im 
+     Systemstartprozess ein. Die letzte Meldung lautet dabei <q>console [tty0] 
+     enabled, bootconsole</q>. Dies ist ein Fehler im Kernel, für den eine
+     Korrektur existiert, die das Problem allerdings nicht unbedingt vollständig
+     behebt.<br />
+     Das Problem kann umgangen werden, indem der Kernel-Startparameter
+     <q>video=atyfb:off</q> verwandt wird, um den Framebuffer während des
+     Systemstarts abzuschalten und dem Installer (und dem regulären Kernel)
+     erlaubt, auf solchen Systemen zu starten.<br />
+     Lesen Sie <a href="http://bugs.debian.org/609466">#609466</a>.</dd>
+
+  <dt>Tastaturauswahl funktioniert im graphischen Installer für einige Layouts nicht</dt>
+  <dd>
+     Für einige Kombinationen (Bulgarisch, Schweizerisches Deutsch, Schwedisch
+     und Brasilianisch) funktioniert die Voreinstellung bei graphischen
+     Installationen nicht. Auch wird die getroffene Auswahl nicht verwandt und
+     das System befindet sich standardmäßig im amerikanischen Englisch
+     (/etc/default/keyboard).<br />
+     Lesen Sie <a href="http://bugs.debian.org/610843">#610843</a>.</dd>
+
+  <dt>Mögliche Installationsprobleme mit RTL8169-basierten Netzwerkkarten</dt>
+  <dd>
+     Der Debian-Installer könnte nicht in der Lage sein, während der 
+     Installation Netzwerkkarten der RTL8169-Familie zu verwenden, wozu auch
+     das Runterladen der Pakete während der Installation gehört. Das 
+     installierte System ist von dem Problem nicht betroffen.<br />
+     Lesen Sie <a href="http://bugs.debian.org/558316">#558316</a> und ähnliche
+     zusammengeführte Fehler.<br />
+     Dies wird in der nächsten Zwischenveröffentlichung von Squeeze (6.0.1) 
+     behoben sein.</dd>
+
+  <dt>Systemstart schlägt auf einem Btrfs-Wurzeldateisystem nach einer 
+      erfolgreichen Installation fehl</dt>
+  <dd>Die Installation wird normal beendet, nach einem Systemneustart endet sie
+      aber an der Eingabeaufforderung einer Busybox in der Initramfs<br />
+      Lesen Sie <a href="http://bugs.debian.org/608538">#608538</a>.</dd>
+
+  <dt>Windows wird zu der Grub-Liste nicht hinzugefügt</dt>
+  <dd>
+     Der Debian-Installer erkennt während der Installation Windows aber fügt es
+     nicht zu dem Boot-Menü von Grub hinzu. Um dies zu umgehen, führen Sie nach
+     der Installation <q>update-grub</q> aus.<br />
+     Lesen Sie <a href="http://bugs.debian.org/608025">#608025</a>.</dd>
+
+  <dt>Erstellt zu MacOS 9 inkompatible Partitionstabelle</dt>
+  <dd>
+     Es wurde berichtet, dass das Partitionierungswerkzeug des Installers die
+     Partitionstabelle so verändert, dass MacOS 9 sie nicht mehr erkennt und
+     nicht mehr startet. Obwohl die HFS+-Partitionen zu Linux und MacOS X
+     kompatibel sind, werden Ihnen alle Vorsichtsmaßnahmen empfohlen, wenn Sie
+     auf einer Maschine mit MacOS 9 installieren.<br />
+     Lesen Sie <a href="http://bugs.debian.org/604134">#604134</a>.</dd>
+
+  <dt>Partitionierung schlägt auf kFreeBSD fehl</dt>
+  <dd>
+     Es gibt Berichte, dass die Partitionierung auf kFreeBSD fehlschlägt. Die
+     Probleme scheinen mit der Ausrichtung / erweiterten Partitionen 
+     zusammenzuhängen.<br />
+     Lesen Sie <a href="http://bugs.debian.org/593733">#593733</a>, <a
+     href="http://bugs.debian.org/597088">#597088</a> und <a
+     href="http://bugs.debian.org/602129">#602129</a>.</dd>
+
+  <dt>Netz-/Graphik-/Speicherkarte funktioniert nicht richtig</dt>
+  <dd>
+     Eine Reihe von Hardware, insbesondere Netzwerk- und Graphikkarten sowie
+     Speicherkontroller benötigen binäre, nicht freie Firmware, um korrekt zu
+     arbeiten.<br />
+     Debian ist freier Software verpflichtet und wird niemals erzwingen, dass 
+     das System von nicht freier Software abhängt (lesen Sie Debians <a
+     href="http://www.debian.org/social_contract">Gesellschaftsvertrag</a>). 
+     Daher ist nicht freie Firmware nicht im Installer vorhanden.<br />
+     Falls Sie aber während der Installation externe Firmware laden möchten,
+     können Sie dies durchführen. Der Prozess hierzu ist im 
+     Installationshandbuch dokumentiert.</dd>
+
+  <dt>Zipl-Installationen führen dazu, dass S390 uninstallierbar ist</dt>
+  <dd>
+    Falls eine dedizierte Partition für das /boot-Verzeichnis erstellt wird, 
+    schlägt der Systemstart nach der Installation fehl, falls /boot vor /
+    eingehängt wird.</br />
+    Lesen Sie <a href="http://bugs.debian.org/519254">#519254</a>.</dd>
+
   <dt>Fehlerhafte Router können zu Netzproblemen führen</dt>
   <dd>
       Falls bei Ihnen während der Installation Netzprobleme auftreten, könnte
@@ -42,14 +151,6 @@ Installationsbericht</a>, der das Problem beschreibt.
       <tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_rmem</tt><br />
       <tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_wmem</tt>
 
-  <dt>Ländernamen auf Englisch nicht korrekt sortiert</dt>
-  <dd>
-     Während des Auswahl des Spiegels werden die Ländernamen nach Ländercode
-     und nicht nach Ländernamen sortiert. Dadurch kann es schwierig werden,
-     einige Länder in der Liste zu finden. Dies betrifft nur Installationen
-     auf Englisch.
- </dd>
-
  <!-- leaving this in for possible future use...
      <dt>i386: mehr als 32&nbsp;MB an Speicher werden zur Installation benötigt</dt>
      <dd>
@@ -60,14 +161,6 @@ Installationsbericht</a>, der das Problem beschreibt.
         haben.
          </dd>
 -->
-  <dt>Einige USB-Tastaturen könnten nicht funktionieren</dt>
-  <dd>
-     Einige USB-Tastaturen benötigen zur korrekten Unterstützung spezielle 
-     Kernelmodule. Diese fehlen im aktuellen Installer. Lesen Sie hierzu <a 
-     href="http://bugs.debian.org/561036">#561036</a>, <a 
-     href="http://bugs.debian.org/567431">#567431</a>. In den täglich gebauten
-     Images ist dies bereits behoben.
- </dd>
 
   <dt>i386: mehrere Probleme</dt>
   <dd>
@@ -84,20 +177,6 @@ Installationsbericht</a>, der das Problem beschreibt.
      Das Dateisystemerstellwerkzeug von Ext4 erlauben nicht die Erstellung
      von Dateisystemen mit einer Größe von über 16 TiB.
  </dd>
-  <dt>Armel: Root auf RAID Boot-Problem</dt>
-  <dd>
-     Bitte seien Sie darauf vorbereitet, dass es ein Problem gibt, falls Sie
-     auswählen, Root auf RAID zu setzen, da nach der Installation von Debian 
-     Ihre Maschine nicht starten wird. Glücklicherweise können Sie das Problem
-     leicht umgehen: Wenn der Installer Ihnen mitteilt, dass er fertig sei und
-     Sie fragt, ob Sie das System neu starten möchten, wählen Sie <q>Zurück</q>
-     und öffnen eine Shell im Menü. Verwenden Sie dann Nano, um die Datei
-     <tt>/target/usr/share/initramfs-tools/hooks/flash_kernel_set_root</tt> zu
-     bearbeiten. Entfernen Sie dort die Prüfung, die sicherstellt, dass das
-     Root-Gerät existiert. Geben Sie <q>exit</q> ein, wählen Sie <q>Das System
-     bootbar machen</q> und drücken Sie <q>okay</q> bei der <q>Installation
-     abgeschlossen</q>-Nachricht.
- </dd>
 
   <dt>S390: Nichtunterstützte Funktionalitäten</dt>
   <dd>
@@ -105,18 +184,5 @@ Installationsbericht</a>, der das Problem beschreibt.
         <li>Die Unterstützung für DASD DIAG-Disziplinen ist derzeit nicht
             verfügbar.</li>
       </ul>
- </dd>
-  <dt>Sparc: Silo-Bootloader-Installationsproblem</dt>
-  <dd>
-     Der Silo-Bootloader wird nicht korrekt im Zielsystem installiert. Daher
-     wird ein Systemneustart fehlschlagen. Lesen Sie <a 
-     href="http://bugs.debian.org/565639">#565639</a> für Details. Korrigiert in
-     den täglich gebauten Images.
- </dd>
-  <dt>kFreeBSD-Images nicht verfügbar</dt>
-  <dd>
-     Die Unterstützung für kFreeBSD wird noch in den Installer integriert und 
-     ist in dieser Veröffentlichung noch nicht verfügbar. Es wird daran
-     gearbeitet, dies für kommende Veröffentlichungen zu korrigieren.
  </dd>
 </dl>
