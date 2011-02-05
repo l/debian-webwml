@@ -161,86 +161,117 @@ sub langcmp {
   return $ufirst cmp $usecond;
 }
 
+sub language_selector_css {
+    my $str = "";
+
+    $base_url      = "$(HOME)";
+    $file          = "$(WML_SRC_BASENAME)";
+    $cur_lang      = "$(CUR_LANG)";
+    $cwd           = $WML_SRC_DIRNAME;
+    $full_base_url = &canonpath("$cwd/$base_url");
+    $rel_dir       = &relpath( $full_base_url, $cwd );
+    $rel_dir =~ s,/$,,;
+
+# printf STDERR "base_url=$base_url rel_dir=$rel_dir file=$file cur_lang=$cur_lang\n";
+
+    foreach ( keys %langs ) {
+
+        # printf STDERR "$base_url/../$_/$rel_dir/$file.wml\n";
+        if ( -f "$base_url/../$_/$rel_dir/$file.wml" ) {
+            if ( $_ ne lc($cur_lang) or $cur_lang eq "Chinese" ) {
+                push @used_langs, $_;
+
+                # printf STDERR "found file in $_\n";
+            }
+        }
+    }
+
+    # printf STDERR join(', ', @used_langs);
+
+    if ( $rel_dir eq "" and $file eq "sitemap" )
+    {    # special case for the site map
+        $str .= "<!--UdmComment-->\n";
+        $str .= "<div id=\"pageLang\">\n";
+        $str .= "<p>\n";
+        $str
+            .= q{<gettext>This page is also available in the following languages:</gettext>}
+            . "</p>\n";
+        $str .= "<p class=\"navpara\">\n";
+        foreach ( keys %langs ) {
+            if ( $_ ne lc($cur_lang) or $cur_lang eq "Chinese" ) {
+                $sorted_langs{ $selflang{$_} } = $_;
+            }
+        }
+        foreach ( sort langcmp keys %sorted_langs ) {
+            $cur_lang = $sorted_langs{$_};
+            $tooltip  = $trans{$CUR_ISO_LANG}{$cur_lang};
+            if ( $cur_lang ne "chinese" ) {
+                $str
+                    .= " <a href=\"$file.$langs{$cur_lang}.html\" title=\"$tooltip\" hreflang=\"$langs{$cur_lang}\" lang=\"$langs{$cur_lang}\" rel=\"alternate\">$_";
+                $str .= "&nbsp;($translit{$cur_lang})"
+                    if defined $translit{$cur_lang};
+                $str .= "</a>\n";
+            }
+            else {
+                $str
+                    .= " <a href=\"$file.$langs{$cur_lang}-cn.html\" title=\"$tooltip (<CNc/>)\" hreflang=\"$langs{$cur_lang}-CN\" lang=\"$langs{$cur_lang}-CN\" rel=\"alternate\">$_(&#31616;)</a>\n";
+                $str
+                    .= " <a href=\"$file.$langs{$cur_lang}-hk.html\" title=\"$tooltip (<HKc/>)\" hreflang=\"$langs{$cur_lang}-HK\" lang=\"$langs{$cur_lang}-HK\" rel=\"alternate\">$_(HK)</a>\n";
+                $str
+                    .= " <a href=\"$file.$langs{$cur_lang}-tw.html\" title=\"$tooltip (<TWc/>)\" hreflang=\"$langs{$cur_lang}-TW\" lang=\"$langs{$cur_lang}-TW\" rel=\"alternate\">$_(&#32321;)</a>\n";
+            }
+        }
+        $str .= "</p>\n";
+        $str .= "</div>\n";
+        $str .= "<!--/UdmComment-->\n";
+    }
+    elsif (@used_langs) {
+        $str .= "<!--UdmComment-->\n";
+        $str .= "<div id=\"pageLang\">\n";
+        $str .= "<div id=\"langSelector\">\n";
+        $str
+            .= q{<gettext>This page is also available in the following languages:</gettext>}
+            . "\n";
+        $str .= "<div id=\"langContainer\">\n";
+
+        # Language sorting. Create a hash going from the language's own name
+        # for itself to the language's ISO keys. Then work with the sorted
+        # keys.
+        foreach (@used_langs) {
+            $sorted_langs{ $selflang{$_} } = $_;
+        }
+
+        # Sort on uppercase to work with languages which use lowercase initial
+        # letters.
+        foreach ( sort langcmp keys %sorted_langs ) {
+            $cur_lang = $sorted_langs{$_};
+            $tooltip  = $trans{$CUR_ISO_LANG}{$cur_lang};
+            if ( $cur_lang ne "chinese" ) {
+                $str
+                    .= " <a href=\"$file.$langs{$cur_lang}.html\" title=\"$tooltip\" hreflang=\"$langs{$cur_lang}\" lang=\"$langs{$cur_lang}\" rel=\"alternate\">$_";
+                $str .= "&nbsp;($translit{$cur_lang})"
+                    if defined $translit{$cur_lang};
+                $str .= "</a>\n";
+            }
+            else {
+                $str
+                    .= " <a href=\"$file.$langs{$cur_lang}-cn.html\" title=\"$tooltip (<CNc/>)\" hreflang=\"$langs{$cur_lang}-CN\" lang=\"$langs{$cur_lang}-CN\" rel=\"alternate\">$_(&#31616;)</a>\n";
+                $str
+                    .= " <a href=\"$file.$langs{$cur_lang}-hk.html\" title=\"$tooltip (<HKc/>)\" hreflang=\"$langs{$cur_lang}-HK\" lang=\"$langs{$cur_lang}-HK\" rel=\"alternate\">$_(HK)</a>\n";
+                $str
+                    .= " <a href=\"$file.$langs{$cur_lang}-tw.html\" title=\"$tooltip (<TWc/>)\" hreflang=\"$langs{$cur_lang}-TW\" lang=\"$langs{$cur_lang}-TW\" rel=\"alternate\">$_(&#32321;)</a>\n";
+            }
+        }
+        $str .= "</div></div></div>";
+    }
+
+    return $str;
+}
+
 sub languages {
-  my $str = "";
+     my $str = language_selector_css() or return '';
 
-  $base_url = "$(HOME)";
-  $file = "$(WML_SRC_BASENAME)";
-  $cur_lang = "$(CUR_LANG)";
-  $cwd = $WML_SRC_DIRNAME;
-  $full_base_url = &canonpath("$cwd/$base_url");
-  $rel_dir = &relpath($full_base_url, $cwd);
-  $rel_dir =~ s,/$,,;
-
-  # printf STDERR "base_url=$base_url rel_dir=$rel_dir file=$file cur_lang=$cur_lang\n";
-
-  foreach(keys %langs) {
-     # printf STDERR "$base_url/../$_/$rel_dir/$file.wml\n";
-     if ( -f "$base_url/../$_/$rel_dir/$file.wml" ) {
-        if ($_ ne lc($cur_lang) or $cur_lang eq "Chinese") {
-           push @used_langs, $_;
-           # printf STDERR "found file in $_\n";
-        }
-     }
-  }
-  # printf STDERR join(', ', @used_langs);
-
-  if ($rel_dir eq "" && $file eq "sitemap") { # special case for the site map
-    $str .= "<!--UdmComment-->\n";
-    $str .= "<p>\n";
-    $str .= q{<gettext>This page is also available in the following languages:</gettext>}."</p>\n";
-    $str .= "<p class=\"navpara\">\n";
-    foreach (keys %langs) {
-      if ($_ ne lc($cur_lang) or $cur_lang eq "Chinese") {
-        $sorted_langs{$selflang{$_}} = $_;
-      }
-    }
-    foreach (sort langcmp keys %sorted_langs) {
-      $cur_lang = $sorted_langs{$_};
-      $tooltip = $trans{$CUR_ISO_LANG}{$cur_lang};
-      if ($cur_lang ne "chinese") {
-        $str .= " <a href=\"$file.$langs{$cur_lang}.html\" title=\"$tooltip\" hreflang=\"$langs{$cur_lang}\" lang=\"$langs{$cur_lang}\" rel=\"alternate\">$_";
-        $str .= "&nbsp;($translit{$cur_lang})" if defined $translit{$cur_lang};
-        $str .= "</a>\n";
-      } else {
-        $str .= " <a href=\"$file.$langs{$cur_lang}-cn.html\" title=\"$tooltip (<CNc/>)\" hreflang=\"$langs{$cur_lang}-CN\" lang=\"$langs{$cur_lang}-CN\" rel=\"alternate\">$_(&#31616;)</a>\n";
-        $str .= " <a href=\"$file.$langs{$cur_lang}-hk.html\" title=\"$tooltip (<HKc/>)\" hreflang=\"$langs{$cur_lang}-HK\" lang=\"$langs{$cur_lang}-HK\" rel=\"alternate\">$_(HK)</a>\n";
-        $str .= " <a href=\"$file.$langs{$cur_lang}-tw.html\" title=\"$tooltip (<TWc/>)\" hreflang=\"$langs{$cur_lang}-TW\" lang=\"$langs{$cur_lang}-TW\" rel=\"alternate\">$_(&#32321;)</a>\n";
-      }
-    }
-     $str .= "</p>\n";
      $str .= "<!--/UdmComment-->\n";
-  }
-  elsif (@used_langs) {
-     $str .= "<!--UdmComment-->\n";
-     $str .= "<p>\n";
-     $str .= q{<gettext>This page is also available in the following languages:</gettext>}."\n";
-     $str .= "</p><p class=\"navpara\">\n";
-     # Language sorting. Create a hash going from the language's own name
-     # for itself to the language's ISO keys. Then work with the sorted
-     # keys.
-     foreach (@used_langs) {
-        $sorted_langs{$selflang{$_}} = $_;
-     }
-     # Sort on uppercase to work with languages which use lowercase initial
-     # letters.
-     foreach (sort langcmp keys %sorted_langs) {
-        $cur_lang = $sorted_langs{$_};
-        $tooltip = $trans{$CUR_ISO_LANG}{$cur_lang};
-        if ($cur_lang ne "chinese") {
-           $str .= " <a href=\"$file.$langs{$cur_lang}.html\" title=\"$tooltip\" hreflang=\"$langs{$cur_lang}\" lang=\"$langs{$cur_lang}\" rel=\"alternate\">$_";
-           $str .= "&nbsp;($translit{$cur_lang})" if defined $translit{$cur_lang};
-           $str .= "</a>\n";
-        } else {
-           $str .= " <a href=\"$file.$langs{$cur_lang}-cn.html\" title=\"$tooltip (<CNc/>)\" hreflang=\"$langs{$cur_lang}-CN\" lang=\"$langs{$cur_lang}-CN\" rel=\"alternate\">$_(&#31616;)</a>\n";
-           $str .= " <a href=\"$file.$langs{$cur_lang}-hk.html\" title=\"$tooltip (<HKc/>)\" hreflang=\"$langs{$cur_lang}-HK\" lang=\"$langs{$cur_lang}-HK\" rel=\"alternate\">$_(HK)</a>\n";
-           $str .= " <a href=\"$file.$langs{$cur_lang}-tw.html\" title=\"$tooltip (<TWc/>)\" hreflang=\"$langs{$cur_lang}-TW\" lang=\"$langs{$cur_lang}-TW\" rel=\"alternate\">$_(&#32321;)</a>\n";
-        }
-     }
-     $str .= "\n</p><p>\n";
-     $str .= q{<gettext>How to set <a href=m4_HOME/intro/cn>the default document language</a></gettext>};
-     $str .= "\n</p>\n<!--/UdmComment-->\n";
-  }
 
   return $str;
 }
