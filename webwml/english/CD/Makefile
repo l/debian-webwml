@@ -3,7 +3,7 @@
 
 WMLBASE=..
 CUR_DIR=CD
-SUBS=artwork faq http-ftp jigdo-cd torrent-cd mirroring netinst releases vendors
+SUBS=artwork faq http-ftp jigdo-cd torrent-cd mirroring netinst live releases vendors
 
 GETTEXTFILES += cdimage.mo
 
