@@ -3,7 +3,7 @@
 
 WMLBASE=../..
 CUR_DIR=releases/squeeze
-SUBS=
+SUBS=debian-installer
 
 include $(WMLBASE)/Make.lang
 
