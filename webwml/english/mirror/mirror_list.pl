@@ -355,21 +355,21 @@ EOM
     my \@elems = \@{\$secondaries{\$country}{\$countrysite}};
     print <<EOM;
 <tr>
-  <td valign="top"><code>\$countrysite</code>
+  <td valign="top">\$countrysite
 EOM
     if (\$elems[3]) {
       my \$extraname = \$elems[3];
       \$extraname =~ s%  %\&nbsp\;\&nbsp\;%;
       print <<EOM;
 <br>
-<code>\$extraname</code>
+\$extraname
 EOM
     }
     print <<EOM;
   </td>
   <td valign="top">\$elems[0]</td>
   <td valign="top">\$elems[1]</td>
-  <td valign="top"><small><small>\$elems[2]</small></small></td>
+  <td valign="top"><small>\$elems[2]</small></td>
 </tr>
 EOM
   }
