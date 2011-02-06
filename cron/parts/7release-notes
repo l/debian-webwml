@@ -15,11 +15,15 @@ date > $notesdir/build.log
 # is needed just add it here
 #
 # Add the release name once released/branched out of trunk
-for release in etch lenny testing; do
+for release in etch lenny squeeze testing; do
     echo "rebuilding the release notes for $release" >> $notesdir/build.log
-    (cd $notesdir/$release && svn update) >> $notesdir/build.log 2>&1
-    make -C $notesdir/$release publish \
-	PUBLISHTARBALL=yes PUBLISHDIR=$webtopdir/www/releases/$release >> $notesdir/build.log 2>&1
+    if [ -d "$notesdir/$release" ] ; then
+        (cd $notesdir/$release && svn update) >> $notesdir/build.log 2>&1
+         make -C $notesdir/$release publish \
+             PUBLISHTARBALL=yes PUBLISHDIR=$webtopdir/www/releases/$release >> $notesdir/build.log 2>&1
+    else
+        echo "ERROR: directory $notesdir/$release does not exist"  >> $notesdir/build.log
+    fi
 done
 
 date >> $notesdir/build.log
