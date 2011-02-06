@@ -30,7 +30,8 @@ newsevents_FILES = $(addprefix $(TEMPLDIR)/, \
   projectnews/footer.wml weeklynews/footer.wml) \
   $(ENGLISHDIR)/News/press/press.tags \
   $(ENGLISHDIR)/events/speakers/speakers.defs \
-  $(ENGLISHDIR)/events/talks.defs
+  $(ENGLISHDIR)/events/talks.defs \
+  $(ENGLISHDIR)/News/news.rdf.in
 organization_FILES = $(ENGLISHDIR)/intro/organization.data
 ports_FILES     = $(ENGLISHDIR)/ports/menu.defs \
   $(shell export LC_COLLATE=C; echo $(ENGLISHDIR)/ports/*/menu.inc) \
