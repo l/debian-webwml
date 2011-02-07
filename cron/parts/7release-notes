@@ -15,7 +15,7 @@ date > $notesdir/build.log
 # is needed just add it here
 #
 # Add the release name once released/branched out of trunk
-for release in etch lenny squeeze testing; do
+for release in etch lenny squeeze ; do
     echo "rebuilding the release notes for $release" >> $notesdir/build.log
     if [ -d "$notesdir/$release" ] ; then
         (cd $notesdir/$release && svn update) >> $notesdir/build.log 2>&1
@@ -23,13 +23,8 @@ for release in etch lenny squeeze testing; do
         # extracted in master if we say 'testing' use the 'testing' directory 
         # but publish in 'squeeze' in the website. Please remove after creating
         # the 'squeeze' directory in /srv/www.debian.org/release-notes/ - jfs - 2011-06-02
-        if [ $release = "testing" ] ; then
-         make -C $notesdir/$release publish \
-             PUBLISHTARBALL=yes PUBLISHDIR=$webtopdir/www/releases/squeeze >> $notesdir/build.log 2>&1
-        else
          make -C $notesdir/$release publish \
              PUBLISHTARBALL=yes PUBLISHDIR=$webtopdir/www/releases/$release >> $notesdir/build.log 2>&1
-        fi
     else
         echo "ERROR: directory $notesdir/$release does not exist"  >> $notesdir/build.log
     fi
