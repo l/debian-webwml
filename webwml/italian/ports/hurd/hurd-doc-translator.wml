@@ -17,58 +17,58 @@
 <h3><a href="#TOC_concept" name="concept">Il concetto</a></h3>
 
 <p>Per approfondire l'argomento traduttori si usa come esempio i normali
-filesystem, un filesystem Ë supporto di memorizzazione con un albero
+filesystem, un filesystem √® supporto di memorizzazione con un albero
 gerarchico di directory e file. Per accedere alle directory e ai file si
 usa una speciale stringa di caratteri, il percorso. Inoltre esistono link
 simbolici per rimandare a uno stesso file da diversi punti dell'albero delle
-directory e hard link per dare a uno stesso file pi˘ nomi. Ci sono dei file
+directory e hard link per dare a uno stesso file pi√π nomi. Ci sono dei file
 speciali detti device per comunicare con i driver per il kernel dei
 dispositivi hardware e ci sono i mount point per includere altri supporti di
 memorizzazione nell'albero delle directory. Infine esistono anche altri strani
 oggetti come le fifo.</p>
 
-<p>Sebbene questi oggetti siano molto diversi condividono alcune propriet‡
+<p>Sebbene questi oggetti siano molto diversi condividono alcune propriet√†
 comuni, ad esempio hanno un proprietario, sono associati a un gruppo e hanno
 dei diritti di accesso (permessi); tutte queste informazioni sono scritte
-negli inode. Un'altra cosa fondamentale: ogni oggetto Ë associato a
+negli inode. Un'altra cosa fondamentale: ogni oggetto √® associato a
 esattamente un inode (gli hard link sono in qualche modo speciali dato che
 condividono lo stesso inode). In alcuni casi nell'inode sono memorizzate
 anche informazioni differenti, per esempio possono contenere la destinazione
 di un link simbolico.</p>
 
-<p>Comunque queste funzionalit‡ comuni di solito non sono sfruttate nelle
+<p>Comunque queste funzionalit√† comuni di solito non sono sfruttate nelle
 implementazioni e sono rimandandate alla loro interfaccia di programmazione
-che Ë standard. Infatti si puÚ accedere a tutti gli inode usando le chiamate
+che √® standard. Infatti si pu√≤ accedere a tutti gli inode usando le chiamate
 standard POSIX come <code>read()</code> e <code>write()</code>. Per esempio,
 per aggiungere un nuovo tipo di oggetto (un nuovo tipo di link) a un kernel
 unix monolitico si deve modificare il codice per ogni filesystem.</p>
 
 <p>In Hurd le cose funzionano in modo diverso. Sebbene nell'Hurd uno specifico
-servente per il filesystem possa sfruttare le propriet‡ speciali dei tipi di
+servente per il filesystem possa sfruttare le propriet√† speciali dei tipi di
 oggetto standard come i link (per esempio nel filesystem ext2 i fast link) ha
-anche una interfaccia generica che permette di aggiungere delle funzionalit‡
+anche una interfaccia generica che permette di aggiungere delle funzionalit√†
 senza modificare il codice esistente.</p>
 
 <p>Il trucco consiste nel permettere l'inserimento di un programma fra il
 reale contenuto di un file e l'utente che accede a quel file. Un programma di
-questo tipo Ë chiamato traduttore dato che Ë capace di elaborare le richieste
-in arrivo in molti modi diversi. In altre parole un traduttore Ë un servente
+questo tipo √® chiamato traduttore dato che √® capace di elaborare le richieste
+in arrivo in molti modi diversi. In altre parole un traduttore √® un servente
 Hurd che fornisce l'interfaccia verso il filesystem sottostante.</p>
 
-<p>I traduttori hanno delle propriet‡ molto interessanti. Dal punto di vista
+<p>I traduttori hanno delle propriet√† molto interessanti. Dal punto di vista
 del kernel i traduttori sono dei normali processi dell'utente, questo
 significa che i tradutori possono essere eseguiti da qualsiasi utente, che
 non sono necessari i privilegi dell'utente root per installare o modificare un
 traduttore e che invece sono sufficienti i giusti permessi di accesso
-all'inode su cui Ë collegato il traduttore. Molti traduttori non richiedono un
+all'inode su cui √® collegato il traduttore. Molti traduttori non richiedono un
 reale file per funzionare, infatti possono fornire informazioni per proprio
-conto, questo perchÈ le informazioni sui traduttori sono memorizzate
+conto, questo perch√© le informazioni sui traduttori sono memorizzate
 nell'inode.</p>
 
 <p>I traduttori si occupano di servire tutte le operazioni sul filesystem che
-convolgono gli inode a cui sono collegati. PoichÈ non sono limitati dal
+convolgono gli inode a cui sono collegati. Poich√© non sono limitati dal
 normale insieme di oggetti (file device, link, ecc.) sono liberi di restituire
-qualsiasi cosa che ha senso al programmatore. Si puÚ immaginare un traduttore
+qualsiasi cosa che ha senso al programmatore. Si pu√≤ immaginare un traduttore
 che si comporta come una directory quando ci si accede con <code>cd</code> o
 <code>ls</code> e che allo stesso tempo si comporta come un file quando ci si
 accede con <code>cat</code>.</p>
@@ -76,52 +76,52 @@ accede con <code>cat</code>.</p>
 <h3><a href="#TOC_examples" name="examples">Esempi</a></h3>
 <h4>Mount point</h4>
 
-<p>Un mount point puÚ essere visto come un inode su cui Ë attaccato uno
-speciale traduttore, il cui scopo Ë tradurre le operazioni sul filesystem del
+<p>Un mount point pu√≤ essere visto come un inode su cui √® attaccato uno
+speciale traduttore, il cui scopo √® tradurre le operazioni sul filesystem del
 mount point su un altro supporto di memorizzazione, per esempio un'altra
 partizione.</p>
 
-<p>Sia chiaro, qui Ë descritto come sono implementati i filesystem sotto Hurd.
-Un filesystem Ë un traduttore. Questo traduttore prende come argomento un
-supporto di memorizzazione ed Ë capace di servire in modo trasparente tutte
+<p>Sia chiaro, qui √® descritto come sono implementati i filesystem sotto Hurd.
+Un filesystem √® un traduttore. Questo traduttore prende come argomento un
+supporto di memorizzazione ed √® capace di servire in modo trasparente tutte
 le operazioni sul filesystem.</p>
 
 <h4>File device</h4>
 
 <p>Ci sono file device molto diversi che nei sistemi con un kernel monolitico
 sono tutti forniti dal kernel stesso. In Hurd tutti i file device sono forniti
-da dei traduttori. Un traduttore puÚ fornire il supporto per parecchi file
+da dei traduttori. Un traduttore pu√≤ fornire il supporto per parecchi file
 device simili, per esempio tutte le partizioni del disco fisso. In questo
-modo il numero effettivo di traduttori necessari Ë piuttosto piccolo, comunque
+modo il numero effettivo di traduttori necessari √® piuttosto piccolo, comunque
 si noti che quando si accede a ogni file device viene avviato un task del
-traduttore separato. PoichÈ Hurd Ë pesantemente multi-threaded, questo risulta
+traduttore separato. Poich√© Hurd √® pesantemente multi-threaded, questo risulta
 essere particolarmente economico.</p>
 
-<p>Quando Ë coinvolto l'hardware di solito un traduttore inizia a comunicare
-con il kernel per avere i dati dall'hardware, invece se non Ë necessario
+<p>Quando √® coinvolto l'hardware di solito un traduttore inizia a comunicare
+con il kernel per avere i dati dall'hardware, invece se non √® necessario
 accedere all'hardware allora il kernel non viene coinvolto. Per esempio
-<code>/dev/zero</code> non richiede l'accesso all'hardware e quindi puÚ
+<code>/dev/zero</code> non richiede l'accesso all'hardware e quindi pu√≤
 essere implemento completamente in spazio utente.</p>
 
 <h4>Link simbolici</h4>
 
-<p>Anche un link simbolico puÚ essere visto come un traduttore. L'accesso a un
+<p>Anche un link simbolico pu√≤ essere visto come un traduttore. L'accesso a un
 link simbolico fa partire un traduttore che inoltra la richiesta al filesystem
 che contiene il file a cui punta il link.</p>
 
 <p>Per migliorare le prestazioni i filesystem supportano nativamente i
-link simbolici e quindi possono trarre vantaggio da questa funzionalit‡
+link simbolici e quindi possono trarre vantaggio da questa funzionalit√†
 implementando i link simbolici in modo ottimale. Internamente l'accesso ai
 link simbolici non fa partire un nuovo processo traduttore. Comunque per
-l'utente puÚ sembrare che sia coinvolto un traduttore passivo (si veda pi˘
-sotto per una spiegazione di che cosa Ë un traduttore passivo).</p>
+l'utente pu√≤ sembrare che sia coinvolto un traduttore passivo (si veda pi√π
+sotto per una spiegazione di che cosa √® un traduttore passivo).</p>
 
 <p>Dato che fa parte dell'Hurd anche un traduttore per i link simbolici,
 qualsiasi servente per filesystem che ha il supporto per i traduttori
 automaticamente ha il supporto per i link simbolici (per i link statici, per i
-file device, ecc.)! Questo significa che si puÚ avere un filesystem
+file device, ecc.)! Questo significa che si pu√≤ avere un filesystem
 funzionante molto rapidamente e aggiungere il supporto per i link simbolici e
-altre funzionalit‡ successivamente.</p>
+altre funzionalit√† successivamente.</p>
 
 <h3><a href="#TOC_actpas" name="actpas">Taduttori passivi e taduttori attivi</a></h3>
 
@@ -131,71 +131,71 @@ l'una all'altra.</p>
 
 <h4>Traduttori attivi</h4>
 
-<p>Come gi‡ detto un traduttore attivo Ë un processo traduttore in esecuzione.
+<p>Come gi√† detto un traduttore attivo √® un processo traduttore in esecuzione.
 Si possono attivare e rimuovere i traduttori attivi con il comando
-<code>settrans -a</code>. L'opzione <code>-a</code> Ë necessaria per indicare
+<code>settrans -a</code>. L'opzione <code>-a</code> √® necessaria per indicare
 a <code>settrans</code> che si vuole modificare un traduttore attivo.</p>
 
 <p>Il comando <code>settrans</code> accetta tre tipi di argomento. Per prima
 cosa si possono impostare le opzioni del comando <code>settrans</code> stesso,
 come <code>-a</code> necessaria modificare il traduttore attivo. Poi si
-specifica l'inode che si intende modificare, ricordarsi che un traduttore Ë
-sempre associato con un inode dell'albero delle directory e che si puÚ
+specifica l'inode che si intende modificare, ricordarsi che un traduttore √®
+sempre associato con un inode dell'albero delle directory e che si pu√≤
 modificare un solo inode alla volta. Se non si specificano altri argomenti
-<code>settrans</code> tenter‡ di rimuove un traduttore esistente. La forza
-di questi tentativi dipende dalle opzioni specificate (se il traduttore Ë
-in uso da parte di un processo si ricever‡ il messaggio di errore "device
+<code>settrans</code> tenter√† di rimuove un traduttore esistente. La forza
+di questi tentativi dipende dalle opzioni specificate (se il traduttore √®
+in uso da parte di un processo si ricever√† il messaggio di errore "device
 or resource busy" a meno che non si forzi la sua fine).</p>
 
 <p>Se si specificano altri argomenti, vengono interpretati come la riga
 di comando per eseguire il traduttore. Questo significa che l'argomanto
-successivo Ë il nome del file eseguibile del traduttore. Ulteriori argomenti
+successivo √® il nome del file eseguibile del traduttore. Ulteriori argomenti
 sono le opzioni del traduttore e non del comando <code>settans</code>.</p>
 
-<p>Per esempio per montare una partizione ext2fs si puÚ eseguire
+<p>Per esempio per montare una partizione ext2fs si pu√≤ eseguire
 <code>settrans -a -c /mnt /hurd/ext2fs /dev/hd2s5</code>. L'opzione
-<code>-c</code> crea il mount point se questo ancora non esiste, non Ë
-necessario che sia una directory. Per smontare si puÚ usare <code>settrans
+<code>-c</code> crea il mount point se questo ancora non esiste, non √®
+necessario che sia una directory. Per smontare si pu√≤ usare <code>settrans
 -a /mnt</code>.</p>
 
 <h4>Traduttori passivi</h4>
 
 <p>Un traduttore passivo viene impostato e modificato con la stessa sintassi
 di un traduttore attivo (tralasciando l'opzione <code>-a</code>) tutto quello
-detto precedentemente Ë valido anche per i traduttori passivi. Comunque
-c'Ë una differenza: i traduttori passivi non sono stati ancora avviati.</p>
+detto precedentemente √® valido anche per i traduttori passivi. Comunque
+c'√® una differenza: i traduttori passivi non sono stati ancora avviati.</p>
 
-<p>Questo ha senso perchÈ Ë il comportamento che normalmente vuole l'utente,
+<p>Questo ha senso perch√© √® il comportamento che normalmente vuole l'utente,
 non si vogliono montare le partizioni fino a quando non si accede realmente
 ai file presenti su quelle partizioni, non si vuole attivare la rete fino a
-quando non c'Ë del traffico e cosÏ via.</p>
+quando non c'√® del traffico e cos√¨ via.</p>
 
 <p>Invece la prima volta che si accede a un traduttore passivo viene
 automaticamente letto dall'inode e un traduttore attivo viene avviato sopra
-usando la riga di comando che Ë memorizzato nell'inode. Questo Ë simile al
-meccanismo automount di Linux, con la differenza che non Ë una funzionalit‡
-aggiuntiva che deve essere impostata manualmente ma Ë una parte integrante del
+usando la riga di comando che √® memorizzato nell'inode. Questo √® simile al
+meccanismo automount di Linux, con la differenza che non √® una funzionalit√†
+aggiuntiva che deve essere impostata manualmente ma √® una parte integrante del
 sistema. Quindi l'impostazione dei traduttori passivi rimanda l'avvio del task
 traduttore fino a quando non sia necessario. Nel caso che un traduttore attivo
 muoia per qualsiasi ragione la volta successiva che si accede all'inode il
 traduttore viene riavviato.</p>
 
-<p>C'Ë un'ulteriore differenza: i traduttori attivi possono morire o perdersi.
-Appena il processo del traduttore attivo muore (per esempio perchÈ si riavvia
-la macchina) Ë perso per sempre. I traduttori passivi non sono temporanei e
+<p>C'√® un'ulteriore differenza: i traduttori attivi possono morire o perdersi.
+Appena il processo del traduttore attivo muore (per esempio perch√© si riavvia
+la macchina) √® perso per sempre. I traduttori passivi non sono temporanei e
 rimangono nell'inode nonostante i riavvii fino a quando non si modificano con
 il programma <code>settrans</code> o si cancella l'inode a cui sono collegati.
 Questo significa che non serve tenere un file di configurazione con l'elenco
 dei mount point.</p>
 
-<p>Infine, anche se si Ë impostato un traduttore passivo si puÚ impostare un
-traduttore attivo differente. Solo se il tradutore Ë avviato automaticamente
-perchÈ non c'era un altro traduttore attivo quando Ë stato fatto l'accesso
+<p>Infine, anche se si √® impostato un traduttore passivo si pu√≤ impostare un
+traduttore attivo differente. Solo se il tradutore √® avviato automaticamente
+perch√© non c'era un altro traduttore attivo quando √® stato fatto l'accesso
 all'inode viene considerato il traduttore passivo.</p>
 
 <h3><a href="#TOC_manage" name="manage">Gestione dei traduttori</a></h3>
 
-<p>Come detto precedentemente si puÚ usare <code>settrans</code> per impostare
+<p>Come detto precedentemente si pu√≤ usare <code>settrans</code> per impostare
 e modificare i traduttori attivi e passivi. Ci sono molte opzioni per cambiare
 il comportamento di <code>settrans</code> nel caso che qualcosa vada male e
 per condizionare i suoi effetti. Qui sono riportati alcuni comuni usi:
@@ -215,36 +215,36 @@ per condizionare i suoi effetti. Qui sono riportati alcuni comuni usi:
 	forza un traduttore a disattivarsi.</li>
 </ul>
 
-<p>Si puÚ usare il comando
+<p>Si pu√≤ usare il comando
 <a href="hurd-doc-utils#showtrans"><code>showtrans</code></a> per vedere se
-un traduttore Ë collegato a un inode. Purtroppo questo comando mostra solo i
+un traduttore √® collegato a un inode. Purtroppo questo comando mostra solo i
 traduttori passivi.</p>
 
 <p>Si possono cambiare le opzioni di un traduttore (per filesystem) attivo
-con <code>fsysopts</code> senza riavviarlo, Ë veramente molto comodo. Per
-esempio si puÚ fare quello che sotto Linux Ë "rimontare una paritzione in
+con <code>fsysopts</code> senza riavviarlo, √® veramente molto comodo. Per
+esempio si pu√≤ fare quello che sotto Linux √® "rimontare una paritzione in
 sola lettura" semplicemente eseguendo <code>fsysopts /mntpoint
---readonly</code>. Il traduttore attivo in esecuzione modificher‡ il proprio
-comportamento in base alle richieste se Ë possibile. <code>fsysopts
+--readonly</code>. Il traduttore attivo in esecuzione modificher√† il proprio
+comportamento in base alle richieste se √® possibile. <code>fsysopts
 /mntpoint</code> senza altri parametri mostra le impostazioni attuali.</p>
 
 <h4>Esempi</h4>
 
 <p>Si raccomanda di iniziare leggendo il comando <code>/bin/mount</code>,
-Ë solo un piccolo script dato che l'impostazione dei traduttori per i
-filesystem Ë simile al montare le partizioni, si puÚ facilmente comprendere
+√® solo un piccolo script dato che l'impostazione dei traduttori per i
+filesystem √® simile al montare le partizioni, si pu√≤ facilmente comprendere
 il concetto. Creare una immagine di un filesystem con <code>dd if=/dev/zero
 of=dummy.fs bs=1024k count=8; mke2fs dummy.fs</code> e montarlo con
 <code>settrans -c dummy /hurd/ext2fs `pwd`/dummy.fs</code>. Notare che il
-traduttore ancora non Ë partito, non c'Ë un processo <code>ext2fs</code> in
-esecuzione (lo si puÚ verificare con <code>ps Aux</code>). Controllare che
+traduttore ancora non √® partito, non c'√® un processo <code>ext2fs</code> in
+esecuzione (lo si pu√≤ verificare con <code>ps Aux</code>). Controllare che
 tutto sia apposto con <code>showtrans</code>.</p>
 
 <p>Adesso digitare <code>ls dummy</code>, noterete un piccolo ritardo
 necessario all'avvio del traduttore. In futuro non ci dovrebbero essere altri
-ritardi per accedere a dummy, sotto Linux si potrebbe dire che Ë stato fatto
+ritardi per accedere a dummy, sotto Linux si potrebbe dire che √® stato fatto
 l'automount di un filesystem di loop. Controllare con <code>ps Aux</code> che
-c'Ë un processo <code>ext2fs</code> attivo e in esecuzione. Adesso aggiungere
+c'√® un processo <code>ext2fs</code> attivo e in esecuzione. Adesso aggiungere
 alcuni file nella nuova directory. Provare a rendere il filesystem di sola
 lettura con <code>fsysopts</code>, i successivi tentativi di scrittura
 falliranno. Provare a uccidere il traduttore attivo con <code>settrans
@@ -253,7 +253,7 @@ falliranno. Provare a uccidere il traduttore attivo con <code>settrans
 <p>Adesso si dovrebbe aver chiaro cosa succede, ricordarsi che questo era solo
 <em>un</em> servente, il servente Hurd ext2fs. Ci sono molti altri serventi
 nella directory <code>hurd</code>, alcuni di essi sono per i filesystem,
-alcuni sono necessari per le funzionalit‡ del filesystem come i link, alcuni
+alcuni sono necessari per le funzionalit√† del filesystem come i link, alcuni
 sono necessari per i file device, alcuni per la rete. Si immagini di montare
 un server FTP con <code>settrans</code> e di scaricare i file semplicemente
 con il normale comando <code>cp</code> o modificare il vostro sito web con
