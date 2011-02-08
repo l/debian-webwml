@@ -6,7 +6,7 @@ CUR_DIR=devel
 SUBS=website join misc wnpp todo \
  debian-jr debian-med debian-desktop debian-lex \
  debian-nonprofit debian-installer debian-accessibility buildd \
- debian-volatile
+ debian-volatile debian-live
 
 include $(WMLBASE)/Make.lang
 
