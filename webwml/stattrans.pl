@@ -517,14 +517,14 @@ foreach $lang (@search_in) {
                 if ($u_body) {
                     print HTML "<li><a href=\"#untranslated\">General pages</a></li>\n";
                 }
-                if ($ui_body) {
-                    print HTML "<li><a href=\"#untranslated-l10n\">International pages</a></li>\n";
-                }
                 if ($un_body) {
                     print HTML "<li><a href=\"#untranslated-news\">News items</a></li>\n";
                 }
 	        if ($uu_body) {
               	    print HTML "<li><a href=\"#untranslated-user\">Consultant/user pages</a></li>\n";
+                }
+                if ($ui_body) {
+                    print HTML "<li><a href=\"#untranslated-l10n\">International pages</a></li>\n";
                 }
                 print HTML "</ul></li>\n";
             }
@@ -561,12 +561,6 @@ foreach $lang (@search_in) {
                 print HTML $u_body;
                 print HTML "</table>\n";
             }
-            if ($ui_body) {
-                print HTML "<h3 id='untranslated-l10n'>International pages not translated: <a href='#top'>(top)</a></h3>\n";
-                print HTML "<table summary=\"Untranslated international pages\">\n";
-                print HTML $ui_body;
-                print HTML "</table>\n";
-            }
             if ($un_body) {
                 print HTML "<h3 id='untranslated-news'>News items not translated: <a href='#top'>(top)</a></h3>\n";
                 print HTML "<table summary=\"Untranslated news items\">\n";
@@ -577,6 +571,12 @@ foreach $lang (@search_in) {
                 print HTML "<h3 id='untranslated-user'>Consultant/user pages not translated: <a href='#top'>(top)</a></h3>\n";
                 print HTML "<table summary=\"Untranslated consultant/user pages\">\n";
                 print HTML $uu_body;
+                print HTML "</table>\n";
+            }
+            if ($ui_body) {
+                print HTML "<h3 id='untranslated-l10n'>International pages not translated: <a href='#top'>(top)</a></h3>\n";
+                print HTML "<table summary=\"Untranslated international pages\">\n";
+                print HTML $ui_body;
                 print HTML "</table>\n";
             }
             if ($t_body) {
