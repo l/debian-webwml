@@ -3,15 +3,7 @@
 
 WMLBASE=..
 CUR_DIR=international
-SUBS=Catalan Chinese Croatian Danish french German l10n Polish Slovak Swedish
-
-ifneq (,$(findstring spanish/,$(CURDIR)))
-SUBS += spanish
-endif
-
-ifneq (,$(findstring dutch/,$(CURDIR)))
-SUBS += dutch
-endif
+SUBS=Catalan Chinese Croatian Danish dutch french German l10n Polish Slovak spanish Swedish
 
 include $(WMLBASE)/Make.lang
 
