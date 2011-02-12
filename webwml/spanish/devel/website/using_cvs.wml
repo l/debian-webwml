@@ -1,28 +1,28 @@
 #use wml::debian::template title="Uso del CVS"
-#use wml::debian::translation-check translation="1.21"
+#use wml::debian::translation-check translation="1.22" maintainer="Luis Uribe"
 
-<p>CVS es un programa para ayudar en la gestión de varias personas que
-trabajan simultáneamente en el mismo material. Cada usuario crea una copia
-local del repositorio principal. Las copias locales pueden residir en la
-misma máquina o a lo largo del mundo. Los usuarios pueden entonces modificar
-la copia local como deseen, y cuando el material modificado esté preparado, enviar
+<p>CVS es un programa que se usa para controlar el trabajo que se realiza de manera simultanea por varias 
+personas sobre un mismo material. Con él, cada usuario crea una copia
+local del repositorio principal. Las copias locales pueden estar en la
+misma máquina o en cualquier lugar del mundo. Los usuarios pueden modificar
+la copia local como deseen y, cuando el material modificado esté preparado, enviar
 los cambios al repositorio principal.
 
 <p>Para un accesso de sólo lectura puede usar la <a href="http://cvs.debian.org/webwml/?root=webwml">interfaz web</a>. Existen también muchos clientes gráficos como <a href="http://packages.debian.org/cervisia">Cervisia</a> de KDE. Este documento describe el flujo de trabajo con el programa de linea de órdenes <code>cvs</code>, aunque otros clientes ofrecen funciones similares.
 
 <p>CVS no le permitirá enviar un fichero si la copia del repositorio
 principal se ha modificado desde la última actualización que usted realizó.
-Esto no suele ser un problema, ya que puede actualizar su copia
-local. Si las modificaciones eran de partes diferentes a aquellas en las que trabajaba,
+Normalmente esto no es problema, ya que puede actualizar su copia
+local. Si las modificaciones realizadas en la copia del repositorio central
+eran de partes diferentes a aquellas en las que usted trabajaba,
 los cambios se fusionan silenciosamente. Si los cambios afectan al mismo área
-en la que estuvo trabajando, le avisará de que hay un conflicto y que es necesario
+en la que estuvo trabajando, le avisará de que hay un conflicto y usted tendrá que
 editar el fichero y corregir el problema antes de enviarlo.
 
-<P>A continuación usaremos un acceso anónimo como ejemplo. Si usted tiene
-acceso a una cuenta que le da permiso de escritura en el repositorio, debería usar esa cuenta. 
-Si está planeando hacer cambios, debería conseguir una cuenta antes de empezar, ya que los usuarios anónimos no pueden enviar cambios.
-Vea la sección sobre <a href="#write-access">acceso con escritura</a> para más 
-información.
+<P>A continuación se usará como ejemplo un acceso anónimo. Si usted tiene
+acceso a una cuenta que le dé permisos de escritura en el repositorio, debería usarla. 
+Si está planeando hacer cambios, antes de empezar debería conseguir una cuenta, ya que los usuarios anónimos no pueden enviar cambios.
+Para más información vea la sección sobre <a href="#write-access">acceso con escritura</a>.
 
 <p>Para empezar a usar CVS, primero ha de <code>autenticarse</code> en el servidor CVS:
 
@@ -38,7 +38,7 @@ información.
    cvs -d :pserver:anonymous@cvs.alioth.debian.org:/cvsroot/webwml checkout webwml
 </pre>
 
-<p>Puede obtener un subconjunto de páginas como este:
+<p>Con ello puede obtener un subconjunto de páginas como este:
 
 <pre>
    cvs -d :pserver:anonymous@cvs.alioth.debian.org:/cvsroot/webwml checkout -l \\
@@ -49,28 +49,33 @@ información.
           &lt;<var>ruta a los ficheros deseados</var>&gt;
 </pre>
 
-<p>Repita esto para todos los directorios o ficheros que quiera. La
+<p>Puede repetirlo para todos los subdirectorios o ficheros que quiera. La
 segunda línea incluye todos los ficheros que necesitará si quiere
-crear HTML a partir de los ficheros WML. Descargas parciales como esas no están en realidad permitidas, 
+crear HTML a partir de los ficheros WML. En realidad no están permitidas las descargas parciales, 
 por lo que las instrucciones anteriores puede que no siempre funcionen.
 
-<p>Si ha recibido un usuario y clave, insértela en el lugar de «anonymous»,
+<p>Si ha recibido un usuario y clave, colóquela en el lugar de «anonymous»,
 de esta forma:
 
 <pre>
    cvs -d :ext:usuario@cvs.debian.org:/cvs/webwml checkout webwml/english/doc
 </pre>
 
-<P>Desde ahora, no necesitará usar la parte <code>'-d :ext:...'</code>
-Cada pocos días tendrá que hacer
+<P>Desde entonces, no necesitará usar la parte <code>'-d :ext:...'</code>
+Pero cada pocos días tendrá que ejecutar
 
 <pre>
    cvs update -d
 </pre>
 
-<p>para actualizar los ficheros del repositorio que hayan cambiado. La
+<p>para actualizarse con los ficheros del repositorio que hayan cambiado. La
 opción de actualización <code>-d</code> añadirá automáticamente los nuevos directorios.
-Puede que quiera crear un fichero <code>~/.cvsrc</code>, de forma que no tenga que teclear
+Esto también revisa los directorios que fueron omitidos en el caso de que
+usted realizara una descarga parcial &mdash; en ese caso es posible 
+que quiera usar el script <code>cvsup.py</code>
+
+
+<p>Puede que quiera crear un fichero <code>~/.cvsrc</code>, de forma que no tenga que teclear
 las mismas opciones constantemente. Esto puede contener por ejemplo:
 
 <pre>
