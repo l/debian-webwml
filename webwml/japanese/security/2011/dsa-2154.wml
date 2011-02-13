@@ -1,0 +1,71 @@
+#use wml::debian::translation-check translation="1.1"
+<define-tag description>特権の昇格</define-tag>
+<define-tag moreinfo>
+
+<p>exim4 に設計ミス (<a href="http://security-tracker.debian.org/tracker/CVE-2010-4345">CVE-2010-4345</a>) 
+が発見されました。-C オプションを用
+いた代替設定ファイルの指定または -D オプションを用いたマクロ上書きの
+設定により、ローカル Debian-exim ユーザから管理者権限の取得が可能です。
+残念ながら、これらの欠陥の修正には exim4 の挙動の変更が必要です。-C
+や -D オプションを使用している場合、またはシステムフィルタ機能を用い
+ている場合は、変更を吟味して設定を適切に調整してください。Debian の標
+準設定には今回の更新の影響はありません。</p>
+
+変更の詳細の一覧は、パッケージの NEWS.Debian に記載されています。関係
+ある部分については下記に記載されています。</p>
+
+<p>これに加え、setuid/setgid システムコール失敗時のエラー処理抜けのため、
+Debian-exim ユーザがログデータに任意のファイルを root に追加されるこ
+とができる欠陥 (<a href="http://security-tracker.debian.org/tracker/CVE-2011-0017">CVE-2011-0017</a>) 
+も修正されました。</p>
+
+<p>安定版 (stable) ディストリビューション (lenny) では、これらの問題はバ
+ージョン 4.69-9+lenny3 で修正されています。</p>
+
+<p>テスト版 (squeeze) および不安定版 (unstable) ディストリビューション
+では、この問題はバージョン 4.72-4 で修正されています。</p>
+
+
+<p>以下は exim4-daemon-light と exim4-daemon-heavy パッケージからの
+NEWS.Debian ファイルの抜粋です。</p>
+
+<blockquote><pre>
+Exim バージョン 4.72 及びそれ以下には、CVE-2010-4345 の欠陥があります。
+これは特権の昇格の問題で、-C オプションを用いた代替設定ファイルの指定
+によりローカルユーザが root 権限を取得可能です。マクロ上書き機能 (-D)
+もこの目的に悪用可能です。
+
+このセキュリティ欠陥に対する対処のため、上流では仕様の複数の変更を行
+っています。このパッケージにはその変更が反映されています。
+
+exim が -C または -D オプション付きで起動された場合、デーモンは再実行
+の際に root 権限の再取得を行いません。この処理は通常ローカル配送の場
+合必要になってきます。このため、exim デーモンを -D や -C オプションで
+実行することは、一般的にはもうできなくなっています。
+
+但し、この版の exim は TRUSTED_CONFIG_LIST=/etc/exim4/trusted_configs
+という設定でビルドされています。TRUSTED_CONFIG_LIST は信用可能な設定
+ファイルのリストを定義します。もし設定ファイルが root 所有で、リスト
+内にあるパス名と一致する場合、exim が root 権限を手放すことなしに
+exim のビルド時のユーザからの当該設定ファイルの起動が許されます。
+
+既存のメールスキャナが動作するよう、ホットフィックスとして
+WHITELIST_D_MACROS=OUTGOING の設定も加えています。つまり、ローカル配
+送を可能とし、かつ -DOUTGOING つきで exim を起動することが可能になっ
+ています。
+
+以前から -D スイッチを使っていた場合、設定を独立の設定ファイルを用い
+るよう変更する必要があります。.include 機能を使えば簡単になるでしょう。
+
+システムフィルタは、標準では root ではなく exim_user 権限で実行され
+るようになりました。システムフィルタとして実行する際の設定が root 権
+限を必要としている場合、exim の main 設定オプションに
+system_filter_user を設定する必要があるでしょう。
+</pre>
+</blockquote>
+
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2011/dsa-2154.data"
+# $Id$

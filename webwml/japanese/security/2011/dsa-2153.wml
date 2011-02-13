@@ -1,0 +1,208 @@
+#use wml::debian::translation-check translation="1.1"
+<define-tag description>特権の昇格/サービス拒否攻撃/情報の漏洩</define-tag>
+<define-tag moreinfo>
+
+<p>
+Linux カーネルに、特権の昇格/サービス拒否攻撃/情報の漏洩に繋がる複数の問
+題が発見されました。The Common Vulnerabilities and Exposures project は
+以下の問題を認識しています。
+</p>
+
+<ul>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-0435">CVE-2010-0435</a>
+
+    <p>
+    Gleb Napatov さんにより、KVM サブシステムに欠陥が報告されました。
+    仮想マシンから mov to/from DR 命令を実行することで、ホストマシン
+    に対するサービス拒否攻撃を実効可能です。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-3699">CVE-2010-3699</a>
+
+    <p>
+    Keir Fraser さんにより、Xen サブシステムのパッチが提供されました。
+    デバイスの参照のリークのため、参照を保持し続けることでゲストから
+    ホストに対するサービス拒否攻撃を実効可能です。これは、この操作に
+    よりゾンビドメインが発生し、xenwatch プロセスがハングし、xm コマ
+    ンドが失敗するためです。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4158">CVE-2010-4158</a>
+
+    <p>
+    Dan Rosenberg さんにより、socket filter サブシステムに欠陥が発見
+    されました。ローカルの非特権ユーザがカーネルの機密情報を含むメモ
+    リの内容を取得可能です。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4162">CVE-2010-4162</a>
+
+    <p>
+    Dan Rosenberg さんにより、block I/O サブシステムにオーバフローの
+    欠陥が発見されました。ローカルユーザが多数のページをマップできる
+    ため、OOM キラー起動によるサービス拒否攻撃を実効可能です。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4163">CVE-2010-4163</a>
+
+    <p>
+    Dan Rosenberg さんにより、block I/O サブシステムにオーバフローの
+    欠陥が発見されました。iov セグメントの検証が不適切なため、ローカ
+    ルユーザがカーネルパニックを引き起こし、サービス拒否攻撃を実効可
+    能です。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4242">CVE-2010-4242</a>
+
+    <p>
+    Alan Cox さんにより、Bluetooth サブシステムに欠陥が報告されました。
+    tty write 操作にチェックが抜けているため、HCI UART デバイスにアク
+    セス可能なローカルユーザがサービス拒否攻撃 (NULL ポインタ参照) を
+    実効可能です。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4243">CVE-2010-4243</a>
+
+    <p>
+    Brad Spengler さんにより、カーネルメモリアカウンティングシステム
+    にサービス拒否攻撃に繋がる欠陥が報告されました。巨大な argv/envp
+    値を exec に渡すことで、ローカルユーザがOOM キラー起動し、他のユ
+    ーザの所有するプロセスを殺すことが可能です。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4248">CVE-2010-4248</a>
+
+    <p>
+    Oleg Nesterov rさんにより、POSIX CPU タイマサブシステムに欠陥が報
+    告されました。スレッドグループの先頭の挙動に不適切な課程が置かれ
+    ているため、ローカルユーザがサービス拒否攻撃 (カーネル Oops) を実
+    効可能です。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4249">CVE-2010-4249</a>
+
+    <p>
+    Vegard Nossum さんにより、UNIX ソケットガベージコレクタに欠陥が報
+    告されました。ローカルユーザが処理中のソケットで過負荷を掛けるこ
+    とで LOWMEM を全て消費することができるため、システム性能を低下さ
+    れることが可能です。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4258">CVE-2010-4258</a>
+
+    <p>
+    Nelson Elhage さんにより、Linux oops 処理に欠陥が報告されました。
+    ローカルユーザが fs を KERNEL_DS にセットしたプロセスで oops を起
+    こすことができた場合、特権の昇格が可能です。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4342">CVE-2010-4342</a>
+
+    <p>
+    Nelson Elhage さんにより、econet プロトコルに欠陥が報告されました。
+    リモートの攻撃者が、UDP 経由で Acorn Universal ネットワークパケッ
+    トを送信することで、サービス拒否攻撃を実効可能です。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4346">CVE-2010-4346</a>
+
+    <p>
+    Tavis Ormandy さんにより install_special_mapping 処理に、欠陥が報
+    告されました。ローカルユーザから mmap_min_addr のセキュリティ制約
+    の迂回が可能です。これに他のサービス拒否攻撃 (NULL ポインタ参照)
+    に繋がる危険性の低い欠陥を組み合わせることで、ローカルユーザから
+    の特権の昇格が可能です。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4526">CVE-2010-4526</a>
+
+    <p>
+    Eugene Teo さんにより、Linux SCTP 実装に欠陥が報告されました。リ
+    モートの攻撃者から、ロックされたソケットに ICMP unreachable メッ
+    セージを起こることで、サービス拒否攻撃 (カーネルメモリ破壊) を実
+    効可能です。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4527">CVE-2010-4527</a>
+
+    <p>
+    Dan Rosenberg さんにより、OSS サウンドカードドライバに欠陥が報告
+    されました。デバイスにアクセス可能なローカルユーザ (Debian の標準
+    設定では、audio グループのメンバ) から、機密情報を含むカーネルメ
+    モリの取得やバッファオーバフローの発生が行えるため、特権の昇格を
+    行える可能性があります。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4529">CVE-2010-4529</a>
+
+    <p>
+    Dan Rosenberg さんにより、非 x86 アーキテクチャでの Linux カーネ
+    ル IrDA ソケット実装に欠陥が報告されました。ローカルユーザが細工
+    した IRLMP_ENUMDEVICES getsockopt コールを用いることにより、機密
+    情報を含むカーネルメモリへのアクセスが可能です。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4565">CVE-2010-4565</a>
+
+    <p>
+    Dan Rosenberg さんにより、Linux CAN プロトコルサブシステムに欠陥
+    が報告されました。ローカルユーザがカーネルヒープオブジェクトのア
+    ドレスを取得できるため、システムの攻撃が容易になります。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4649">CVE-2010-4649</a>
+
+    <p>
+    Dan Carpenter さんにより、InfiniBand サブシステムの uverb の扱い
+    に欠陥が発見されました。大きな cmd.ne の値によりバッファオーバフ
+    ローを起こすため、サービス拒否攻撃 (メモリ破壊) を実効可能です。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4656">CVE-2010-4656</a>
+
+    <p>
+    Kees Cook さんにより、I/O-Warrior USB デバイスのドライバに欠陥が
+    報告されました。これらのデバイスにアクセス可能なユーザが、カーネ
+    ルバッファの上書きを行えるため、サービス拒否攻撃や特権の昇格を行
+    える可能性があります。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-4668">CVE-2010-4668</a>
+
+    <p>Dan Rosenberg さんにより、block サブシステムに欠陥が報告されまし
+    た。ローカルユーザが、ある種の長さ 0 の I/O 要求を行うことで、サ
+    ービス拒否攻撃 (カーネルパニック) を実効可能です。
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-0521">CVE-2011-0521</a>
+
+    <p>Dan Carpenter さんにより、AV7110 カードの DVB ドライバに欠陥が発
+    見されました。ローカルユーザが info->num 値に負の値を渡せるため、
+    カーネルメモリを破壊しサービス拒否攻撃を実効可能です。
+	</p></li>
+
+</ul>
+
+
+<p>安定版 (stable) ディストリビューション (lenny) では、この問題はバージ
+ョン 2.6.26-26lenny2 で修正されています。</p>
+
+<p>以下は今回の更新の効果を得るため、または今回の更新との互換性を維持する
+ために再ビルドした追加ソースパッケージの一覧表です。</p>
+
+<div class="centerdiv"><table cellspacing="0" cellpadding="2">
+<tr><th>&nbsp;</th>             <th>Debian 5.0 (lenny)</th></tr>
+<tr><td>user-mode-linux</td>    <td>2.6.26-1um-2+26lenny2</td></tr>
+</table></div>
+
+<p>直ぐに linux-2.6 and user-mode-linux パッケージをアップグレードするこ
+とを勧めます。</p>
+
+<p>これらの更新は、システムのリブート後有効になることに注意してください。</p>
+
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2011/dsa-2153.data"
+# $Id$
