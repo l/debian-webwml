@@ -1,8 +1,8 @@
 <hr>
 <address>
-Администраторы Debian BTS &lt;<email "owner@bugs.debian.org">&gt;
+п░п╢п╪п╦п╫п╦я│я┌я─п╟я┌п╬я─я▀ Debian BTS &lt;<email "owner@bugs.debian.org">&gt;
 
-<p>Система отслеживания ошибок Debian<br>
+<p>п║п╦я│я┌п╣п╪п╟ п╬я┌я│п╩п╣п╤п╦п╡п╟п╫п╦я▐ п╬я┬п╦п╠п╬п╨ Debian<br>
 Copyright &copy; 1999 Darren O. Benham, 1994-97 Ian Jackson,
 1997 nCipher Corporation Ltd, 1995 Steven Brenner.
 </address>
