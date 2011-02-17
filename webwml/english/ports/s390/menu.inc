@@ -8,5 +8,4 @@
 
 <menu-item name="ports"         basename="../index">
 <menu-item name="s390"          basename="index">
-<menu-item name="news"          basename="news">
 
