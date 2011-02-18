@@ -115,10 +115,10 @@ close(FILE);
 if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	# Translation of fixed version messages
 	#$output =~ s|<p>For.the.\S+.distribution.\S+.this.problem.has.been.fixed.in.version.\S+\.</p>|$translation->{$opt_l}{'<p>For the <distrib_release> distribution (<distrib_name>) this problem has been fixed in version <version>.</p>'}|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 ($2), ce problème a été corrigé dans la version $3.</p>|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 ($2), ces problèmes ont été corrigés dans la version $3.</p>|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).distribution,?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 ($2), ce problème a été corrigé dans la version $3.</p>|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).distribution,?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 ($2), ces problèmes ont été corrigés dans la version $3.</p>|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.this.problem.has.a?l?s?o?.?been.fixed.?[\n]?in.version.(\S+)\.|<p>Pour la distribution $1 ($2), ce problème a été corrigé dans la version $3.|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.?[\n]?in.version.(\S+)\.|<p>Pour la distribution $1 ($2), ces problèmes ont été corrigés dans la version $3.|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).distribution,?.this.problem.has.a?l?s?o?.?been.fixed.?[\n]?in.version.(\S+)\.|<p>Pour la distribution $1 ($2), ce problème a été corrigé dans la version $3.|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).distribution,?.these.problems.have.a?l?s?o?.?been.fixed.?[\n]?in.version.(\S+)\.|<p>Pour la distribution $1 ($2), ces problèmes ont été corrigés dans la version $3.|gs;
 
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\).and.t?h?e?.??(\S+).distribution.\((\S+)\),?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème a été corrigé dans la version $5.</p>|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\).and.t?h?e?.??(\S+).distribution.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes ont été corrigés dans la version $5.</p>|gs;
@@ -126,8 +126,10 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\) distributions,?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes ont été corrigés dans la version $5.</p>|gs;
 	$output =~ s|<p>[\n]?For.the.upcoming.(\S+).distribution.\((\S+)\).and.the.(\S+).distribution.\((\S+)\),?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 à venir ($2) et la distribution $3 ($4), ce problème a été corrigé dans la version $5.</p>|gs;
 	$output =~ s|<p>[\n]?For.the.upcoming.(\S+).distribution.\((\S+)\).and.the.(\S+).distribution.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 à venir ($2) et la distribution $3 ($4), ces problèmes ont été corrigés dans la version $5.</p>|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\).and.the.(\S+).distribution.\((\S+)\),?, this problem will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème sera corrigé prochainement.</p>|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\).and.the.(\S+).distribution.\((\S+)\),?, these problems will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes seront corrigés prochainement.</p>|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\).and.the.(\S+).distribution.\((\S+)\),?, this problem.?[\n]?will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème sera corrigé prochainement.</p>|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\).and.the.(\S+).distribution.\((\S+)\),?, these problems will.?[\n]?be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes seront corrigés prochainement.</p>|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\).distributions, these problems.?[\n]?will.be.fixed.soon\.[\n]?</p>|<p>Pour les distributions $1 ($2) et $3 ($4), ces problèmes seront corrigés prochainement.</p>|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\).distributions, this problem.?[\n]?will.be.fixed.soon\.[\n]?</p>|<p>Pour les distributions $1 ($2) et $3 ($4), ce problème sera corrigé prochainement.</p>|gs;
 	$output =~ s|<p>[\n]?For the.(\S+).distribution.\((\S+)\),?.this problem.will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2), ce problème sera corrigé prochainement.</p>|gs;
 	$output =~ s|<p>[\n]?For the.(\S+).distribution.\((\S+)\),?.these problems.will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2), ces problèmes seront corrigés prochainement.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).will.be.fixed.soon\.[\n]?</p>|<p>La distribution $1 ($2) sera corrigé prochainement.</p>|gs;
@@ -137,16 +139,17 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|\(sid\)|\(Sid\)|g;
 	$output =~ s|\(lenny\)|\(Lenny\)|g;
 	$output =~ s|\(squeeze\)|\(Squeeze\)|g;
+	$output =~ s|\(wheezy\)|\(Wheezy\)|g;
 
 	# Short recurrent part of text. Take care ! substitution order might be important
-	$output =~ s|Several.vulnerabilities.have.been.discovered in|Plusieurs vulnérabilités ont été découvertes dans|gs;
+	$output =~ s|Several.vulnerabilities.(have.been\|were).discovered in|Plusieurs vulnérabilités ont été découvertes dans|gs;
 	$output =~ s|A buffer.overflow has been discovered in|Un débordement de tampon a été découvert dans|gs; 
 	$output =~ s|The.Common.Vulnerabilities.and.Exposures.project.identifies.the.following.problems:|Le projet « Common Vulnerabilities and Exposures » (CVE) identifie les problèmes suivants :|s;
 	$output =~ s|,.which.may.lead.to.the.execution.of.arbitrary.code\.|. Cela peut mener à l'exécution de code arbitraire.|gs;
 	$output =~ s|,.which.may.result.in.the.execution.of.arbitrary.code\.|. Cela peut avoir pour conséquence l'exécution de code arbitraire.|gs;
 	$output =~ s|,.which.might.allow.the.execution.of.arbitrary.code\.|. Cela peut permettre l'exécution de code arbitraire.|gs;
-#	$output =~ s|||gs;
-#	$output =~ s|||gs;
+	$output =~ s|remote.attackers|des attaquants distants|gs;
+	$output =~ s|denial.of.service|déni de service|gs;
  
 	$output =~ s|the (\S+) parser|l'analyseur $1|gs;
 
