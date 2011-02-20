@@ -89,6 +89,7 @@ foreach $l (<ADV>) {
 	  push @dbids, "BID".$id;
       }
   }
+  last if ($l =~ /Further information about Debian Security Advisories.*$/i);
   $mi = 0 if ($l =~ /^(wget url|Obtaining updates|Upgrade Instructions)/i);
   $moreinfo .= "<p>" if ($mi && $nl);
   $nl = 0;
@@ -127,6 +128,7 @@ $moreinfo =~ s|</li>\n\n<li>|\n\n<ul>\n\n<li>|;
 #$moreinfo =~ s|</p>\n\n<p>(\w* \w* stable)|</p></li>\n\n</ul>\n\n<p>$1|; 
 if ($moreinfo =~ /<ul>\n\n<li>/) { $moreinfo =~ s|</p>\n\n<p>(\w+ \w+ \w* ?(old ?stable\|stable\|testing))|</p></li>\n\n</ul>\n\n<p>$1|; }
 chomp ($moreinfo);
+
 $files =~ s/(- )?-+\n//g;
 $files =~ s/\n\n$/\n/s;
 
