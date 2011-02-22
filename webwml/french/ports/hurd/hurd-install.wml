@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd&nbsp;&ndash;&nbsp;Installation" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.75" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.77" maintainer="David Prévot"
 
 # Translators:
 # Jérome Abela, 1999.
@@ -437,156 +437,161 @@ critiques&nbsp;; toutes seront acceptées avec plaisir.
 #
 #  Faites-le, et bienvenue sous le Hurd !
 #</p>
-#
-#
-#<h2>7. Configuration</h2>
-#
-#
-#<h3>7.1 Le réseau</h3>
-#
-#<p>
-#  D'abord, assurez-vous que la carte réseau est reconnue par GNU Mach :
-#</p>
-#
-#<table><tr><td>&nbsp;</td><td class=example><pre>
-# \# devprobe eth0
-# eth0
-#</pre></td></tr></table>
-#
-#<p>
-#  Si <code>devprobe eth0</code> ne renvoie pas <code>eth0</code>, le noyau
-#  n'a pas détecté la carte réseau et vous devez essayer une autre carte.
-#
-#  Par exemple, la carte e1000 de QEMU n'est pas prise en charge, la pcnet
-#  devrait fonctionner : <code>-net nic,model=pcnet -net user</code>.
-#</p>
-#
-#<p>
-#Pour configurer le réseau, le traducteur pfinet doit être configuré. Cela se
-#fait par la commande <code>settrans</code> qui attache un traducteur à un nœud
-#de système de fichiers donné. Quand les programmes accéderont au nœud, par
-#exemple en envoyant un RPC, le système d'exploitation lancera de manière
-#transparente le serveur afin de prendre en charge la requête.
-#</p>
-#
-#<table><tr><td>&nbsp;</td><td class=example><pre>
-# \# settrans -fgap /servers/socket/2 /hurd/pfinet -i eth0 \
-#   -a a.b.c.d -g e.f.g.h -m i.j.k.l
-#</pre></td></tr></table>
-#
-#<p>
-#Ici, <code>settrans</code> reçoit plusieurs options. Les deux premières,
-#<var>fg</var>, forcent tous les traducteurs existants à disparaître. Les deux
-#suivantes, <var>ap</var>, créent les traducteurs actifs et passifs. En
-#rendant un traducteur actif, nous verrons immédiatement tous les messages
-#d'erreur sur <tt>stderr</tt>. Ce dernier sauvegarde le traducteur et ses
-#paramètres dans le nœud de façon à pouvoir le relancer plus tard de manière
-#transparente (c'est-à-dire en ayant des paramètres persistants même après un
-#réamorçage). Les options sont suivies d'un nœud auquel le traducteur sera
-#attaché, puis du programme (c'est-à-dire le traducteur) à lancer et de tous les
-#paramètres à lui passer. L'option <var>-i</var> est l'interface sur laquelle
-#<code>pfinet</code> écoutera, <var>-a</var> est l'adresse IP, <var>-g</var>
-#la passerelle et <var>-m</var> le masque de sous-réseau.
-#</p>
-#
-#<p>
-#Veillez à ajouter des serveurs de nom de domaines à votre fichier
-#<tt>/etc/resolv.conf</tt>&nbsp;:
-#</p>
-#
-#<table><tr><td>&nbsp;</td><td class=example><pre>
-#  nameserver 192.168.1.1
-#</pre></td></tr></table>
-#
-#<p>
-#Pour tester la configuration, veuillez taper <code>ping -c2 gateway</code>. Le
-#<var>-c</var> est important pour limiter le nombre de pings&nbsp;;
-#rappelez-vous, <kbd>CONTROL-C</kbd> ne fonctionne pas en mode utilisateur
-#unique.
-#</p>
-#
-#<p>
-#DHCP ne fonctionne pas encore sous le Hurd. C'est dû à des limitations de
-#pfinet&nbsp;: il est basé sur le code TCP/IP de Linux et est incapable
-#d'écouter sur <tt>0.0.0.0</tt>.
-#</p>
-#
-#<p>
-#Il est possible d'obtenir de l'aide sur <code>settrans</code> en lui passant l'option
-#<var>--help</var>. Il en va de même concernant un traducteur donné en
-#l'invoquant depuis la ligne de commande avec ce même paramètre, par
-#exemple&nbsp;:
-#</p>
-#
-#<table><tr><td>&nbsp;</td><td class=example><pre>
-# \# /hurd/pfinet --help
-#</pre></td></tr></table>
-#
-#<p>
-#Comme la sortie peut être importante, pensez à la traiter à travers un visionneur
-#de texte tel que <code>less</code>.
-#</p>
-#
-#
-#<h3>7.2 Autres systèmes de fichiers</h3>
-#
-#<p>
-#Ensuite, veuillez éditer <tt>/etc/fstab</tt> en y ajoutant tous les systèmes de
-#fichiers supplémentaires ainsi que l'espace d'échange. Il est <em>très
-#important</em> que l'espace d'échange soit utilisé&nbsp;; le Hurd sera plus
-#stable. Notez que le Hurd peut partager une partition d'échange de
-#manière transparente avec Linux, mais pourra sans problème paginer sur quelque
-#périphérique que ce soit, y compris une partition brute comme votre partition
-#home. Par défaut, <code>nano</code> est le seul éditeur de texte installé par
-#la distribution de base.
-#</p>
-#
-#<p>
-#Voici un exemple de fichier <tt>/etc/fstab</tt>&nbsp;:
-#</p>
-#
-#<table><tr><td>&nbsp;</td><td class=example><pre>
-#\# &#60;file system&#62; &#60;mount point&#62;   &#60;type&#62;  &#60;options&#62;  &#60;dump&#62;  &#60;pass&#62;
-#/dev/hd0s1      /               ext2    rw         0       1
-#/dev/hd0s2      /home           ext2    rw         0       2
-#/dev/hd0s3      none            swap    sw         0       0
-#</pre></td></tr></table>
-#
-#<p>
-#N'oubliez pas de créer tous les périphériques avec la commande
-#<code>MAKEDEV</code>&nbsp;:
-#</p>
-#
-#<table><tr><td>&nbsp;</td><td class=example><pre>
-# \# cd /dev
-# \# ./MAKEDEV hd0s1 hd0s2 hd0s3
-#</pre></td></tr></table>
-#
-#<p>
-#Pour monter un système de fichiers nfs, le traducteur <code>/hurd/nfs</code> est
-#utilisé. Quand il n'est pas lancé par le superutilisateur, le traducteur se
-#connecte au serveur en utilisant un port au-dessus de&nbsp;1023. Par défaut,
-#GNU/Linux rejettera cela. Pour dire à GNU/Linux d'accepter les connexions
-#provenant d'un port non réservé, veuillez ajouter l'option
-#<var>insecure</var> à la ligne d'export. Voici un exemple de fichier
-#<tt>/etc/exports</tt> supposant que l'adresse IP du client est
-#<tt>192.168.1.2</tt>&nbsp;:
-#</p>
-#
-#<table><tr><td>&nbsp;</td><td class=example><pre>
-#  /home  192.168.1.2(rw,insecure)
-#</pre></td></tr></table>
-#
-#<p>
-#Pour monter ceci sur une machine GNU et en supposant que l'adresse IP du
-#serveur nfs est <tt>192.168.1.1</tt>&nbsp;:
-#</p>
-#
-#<table><tr><td>&nbsp;</td><td class=example><pre>
-#\# settrans -cgap /mount/point /hurd/nfs 192.168.1.1:/home
-#</pre></td></tr></table>
-#
-#
+
+
+<h2>Configuration</h2>
+
+
+<h3>Le réseau</h3>
+
+<p>
+D'abord, assurez-vous que la carte réseau est reconnue par GNU Mach :
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# devprobe eth0
+ eth0
+</pre></td></tr></table>
+
+<p>
+Si <code>devprobe eth0</code> ne renvoie pas <code>eth0</code>, le noyau
+n'a pas détecté la carte réseau et vous devez essayer une autre carte.
+
+Par exemple, la carte e1000 de QEMU n'est pas prise en charge, la pcnet
+devrait fonctionner : <code>-net nic,model=pcnet -net user</code>.
+</p>
+
+<p>
+Pour configurer le réseau, le traducteur pfinet doit être configuré.
+
+Cela peut se faire en utilisant <code>inetutils-ifconfig</code>
+du paquet <code>inetutils-tools</code>.
+
+Vous pouvez aussi exécuter la commande <code>settrans</code>
+vous-même qui attache un traducteur à un nœud
+de système de fichiers donné. Quand les programmes accéderont au nœud, par
+exemple en envoyant un RPC, le système d'exploitation lancera de manière
+transparente le serveur afin de prendre en charge la requête.
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# settrans -fgap /servers/socket/2 /hurd/pfinet -i eth0 \
+   -a a.b.c.d -g e.f.g.h -m i.j.k.l
+</pre></td></tr></table>
+
+<p>
+Ici, <code>settrans</code> reçoit plusieurs options. Les deux premières,
+<var>fg</var>, forcent tous les traducteurs existants à disparaître. Les deux
+suivantes, <var>ap</var>, créent les traducteurs actifs et passifs. En
+rendant un traducteur actif, nous verrons immédiatement tous les messages
+d'erreur sur <tt>stderr</tt>. Ce dernier sauvegarde le traducteur et ses
+paramètres dans le nœud de façon à pouvoir le relancer plus tard de manière
+transparente (c'est-à-dire en ayant des paramètres persistants même après un
+réamorçage). Les options sont suivies d'un nœud auquel le traducteur sera
+attaché, puis du programme (c'est-à-dire le traducteur) à lancer et de tous les
+paramètres à lui passer. L'option <var>-i</var> est l'interface sur laquelle
+<code>pfinet</code> écoutera, <var>-a</var> est l'adresse IP, <var>-g</var>
+la passerelle et <var>-m</var> le masque de sous-réseau.
+</p>
+
+<p>
+Veillez à ajouter des serveurs de nom de domaines à votre fichier
+<tt>/etc/resolv.conf</tt>&nbsp;:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+  nameserver 192.168.1.1
+</pre></td></tr></table>
+
+<p>
+Pour tester la configuration, veuillez taper <code>ping -c2 gateway</code>. Le
+<var>-c</var> est important pour limiter le nombre de pings&nbsp;;
+rappelez-vous, <kbd>CONTROL-C</kbd> ne fonctionne pas en mode utilisateur
+unique.
+</p>
+
+<p>
+DHCP ne fonctionne pas encore sous le Hurd. C'est dû à des limites de
+pfinet&nbsp;: il est basé sur le code TCP/IP de Linux et est incapable
+d'écouter sur <tt>0.0.0.0</tt>.
+</p>
+
+<p>
+Il est possible d'obtenir de l'aide sur <code>settrans</code> en lui passant l'option
+<var>--help</var>. Il en va de même concernant un traducteur donné en
+l'invoquant depuis la ligne de commande avec ce même paramètre, par
+exemple&nbsp;:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# /hurd/pfinet --help
+</pre></td></tr></table>
+
+<p>
+Comme la sortie peut être importante, pensez à la traiter à travers un visionneur
+de texte tel que <code>less</code>.
+</p>
+
+
+<h3>Autres systèmes de fichiers</h3>
+
+<p>
+Ensuite, veuillez éditer <tt>/etc/fstab</tt> en y ajoutant tous les systèmes de
+fichiers supplémentaires ainsi que l'espace d'échange. Il est <em>très
+important</em> que l'espace d'échange soit utilisé&nbsp;; le Hurd sera plus
+stable. Notez que le Hurd peut partager une partition d'échange de
+manière transparente avec Linux, mais pourra sans problème paginer sur quelque
+périphérique que ce soit, y compris une partition brute comme votre partition
+home. Par défaut, <code>nano</code> est le seul éditeur de texte installé par
+la distribution de base.
+</p>
+
+<p>
+Voici un exemple de fichier <tt>/etc/fstab</tt>&nbsp;:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+\# &#60;file system&#62; &#60;mount point&#62;   &#60;type&#62;  &#60;options&#62;  &#60;dump&#62;  &#60;pass&#62;
+/dev/hd0s1      /               ext2    rw         0       1
+/dev/hd0s2      /home           ext2    rw         0       2
+/dev/hd0s3      none            swap    sw         0       0
+</pre></td></tr></table>
+
+<p>
+N'oubliez pas de créer tous les périphériques avec la commande
+<code>MAKEDEV</code>&nbsp;:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# cd /dev
+ \# ./MAKEDEV hd0s1 hd0s2 hd0s3
+</pre></td></tr></table>
+
+<p>
+Pour monter un système de fichiers NFS, le traducteur <code>/hurd/nfs</code> est
+utilisé. Quand il n'est pas lancé par le superutilisateur, le traducteur se
+connecte au serveur en utilisant un port au-dessus de&nbsp;1023. Par défaut,
+GNU/Linux rejettera cela. Pour dire à GNU/Linux d'accepter les connexions
+provenant d'un port non réservé, veuillez ajouter l'option
+<var>insecure</var> à la ligne d'export. Voici un exemple de fichier
+<tt>/etc/exports</tt> supposant que l'adresse IP du client est
+<tt>192.168.1.2</tt>&nbsp;:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+  /home  192.168.1.2(rw,insecure)
+</pre></td></tr></table>
+
+<p>
+Pour monter ceci sur une machine GNU et en supposant que l'adresse IP du
+serveur NFS est <tt>192.168.1.1</tt>&nbsp;:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+\# settrans -cgap /mount/point /hurd/nfs 192.168.1.1:/home
+</pre></td></tr></table>
+
+
 #<h3>7.3 Réamorçage</h3>
 #
 #<p>
