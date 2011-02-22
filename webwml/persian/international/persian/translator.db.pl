@@ -37,11 +37,40 @@ sub init_translators {
                        file            => 0,
                        compress        => 'none'
                 },
+                'Hadi sarrami' => {
+                       email           => 'behrad_es@yahoo.com',
+                       summary         => 2,
+                       logs            => 2,
+                       diff            => 2,
+                       tdiff           => 0,
+                       file            => 0,
+                       compress        => 'none'
+                },
+                'Morteza ‌Fakhraee' => {
+                       email           => 'behrad_es@yahoo.com',
+                       summary         => 2,
+                       logs            => 2,
+                       diff            => 2,
+                       tdiff           => 0,
+                       file            => 0,
+                       compress        => 'none'
+                },
+                'Arash Bizhan zadeh' => {
+                       email           => 'arashbi@gmail.com',
+                       summary         => 2,
+                       logs            => 2,
+                       diff            => 2,
+                       tdiff           => 0,
+                       file            => 0,
+                       compress        => 'none'
+                },
+
 
         };
         return $translators;
 }
 
 1;
+
 
 
