@@ -132,7 +132,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\).distributions, this problem.?[\n]?will.be.fixed.soon\.[\n]?</p>|<p>Pour les distributions $1 ($2) et $3 ($4), ce problème sera corrigé prochainement.</p>|gs;
 	$output =~ s|<p>[\n]?For the.(\S+).distribution.\((\S+)\),?.this problem.will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2), ce problème sera corrigé prochainement.</p>|gs;
 	$output =~ s|<p>[\n]?For the.(\S+).distribution.\((\S+)\),?.these problems.will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2), ces problèmes seront corrigés prochainement.</p>|gs;
-	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).will.be.fixed.soon\.[\n]?</p>|<p>La distribution $1 ($2) sera corrigé prochainement.</p>|gs;
+	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).will.be.fixed.soon\.[\n]?</p>|<p>La distribution $1 ($2) sera corrigée prochainement.</p>|gs;
 
 	# Case adjustment
 	$output =~ s|\(etch\)|\(Etch\)|g;
@@ -146,6 +146,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|A buffer.overflow has been discovered in|Un débordement de tampon a été découvert dans|gs; 
 	$output =~ s|The.Common.Vulnerabilities.and.Exposures.project.identifies.the.following.problems:|Le projet « Common Vulnerabilities and Exposures » (CVE) identifie les problèmes suivants :|s;
 	$output =~ s|,.which.may.lead.to.the.execution.of.arbitrary.code|. Cela peut mener à l'exécution de code arbitraire|gs;
+	$output =~ s|,.which.could.lead.to.the.execution.of.arbitrary.code|. Cela pourrait mener à l'exécution de code arbitraire|gs;
 	$output =~ s|,.which.may.result.in.the.execution.of.arbitrary.code|. Cela peut avoir pour conséquence l'exécution de code arbitraire|gs;
 	$output =~ s|,.which.might.allow.the.execution.of.arbitrary.code|. Cela peut permettre l'exécution de code arbitraire|gs;
 	$output =~ s|remote.attackers|des attaquants distants|gs;
