@@ -1,5 +1,7 @@
 #use wml::debian::common_translation
-#use wml::debian::mirrors 
+#use wml::debian::mirrors
+#use wml::debian::events_common
+#use wml::debian::links.tags
 
 <div id="header">
    <div id="upperheader">
@@ -25,8 +27,117 @@
    <li><a href="$(HOME)/devel/"><develcorner/></a></li>
 </ul>
 </div> <!-- end navbar -->
+#
+#############################################################
+# Breadcrumbs
 <when <not "$(MAINPAGE)">>
-	 <p id="breadcrumbs">$(title)</p>
+<when <not "$(PAGENAME)">>
+<when <not "$(SUMMARY)">>
+<perl>
+
+# Handle links, and equivalent english/ directory tree (if the translated index is missing)
+    my $eng_dir = '$(WML_SRC_DIRNAME)';
+    $eng_dir =~ s,(.*)/webwml/\w*,$1/webwml/english,;
+    my $relative_path = '.';
+
+# Use the current page name (no link)
+    my $breadcrumbs = qq%$(title)%;
+
+# If the current page is already the index, go one directory up
+    if ( '$(WML_SRC_FILENAME)' eq 'index.wml' )
+    {
+        # Use only year for security/YYYY directory
+        $breadcrumbs = $1 if ( $eng_dir =~ m,security/(\d{4})$, );
+
+        $relative_path = '..';
+        $eng_dir =~ s,/\w*([-.]\w*)?$,,;
+    }
+
+# Loop to get each directory index title
+    # no breadcrumb for 404 page
+    if ( '$(WML_SRC_FILENAME)' ne '404.wml' ) {
+    while ( $eng_dir !~ m,webwml/english$, )
+    {
+        my $title;
+
+# Open the index page to get its title
+        # Some directories have no index
+        if ( $eng_dir !~ m,ports/powerpc/inst$, and
+             $eng_dir !~ m,searchtmpl$, and
+             $eng_dir !~ m,users/\w*$, ) {
+            open INDEX, "$relative_path/index.wml" or
+            open INDEX, "$eng_dir/index.wml" or
+            do {
+                warn "couldn't open $relative_path/index.wml or $eng_dir/index.wml: $!\n";
+# FIXME: This command should break the loop
+                die;
+            };
+
+            # Use only year for security/YYYY directory
+            if ( $eng_dir =~ m,security/(\d{4})$, )
+	        { $title = $1 ; }
+            else {
+                <protect pass=2>
+                foreach (<INDEX>) {
+                    $title = "$1" if ($_ =~ /^#use wml::.* title="(.*?)"/)
+                }
+                </protect>
+            }
+            close INDEX;
+
+# Actually construct breadcrumbs
+            $breadcrumbs = "<a href=\"$relative_path/\">$title</a>\n &#x2F; $breadcrumbs";
+        }
+
+# Go one directory up
+        $relative_path .= '/..';
+        $eng_dir =~ s,/\w*([-.]\w*)?$,,;
+    }}
+
+# Actually print breadcrumbs
+    print '<p id="breadcrumbs">'.$breadcrumbs.'</p>';
+</perl>
+</when>
+#
+# Handle DPN: use date and only year for News/weekly/YYYY directory
+<when "$(SUMMARY)">
+ <p id="breadcrumbs"><a href="$(HOME)/News/"><gettext domain="newsevents">Latest News</gettext></a>
+ &#x2F; <a href="$(HOME)/News/weekly"><debianprojectnews/></a>
+ &#x2F; <a href="../"><:=substr('$(PUBDATE)', 0, 4):></a>
+ &#x2F; <:=&spokendate_noyear('$(PUBDATE)'):>
+ </p>
+</when>
+</when>
+# Handle other pages in DPN directory and subdirectories (year index, contributing, etc.)
+<when "$(PAGENAME)">
+ <p id="breadcrumbs"><a href="$(HOME)/News/"><gettext domain="newsevents">Latest News</gettext></a>
+<perl>
+
+# Pages in DPN directory
+    if ( '$(WML_SRC_DIRNAME)' =~ m,News/weekly$, ) {
+        if ( '$(WML_SRC_FILENAME)' eq 'index.wml' ) {
+           print " &#x2F; <debianprojectnews/>" ;
+        }
+        else {
+           print " &#x2F; <a href=\"$(HOME)/News/weekly\"><debianprojectnews/></a>" ;
+           print " &#x2F; $(PAGENAME)" ;
+       }
+    }
+
+# Pages in DPN subdirectories (use only year for News/weekly/YYYY directory)
+    elsif ( '$(WML_SRC_DIRNAME)' =~ m,News/weekly/(\d{4})$, ) {
+        print " &#x2F; <a href=\"$(HOME)/News/weekly\"><debianprojectnews/></a>" ;
+        if ( '$(WML_SRC_FILENAME)' eq 'index.wml' ) {
+            print " &#x2F; $1 " ;
+        }
+        else {
+            print " &#x2F; <a href=\"$(HOME)/News/weekly/$1\">$1</a>" ;
+            print " &#x2F; $(PAGENAME)" ;
+        }
+    }
+</perl>
+ </p>
+</when>
 </when>
 <when "$(MAINPAGE)">
 	<p id="breadcrumbs">&nbsp; </p>
