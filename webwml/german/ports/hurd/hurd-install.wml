@@ -1,17 +1,17 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; Installation" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.72"
+#use wml::debian::translation-check translation="1.78"
 # $Id$
 # Translator: Helge Kreutzmann <debian@helgefjell.de>  2005-07-17
-
+# Updated: Holger Wansing <linux@wansing-online.de>, 2011
 
 <h1>Debian GNU/Hurd-Installation von Hand</h1>
 <p>
-Dieses Dokument hat als Ziel, einen einfachen und relativ schmerzlosen Satz an
+Dieses Dokument hat zum Ziel, einfache und relativ schmerzlose
 Instruktionen zu vermitteln, wie man von Hand mit einem minimalen Aufwand 
    Debian GNU/Hurd zum Laufen bekommt. Beachten Sie, dass der Debian-Installer 
-   jetzt funktioniert, schauen Sie auf die <a href="hurd-cd">vorbereiteten
-   CD-Images</a>. Dann werden die folgenden Schritte für eine korrekte
+   jetzt funktioniert, schauen Sie nach den <a href="hurd-cd">vorbereiteten
+   CD-Images</a>. Danach werden die folgenden Schritte für eine korrekte
    Konfiguration benötigt.
 </p>
 
@@ -48,7 +48,7 @@ werden dem Benutzer eine Shell und das vertraute Unix VFS (virtuelle Dateisystem
 präsentiert. Obwohl GNU versucht, POSIX zu befolgen, ist es <q>Nicht Unix</q>.
 GNU/Hurd baut auf vielen der Unix-Konzepte auf und erweitert diese, um entweder
 neue Funktionalität zu ergänzen oder um zu korrigieren, was als Schwachstelle im
-ursprünglichen Design angesehen wird. Der am ehesten bemerkbare Unterschied
+ursprünglichen Design angesehen wird. Der am ehesten feststellbare Unterschied
 sind die Übersetzer, User-Space-Programme, die mit dem VFS interagieren. Diese
 Dateisysteme leben weder im Kernel noch müssen sie als root laufen; sie müssen
 nur auf die Hintergrundspeicherung und den <code>Einhängepunkt</code> zugreifen.
@@ -59,15 +59,15 @@ erforderlichen Rechten von einer Autorität ergänzt oder zerstört werden.
 </p>
 
 <p>
-Es ist zwingend erforderlich, vertraut mit der Unix-Umgebung (und speziell
+Es ist zwingend erforderlich, mit der Unix-Umgebung (und speziell
 den GNU-Benutzerprogrammen, wie sie in beliebten Varianten wie beispielsweise
-GNU/Linux gefunden werden können) zu sein, um sich in GNU wohlzufühlen. 
+GNU/Linux gefunden werden können) vertraut zu sein, um sich in GNU wohlzufühlen. 
 Erfahrung mit den Debian-Werkzeugen erweist sich auch als unschätzbar zur
 Konfiguration und Wartung einer GNU/Hurd-Kiste.
 </p>
 
 <p>
-Diese Anleitung bemüht sich, die Installation von GNU/Hurd einen so
+Diese Anleitung bemüht sich, die Installation von GNU/Hurd zu einen so
 schmerzlosen Prozess wie möglich zu machen. Falls Fehler vorliegen, sind
 sie fast sicher Fehler des Autoren. Bitte berichten Sie diese an ihn, zusammen
 mit anderen Vorschlägen und Kritik; sie werden alle dankend entgegengenommen.
@@ -391,151 +391,151 @@ mit anderen Vorschlägen und Kritik; sie werden alle dankend entgegengenommen.
 #</p>
 #
 #
-#<h2>7. Konfiguration</h2>
-#
-#
-#<h3>7.1 Das Netz</h3>
-#
-#<p>
-#  Stellen Sie zuerst sicher, dass Ihre Netzwerkkarte von GNU-Mach erkannt wird:
-#</p>
-#
-#<table><tr><td>&nbsp;</td><td class=example><pre>
-# \# devprobe eth0
-# eth0
-#</pre></td></tr></table>
-#
-#<p>
-#  Falls <code>devprobe eth0</code> nicht <code>eth0</code> liefert, hat der
-#  Kernel Ihre Netzwerkkarte nicht erkannt und Sie müssen eine andere
-#  ausprobieren. Beispielsweise ist wird die Karte e1000 von Qemu nicht
-#  unterstützt, die Pcnet sollte aber funktionieren:
-#  <code>-net nic,model=pcnet -net user</code>
-#</p>
-#
-#<p>
-#Um das Netz zu konfigurieren muss der pfinet-Übersetzer konfiguriert werden. 
-#Dies geschieht über den <code>settrans</code>-Befehl, der einen Übersetzer an
-#einen gegebenen Dateisystemknoten einhängt. Falls Programme auf den Knoten,
-#beispielsweise durch Senden eines RPC, zugreifen, wird das Betriebssystem
-#transparent den Server starten, um die Anfrage zu bearbeiten.
-#</p>
-#
-#<table><tr><td>&nbsp;</td><td class=example><pre>
-#\# settrans -fgap /servers/socket/2 /hurd/pfinet -i eth0 \
-#   -a a.b.c.d -g e.f.g.h -m i.j.k.l
-#</pre></td></tr></table>
-#
-#<p>
-#Hier werden <code>settrans</code> mehrere Optionen übergeben. Die ersten zwei,
-#<q><var>fg</var></q>, erzwingen, dass existierende Übersetzer verschwinden. Die
-#nächsten zwei, <q><var>ap</var></q>, erzeugen sowohl aktive als auch passive
-#Übersetzer. Indem wir aktive Übersetzer erzeugen, sehen wir sofort jede 
-#Fehlermeldung auf <tt><q>stderr</q></tt>. Der letztere speichert den Übersetzer und
-#die Befehle im Knoten, so dass er transparent neu gestartet werden kann (d.h.
-#die Einstellungen bleiben persistent über Neustarts hinweg erhalten). Die
-#Optionen werden vom Knoten, an den der Übersetzer angehängt werden soll, dann
-#dem zu startenden Programm (d.h. dem Übersetzer) und jedem Argument, das Sie
-#ihm übergeben, gefolgt. Die <q><var>-i</var></q>-Option ist die Schnittstelle, auf
-#der <code>pfinet</code> horchen wird, <q><var>-a</var></q> ist die IP-Adresse,
-#<q><var>-g</var></q> ist das Gateway und <q><var>-m</var></q> ist die Netzmaske.
-#</p>
-#
-#<p>
-#Stellen Sie sicher, dass Sie Name-Server zu Ihrer 
-#<tt><q>/etc/resolv.conf</q></tt>-Datei hinzufügen:
-#</p>
-#
-#<table><tr><td>&nbsp;</td><td class=example><pre>
-#  nameserver 192.168.1.1
-#</pre></td></tr></table>
-#
-#<p>
-#Um diese Konfiguration zu testen: <code>ping -c2 gateway</code>. Das
-#<q><var>-c</var></q> ist wichtig, um die Anzahl der pings zu begrenzen; erinnern
-#Sie sich, dass <kbd>CONTROL-C</kbd> im Einzelbenutzermodus nicht funktioniert.
-#</p>
-#
-#<p>
-#DHCP funktioniert noch nicht im Hurd. Dies ist in Beschränkungen von pfinet
-#begründet: es basiert auf Linux TCP/IP-Code und kann nicht auf 
-#<tt><q>0.0.0.0</q></tt> lauschen.
-#</p>
-#
-#<p>
-#Hilfe über <code>settrans</code> kann durch Übergabe der 
-#<q><var>--help</var></q>-Option erhalten werden. Hilfe über einen speziellen
-#Übersetzer kann erhalten werden, indem er von der Befehlszeile mit dem gleichen
-#Argument aufgerufen wird, z.B.:
-#</p>
-#
-#<table><tr><td>&nbsp;</td><td class=example><pre>
-#\# /hurd/pfinet --help
-#</pre></td></tr></table>
-#
-#<p>
-#Da es viel an Ausgabe geben kann, überlegen Sie, diese durch ein
-#seitenbasiertes Anzeige-Programm wie <code>less</code> zu leiten.
-#</p>
-#
-#
-#<h3>7.2 Andere Dateisysteme</h3>
-#
-#<p>
-#Als nächstes editieren Sie <tt><q>/etc/fstab</q></tt>, um weitere Dateisysteme sowie
-#Auslagerungs-Bereich (<q>swap space</q>) hinzuzufügen. Es ist <em>sehr wichtig</em>,
-#dass ein Auslagerungsbereich verwendet wird; der Hurd wird um eine Größenordnung
-#stabiler sein. Beachten Sie, dass sich der Hurd transparent eine 
-#Auslagerungspartition mit Linux teilen kann, aber in jedes Gerät auslagern kann,
-#darunter in rohe Partitionen wie beispielsweise Ihre Home-Partition. 
-#Standardmäßig ist <code>nano</code> der einzige Editor, der in der
-#Basisdistribution installiert ist.
-#</p>
-#
-#<p>
-#Hier ist eine <tt><q>/etc/fstab</q></tt>-Datei als Beispiel:
-#</p>
-#
-#<table><tr><td>&nbsp;</td><td class=example><pre>
-#\# &#60;file system&#62; &#60;mount point&#62;   &#60;type&#62;  &#60;options&#62;  &#60;dump&#62;  &#60;pass&#62;
-#/dev/hd0s1      /               ext2    rw         0       1
-#/dev/hd0s2      /home           ext2    rw         0       2
-#/dev/hd0s3      none            swap    sw         0       0
-#</pre></td></tr></table>
-#
-#<p>
-#Denken Sie daran, jedes Gerät mit dem <code>MAKEDEV</code>-Befehl anzulegen:
-#</p>
-#
-#<table><tr><td>&nbsp;</td><td class=example><pre>
-# \# cd /dev
-# \# ./MAKEDEV hd0s1 hd0s2 hd0s3
-#</pre></td></tr></table>
-#
-#<p>
-#Um ein NFS-Dateisystem einzuhängen, wird der <code>/hurd/nfs</code>-Übersetzer
-#verwendet. Falls er nicht als root läuft, wird er sich am Server mit einer 
-#Port-Nummer oberhalb von 1023 anmelden. Standardmäßig wird GNU/Linux dies
-#ablehnen. Um GNU/Linux mitzuteilen, Verbindungen aus nicht-reservierten Ports
-#zu akzeptieren, ergänzen Sie die <q><var>insecure</var></q>-Option zu der 
-#export-Zeile. Hier ist eine <tt><q>/etc/exports</q></tt>-Datei als Beispiel, die 
-#annimmt, dass die IP-Adresse des Clients <tt><q>192.168.1.2</q></tt> ist:
-#</p>
-#
-#<table><tr><td>&nbsp;</td><td class=example><pre>
-#  /home  192.168.1.2(rw,insecure)
-#</pre></td></tr></table>
-#
-#<p>
-#Um dies von einer GNU-Kiste einzuhängen und unter der Annahme, dass die 
-#IP-Adresse des NFS-Servers <tt><q>192.168.1.1</q></tt> ist:
-#</p>
-#
-#<table><tr><td>&nbsp;</td><td class=example><pre>
-#\# settrans -cgap /mount/point /hurd/nfs 192.168.1.1:/home
-#</pre></td></tr></table>
-#
-#
+<h2>Konfiguration</h2>
+
+
+<h3>Das Netzwerk</h3>
+
+<p>
+  Stellen Sie zuerst sicher, dass Ihre Netzwerkkarte von GNU Mach erkannt wird:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# devprobe eth0
+ eth0
+</pre></td></tr></table>
+
+<p>
+  Falls <code>devprobe eth0</code> nicht <code>eth0</code> ausgibt, hat der
+  Kernel Ihre Netzwerkkarte nicht erkannt und Sie müssen eine andere
+  ausprobieren. Beispielsweise ist wird die Karte e1000 von Qemu nicht
+  unterstützt, die rtl8139 sollte aber funktionieren:
+  <code>-net nic,model=rtl8139 -net user</code>
+</p>
+
+<p>
+Um das Netz zu konfigurieren, muss der pfinet-Übersetzer konfiguriert werden.
+Dies kann durch die Verwendung von inetutils-ifconfig aus dem inetutils-tools-Paket
+erledigt werden oder auch von Hand über den <code>settrans</code>-Befehl, um einen
+Übersetzer an einen gegebenen Dateisystemknoten einzuhängen. Falls Programme
+auf den Knoten, beispielsweise durch Senden eines RPC, zugreifen, wird das
+Betriebssystem transparent den Server starten, um die Anfrage zu bearbeiten.
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# settrans -fgap /servers/socket/2 /hurd/pfinet -i eth0 \
+   -a a.b.c.d -g e.f.g.h -m i.j.k.l
+</pre></td></tr></table>
+
+<p>
+Hier werden <code>settrans</code> mehrere Optionen übergeben. Die ersten zwei,
+<q><var>fg</var></q>, erzwingen, dass existierende Übersetzer verschwinden. Die
+nächsten zwei, <q><var>ap</var></q>, erzeugen sowohl aktive als auch passive
+Übersetzer. Indem wir aktive Übersetzer erzeugen, sehen wir sofort jede 
+Fehlermeldung auf <tt><q>stderr</q></tt>. Der letztere speichert den Übersetzer und
+die Befehle im Knoten, so dass er transparent neu gestartet werden kann (d.h.
+die Einstellungen bleiben persistent über Neustarts hinweg erhalten). Die
+Optionen werden vom Knoten, an den der Übersetzer angehängt werden soll, dann
+dem zu startenden Programm (d.h. dem Übersetzer) und jedem Argument, das Sie
+ihm übergeben, gefolgt. Die <q><var>-i</var></q>-Option ist die Schnittstelle, auf
+der <code>pfinet</code> auf Verbindungen warten wird, <q><var>-a</var></q> ist
+die IP-Adresse,
+<q><var>-g</var></q> ist das Gateway und <q><var>-m</var></q> ist die Netzmaske.
+</p>
+
+<p>
+Stellen Sie sicher, dass Sie Nameserver zu Ihrer 
+<tt><q>/etc/resolv.conf</q></tt>-Datei hinzufügen:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+  nameserver 192.168.1.1
+</pre></td></tr></table>
+
+<p>
+Um diese Konfiguration zu testen: <code>ping -c2 gateway</code>. Das
+<q><var>-c</var></q> ist wichtig, um die Anzahl der pings zu begrenzen; erinnern
+Sie sich, dass <kbd>CONTROL-C</kbd> im Einzelbenutzermodus nicht funktioniert.
+</p>
+
+<p>
+DHCP funktioniert noch nicht im Hurd. Dies ist in Beschränkungen von pfinet
+begründet: es basiert auf Linux TCP/IP-Code und kann nicht auf 
+<tt><q>0.0.0.0</q></tt> auf Verbindungen warten.
+</p>
+
+<p>
+Hilfe über <code>settrans</code> können Sie durch Übergabe der 
+<q><var>--help</var></q>-Option erhalten. Hilfe über einen speziellen
+Übersetzer erhalten Sie, indem er von der Befehlszeile mit dem gleichen
+Argument aufgerufen wird, z.B.:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+\# /hurd/pfinet --help
+</pre></td></tr></table>
+
+<p>
+Da dies viel an Ausgabe erzeugen kann, sollten Sie überlegen, diese durch ein
+seitenbasiertes Anzeige-Programm wie <code>less</code> zu leiten.
+</p>
+
+<h3>Andere Dateisysteme</h3>
+
+<p>
+Als nächstes editieren Sie <tt><q>/etc/fstab</q></tt>, um weitere Dateisysteme sowie
+Auslagerungsspeicher (<q>swap space</q>) hinzuzufügen. Es ist <em>sehr wichtig</em>,
+dass ein Auslagerungsspeicher verwendet wird; der Hurd wird um eine Größenordnung
+stabiler sein. Beachten Sie, dass sich der Hurd transparent eine 
+Auslagerungspartition mit Linux teilen kann, aber in jedes Gerät auslagern kann,
+darunter in rohe Partitionen wie beispielsweise Ihre Home-Partition. 
+Standardmäßig ist <code>nano</code> der einzige Editor, der in der
+Basisdistribution installiert ist.
+</p>
+
+<p>
+Hier ist eine <tt><q>/etc/fstab</q></tt>-Datei als Beispiel:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+\# &#60;file system&#62; &#60;mount point&#62;   &#60;type&#62;  &#60;options&#62;  &#60;dump&#62;  &#60;pass&#62;
+/dev/hd0s1      /               ext2    rw         0       1
+/dev/hd0s2      /home           ext2    rw         0       2
+/dev/hd0s3      none            swap    sw         0       0
+</pre></td></tr></table>
+
+<p>
+Denken Sie daran, jedes Gerät mit dem <code>MAKEDEV</code>-Befehl anzulegen:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# cd /dev
+ \# ./MAKEDEV hd0s1 hd0s2 hd0s3
+</pre></td></tr></table>
+
+<p>
+Um ein NFS-Dateisystem einzuhängen, wird der <code>/hurd/nfs</code>-Übersetzer
+verwendet. Falls er nicht als root läuft, wird er sich am Server mit einer 
+Port-Nummer oberhalb von 1023 anmelden. Standardmäßig wird GNU/Linux dies
+ablehnen. Um GNU/Linux mitzuteilen, Verbindungen aus nicht-reservierten Ports
+zu akzeptieren, ergänzen Sie die <q><var>insecure</var></q>-Option zu der 
+export-Zeile. Hier ist eine <tt><q>/etc/exports</q></tt>-Datei als Beispiel, die 
+annimmt, dass die IP-Adresse des Clients <tt><q>192.168.1.2</q></tt> ist:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+  /home  192.168.1.2(rw,insecure)
+</pre></td></tr></table>
+
+<p>
+Um dies von einer GNU-Kiste einzuhängen und unter der Annahme, dass die 
+IP-Adresse des NFS-Servers <tt><q>192.168.1.1</q></tt> ist:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+\# settrans -cgap /mount/point /hurd/nfs 192.168.1.1:/home
+</pre></td></tr></table>
+
 #<h3>7.3 Neustart</h3>
 #
 #<p>
@@ -571,7 +571,7 @@ mit anderen Vorschlägen und Kritik; sie werden alle dankend entgegengenommen.
 #</p>
 
 
-<h3>8.3 Weitere Pakete installieren</h3>
+<h3>Weitere Pakete installieren</h3>
 <p>
 Es gibt mehrere Wege, um Pakete zu ergänzen. Herunterladen und 
 <code>dpkg -i</code> funktioniert, ist aber sehr unbequem. Die einfachste Methode
@@ -623,6 +623,11 @@ Derzeit müssen Sie die Konsole manuell mit dem folgenden Befehl starten:
 </pre></td></tr></table>
 
 <p>
+Oder viel einfacher (und dauerhaft): aktivieren Sie die Konsole und ihre Optionen
+über <tt>/etc/default/hurd-console</tt>.
+</p>
+
+<p>
 Innerhalb der Hurd-Konsole können Sie zwischen virtuellen Terminals via
 <kbd>ALT+F1</kbd>, <kbd>ALT+F2</kbd> und so weiter wechseln.
 <kbd>ALT+CTRL+BACKSPACE</kbd> hängt die Hurd-Konsole ab und bringt Sie zurück 
@@ -644,7 +649,7 @@ kein Kernelmodul oder DRM erfordern, sollten funktionieren.
 </p>
 
 <p>
-Sie werden mehrere X-Pakete benötigen. <code>x-window-system-core</code>, 
+Sie werden mehrere X-Pakete benötigen. <code>xorg</code>, 
 <code>rxvt</code> und <code>twm</code>, <code>fvwm</code> oder
 <code>wmaker</code> sind ein guter Anfang.
 </p>
