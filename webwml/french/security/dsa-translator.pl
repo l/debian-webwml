@@ -42,6 +42,7 @@ $translation = {
 		'insufficient input sanitising' =>	'Vérification d\'entrée manquante',
 		'missing input validation'		=>	'Validations des entrées insuffisantes',
 		'missing input sanitising'	=>		'Absence de vérification des entrées',
+		'NULL pointer dereference'	=>		'Déréférencement de pointeur NULL',
 		'several vulnerabilities'		=>	'Plusieurs vulnérabilités',
 		'buffer overflow'				=>	'Débordement de mémoire tampon',
 		'buffer overflows'				=>	'Débordements de mémoire tampons',
@@ -127,10 +128,10 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\) distributions?,?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes ont été corrigés dans la version $5.</p>|gs;
 	$output =~ s|<p>[\n]?For.the.upcoming.(\S+).distribution.\((\S+)\).and.the.(\S+).distribution.\((\S+)\),?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 à venir ($2) et la distribution $3 ($4), ce problème a été corrigé dans la version $5.</p>|gs;
 	$output =~ s|<p>[\n]?For.the.upcoming.(\S+).distribution.\((\S+)\).and.the.(\S+).distribution.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 à venir ($2) et la distribution $3 ($4), ces problèmes ont été corrigés dans la version $5.</p>|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\).and.the.(\S+).distribution.\((\S+)\),?, this problem.?[\n]?will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème sera corrigé prochainement.</p>|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\).and.the.(\S+).distribution.\((\S+)\),?, these problems will.?[\n]?be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes seront corrigés prochainement.</p>|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\).distributions, these problems.?[\n]?will.be.fixed.soon\.[\n]?</p>|<p>Pour les distributions $1 ($2) et $3 ($4), ces problèmes seront corrigés prochainement.</p>|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\).distributions, this problem.?[\n]?will.be.fixed.soon\.[\n]?</p>|<p>Pour les distributions $1 ($2) et $3 ($4), ce problème sera corrigé prochainement.</p>|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\).and.the.(\S+).distribution.\((\S+)\),?.this.problem.will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème sera corrigé prochainement.</p>|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\).and.the.(\S+).distribution.\((\S+)\),?.these.problems.will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes seront corrigés prochainement.</p>|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\).distributions,?.these.problems.will.be.fixed.soon\.[\n]?</p>|<p>Pour les distributions $1 ($2) et $3 ($4), ces problèmes seront corrigés prochainement.</p>|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\).distributions,?.this.problem.?[\n]?will.be.fixed.soon\.[\n]?</p>|<p>Pour les distributions $1 ($2) et $3 ($4), ce problème sera corrigé prochainement.</p>|gs;
 	$output =~ s|<p>[\n]?For the.(\S+).distribution.\((\S+)\),?.this problem.will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2), ce problème sera corrigé prochainement.</p>|gs;
 	$output =~ s|<p>[\n]?For the.(\S+).distribution.\((\S+)\),?.these problems.will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2), ces problèmes seront corrigés prochainement.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).will.be.fixed.soon\.[\n]?</p>|<p>La distribution $1 ($2) sera corrigée prochainement.</p>|gs;
@@ -138,6 +139,8 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).is.not.affected.by.these.problems\.[\n]?</p>|<p>La distribution $1 ($2) n'est pas concernée par ces problèmes.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).are.not.affected.by.this.problem\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne sont pas concernées par ce problème.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).are.not.affected.by.these.problems\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne sont pas concernées par ces problèmes.</p>|gs;
+	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.not.contain.a.(\S+).package\.[\n]?</p>|<p>La distribution $1 ($2) ne contient pas de paquet $3.</p>|gs;
+	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).do.not.contain.any.(\S+).packages\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne contiennent pas de paquet $5.</p>|gs;
 
 	# Case adjustment
 	$output =~ s|\(etch\)|\(Etch\)|g;
@@ -156,6 +159,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|,.which.might.allow.the.execution.of.arbitrary.code|. Cela peut permettre l'exécution de code arbitraire|gs;
 	$output =~ s|remote.attackers|des attaquants distants|gs;
 	$output =~ s|denial.of.service|déni de service|gs;
+	$output =~ s|the.execution.of.arbitrary.code|l'exécution de code arbitraire|gs;
  
 	$output =~ s|the (\S+) parser|l'analyseur $1|gs;
 
