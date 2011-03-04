@@ -21,7 +21,7 @@ sub obtain_files
     my @list;
     return unless -s "$config{'datadir'}/wmlfiles.old";
     return unless -s "$config{'datadir'}/wmlfiles";
-    if (open (IN, "diff -0 $config{'datadir'}/wmlfiles.old $config{'datadir'}/wmlfiles|")) {
+    if (open (IN, "diff $config{'datadir'}/wmlfiles.old $config{'datadir'}/wmlfiles|")) {
 	while (<IN>) {
 	    next until (/^[<>] \.\//);
 	    s/^[<>] \.\///;
