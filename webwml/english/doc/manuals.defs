@@ -87,11 +87,11 @@
   <br>
   <foreach lang langs>
     <:
+    use Locale::Language;
     my $xy = '<get-var lang />';
     $xy =~ s/[-_]\w+$//; # for pt-br, pt_BR and such
-    my %langs_per_code;
-    foreach (keys %langs) { $langs_per_code{$langs{$_}} = $_; };
-    my $printlang = $trans{$CUR_ISO_LANG}{$langs_per_code{$xy}};
+    my $printlang = $trans{$CUR_ISO_LANG}{lc(code2language($xy))};
+    $printlang = $trans{$CUR_ISO_LANG}{'norwegian'} if ($xy eq 'nb'); # nb is refered as Norwegian on the website
     $printlang = "<strong>$printlang</strong>" if ($xy eq $CUR_ISO_LANG);
     print $printlang;
     :>
