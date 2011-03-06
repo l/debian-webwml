@@ -1,0 +1,115 @@
+#use wml::debian::template title="Push Mirroring"
+#use wml::debian::translation-check translation="1.17" maintainer="Luca Monducci"
+
+<p>Il push mirroring è una modalità di mirroring che minimizza il tempo
+richiesto affinché le modifiche all'archivio principale raggiungano i
+mirror. Il server mirror usa un meccanismo di attivazione (trigger) per
+informare i client mirror che è richiesto un aggiornamento.</p>
+
+<p>Il push mirroring richiede uno impegno di configurazione un po'
+maggiore dal momento che gli amministratori dei mirror sorgente e
+destinazione devono scambiarsi delle informazioni. Il beneficio è
+che il mirror sorgente fa partire il processo di copia immediatamente
+dopo che il proprio archivio è stato aggiornato. Questo consente di
+propagare in modo estremamente rapido le modifiche all'archivio.</p>
+
+<h2>Spiegazione della tecnica</h2>
+
+<p>Prima qualche informazione su ssh. Ssh consente la connessione
+sicura ad account su macchine diverse. Non solo le password non sono
+mai passate in chiaro, ma una volta connessi a una macchina hai la
+garanzia di base che le connessioni successive avverrano sulla stessa
+macchina. Questo previene molti attacchi di tipo man-in-the-middle.</p>
+
+<p>Una capacità che ha ssh è quella di estrarre la chiave pubblica
+di identificazione di un utente su un'altra macchina ed aggiungerla
+a un file di chiavi autorizzate sulla tua macchina.
+Di default, l'utente sull'altra macchina (che ha la chiave privata
+di identifacazione associata con quella pubblica fornita)
+ha privilegi di accesso al tuo account. È possibile però
+aggiungere del testo a una chiave registrata per restringere il tipo
+di accesso consentito a chi usa tale chiave con il tuo account.</p>
+
+<p>Così per proteggere il mirror destinazione, la chiave fornita
+dal mirror sorgente ha del testo aggiunto ad essa per limitare chi
+accede all'account destinazione dando il permesso di fare una sola
+cosa: far partire sulla macchina il programma che aggiorna il mirror.
+Anche se qualcuno (una terza parte malintenzionata) fosse in grado
+di forzare la chiave il massimo che potrebbe fare sarebbe far
+partire il programma di mirror sulla tua macchina. Non ci si deve
+neanche da preoccupare che copie multiple del programma possano
+essere avviate poiché viene usato un file di lock.</p>
+
+<p>Sulla sorgente, rsync può essere configurato per limitare chi può
+accedere a una data area per username e password. Questi ultimi
+sono totalmente indipendenti da <kbd>/etc/passwd</kbd> cosicché
+un server push non deve preoccuparsi della possibilità di dare ad
+altri accesso alla macchina. Come viene configurato, username e
+password sono passati in chiaro. Questo non dovrebbe essere un
+problema però, poiché il peggio che possa accadere è che altri
+possano copiare le pagine Debian da quel sito.</p>
+
+<h2>Configurare un client di push mirror</h2>
+
+<p>È meglio configurare usanto un account di utente ordinario,
+invece di root. Il contenuto della chiave pubblica per ssh data
+dal mirror sorgente, dovrebbe essere copiato in
+<kbd>~&lt;user&gt;/.ssh/authorized_keys</kbd>.</p>
+
+<p>Per diventare un client push per l'archivio FTP, è necessario
+impostare il mirror usando l'insieme di script <a href="ftpmirror#how">\
+ftpsync</a> con alcune modifiche. Occorre cambiare la sezione dello
+script marcata per le configurazioni protette da password e togliere
+il commento all'inclusione del file <a href="ftpsync.conf">ftpsync.conf</a>.
+Apri con un editor ftpsync.conf e segui le direttive ivi contenute
+usando le informazioni fornite dal mirror sorgente.</p>
+
+<p>Per diventare un client push delle pagine WWW, avrai bisogno
+dei file <a href="websync">websync</a> e <a href="websync.conf">\
+websync.conf</a>. Apri con un editor websync.conf e segui le
+direttive ivi contenute usando le informazioni fornite dal mirror
+sorgente.</p>
+
+<h2>Siti client di tipo Push-Primary</h2>
+
+<p>I mirror client di tipo Push-Primary, definiti anche mirror Tier-1,
+sono dei mirror push client ai quali è consentita la copia dai
+nostri archivi master.</p>
+
+<p>Se il tuo sito è <strong>molto</strong> ben connesso (con banda
+molto buona e ben connesso con i maggiori backbone) e hai la volontà
+di lasciare che altri siti facciano mirroring dal tuo sito, puoi
+farcelo sapere in modo da poterti prendere in considerazione come
+push mirror.
+Tuttavia, non ti aspettare che questo accada molto presto, perché
+abbiamo già una certo numero di mirror Tier-1.</p>
+
+<p>Se il tuo sito sta diventando un Push-Primary per l'archivio
+FTP, avrai bisogno di uno di questi file:</p>
+<ul>
+<li><a href="id_rsa.pub.ftp-master">chiave pubblica SSH2 usata da
+    ftp-master.debian.org</a></li>
+<li><a href="id_rsa.pub.syncproxy.eu">chiave pubblica SSH2 usata da
+    syncproxy.eu.debian.org</a></li>
+<li><a href="id_rsa.pub.syncproxy.wna">chiave pubblica SSH2 usata da
+    syncproxy.wna.debian.org</a></li>
+</ul>
+
+<p>Se il proprio sito sta diventando un Push-Primary per le pagine WWW,
+occorrerà la <a href="id_rsa.pub.www-master">chiave pubblica SSH2 usata
+da www-master.debian.org</a>.</p>
+
+<h2>Configurare un server push mirror</h2>
+
+<p>Dato il gran numero di mirror e la dimensione dell'archivio Debian,
+non è opportuno per tutti i mirror usare l'archivio del sito master
+come sorgente per Debian (cioè come proprio server push mirror). È
+molto più efficiente se il carico è distribuito tra una serie di push
+mirror distribuiti nel mondo.</p>
+
+<p>I server push mirror dovrebbero essere client push mirror
+dell'archivio master (o forse di un altro push server) e dovrebbero
+contenere un mirror dell'intero archivio Debian.</p>
+
+<p>Vedi i <a href="push_server">dettagli di cofigurazione di un push
+server</a>.</p>
