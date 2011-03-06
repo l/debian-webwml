@@ -1,0 +1,270 @@
+#use wml::debian::template title="Creare un mirror dell'archivio Debian"
+#use wml::debian::toc
+#include "$(ENGLISHDIR)/releases/sid/archive.data"
+#include "$(ENGLISHDIR)/releases/arches.data"
+#use wml::debian::translation-check translation="1.67" maintainer="Luca Monducci"
+
+<toc-display/>
+
+<toc-add-entry name="whether">Se creare un mirror</toc-add-entry>
+
+<p>I nuovi mirror sono sempre ben accetti ma ogni potenziale gestore di
+un nuovop mirror dovrebbe rispondere alle seguenti domande prima di avviare
+un proprio mirror:</p>
+
+<ul>
+<li>È necessario un mirror nella mia area georgrafica? Magari ce ne
+sono già altri nelle vicinanze.</li>
+<li>Dispongo delle risorse per ospitare un mirror? I mirror richiedono
+un considerevole spazio su disco e molta banda, si deve essere in grado
+di coprirne i costi.</li>
+<li>Un mirror è la scelta giusta? Capita che qualcuno avvii un mirror
+quando, in realtà, voglia solamente un proxy.</li>
+</ul>
+
+<toc-add-entry name="what">Cosa mettere nel mirror</toc-add-entry>
+
+<p>La <a href="./">pagina principale dei mirror</a> elenca gli archivi
+disponibili.</p>
+
+<ul>
+<li>Gli utenti cercheranno la directory debian/ per installare Debian
+via rete, per scaricare i CD (usando jigdo), e per aggiornare sistemi
+già installati.</li>
+
+<li>debian-cd/ è una directory che non è identica su tutti i
+mirror. Da qualche parte conterrà i template di jigdo per produrre le
+immagini dei CD (insieme ai file contenuti in debian/), da altre
+conterrà delle immagini già complete, in altri siti entrambi.
+<br/>
+Controllare la pagina <a href="$(HOME)/CD/mirroring/">mirror delle immagini
+dei CD</a> per ulteriori informazioni a riguardo.</li>
+
+<li>debian-archive/ contiene il vero <em>archivio</em>: le versioni vecchie
+e obsolete di Debian. Di solito è interesante solo per un piccolo numero
+di utenti.</li>
+</ul>
+
+<p>Visitare la pagina delle <a href="size">dimensioni dei mirror</a>per 
+informazioni più precise riguardo la grandezza dei mirror.</p>
+
+<p>La directory debian-security/ contiene solamente gli aggiornamenti di
+sicurezza rilasciati dal Debian Security Team. Sembra interessante per tutti,
+ma siccome gli aggiornamenti sono sporadici, bisognerebbe sincronizzare il
+mirror molto spesso per essere aggiornati (oppure usare il
+<a href="push_mirroring">push mirroring</a>) ed è per questo che non è
+raccomandato. Debian si sforza al massimo per mantenere disponibile
+security.debian.org.</p>
+
+<p>NB: l'archivio debian-non-US/ è deprecato a partire da Debian 3.1
+(<em>sarge</em>) rilasciato nel giugno 2005.</p>
+
+<toc-add-entry name="wherefrom">Da dove sincronizzarsi</toc-add-entry>
+
+<p>Molte persone sembrano pensare che <code>ftp.debian.org</code> sia la
+locazione canonica dei pacchetti Debian e che sarebbe meglio per loro
+sincronizzarsi da quel sito. Questo <strong>non è vero</strong>.</p>
+
+<p><code>ftp.debian.org</code> è solamente uno dei tanti server che
+sono aggiornati da un server interno di Debian. Attualmente è geograficamente
+posizionato negli Stati Uniti d'America ed esiste ancora principalmente per
+compatibilità con il passato.</p>
+
+<p>I <a href="official">mirror ufficiali</a> sono degli ottimi punti da
+cui fare un mirror.
+Uno qualsiasi dei server nella <a href="list-full">lista completa dei
+mirror</a> etichettato <kbd>Type: Push-Primary</kbd> oppure <kbd>Type:
+Push-Secondary</kbd> è una buona fonte per sincronizzarsi. Si raccomanda
+di utilizzarne uno rete-geograficamente vicino.</p>
+
+<p>Non c'è nessuna differenza tra i vari mirror <em>Push-Primary</em>
+fintanto che il mirroring viene effettuato. D'altra parte, se molte persone
+usassero ftp.debian.org (e purtroppo lo fanno), questo necessariamente
+comporta uno spreco della banda che ci viene donata.</p>
+
+<p>Chi gestisce un mirror negli Satti Uniti d'America dovrebbe fare il
+mirror da ftp.us.debian.org (l'indirizzo del mirror ufficiale negli Stati
+Uniti, che è un mirror di push primario). Siccome quell'indirizzo
+è anche un alias DNS in round-robin per diverse macchine, è solitamente
+raccomandabile determinare quale dei componenti è il migliore e poi
+fare il mirror da quello.
+<br />
+<small>Il vantaggio di questa operazione è che previene il rischio
+di errori durante la sincronizzazione a due fasi (a causa della finestra
+temporale le due diverse fasi potrebbero svolgersi su due macchine
+diverse con dati diversi, causando una race condition). Lo svantaggio
+è che si concentra tutto su un solo sito le cui prestazioni potrebbero
+variare, ma questo è vero per l'intera rete di mirror.</small></p>
+
+<toc-add-entry name="how">Come sincronizzarsi</toc-add-entry>
+
+<p>Il metodo raccomandato per sincronizzarsi è l'insieme di script chiamato
+ftpsync, disponibile in due formati:</p>
+<ul>
+    <li>come tarball da <url "http://ftp-master.debian.org/ftpsync.tar.gz"></li>
+    <li>dal repository git: <kbd>git clone https://ftp-master.debian.org/git/archvsync.git</kbd></li>
+</ul>
+
+<p>Il protocollo raccomandato per la sincronizzazione è
+<a href="http://packages.debian.org/stable/net/rsync">rsync</a>.</p>
+
+<p>Si raccomanda di non usare <kbd>wget</kbd> o oltri strumenti basati su FTP.
+Sembrano funzionare bene, ma hanno parecchi problemi (non riconoscono i
+collegamenti fisici, complicano la realizzazione di mirror parziali, ecc.).</p>
+
+<h3>Impostazione di rsync</h3>
+
+<p>Si raccomanda l'utilizzo dell'<a
+href="http://ftp-master.debian.org/ftpsync.tar.gz">insieme di script
+ftpsync</a> per sincronizzarsi con l'archivio. Si seguano le indicazioni nel
+file README per impostare il mirroring.</p>
+
+<p>Se invece si vuole usare dei propri script, queste sono le funzionalità
+minimali che devono essere supportate:</p>
+
+<ul>
+<li><p>DEVE fare una sincronizzazione in 2 fasi</p>
+<p>Il mirror dell'archivio deve esere fatto in 2 fasi. Con il primo
+rsync si devono ignorare i file di indice. Le giuste opzioni di esclusione
+per la prima esecuzione di rsync sono:</p>
+<kbd>--exclude Packages* --exclude Sources* --exclude Release* --exclude ls-lR*</kbd>
+<p>La prima fase non deve cancellare nessun file.</p>
+<p>La seconda fase deve quindi trasferire i file esclusi in precedenza e
+cancellare i file che non sono più sul mirror.</p>
+
+<p>Motivo: se il mirror dell'archivio fosse fatto con un solo passaggio,
+potrebbero verificarsi dei periodi temnporali in cui i file di indice
+fanno riferimento a file ancora non presenti sul mirror.</p>
+</li>
+
+<li><p>NON DEVE ignorare i push mentre è in esecuzione (nel caso di
+<a href="push_mirroring">push mirroring</a>).</p>
+<p>Se viene ricevuto un push mentre è in corso la sincronizzazione di
+un mirror, NON DEVE essere ignorato. È necessario ripetere l'intero
+processo di sincronizzazione.</p>
+
+<p>Motivo: la maggior parte degli script di mirror per Debian lasciano
+il mirror in uno stato inconsistente nel caso che venga ricevuto un
+secondo push mentre è ancora in corso la sincronizzazione precedente.
+È possibile che nel prossimo futuro cresca la frequenza dei push.</p>
+</li>
+
+  <li>Eseguire rsync con almeno queste opzioni: <kbd>--recursive --times
+      --links --hard-links --delete</kbd>.</li>
+
+  <li>Se si dispone di altro spazio su disco, usare anche l'opzione <kbd>--delete-after</kbd>
+	  per prevenire qualche problema temporaneo di aggiornamento.</li>
+
+  <li>Dopo che rsync ha finito di sincronizzarsi, si aggiunga un file
+      timestamp nella sottodirectory <code>project/trace/</code> del mirror
+	  chiamata come il vostro server. Questo significa eseguire
+      <kbd>date -u &gt; .../debian/project/trace/<var>vostro.server</var></kbd>
+	  dopo che la sincronizzazione giornaliera è finita.</li>
+
+  <li>Si sconsiglia fortemente di escludere <tt>project/</tt>, <tt>doc/</tt> e
+      altre sotto-directory. Solitamente hanno una dimensione ridotta ma
+      risultano molto utili agli utenti.
+      Specialmente <tt>project/trace</tt> aiuta molto se ci sono dei problemi
+      con il mirror.</li>
+</ul>
+
+<toc-add-entry name="partial">Mirroring parziale</toc-add-entry>
+
+<p>Considerando le già <a href="size">grandi dimensioni dell'archivio
+Debian</a>, alcune persone preferisono fare il mirroring solo delle parti di
+cui hanno bisogno. Se si vuole escludere qualcosa si dovrebbero escludere le
+architetture.</p>
+
+<p>Con <a href="http://ftp-master.debian.org/ftpsync.tar.gz">ftpsync</a>,
+questo si può fare modificando la variabile ARCH_EXCLUDE.</p>
+
+<p>Si scoraggia fortemente l'esclusione delle directory <tt>project/</tt>,
+<tt>doc/</tt> e le altre sottodirectory. Di solito hanno una dimensione
+minore e sono comunque utili agli utenti. Specialmente <tt>project/trace</tt>
+aiuta molto in caso di problemi con il mirror.</p>
+
+<p>È possibile usare altri script ma di solito non è necessario e inoltre
+non è raccomandato sui mirror ufficiali. Per esempio, questo imposta
+le opzioni di esclusione di rsync a <em>tutte</em> le architetture:
+<br />
+<: 
+print "<code>--exclude binary-$_/ --exclude *_$_.deb --exclude *_$_.udeb --exclude installer-$_/ --exclude Contents-$_*</code><br>\n"
+  foreach (@arches);
+:>
+
+<toc-add-entry name="when">Quando sincronizzarsi</toc-add-entry>
+
+<p>L'archivio principale viene aggiornato quattro volte al giorno. I mirror
+solitamente iniziano la sincronizzazione intorno alle 03:00, 09:00, 15:00 e
+21:00 (tutti orari UTC) ma questi non sono mai orari definitivi e ogni mirror
+non si dovrebbe fissare su quelli.</p>
+
+<p>Il vostro mirror andrebbe aggiornato dopo qualche ora rispetto agli
+aggiornamenti dell'archivio principale.
+Andrebbe controllato se il mirror utilizzato per sincronizzarsi crea un
+file timestamp nella sua directory <kbd>project/trace/</kbd>. Il file di
+timestamp sarà chiamato come il sito, e conterrà l'orario di
+completamento dell'ultimo aggiornamento. Aggiungete un paio di ore da
+quell'orario (per essere sicuri) e sincronizzatevi a quell'ora.</p>
+
+<p>La maniera più semplice sincronizzarsi ogni giorno è usare
+cron. Consultate <kbd>man crontab</kbd> per dettagli.</p>
+
+<p>Notate che se il vostro sito è avvisato tramite un meccanismo di
+push, allora non vi dovete preoccupare di questo.</p>
+
+<h3>Mirroring push con trigger</h3>
+
+<p>Il <q>push mirroring</q> è una forma di mirroring basata su rsync che
+è stata sviluppata per minimizzare i tempi che impiegano i cambiamenti
+dell'archivio a raggiungere i vari mirror. Il server di origine usa un
+trigger SSH per avvisare i mirror destinatari di aggiornarsi. L'attività
+di <q>pushing</q> è solitamente limitata a un trigger sicuro che non
+contiene dati variabili, quindi il resto del processo di mirroring è
+la semplice <q>pull</q> come un job di cron.</p>
+
+<p>Il push mirroring è necessario per mantenere sincronizzati molti
+server (come i server DNS in round-robin per <tt>ftp.us.debian.org</tt>)
+ed è comunemente utilizzato per i nostri mirror di primo e secondo livello.
+Per i mirror <q>normali</q>, questo metodo richiede uno sforzo notevole di
+impostazione che non ripaga rispetto a con un cron job ben ottimizzato.</p>
+
+<p>Per una descrizione più dettagliata del funzionamento, perché è più
+sicuro e come creare un push mirror, consultare <a href="push_mirroring">la
+spiegazione completa</a>.
+
+<toc-add-entry name="settings">Ulteriori impostazioni raccomandate</toc-add-entry>
+
+<p>Se si crea un mirror Debian disponibile via HTTP per favore
+aggiungete le seguenti impostazioni alla vostra configurazione di Apache
+(supponendo naturalmente che stiate usando Apache) nel blocco
+<code>&lt;Directory <var>/percorso/al/vostro/mirror/debian</var>&gt;</code>
+dove <var>/percorso/al/vostro/mirror/debian</var> dovrebbe essere il percorso
+alla directory che contiene la copia dell'archivio Debian:</p>
+
+<pre>
+   Options +Indexes +SymlinksIfOwnerMatch
+   IndexOptions NameWidth=* +SuppressDescription
+</pre>
+
+<p>Questo abilita l'indice delle directory e si assicura che funzionino i
+link simbolici. I nomi dei file nell'indice delle directory non saranno
+troncati e le descrizioni (pressoché inesistenti) non saranno mostrate.</p>
+
+<p>Con Apache 1.3.x, è necessario aggiungere la seguente opzione:</p>
+
+<pre>
+   DirectoryIndex .
+</pre>
+
+<p>Non aggiungerla con Apache 2.x.</p>
+
+<toc-add-entry name="submit">Come aggiungere un mirror alla lista dei mirror</toc-add-entry>
+
+<p>Una volta che il mirror è impostato dovrebbe essere <a
+href="submit">registrato in Debian</a> così da essere inclusi nella <a
+href="list">lista dei mirror</a>.
+Gli invii delle registrazioni possono essere effettuati utilizzando il nostro
+<a href="submit">semplice form web</a>.</p>
+
+<p>Problemi o domande possono essere inoltrati a <email mirrors@debian.org>.</p>
