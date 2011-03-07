@@ -3,7 +3,7 @@
 
 WMLBASE=../..
 CUR_DIR=devel/website
-SUBS=errors
+SUBS=errors stats
 
 include $(WMLBASE)/Make.lang
 
