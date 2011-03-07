@@ -42,8 +42,8 @@ BEGIN {
 
 $| = 1;
 
-$opt_h = "/org/www.debian.org/webwml/devel/website/stats";
-$opt_w = "/org/www.debian.org/webwml";
+$opt_h = "/srv/www.debian.org/webwml/devel/website/stats";
+$opt_w = "/srv/www.debian.org/webwml";
 $opt_p = "*.(wml|src)";
 $opt_t = "Debian web site translation statistics";
 $opt_v = 0;
@@ -580,6 +580,8 @@ foreach $lang (@search_in) {
 
 	    print HTML "<p><address>Created with <a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/stattrans.pl?view=markup\&amp;root=webwml\">webwml-stattrans</a></address></p>\n";
             close (HTML);
+        } else {
+            print "Can't open $config{'htmldir'}/$l.wml\n";
         }
     }
 }
