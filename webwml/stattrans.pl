@@ -42,7 +42,7 @@ BEGIN {
 
 $| = 1;
 
-$opt_h = "/srv/www.debian.org/webwml/devel/website/stats";
+$opt_h = "/srv/www.debian.org/webwml/english/devel/website/stats";
 $opt_w = "/srv/www.debian.org/webwml";
 $opt_p = "*.(wml|src)";
 $opt_t = "Debian web site translation statistics";
