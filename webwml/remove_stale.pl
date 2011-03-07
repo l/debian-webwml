@@ -117,12 +117,15 @@ sub find_stale_files
 
 	print "Recursing into `$dir'\n";
 
-	# the language subdir possibly doesn;t exist yet for newly 
+	# the language subdir possibly doesn't exist yet for newly 
 	# started translations
 	return 0  unless  -d $dir;
 
 	# Don't try to do anything in subdirectories of l10n.
 	return 0  if  $dir =~ m'l10n/[^/]+$';
+
+	# Don't try to do anything in stats either.
+	return 0  if  $dir =~ m'stats$';
 
 	# create a list of *.html files and a hash of *.wml files in this translation
 	#my (%wmlfiles,@htmlfiles);
