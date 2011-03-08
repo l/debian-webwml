@@ -535,7 +535,7 @@ foreach $lang (@search_in) {
                 print HTML "</table>\n";
             }
             if ($ui_body) {
-                print HTML "<toc-add-entry name=\"untranslated-l10n\"'>International pages not translated</toc-add-entry>\n";
+                print HTML "<toc-add-entry name=\"untranslated-l10n\">International pages not translated</toc-add-entry>\n";
                 print HTML "<table summary=\"Untranslated international pages\">\n";
                 print HTML $ui_body;
                 print HTML "</table>\n";
@@ -578,7 +578,7 @@ foreach $lang (@search_in) {
                 print HTML "</table>\n";
             }
 
-	    print HTML "<p><address>Created with <a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/stattrans.pl?view=markup\&amp;root=webwml\">webwml-stattrans</a></address></p>\n";
+	    print HTML "<address>Created with <a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/stattrans.pl?view=markup\&amp;root=webwml\">webwml-stattrans</a></address>\n";
             close (HTML);
         } else {
             print "Can't open $config{'htmldir'}/$l.wml\n";
@@ -716,7 +716,7 @@ foreach $lang (@search_in) {
 print HTMLI "</tbody>";
 print HTMLI "</table>\n";
 
-print HTMLI "<p><address>Created with <a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/stattrans.pl?view=markup\&amp;root=webwml\">webwml-stattrans</a></address></p>\n";
+print HTMLI "<address>Created with <a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/stattrans.pl?view=markup\&amp;root=webwml\">webwml-stattrans</a></address>\n";
 close (HTMLI);
 
 print "done.\n" if ($config{'verbose'});
