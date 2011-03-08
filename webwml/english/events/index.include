@@ -14,37 +14,34 @@ my $path = $CUR_YEAR;
 my $str = '';
 my $past = '';
 
-$str .= "<ul>\n";
+# $str .= "<ul>\n";
 
 # check if the current year has any past events.
 opendir DIR, "$current_dir/$path" || die "Can't open $current_dir/$path: $!";
 @files = grep { /^\d+.*.wml$/ && -f "$current_dir/$path/$_" } readdir DIR;
 @files = sort @files;
 closedir DIR;
+
 foreach (@files) {
   open FILE, "$path/$_" or open FILE, "$current_dir/$path/$_" or die "something went wrong, check permissions on $current_dir/$path/$_";
   foreach (<FILE>) { if (/^#use wml::debian::past_event$/) { $past = 'yes'; last; } }
   close FILE;
   if ($past eq 'yes') {
-    $str .= "  <li><a href=\"$path/\"><past_words> $path</a>\n";
+    $str .= "  <a href=\"$path/\"> $path</a>, ";
     last;
   }
 }
 
-# if it's a year that's not the current year, assume it has at least one
+# if it's a year that's not the current year and it's > 1999, assume it has at least one
 # past event and thus include it in $str. no need to waste resources
 # checking it.
-while (1) {
-  $path--;
-  last unless (-d "$current_dir/$path");
-    $str .= "  <li><a href=\"$path/\"><past_words> $path</a>\n";
+for ($path = $(CUR_YEAR); $path > 1999; $path--) {  
+    $str .= "  <a href=\"$path/\"> $path</a>, ";
 }
 
-$str .= "</ul>\n";
-
+$str .= "  <a href=\"$current_dir/1999/\">1999</a> and <a href=\"$current_dir/1998/\">1998</a>\.</p> ";
 return $str;
 }
-
 
 # get_future_event_list
 # This displays future events.
