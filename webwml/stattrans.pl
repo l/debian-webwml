@@ -45,7 +45,7 @@ $| = 1;
 $opt_h = "/srv/www.debian.org/webwml/english/devel/website/stats";
 $opt_w = "/srv/www.debian.org/webwml";
 $opt_p = "*.(wml|src)";
-$opt_t = "Debian web site translation statistics";
+$opt_t = '<stats_title>';
 $opt_v = 0;
 $opt_d = "u";
 $opt_l = undef;
@@ -200,16 +200,16 @@ sub check_translation
 	# From translation-check.wml
 
 	if ( $major_number != $major_translated_number ) {
-	    return "This translation is too out of date";
+	    return '<gettext domain="stats">This translation is too out of date</gettext>';
 	} elsif ( $last_number - $last_translated_number < 0 ) {
-	    return "Wrong translation version";
+	    return '<gettext domain="stats">Wrong translation version</gettext>';
 	} elsif ( $last_number - $last_translated_number >= $max_versions ) {
-	    return "This translation is too out of date";
+	    return '<gettext domain="stats">This translation is too out of date</gettext>';
 	} elsif ( $last_number - $last_translated_number >= $min_versions ) {
-	    return "The original is newer than this translation";
+	    return '<gettext domain="stats">The original is newer than this translation</gettext>';
 	}
     } elsif ( !$version && $translation) {
-	return "The original no longer exists";
+	return '<gettext domain="stats">The original no longer exists</gettext>';
     }
     return "";
 }
@@ -367,7 +367,7 @@ foreach $lang (@search_in) {
         foreach $file (@filenames) {
             next if ($file eq "");
             (my $base = $file) =~ s/\.wml$//;
-            my $hits = exists $hits{$base} ? $hits{$base}.' hits' : 'hit count N/A';
+            my $hits = exists $hits{$base} ? $hits{$base}.' <gettext domain="stats">hits</gettext>' : '<gettext domain="stats">hit count N/A</gettext>';
             # Translated pages
             if (index ($wmlfiles{$lang}, " $file ") >= 0) {
                 $translated{$lang}++;
@@ -386,7 +386,7 @@ foreach $lang (@search_in) {
                     $o_body .= sprintf "<td>%s</td>", $transversion{"$lang/$file"};
                     $o_body .= sprintf "<td>%s</td>", $version{"$orig/$file"};
                     $o_body .= sprintf "<td>%s</td>", $msg;
-		    if ($msg eq "Wrong translation version" || $msg eq "The original no longer exists") {
+		    if ($msg eq '<gettext domain="stats">Wrong translation version</gettext>' || $msg eq '<gettext domain="stats">The original no longer exists</gettext>') {
 		        $o_body .= "<td></td><td></td>";
 		    } else {
 		        $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/$orig/%s?root=webwml\&amp;view=diff\&amp;r1=%s\&amp;r2=%s\&amp;diff_format=%s\">%s\&nbsp;->\&nbsp;%s</a></td>",
@@ -474,14 +474,14 @@ foreach $lang (@search_in) {
 	$percent_us{$lang} = 100 - $percent_as{$lang};
 
         if (open (HTML, ">$config{'htmldir'}/$l.wml")) {
-	    printf HTML "#use wml::debian::template title=\"%s\"\n", ucfirst $lang;
+	    printf HTML "#use wml::debian::template title=\"<:=\$trans{\$CUR_ISO_LANG}{%s}:>\"\n", $lang;
 	    print HTML "#use wml::debian::toc\n\n";
             $color = get_color ($percent_a{$lang});
 
-            printf HTML "<table summary=\"Translation summary for $lang\" style=\"background-color: %s\; width: 100%\; font-weight: bold\; margin: 0\; text-align: center\;\">\n", $color;
+            printf HTML '<table summary="<gettext domain="stats">Translation summary for</gettext> <:=$trans{$CUR_ISO_LANG}{'.$lang.'} :>" style="background-color: %s; width: 100%; font-weight: bold; margin: 0; text-align: center;">'."\n", $color;
             print HTML "<colgroup span=\"4\" width=\"25%\"></colgroup>\n";
 
-            print HTML "<tr><th>Translated</th><th>Up-to-date</th><th>Outdated</th><th>Not translated</th></tr>\n<tr>";
+            print HTML '<tr><th><gettext domain="stats">Translated</gettext></th><th><gettext domain="stats">Up to date</gettext></th><th><gettext domain="stats">Outdated</gettext></th><th><gettext domain="stats">Not translated</gettext></th></tr>'."\n<tr>\n";
             printf HTML "<td>%d files (%.1f%%)</td>", $wml{$lang}, $percent_a{$lang};
             printf HTML "<td>%d files (%.1f%%)</td>", $translated{$lang}, $percent_t{$lang};
             printf HTML "<td>%d files (%.1f%%)</td>", $outdated{$lang}, $percent_o{$lang};
@@ -498,59 +498,65 @@ foreach $lang (@search_in) {
             # Make the table of content
 	    print HTML "<toc-display/>\n";
             if (%hits) {
-                print HTML "<p>Note: The lists of pages are sorted by popularity. Hover over the page name to see the number of hits.</p>\n";
+                print HTML '<p><gettext domain="stats">Note: the lists of pages are sorted by popularity. Hover over the page name to see the number of hits.</gettext></p>'."\n";
             }
 
             # outputs the content
             if ($o_body) {
-                print HTML "<toc-add-entry name=\"outdated\">Outdated translations</toc-add-entry>\n";
+                print HTML '<toc-add-entry name="outdated"><gettext domain="stats">Outdated translations</gettext></toc-add-entry>'."\n";
                 print HTML "<table summary=\"Outdated translations\" border=0 cellpadding=1 cellspacing=1>\n";
-                print HTML "<tr><th>File</th><th>Translated</th><th>Origin</th><th>Comment</th>";
-                if ($opt_d eq "u") { print HTML "<th>Unified diff</th><th>Colored diff</th>"; }
-                elsif ($opt_d eq "h") { print HTML "<th>Colored diff</th><th>Unified diff</th>"; }
-                else { print HTML "<th>Diff</th>"; }
-                print HTML "<th>Log</th>";
-                print HTML "<th>Translation</th>";
-                print HTML "<th>Maintainer</th>";
+                print HTML '<tr><th><gettext domain="stats">File</gettext></th>'."\n";
+		print HTML '<th><gettext domain="stats">Translation</gettext></th>'."\n";
+		print HTML '<th><gettext domain="stats">Origin</gettext></th>'."\n";
+		print HTML '<th><gettext domain="stats">Comment</gettext></th>'."\n";
+                if ($opt_d eq "u") { print HTML '<th><gettext domain="stats">Unified diff</gettext></th><th><gettext domain="stats">Colored diff</gettext></th>'; }
+                elsif ($opt_d eq "h") { print HTML '<th><gettext domain="stats">Colored diff</gettext></th><th><gettext domain="stats">Unified diff</gettext></th>'; }
+                else { print HTML '<th><gettext domain="stats">Diff</gettext></th>'; }
+                print HTML '<th><gettext domain="stats">Log</gettext></th>';
+                print HTML '<th><gettext domain="stats">Translation</gettext></th>';
+                print HTML '<th><gettext domain="stats">Maintainer</gettext></th>';
                 print HTML "</tr>\n";
                 print HTML $o_body;
                 print HTML "</table>\n";
             }
             if ($u_body) {
-                print HTML "<toc-add-entry name=\"untranslated\">General pages not translated</toc-add-entry>\n";
-                print HTML "<table summary=\"Untranslated general pages\">\n";
+                print HTML '<toc-add-entry name="untranslated"><gettext domain="stats">General pages not translated</gettext></toc-add-entry>'."\n";
+                print HTML '<table summary="<gettext domain="stats">Untranslated general pages</gettext>">'."\n";
                 print HTML $u_body;
                 print HTML "</table>\n";
             }
             if ($un_body) {
-                print HTML "<toc-add-entry name=\"untranslated-news\">News items not translated</toc-add-entry>\n";
-                print HTML "<table summary=\"Untranslated news items\">\n";
+                print HTML '<toc-add-entry name="untranslated-news"><gettext domain="stats">News items not translated</gettext></toc-add-entry>'."\n";
+                print HTML '<table summary="<gettext domain="stats">Untranslated news items</gettext>">'."\n";
                 print HTML $un_body;
                 print HTML "</table>\n";
             }
             if ($uu_body) {
-                print HTML "<toc-add-entry name=\"untranslated-user\">Consultant/user pages not translated</toc-add-entry>\n";
-                print HTML "<table summary=\"Untranslated consultant/user pages\">\n";
+                print HTML '<toc-add-entry name="untranslated-user"><gettext domain="stats">Consultant/user pages not translated</gettext></toc-add-entry>'."\n";
+                print HTML '<table summary="<gettext domain="stats">Untranslated consultant/user pages</gettext>">'."\n";
                 print HTML $uu_body;
                 print HTML "</table>\n";
             }
             if ($ui_body) {
-                print HTML "<toc-add-entry name=\"untranslated-l10n\">International pages not translated</toc-add-entry>\n";
-                print HTML "<table summary=\"Untranslated international pages\">\n";
+                print HTML '<toc-add-entry name="untranslated-l10n"><gettext domain="stats">International pages not translated</gettext></toc-add-entry>'."\n";
+                print HTML '<table summary="<gettext domain="stats">Untranslated international pages</gettext>">'."\n";
                 print HTML $ui_body;
                 print HTML "</table>\n";
             }
             if ($t_body) {
-                print HTML "<toc-add-entry name=\"uptodate\">Translated pages (up-to-date)</toc-add-entry>\n";
+                print HTML '<toc-add-entry name="uptodate"><gettext domain="stats">Translated pages (up-to-date)</gettext></toc-add-entry>'."\n";
                 print HTML "<ul class=\"discless\">\n";
                 print HTML $t_body;
                 print HTML "</ul>\n";
             }
             # outputs the gettext stats
             if ($lang ne 'english') {
-                print HTML "<toc-add-entry name=\"gettext\">Translation of templates (gettext files)</toc-add-entry>\n";
-                print HTML "<table summary=\"Gettext statistics\" width=\"100%\">\n";
-                print HTML "<tr><th>File</th><th>Up to date</th><th>Fuzzy</th><th>Untranslated</th><th>Total</th></tr>\n";
+                print HTML '<toc-add-entry name="gettext"><gettext domain="stats">Translated templates (PO files)</gettext></toc-add-entry>'."\n";
+                print HTML '<table summary="<gettext domain="stats">PO Translation Statistics</gettext>" width="100%">'."\n";
+		print HTML '<tr><th><gettext domain="stats">File</gettext></th>'."\n";
+		print HTML '<th><gettext domain="stats">Up to date</gettext></th>'."\n";
+		print HTML '<th><gettext domain="stats">Fuzzy</gettext></th>'."\n";
+		print HTML '<th><gettext domain="stats">Untranslated</gettext></th></tr>'."\n";
                 foreach my $domain (sort keys %po_total) {
                     next if $domain eq 'total';
                     print HTML "<tr>";
@@ -566,7 +572,8 @@ foreach $lang (@search_in) {
                     printf HTML "<td align=right>%d</td>", $po_total{$domain};
                     print HTML "</tr>\n";
                 }
-                print HTML "<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><th>Total:</th>";
+                print HTML "<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>\n";
+		print HTML '<tr><th><gettext domain="stats">Total:</gettext></th>';
                 $color_t = get_color ($percent_po_t{'total'}{$lang});
                 $color_f = get_color (100 - $percent_po_f{'total'}{$lang});
                 $color_u = get_color (100 - $percent_po_u{'total'}{$lang});
@@ -578,7 +585,7 @@ foreach $lang (@search_in) {
                 print HTML "</table>\n";
             }
 
-	    print HTML "<address>Created with <a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/stattrans.pl?view=markup\&amp;root=webwml\">webwml-stattrans</a></address>\n";
+	    print HTML '<address><gettext domain="stats">Created with</gettext> <a href="http://alioth.debian.org/scm/viewvc.php/webwml/stattrans.pl?view=markup&amp;root=webwml">webwml-stattrans</a></address>'."\n";
             close (HTML);
         } else {
             print "Can't open $config{'htmldir'}/$l.wml\n";
@@ -593,11 +600,12 @@ print "Creating index.wml... " if ($config{'verbose'});
 open (HTMLI, ">$config{'htmldir'}/index.wml")
     || die "Can't open $config{'htmldir'}/index.wml";
 
+print HTMLI "#use wml::debian::stats_tags\n";
 printf HTMLI "#use wml::debian::template title=\"%s\"\n\n", $config{'title'};
-print HTMLI "<h2>Translated web pages</h2>\n";
-printf HTMLI "<p>There are %d pages to translate.</p>\n",($wml{'english'}+$untranslated{'english'});
+print HTMLI '<h2><gettext domain="stats">Translated web pages</gettext></h2>'."\n";
+printf HTMLI "<p><stats_pages %d></p>\n",($wml{'english'}+$untranslated{'english'});
 
-print HTMLI "<table summary=\"Translation Statistics by Page Count\" class=\"stattrans\">\n";
+print HTMLI '<table summary="<gettext domain="stats">Translation Statistics by Page Count</gettext>" class="stattrans">'."\n";
 print HTMLI "<colgroup width=\"20%\">\n";
 print HTMLI "<col>\n";
 print HTMLI "</colgroup>";
@@ -612,7 +620,11 @@ print HTMLI "<col width=\"10%\">\n";
 print HTMLI "<col width=\"10%\">\n";
 print HTMLI "</colgroup>";
 print HTMLI "<thead>";
-print HTMLI "<tr><th>Language</th><th colspan=\"2\">Translations</th><th colspan=\"2\">Up to date</th><th colspan=\"2\">Outdated</th><th colspan=\"2\">Not translated</th></tr>\n";
+print HTMLI '<tr><th><gettext domain="stats">Language</gettext></th>'."\n";
+print HTMLI '<th colspan="2"><gettext domain="stats">Translations</gettext></th>'."\n";
+print HTMLI '<th colspan="2"><gettext domain="stats">Up to date</gettext></th>'."\n";
+print HTMLI '<th colspan="2"><gettext domain="stats">Outdated</gettext></th>'."\n";
+print HTMLI '<th colspan="2"><gettext domain="stats">Not translated</gettext></th></tr>'."\n";
 print HTMLI "</thead>";
 print HTMLI "<tbody>";
 foreach $lang (@search_in) {
@@ -625,7 +637,7 @@ foreach $lang (@search_in) {
         $color_u = get_color (100 - $percent_u{$lang});
 
         print HTMLI "<tr>";
-        printf HTMLI "<th><a href=\"%s\">%s</a> (%s)</th>", $l, ucfirst $lang, $l;
+        printf HTMLI "<th><a href=\"%s\"><:=\$trans{\$CUR_ISO_LANG}{%s} :></a> (%s)</th>", $l, $lang, $l;
         printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%.1f%%)</td>", $color_a, $wml{$lang},          $percent_a{$lang};
         printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%.1f%%)</td>", $color_t, $translated{$lang},   $percent_t{$lang};
         printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%.1f%%)</td>", $color_o, $outdated{$lang},     $percent_o{$lang};
@@ -636,10 +648,10 @@ foreach $lang (@search_in) {
 print HTMLI "</tbody>";
 print HTMLI "</table>\n";
 
-print HTMLI "<h2>Translated web pages (by size)</h2>\n";
-printf HTMLI "<p>There are %d bytes to translate.</p>\n",($wml_s{'english'}+$untranslated_s{'english'});
+print HTMLI '<h2><gettext domain="stats">Translated web pages (by size)</gettext></h2>'."\n";
+printf HTMLI "<p><stats_bytes %d></p>\n",($wml_s{'english'}+$untranslated_s{'english'});
 
-print HTMLI "<table summary=\"Translation Statistics by Page Size\" class=\"stattrans\">\n";
+print HTMLI '<table summary="<gettext domain="stats">Translation Statistics by Page Size</gettext>" class="stattrans">'."\n";
 print HTMLI "<colgroup span=\"1\">\n";
 print HTMLI "<col width=\"20%\">\n";
 print HTMLI "</colgroup>";
@@ -654,7 +666,11 @@ print HTMLI "<col width=\"13%\">\n";
 print HTMLI "<col width=\"7%\">\n";
 print HTMLI "</colgroup>";
 print HTMLI "<thead>";
-print HTMLI "<tr><th>Language</th><th colspan=\"2\">Translations</th><th colspan=\"2\">Up to date</th><th colspan=\"2\">Outdated</th><th colspan=\"2\">Not translated</th></tr>\n";
+print HTMLI '<tr><th><gettext domain="stats">Language</gettext></th>'."\n";
+print HTMLI '<th colspan="2"><gettext domain="stats">Translations</gettext></th>'."\n";
+print HTMLI '<th colspan="2"><gettext domain="stats">Up to date</gettext></th>'."\n";
+print HTMLI '<th colspan="2"><gettext domain="stats">Outdated</gettext></th>'."\n";
+print HTMLI '<th colspan="2"><gettext domain="stats">Not translated</gettext></th></tr>'."\n";
 print HTMLI "</thead>";
 print HTMLI "<tbody>";
 
@@ -668,7 +684,7 @@ foreach $lang (@search_in) {
 	$color_u = get_color (100 - $percent_u{$lang});
 
 	print HTMLI "<tr>";
-	printf HTMLI "<th><a href=\"%s\">%s</a> (%s)</th>", $l, ucfirst $lang, $l;
+	printf HTMLI "<th><a href=\"%s\"><:=\$trans{\$CUR_ISO_LANG}{%s} :></a> (%s)</th>", $l, $lang, $l;
 	printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%.1f%%)</td>", $color_a, $wml_s{$lang},                   $percent_as{$lang};
 	printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%.1f%%)</td>", $color_t, $translated_s{$lang},            $percent_ts{$lang};
 	printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%.1f%%)</td>", $color_o, $outdated_s{$lang},              $percent_os{$lang};
@@ -679,9 +695,10 @@ foreach $lang (@search_in) {
 print HTMLI "</tbody>";
 print HTMLI "</table>\n";
 
-print HTMLI "<h2>Translated templates (gettext files)</h2>\n";
-printf HTMLI "<p>There are %d strings to translate.</p>\n",$po_total{'total'};
-print HTMLI "<table summary=\"Gettext Translation Statistics\"class=\"stattrans\">\n";
+print HTMLI '<h2><gettext domain="stats">Translated templates (PO files)</gettext></h2>'."\n";
+printf HTMLI "<p><stats_strings %d></p>\n",$po_total{'total'};
+
+print HTMLI '<table summary="<gettext domain="stats">PO Translation Statistics</gettext>"class="stattrans">'."\n";
 print HTMLI "<colgroup span=\"1\"width=\"28%\">\n";
 print HTMLI "</colgroup>";
 print HTMLI "<colgroup span=\"6\" width=\"12%\">\n";
@@ -693,7 +710,10 @@ print HTMLI "<col width=\"12%\">\n";
 print HTMLI "<col width=\"12%\">\n";
 print HTMLI "</colgroup>";
 print HTMLI "<thead>";
-print HTMLI "<tr><th>Language</th><th colspan=\"2\">Up to date</th><th colspan=\"2\">Fuzzy</th><th colspan=\"2\">Not translated</th></tr>\n";
+print HTMLI '<tr><th><gettext domain="stats">Language</gettext></th>'."\n";
+print HTMLI '<th colspan="2"><gettext domain="stats">Up to date</gettext></th>'."\n";
+print HTMLI '<th colspan="2"><gettext domain="stats">Fuzzy</gettext></th>'."\n";
+print HTMLI '<th colspan="2"><gettext domain="stats">Not translated</gettext></th></tr>'."\n";
 print HTMLI "</thead>";
 print HTMLI "<tbody>";
 foreach $lang (@search_in) {
@@ -702,7 +722,7 @@ foreach $lang (@search_in) {
     @processed_langs = ("zh-cn", "zh-tw") if $langs{$lang} eq "zh";
     foreach $l (@processed_langs) {
         print HTMLI "<tr>";
-        printf HTMLI "<th><a href=\"%s#gettext\">%s</a> (%s)</th>", $l, ucfirst $lang, $l;
+        printf HTMLI "<th><a href=\"%s#gettext\"><:=\$trans{\$CUR_ISO_LANG}{%s} :></a> (%s)</th>", $l, $lang, $l;
         $color_t = get_color ($percent_po_t{'total'}{$lang});
         $color_f = get_color (100 - $percent_po_f{'total'}{$lang});
         $color_u = get_color (100 - $percent_po_u{'total'}{$lang});
@@ -716,7 +736,7 @@ foreach $lang (@search_in) {
 print HTMLI "</tbody>";
 print HTMLI "</table>\n";
 
-print HTMLI "<address>Created with <a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/stattrans.pl?view=markup\&amp;root=webwml\">webwml-stattrans</a></address>\n";
+print HTMLI '<address><gettext domain="stats">Created with</gettext> <a href="http://alioth.debian.org/scm/viewvc.php/webwml/stattrans.pl?view=markup&amp;root=webwml">webwml-stattrans</a></address>'."\n";
 close (HTMLI);
 
 print "done.\n" if ($config{'verbose'});
