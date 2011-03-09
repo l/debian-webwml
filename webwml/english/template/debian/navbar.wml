@@ -2,6 +2,7 @@
 #use wml::debian::mirrors
 #use wml::debian::events_common
 #use wml::debian::links.tags
+#use wml::debian::stats_tags
 
 <div id="header">
    <div id="upperheader">
@@ -40,25 +41,23 @@
     $eng_dir =~ s,(.*)/webwml/\w*,$1/webwml/english,;
     my $relative_path = '.';
 
-# Use the current page name (no link)
-    my $breadcrumbs = q%$(title)%;
-
+    my $breadcrumbs;
 # If the current page is already the index, go one directory up
     if ( '$(WML_SRC_FILENAME)' eq 'index.wml' )
     {
         # Use only year for security/YYYY and vote/YYYY directories
-        $breadcrumbs = $1 if ( $eng_dir =~ m,security/(\d{4})$, or $eng_dir =~ m,vote/(\d{4})$, );
+        $breadcrumbs = "$1 <!--" if ( $eng_dir =~ m,security/(\d{4})$, or $eng_dir =~ m,vote/(\d{4})$, );
 
         # Use short name for l10n stats #616340
-        $breadcrumbs = 'PO' if ( $eng_dir =~ m,international/l10n/po$, );
-        $breadcrumbs = 'PO Debconf' if ( $eng_dir =~ m,international/l10n/po-debconf$, );
-        $breadcrumbs = 'po4a' if ( $eng_dir =~ m,international/l10n/po4a$, );
+        $breadcrumbs = 'PO <!--' if ( $eng_dir =~ m,international/l10n/po$, );
+        $breadcrumbs = 'PO Debconf <!--' if ( $eng_dir =~ m,international/l10n/po-debconf$, );
+        $breadcrumbs = 'po4a <!--' if ( $eng_dir =~ m,international/l10n/po4a$, );
 
         $relative_path = '..';
         $eng_dir =~ s,/\w*([-.]\w*)?$,,;
     }
 # Use language code for l10n stats #616340
-    $breadcrumbs = '@tmpl_lang@' if ( $breadcrumbs =~ m,@tmpl_lang@, );
+#    $breadcrumbs = '@tmpl_lang@' if ( $breadcrumbs =~ m,\@tmpl_lang\@, );
 
 # Loop to get each directory index title
     # no breadcrumb for 404 page
@@ -92,6 +91,10 @@
             elsif ( $eng_dir =~ m,international/l10n/po4a$, )
                 { $title = 'po4a' ; }
 
+            # Handle translated title in website stats
+            elsif ( $eng_dir =~ m,website/stats$, )
+                { $title = '<stats_title>' ; }
+
             # Normal case: use $(title)
             else {
                 <protect pass=2>
@@ -112,8 +115,10 @@
     }}
 
 # Actually print breadcrumbs
-    print '<p id="breadcrumbs">'.$breadcrumbs.'</p>';
+    print '<p id="breadcrumbs">'.$breadcrumbs;
+
 </perl>
+$(title)<!-- --></p>
 </when>
 #
 # Handle DPN: use date and only year for News/weekly/YYYY directory

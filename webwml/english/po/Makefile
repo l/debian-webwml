@@ -8,7 +8,9 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-DOMAINS = templates bugs cdimage consultants countries date distrib doc l10n langs legal mailinglists newsevents organization ports search security vendors vote wnpp others
+DOMAINS = templates bugs cdimage consultants countries date distrib \
+	  doc l10n langs legal mailinglists newsevents organization \
+	  ports search security stats vendors vote wnpp others
 
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
 cdimage_FILES   = $(TEMPLDIR)/cdimage.wml
@@ -42,6 +44,7 @@ security_FILES  = $(TEMPLDIR)/security.wml \
   $(ENGLISHDIR)/security/faq.inc \
   $(ENGLISHDIR)/security/dsa.rdf.in \
   $(ENGLISHDIR)/security/make-ref-table.pl
+stats_FILES 	= $(WMLBASE)/../stattrans.pl $(TEMPLDIR)/stats_tags.wml
 vendors_FILES   = $(ENGLISHDIR)/CD/vendors/vendors.CD.def
 vote_FILES      = $(TEMPLDIR)/votebar.wml
 wnpp_FILES      = $(TEMPLDIR)/wnpp.wml
@@ -79,6 +82,7 @@ SOURCEFILES = \
   $(ports_FILES)                \
   $(search_FILES)               \
   $(security_FILES)             \
+  $(stats_FILES)		\
   $(vendors_FILES)              \
   $(vote_FILES)                 \
   $(wnpp_FILES)                 \
@@ -137,6 +141,9 @@ $(ENGLISHDIR)/po/search.pot: # $(search_FILES)
 
 $(ENGLISHDIR)/po/security.pot: # $(security_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl security $(security_FILES) > $@
+
+$(ENGLISHDIR)/po/stats.pot: # $(stats_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl stats $(stats_FILES) > $@
 
 $(ENGLISHDIR)/po/vendors.pot: # $(vendors_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl vendors $(vendors_FILES) > $@
