@@ -1,5 +1,4 @@
 #use wml::std::tags
-
 <perl>
 # get_past_event_list
 # This finds out if there are any events that have passed, and returns
@@ -13,8 +12,6 @@ my $current_dir = "$ENGLISHDIR/events";
 my $path = $CUR_YEAR;
 my $str = '';
 my $past = '';
-
-# $str .= "<ul>\n";
 
 # check if the current year has any past events.
 opendir DIR, "$current_dir/$path" || die "Can't open $current_dir/$path: $!";
@@ -35,11 +32,12 @@ foreach (@files) {
 # if it's a year that's not the current year and it's > 1999, assume it has at least one
 # past event and thus include it in $str. no need to waste resources
 # checking it.
-for ($path = $(CUR_YEAR); $path > 1999; $path--) {  
-    $str .= "  <a href=\"$path/\"> $path</a>, ";
+for ($path = $(CUR_YEAR) - 1; $path > 1999 ; $path--) {  
+    $str .= "  <a href=\"$path/\"> $path</a>,\n"
+    if -d "$ENGLISHDIR/events/$path";
 }
-
-$str .= "  <a href=\"$current_dir/1999/\">1999</a> and <a href=\"$current_dir/1998/\">1998</a>\.</p> ";
+<bind-gettext-domain domain="vendors" />
+$str .= "  <a href=\"$current_dir/1999/\">1999</a> <gettext domain="vendors">and</gettext> <a href=\"$current_dir/1998/\">1998</a>\.</p> ";
 return $str;
 }
 
