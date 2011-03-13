@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; Installazione" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.78" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.80" maintainer="Luca Monducci"
 
 <h1>Installazione manuale di Debian GNU/Hurd</h1>
 
@@ -341,8 +341,11 @@ invece la rtl8139 dovrebbe funzionare con: <code>-net nic,model=rtl8139
 -net user</code>.</p>
 
 <p>Per configurare la rete è necessario configurare prima il traduttore
-pfinet. Questo lo si fa usando inetutils-ifconfig dal pacchetto
-inetutils-tools oppure con il comando <code>settrans</code> che collega
+pfinet. Questo lo si fa usando <code>dhclient</code> dal pacchetto
+<code>isc-dhcp-client</code>, ma il suo avvio non è stato ancora
+automatizzato. Oppure manualmente con il comando <code>inetutils-ifconfig</code>
+dal pacchetto <code>inetutils-tools</code>. Oppure, infine, manualmente
+usando il comando <code>settrans</code> per collegare
 un tradutore a un certo nodo del filesystem e quando i programmi accedono
 al nodo, per esempio inviando un RPC, il sistema operativo avvia in modo
 trasparente il servente per gestire la richiesta.</p>
@@ -376,10 +379,6 @@ nameserver 192.168.1.1
 <p>Testare la configurazione con <code>ping -c2 gateway</code>, l'opzione
 <samp>-c</samp> è importantre per limitare il numero di ping, infatti
 <kbd>CONTROL-C</KBD> non funziona in modalità singolo-utente.</p>
-
-<p>DHCP ancora non funziona con Hurd. Questo è dovuto alle limitazioni di
-pfinet: è basato sul codice TCP/IP di Linux ed è incapace di ascoltare su
-<tt>0.0.0.0</tt>.</p>
 
 <p>Aiuto su <code>settrans</code> può essere ottenuto passando l'opzione
 <samp>--help</samp>. L'aiuto su uno specifico traduttore può essere ottenuto
@@ -541,3 +540,11 @@ sono un buon inizio.</p>
 essere necessario usa il driver vesa.</p>
 
 <p>Infine, eseguire <code>startx</code>.</p>
+
+
+<h3>Ultime parole</h3>
+
+<p>
+Ancora non viene usato il sistema SysV. Per spegnere il sistema, usare
+<code>halt</code> o <code>reboot</code>.
+</p>
