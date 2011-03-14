@@ -100,20 +100,20 @@ sub rdf_add
 
     # Conversion for the content
     if ($ENV{LANGUAGE} eq 'fr') {
-      $headline =~ s/<q>/Â«Â /g;
-      $headline =~ s/<\/q>/Â Â»/g;
-      $body =~ s/<q>/Â«Â /g;
-      $body =~ s/<\/q>/Â Â»/g;
+      $headline =~ s/<q>/« /g;
+      $headline =~ s/<\/q>/ »/g;
+      $body =~ s/<q>/« /g;
+      $body =~ s/<\/q>/ »/g;
     } elsif ($ENV{LANGUAGE} eq 'it') {
-      $headline =~ s/<q>/Â«/g;
-      $headline =~ s/<\/q>/Â»/g;
-      $body =~ s/<q>/Â«/g;
-      $body =~ s/<\/q>/Â»/g;
+      $headline =~ s/<q>/«/g;
+      $headline =~ s/<\/q>/»/g;
+      $body =~ s/<q>/«/g;
+      $body =~ s/<\/q>/»/g;
     } elsif ($ENV{LANGUAGE} eq 'de') {
-      $headline =~ s/<q>/Â»/g;
-      $headline =~ s/<\/q>/Â«/g;
-      $body =~ s/<q>/Â»/g;
-      $body =~ s/<\/q>/Â«/g;
+      $headline =~ s/<q>/»/g;
+      $headline =~ s/<\/q>/«/g;
+      $body =~ s/<q>/»/g;
+      $body =~ s/<\/q>/«/g;
     } else {
       $headline =~ s/<q>/"/g;
       $headline =~ s/<\/q>/"/g;
