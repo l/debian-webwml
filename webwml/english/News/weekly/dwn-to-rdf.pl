@@ -23,6 +23,7 @@
 use strict;
 use warnings;
 
+use Locale::Messages (':locale_h');
 use XML::RSS;
 use Encode qw(decode_utf8);
 
@@ -99,20 +100,20 @@ sub rdf_add
 
     # Conversion for the content
     if ($ENV{LANGUAGE} eq 'fr') {
-      $headline =~ s/<q>/« /g;
-      $headline =~ s/<\/q>/ »/g;
-      $body =~ s/<q>/« /g;
-      $body =~ s/<\/q>/ »/g;
+      $headline =~ s/<q>/Â«Â /g;
+      $headline =~ s/<\/q>/Â Â»/g;
+      $body =~ s/<q>/Â«Â /g;
+      $body =~ s/<\/q>/Â Â»/g;
     } elsif ($ENV{LANGUAGE} eq 'it') {
-      $headline =~ s/<q>/«/g;
-      $headline =~ s/<\/q>/»/g;
-      $body =~ s/<q>/«/g;
-      $body =~ s/<\/q>/»/g;
+      $headline =~ s/<q>/Â«/g;
+      $headline =~ s/<\/q>/Â»/g;
+      $body =~ s/<q>/Â«/g;
+      $body =~ s/<\/q>/Â»/g;
     } elsif ($ENV{LANGUAGE} eq 'de') {
-      $headline =~ s/<q>/»/g;
-      $headline =~ s/<\/q>/«/g;
-      $body =~ s/<q>/»/g;
-      $body =~ s/<\/q>/«/g;
+      $headline =~ s/<q>/Â»/g;
+      $headline =~ s/<\/q>/Â«/g;
+      $body =~ s/<q>/Â»/g;
+      $body =~ s/<\/q>/Â«/g;
     } else {
       $headline =~ s/<q>/"/g;
       $headline =~ s/<\/q>/"/g;
@@ -133,8 +134,24 @@ sub rdf_add
 
 my $rss = new XML::RSS (version => '1.0', encoding => charset, encode_output => 0);
 
-$rss->channel (title          => 'Debian Project News',
-	       description    => 'Debian Project News '. $current,
+bindtextdomain "templates", "../../../locale";
+bindtextdomain "newsevents", "../../../locale";
+my $loctitle = dgettext "templates", "Debian Project News";
+my $locdesc = dgettext "newsevents", "The newsletter for the Debian community";
+
+my $trick = '<gettext domain="newsevents">The newsletter for the Debian community</gettext>';
+
+my $charset = charset;
+
+#prevent double utf-8 encode by XML::RSS
+
+if ($charset eq 'utf-8') {
+	$loctitle = decode_utf8($loctitle);
+	$locdesc = decode_utf8($locdesc);
+}
+
+$rss->channel (title          => $loctitle,
+	       description    => $locdesc,
 	       link           => $url,
 	       dc             => {
 		   date => $pubdate,
@@ -144,7 +161,6 @@ $rss->channel (title          => 'Debian Project News',
 my $count = 0;
 my $headline = '';
 my $body = '';
-my $charset = charset;
 
 if (open (F, $current . '/index.wml')) {
     while (<F>) {
@@ -171,7 +187,7 @@ if (open (F, $current . '/index.wml')) {
 
 	    if ($body !~ /(main\/newpkg|removals.txt|wnpp\/help_requeste|href="mailto:debian-publicity\@lists.debian.org"|www.debian.org\/security)/) {
 		if (!$headline) {
-		    rdf_add ($rss, $count++, 'Debian Project News '.$current, $body) if ($count == 0);
+		    rdf_add ($rss, $count++, $locdesc, $body) if ($count == 0);
 		} else {
 		    rdf_add ($rss, $count++, $headline, $body);
 		}
@@ -187,3 +203,4 @@ if (open (F, $current . '/index.wml')) {
 # fill file
 
 $rss->save ($rdf);
+
