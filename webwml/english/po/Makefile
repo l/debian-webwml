@@ -33,7 +33,8 @@ newsevents_FILES = $(addprefix $(TEMPLDIR)/, \
   $(ENGLISHDIR)/News/press/press.tags \
   $(ENGLISHDIR)/events/speakers/speakers.defs \
   $(ENGLISHDIR)/events/talks.defs \
-  $(ENGLISHDIR)/News/news.rdf.in
+  $(ENGLISHDIR)/News/news.rdf.in \
+  $(ENGLISHDIR)/News/weekly/dwn-to-rdf.pl
 organization_FILES = $(ENGLISHDIR)/intro/organization.data
 ports_FILES     = $(ENGLISHDIR)/ports/menu.defs \
   $(shell export LC_COLLATE=C; echo $(ENGLISHDIR)/ports/*/menu.inc) \
@@ -43,7 +44,7 @@ security_FILES  = $(TEMPLDIR)/security.wml \
   $(TEMPLDIR)/securityreferences.wml \
   $(ENGLISHDIR)/security/faq.inc \
   $(ENGLISHDIR)/security/dsa.rdf.in \
-  $(ENGLISHDIR)/security/make-ref-table.pl
+  $(ENGLISHDIR)/security/make-ref-table.pl 
 stats_FILES 	= $(WMLBASE)/../stattrans.pl $(TEMPLDIR)/stats_tags.wml
 vendors_FILES   = $(ENGLISHDIR)/CD/vendors/vendors.CD.def
 vote_FILES      = $(TEMPLDIR)/votebar.wml
