@@ -6,7 +6,7 @@
 # destination directory if necessary.
 
 # Written in 2000-2008 by Peter Krefting <peter@softwolves.pp.se>
-# © Copyright 2000-2008 Software in the public interest, Inc.
+# Â© Copyright 2000-2008 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -94,7 +94,7 @@ while (<SRC>)
 		$next = <SRC>;
 		if ($next eq "community.\n")
 		{
-			$_ = "<b>Välkommen</b> till Debian Weekly News, ett nyhetsbrev för Debianutvecklare.\n";
+			$_ = "<b>VÃ¤lkommen</b> till Debian Weekly News, ett nyhetsbrev fÃ¶r Debianutvecklare.\n";
 		}
 		else
 		{
@@ -104,7 +104,7 @@ while (<SRC>)
 	elsif ($_ eq "<b>Welcome</b> to Debian Weekly News, a newsletter for the Debian community.\n")
 	{
 		# Translate intro
-		$_ = "<b>Välkommen</b> till Debian Weekly News, ett nyhetsbrev för Debianfolk.\n";
+		$_ = "<b>VÃ¤lkommen</b> till Debian Weekly News, ett nyhetsbrev fÃ¶r Debianfolk.\n";
 	}
 	elsif ($_ eq "<p><strong>New or Noteworthy Packages.</strong> The following new or\n")
 	{
@@ -115,8 +115,8 @@ while (<SRC>)
 			$next2 = <SRC>;
 			if ($next2 eq "issue.</p>\n")
 			{
-				$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong>\n";
-				$_ .= "Följande paket har lagts till Debianarkivet sedan förra utgåvan.</p>\n";
+				$_ =  "<p><strong>Nya eller anmÃ¤rkningsvÃ¤rda paket.</strong>\n";
+				$_ .= "FÃ¶ljande paket har lagts till Debianarkivet sedan fÃ¶rra utgÃ¥van.</p>\n";
 			}
 			else
 			{
@@ -126,8 +126,8 @@ while (<SRC>)
 		}
 		elsif ($next eq "updated packages were updated or added to the Debian archive recently.</p>\n")
 		{
-			$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong>\n";
-			$_ .= "Följande nya eller uppdaterade paket har nyligen lagts till\n";
+			$_ =  "<p><strong>Nya eller anmÃ¤rkningsvÃ¤rda paket.</strong>\n";
+			$_ .= "FÃ¶ljande nya eller uppdaterade paket har nyligen lagts till\n";
 			$_ .= "Debianarkivet.</p>\n";
 		}
 		else
@@ -141,19 +141,19 @@ while (<SRC>)
 		$next = <SRC>;
 		if ($next eq "added to the Debian archive recently.</p>\n")
 		{
-			$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong>\n";
-			$_ .= "Följande paket har nyligen lagts till Debianarkivet.</p>\n";
+			$_ =  "<p><strong>Nya eller anmÃ¤rkningsvÃ¤rda paket.</strong>\n";
+			$_ .= "FÃ¶ljande paket har nyligen lagts till Debianarkivet.</p>\n";
 		}
 		elsif ($next eq "added to the Debian archive recently or contain important updates.</p>\n")
 		{
-			$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong>\n";
-			$_ .= "Följande paket har nyligen lagts till Debianarkivet eller innehåller\n";
+			$_ =  "<p><strong>Nya eller anmÃ¤rkningsvÃ¤rda paket.</strong>\n";
+			$_ .= "FÃ¶ljande paket har nyligen lagts till Debianarkivet eller innehÃ¥ller\n";
 			$_ .= "viktiga uppdateringar.</p>\n"
 		}
         elsif ($next eq "added to the unstable Debian archive recently or contain important updates.</p>\n")
         {
-			$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong>\n";
-			$_ .= "Följande paket har nyligen lagts till det instabila Debianarkivet eller innehåller\n";
+			$_ =  "<p><strong>Nya eller anmÃ¤rkningsvÃ¤rda paket.</strong>\n";
+			$_ .= "FÃ¶ljande paket har nyligen lagts till det instabila Debianarkivet eller innehÃ¥ller\n";
 			$_ .= "viktiga uppdateringar.</p>\n";
         }
         elsif ($next eq "added to the unstable Debian archive <a\n")
@@ -166,10 +166,10 @@ while (<SRC>)
         		$next = <SRC>;
         		if ($next eq "important updates.</p>\n")
         		{
-					$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong>\n";
-					$_ .= "Följande paket har\n";
+					$_ =  "<p><strong>Nya eller anmÃ¤rkningsvÃ¤rda paket.</strong>\n";
+					$_ .= "FÃ¶ljande paket har\n";
 					$_ .= "<a href=\"http://packages.debian.org/unstable/newpkg_main\">nyligen</a>\n";
-					$_ .= "lagts till det instabila Debianarkivet eller innehåller viktiga uppdateringar.\n";
+					$_ .= "lagts till det instabila Debianarkivet eller innehÃ¥ller viktiga uppdateringar.\n";
 					$_ .= "</p>\n";
 				}
 				else
@@ -196,8 +196,8 @@ while (<SRC>)
 			$next2 = <SRC>;
 			if ($next2 eq "important updates.</p>\n")
 			{
-				$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong>\n";
-				$_ .= "Följande paket har nyligen lagts till det instabila Debianarkivet eller innehåller\n";
+				$_ =  "<p><strong>Nya eller anmÃ¤rkningsvÃ¤rda paket.</strong>\n";
+				$_ .= "FÃ¶ljande paket har nyligen lagts till det instabila Debianarkivet eller innehÃ¥ller\n";
 				$_ .= "viktiga uppdateringar.</p>\n";
 			}
 			else
@@ -220,13 +220,13 @@ while (<SRC>)
 		if ($next eq "you update your systems if you have one of these packages installed.</p>\n" ||
 		    $next eq "that you update your systems if you have any of these packages installed.</p>\n")
 		{
-			$_ =  "<p><strong>Säkerhetsuppdateringar.</strong>\n";
-			$_ .= "Ni kan rutinen, se till att uppdatera era system om ni har något av\n";
+			$_ =  "<p><strong>SÃ¤kerhetsuppdateringar.</strong>\n";
+			$_ .= "Ni kan rutinen, se till att uppdatera era system om ni har nÃ¥got av\n";
 			$_ .= "dessa paket installerade.</p>\n";
 		}
 		elsif ($next eq "that you update your systems if you have this package installed.</p>\n")
 		{
-			$_ =  "<p><strong>Säkerhetsuppdatering.</strong>\n";
+			$_ =  "<p><strong>SÃ¤kerhetsuppdatering.</strong>\n";
 			$_ .= "Ni kan rutinen, se till att uppdatera era system om ni har detta paket\n";
 			$_ .= "installerat.</p>\n";
 		}
@@ -238,10 +238,10 @@ while (<SRC>)
 
 	s/(\s+)--(\s+)/$1&ndash;$2/g;
 	s/>Bug#([0-9])/>rapport $1/g;
-	s/Request of QA/Efter fråga från QA/;
-	s/Request of [mM]aintainer/Efter fråga från ansvariga/;
-	s/orphaned for more than/övergivet i mer än/;
-	s/has never been part of a stable release/har aldrig ingått i en stabil utgåva/;
+	s/Request of QA/Efter frÃ¥ga frÃ¥n QA/;
+	s/Request of [mM]aintainer/Efter frÃ¥ga frÃ¥n ansvariga/;
+	s/orphaned for more than/Ã¶vergivet i mer Ã¤n/;
+	s/has never been part of a stable release/har aldrig ingÃ¥tt i en stabil utgÃ¥va/;
 
 	unless ($insertedrevision || /^#/)
 	{

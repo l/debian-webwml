@@ -1,130 +1,130 @@
 #use wml::debian::template title="Push-spegling"
 #use wml::debian::translation-check translation="1.17"
 
-<p>&rdquo;Push&rdquo;-spegling är en form av spegling som minimerar tiden det tar
-för ändringar i huvudarkivet att nå speglarna.
-Den servande spegeln använder en utlösarmekanism för att omedelbart informera
-klientspegeln om att den måste uppdateras.
+<p>&rdquo;Push&rdquo;-spegling Ã¤r en form av spegling som minimerar tiden det tar
+fÃ¶r Ã¤ndringar i huvudarkivet att nÃ¥ speglarna.
+Den servande spegeln anvÃ¤nder en utlÃ¶sarmekanism fÃ¶r att omedelbart informera
+klientspegeln om att den mÃ¥ste uppdateras.
 </p>
 
-<p>&rdquo;Push&rdquo;-spegling tar lite mer tid i anspråk att sätta upp, eftersom de
-som är ansvariga för upp- och nedströmsspeglarna måste utbyta
+<p>&rdquo;Push&rdquo;-spegling tar lite mer tid i ansprÃ¥k att sÃ¤tta upp, eftersom de
+som Ã¤r ansvariga fÃ¶r upp- och nedstrÃ¶msspeglarna mÃ¥ste utbyta
 information.
-Fördelen är att uppströmsspegeln är den som påbörjar speglingsprocessen
-direkt efter att dess eget arkiv har uppdateras, vilket gör att ändringar i
+FÃ¶rdelen Ã¤r att uppstrÃ¶msspegeln Ã¤r den som pÃ¥bÃ¶rjar speglingsprocessen
+direkt efter att dess eget arkiv har uppdateras, vilket gÃ¶r att Ã¤ndringar i
 arkivet propageras extremt snabbt.
 </p>
 
-<h2>Förklaring av metoden</h2>
+<h2>FÃ¶rklaring av metoden</h2>
 
-<p>Först en kort förklaring av ssh:
-Ssh gör det möjligt att koppla upp sig mot konto på olika maskiner på ett
-säkert sätt.
-Förutom att lösenord aldrig sänds i klartext, så är du även i stora drag
-garanterad att så fort du gjort en uppkoppling mot en maskin att framtida
-uppkopplingar verkligen sker mot samma maskin, något som förhindra många
-attacker av typen &rdquo;man-in-the-middle&rdquo;, alltså att någon på vägen
-avlyssnar/förändrar kommunikationen.
+<p>FÃ¶rst en kort fÃ¶rklaring av ssh:
+Ssh gÃ¶r det mÃ¶jligt att koppla upp sig mot konto pÃ¥ olika maskiner pÃ¥ ett
+sÃ¤kert sÃ¤tt.
+FÃ¶rutom att lÃ¶senord aldrig sÃ¤nds i klartext, sÃ¥ Ã¤r du Ã¤ven i stora drag
+garanterad att sÃ¥ fort du gjort en uppkoppling mot en maskin att framtida
+uppkopplingar verkligen sker mot samma maskin, nÃ¥got som fÃ¶rhindra mÃ¥nga
+attacker av typen &rdquo;man-in-the-middle&rdquo;, alltsÃ¥ att nÃ¥gon pÃ¥ vÃ¤gen
+avlyssnar/fÃ¶rÃ¤ndrar kommunikationen.
 </p>
 
-<p>En funktionalitet som finns i ssh är möjligheten för användaren att lägga
-den publika identitetsnyckeln för en användare på en annan maskin och lägga
-den bland de auktoriserade nycklarna på sin egen maskin.
-Standardinställningen är då att användaren på den andra maskinen (som har
-den privata identitetsnyckeln som hör ihop med den publika identitetsnyckeln
-som du fått) då får inloggningsbehörighet på ditt konto.
-Det är dock möjligt att lägga in en text till en auktoriserad nyckel som
-begränsar den typ av åtkomstbehörighet som den person som använder den
-nyckeln för att komma åt ditt konto får.
+<p>En funktionalitet som finns i ssh Ã¤r mÃ¶jligheten fÃ¶r anvÃ¤ndaren att lÃ¤gga
+den publika identitetsnyckeln fÃ¶r en anvÃ¤ndare pÃ¥ en annan maskin och lÃ¤gga
+den bland de auktoriserade nycklarna pÃ¥ sin egen maskin.
+StandardinstÃ¤llningen Ã¤r dÃ¥ att anvÃ¤ndaren pÃ¥ den andra maskinen (som har
+den privata identitetsnyckeln som hÃ¶r ihop med den publika identitetsnyckeln
+som du fÃ¥tt) dÃ¥ fÃ¥r inloggningsbehÃ¶righet pÃ¥ ditt konto.
+Det Ã¤r dock mÃ¶jligt att lÃ¤gga in en text till en auktoriserad nyckel som
+begrÃ¤nsar den typ av Ã¥tkomstbehÃ¶righet som den person som anvÃ¤nder den
+nyckeln fÃ¶r att komma Ã¥t ditt konto fÃ¥r.
 </p>
 
-<p>Därför, för att skydda spegeln nedströms, har nyckeln som fås av spegeln
-uppströms en sådan begränsning som bara tillåter personen som använder ditt
-konto att göra en sak &ndash; att starta programmet på din maskin som uppdaterar
+<p>DÃ¤rfÃ¶r, fÃ¶r att skydda spegeln nedstrÃ¶ms, har nyckeln som fÃ¥s av spegeln
+uppstrÃ¶ms en sÃ¥dan begrÃ¤nsning som bara tillÃ¥ter personen som anvÃ¤nder ditt
+konto att gÃ¶ra en sak &ndash; att starta programmet pÃ¥ din maskin som uppdaterar
 din spegel.
-Även om någon (en elak tredje part) lyckats knäcka nyckel så är det enda de
-kan göra att starta speglingsprogrammet på din maskin.
-Du behöver inte ens oroa dig för att flera kopior av programmets startas,
-eftersom en låsfil används.
+Ã„ven om nÃ¥gon (en elak tredje part) lyckats knÃ¤cka nyckel sÃ¥ Ã¤r det enda de
+kan gÃ¶ra att starta speglingsprogrammet pÃ¥ din maskin.
+Du behÃ¶ver inte ens oroa dig fÃ¶r att flera kopior av programmets startas,
+eftersom en lÃ¥sfil anvÃ¤nds.
 </p>
 
-<p>Rsync på maskinen uppströms kan konfigureras att begränsa vilka som kan
-spegla en viss avdelning medelst användarnamn och lösenord.
-Dessa är helt separerade från <kbd>/etc/passwd</kbd> så en &rdquo;push&rdquo;-server
-behöver inte oroa sig för att ge andra tillgång till sin maskin.
-Detta bör dock inte vara ett problem, eftersom det värsta som kan hända är
-att en tredje part får möjlighet att spegla Debiansidorna från den platsen.
+<p>Rsync pÃ¥ maskinen uppstrÃ¶ms kan konfigureras att begrÃ¤nsa vilka som kan
+spegla en viss avdelning medelst anvÃ¤ndarnamn och lÃ¶senord.
+Dessa Ã¤r helt separerade frÃ¥n <kbd>/etc/passwd</kbd> sÃ¥ en &rdquo;push&rdquo;-server
+behÃ¶ver inte oroa sig fÃ¶r att ge andra tillgÃ¥ng till sin maskin.
+Detta bÃ¶r dock inte vara ett problem, eftersom det vÃ¤rsta som kan hÃ¤nda Ã¤r
+att en tredje part fÃ¥r mÃ¶jlighet att spegla Debiansidorna frÃ¥n den platsen.
 </p>
 
-<h2>Sätta upp en &rdquo;push&rdquo;-speglingsklient</h2>
+<h2>SÃ¤tta upp en &rdquo;push&rdquo;-speglingsklient</h2>
 
-<p>Det är bäst att sätta upp detta med ett konto för en vanlig användare,
+<p>Det Ã¤r bÃ¤st att sÃ¤tta upp detta med ett konto fÃ¶r en vanlig anvÃ¤ndare,
 inte root.
-Innehållet i den publika ssh-nyckeln som du får från spegeln uppströms ska
-placeras i <kbd>~&lt;användare&gt;/.ssh/authorized_keys</kbd>.
+InnehÃ¥llet i den publika ssh-nyckeln som du fÃ¥r frÃ¥n spegeln uppstrÃ¶ms ska
+placeras i <kbd>~&lt;anvÃ¤ndare&gt;/.ssh/authorized_keys</kbd>.
 </p>
 
-<p>För att bli &rdquo;push&rdquo;-klient för ftp-arkivet behöver du sätta upp
-spegling med hjälp av vår standardskriptsamling <a href="ftpmirror#how">ftpsync</a>
-med några modifieringar. Redigera delen av skriptet märkt för
-lösenordsskyddade konfigureringar och avkommentera inkluderandet av
+<p>FÃ¶r att bli &rdquo;push&rdquo;-klient fÃ¶r ftp-arkivet behÃ¶ver du sÃ¤tta upp
+spegling med hjÃ¤lp av vÃ¥r standardskriptsamling <a href="ftpmirror#how">ftpsync</a>
+med nÃ¥gra modifieringar. Redigera delen av skriptet mÃ¤rkt fÃ¶r
+lÃ¶senordsskyddade konfigureringar och avkommentera inkluderandet av
 filen <a href="ftpsync.conf">ftpsync.conf</a>.
-Redigera ftpsync.conf och följ anvisningarna i den tillsammans med den
-information som du får från spegeln uppströms.
+Redigera ftpsync.conf och fÃ¶lj anvisningarna i den tillsammans med den
+information som du fÃ¥r frÃ¥n spegeln uppstrÃ¶ms.
 </p>
 
-# Filerna har olika namn så att du kan använda samma konto för att spegla
-# båda arkiven.
+# Filerna har olika namn sÃ¥ att du kan anvÃ¤nda samma konto fÃ¶r att spegla
+# bÃ¥da arkiven.
 
-<p>För att bli &rdquo;push&rdquo;-klient för webbsidorna behöver du filerna
+<p>FÃ¶r att bli &rdquo;push&rdquo;-klient fÃ¶r webbsidorna behÃ¶ver du filerna
 <a href="websync">websync</a> och <a href="websync.conf">websync.conf</a>.
-Redigera websync.conf och följ anvisningarna i den tillsammans med den
-information som du får från spegeln uppströms.
+Redigera websync.conf och fÃ¶lj anvisningarna i den tillsammans med den
+information som du fÃ¥r frÃ¥n spegeln uppstrÃ¶ms.
 </p>
 
 <h2>Push-Primary-klienter</h2>
 
-<p>&rdquo;Push-Primary&rdquo;-speglingsklienter, även kända som nivå-1-speglar
-(&rdquo;Tier-1&rdquo;), är de &rdquo;push&rdquo;-speglingsklienter som tillåts spegla från vårt
+<p>&rdquo;Push-Primary&rdquo;-speglingsklienter, Ã¤ven kÃ¤nda som nivÃ¥-1-speglar
+(&rdquo;Tier-1&rdquo;), Ã¤r de &rdquo;push&rdquo;-speglingsklienter som tillÃ¥ts spegla frÃ¥n vÃ¥rt
 huvudarkiv.
 
-<p>Om din server har en <strong>väldigt</strong> bra anslutning (både väldigt
-bra bandbredd och bra koppling till de stora ryggradsnäten), och du är villig
-att låta andra platser spegla från dig, så kan du överväga att berätta det
-för oss, så att vi kan överväga att låta dig bli &rdquo;push&rdquo;-server.
-Du kan dock inte förvänta dig att det händer inom kort tid, eftersom
-vi redan har ett hyfsat antal nivå-1-speglar.
+<p>Om din server har en <strong>vÃ¤ldigt</strong> bra anslutning (bÃ¥de vÃ¤ldigt
+bra bandbredd och bra koppling till de stora ryggradsnÃ¤ten), och du Ã¤r villig
+att lÃ¥ta andra platser spegla frÃ¥n dig, sÃ¥ kan du Ã¶vervÃ¤ga att berÃ¤tta det
+fÃ¶r oss, sÃ¥ att vi kan Ã¶vervÃ¤ga att lÃ¥ta dig bli &rdquo;push&rdquo;-server.
+Du kan dock inte fÃ¶rvÃ¤nta dig att det hÃ¤nder inom kort tid, eftersom
+vi redan har ett hyfsat antal nivÃ¥-1-speglar.
 </p>
 
-<p>Om din plats blir en primär &rdquo;push&rdquo;-spegel för ftp-arkivet behöver du
-en av följande filer:</p>
+<p>Om din plats blir en primÃ¤r &rdquo;push&rdquo;-spegel fÃ¶r ftp-arkivet behÃ¶ver du
+en av fÃ¶ljande filer:</p>
 <ul>
-  <li><a href="id_rsa.pub.ftp-master">öppen SSH2-nyckel använd av
+  <li><a href="id_rsa.pub.ftp-master">Ã¶ppen SSH2-nyckel anvÃ¤nd av
     ftp-master.debian.org</a>.</li>
-  <li><a href="id_rsa.pub.syncproxy.eu">öppen SSH2-nyckel använd av
+  <li><a href="id_rsa.pub.syncproxy.eu">Ã¶ppen SSH2-nyckel anvÃ¤nd av
     syncproxy.eu.debian.org</a>.</li>
-  <li><a href="id_rsa.pub.syncproxy.wna">öppen SSH2-nyckel använd av
+  <li><a href="id_rsa.pub.syncproxy.wna">Ã¶ppen SSH2-nyckel anvÃ¤nd av
     syncproxy.wna.debian.org</a>.</li>
 </ul>
 
-<p>Om din plats blir en primär &rdquo;push&rdquo;-spegel för webbsidorna behöver du
-den <a href="id_rsa.pub.www-master">öppna SSH2-nyckeln använd av
+<p>Om din plats blir en primÃ¤r &rdquo;push&rdquo;-spegel fÃ¶r webbsidorna behÃ¶ver du
+den <a href="id_rsa.pub.www-master">Ã¶ppna SSH2-nyckeln anvÃ¤nd av
 www-master.debian.org</a>.
 </p>
 
-<h2>Sätta upp en &rdquo;push&rdquo;-speglingsserver</h2>
+<h2>SÃ¤tta upp en &rdquo;push&rdquo;-speglingsserver</h2>
 
-<p>Givet det stora antalet speglar och storleken på Debianarkivet är det inte
-möjligt för alla speglar att använda huvudarkivet som uppströmskälla för
+<p>Givet det stora antalet speglar och storleken pÃ¥ Debianarkivet Ã¤r det inte
+mÃ¶jligt fÃ¶r alla speglar att anvÃ¤nda huvudarkivet som uppstrÃ¶mskÃ¤lla fÃ¶r
 Debian (dvs. deras &rdquo;push&rdquo;-speglingsserver).
-Det är mycket mer effektivt att fördela belastningen över ett antal
-&rdquo;push&rdquo;-speglar utspridda över jordklotet.
+Det Ã¤r mycket mer effektivt att fÃ¶rdela belastningen Ã¶ver ett antal
+&rdquo;push&rdquo;-speglar utspridda Ã¶ver jordklotet.
 </p>
 
-<p>&rdquo;Push&rdquo;-speglingsservrar bör vara
-&rdquo;push&rdquo;-speglingsklienter hos huvudarkivet (eller möjligen någon
-annan &rdquo;push&rdquo;-spegel), och bör dessutom
-innehålla en spegel av hela Debianarkivet.
+<p>&rdquo;Push&rdquo;-speglingsservrar bÃ¶r vara
+&rdquo;push&rdquo;-speglingsklienter hos huvudarkivet (eller mÃ¶jligen nÃ¥gon
+annan &rdquo;push&rdquo;-spegel), och bÃ¶r dessutom
+innehÃ¥lla en spegel av hela Debianarkivet.
 </p>
 
-<p>Se <a href="push_server">förklaringssidan</a> för detaljerad information.</p>
+<p>Se <a href="push_server">fÃ¶rklaringssidan</a> fÃ¶r detaljerad information.</p>

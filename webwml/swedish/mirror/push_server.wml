@@ -1,26 +1,26 @@
-#use wml::debian::template title="Sätta upp en &quot;push&quot;-server"
+#use wml::debian::template title="SÃ¤tta upp en &quot;push&quot;-server"
 #use wml::debian::translation-check translation="1.20"
 #use wml::debian::toc
 
-<p>Att sätta upp en <q>push</q>server består av två grundläggande steg:
-Ställa in rsync-åtkomst (för normal <q>pull</q>-spegling) och ställa in en
-ssh-utlösarmekanism (för att trycka (<q>push</q>) i <q>pull</q>-speglingen).
+<p>Att sÃ¤tta upp en <q>push</q>server bestÃ¥r av tvÃ¥ grundlÃ¤ggande steg:
+StÃ¤lla in rsync-Ã¥tkomst (fÃ¶r normal <q>pull</q>-spegling) och stÃ¤lla in en
+ssh-utlÃ¶sarmekanism (fÃ¶r att trycka (<q>push</q>) i <q>pull</q>-speglingen).
 </p>
 
-<p><small>(För mer information om vad en <q>push</q>-server är, läs
-<a href="push_mirroring"><q>push</q>-speglingsförklaringen</a>.)</small>
+<p><small>(FÃ¶r mer information om vad en <q>push</q>-server Ã¤r, lÃ¤s
+<a href="push_mirroring"><q>push</q>-speglingsfÃ¶rklaringen</a>.)</small>
 </p>
 
 <toc-display />
 
-<toc-add-entry name="rsync">Ställa in rsync</toc-add-entry>
+<toc-add-entry name="rsync">StÃ¤lla in rsync</toc-add-entry>
 
 <p>Installera <code>rsync</code> version 2.1.1 eller senare.
-Om din server kör Debian installerar du bara det senaste
+Om din server kÃ¶r Debian installerar du bara det senaste
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>-paketet.
 </p>
 
-<p>Skapa <code>rsyncd.conf</code> och lägg in något i stil med detta:
+<p>Skapa <code>rsyncd.conf</code> och lÃ¤gg in nÃ¥got i stil med detta:
 </p>
 
 <pre>
@@ -37,29 +37,29 @@ socket options = SO_KEEPALIVE
   secrets file = /etc/rsyncd/debian.secrets
 </pre>
 
-<p>Lägg en post för varje server som hämtar från dig med <q>push</q> i filen
+<p>LÃ¤gg en post fÃ¶r varje server som hÃ¤mtar frÃ¥n dig med <q>push</q> i filen
 <code>/etc/rsyncd/debian.secrets</code>:
 </p>
 
 <pre>
-auktoriserat_konto1:ett_lösenord
-auktoriserat_konto2:annat_lösenord
-auktoriserat_kontoN:lösenord
+auktoriserat_konto1:ett_lÃ¶senord
+auktoriserat_konto2:annat_lÃ¶senord
+auktoriserat_kontoN:lÃ¶senord
 </pre>
 
-<p>Du har nu gett nedströmsspeglarna tillgång till arkivet på din maskin.
+<p>Du har nu gett nedstrÃ¶msspeglarna tillgÃ¥ng till arkivet pÃ¥ din maskin.
 </p>
 
-<p>Du vill antagligen starta rsyncprocessen från inetd.
-För att göra detta måste du lägga in rsync-servicen i filen
-<code>/etc/services</code> (om det inte redan står där), så här:
+<p>Du vill antagligen starta rsyncprocessen frÃ¥n inetd.
+FÃ¶r att gÃ¶ra detta mÃ¥ste du lÃ¤gga in rsync-servicen i filen
+<code>/etc/services</code> (om det inte redan stÃ¥r dÃ¤r), sÃ¥ hÃ¤r:
 </p>
 
 <pre>
 rsync           873/tcp
 </pre>
 
-<p>För att aktivera servern från inetd, lägger du till följande i din
+<p>FÃ¶r att aktivera servern frÃ¥n inetd, lÃ¤gger du till fÃ¶ljande i din
 <code>/etc/inetd.conf</code>:
 </p>
 
@@ -68,38 +68,38 @@ rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daem
 </pre>
 
 <p>
-   (Kom ihåg att sända en HUP-signal till inetd för att tala om för det
-    att läsa om sin inställningsfil efter att du ändrat den.)
+   (Kom ihÃ¥g att sÃ¤nda en HUP-signal till inetd fÃ¶r att tala om fÃ¶r det
+    att lÃ¤sa om sin instÃ¤llningsfil efter att du Ã¤ndrat den.)
 </p>
 
-<toc-add-entry name="sshtrigger">Ställa in ssh-utlösarmekanism</toc-add-entry>
+<toc-add-entry name="sshtrigger">StÃ¤lla in ssh-utlÃ¶sarmekanism</toc-add-entry>
 
-<p>Skapa en ny ssh-nyckel för kontot som du använder för att spegla Debian.
-Se till att du inte skriver över din riktiga ssh-nyckel genom att
-använda flaggan -f, till exempel:
+<p>Skapa en ny ssh-nyckel fÃ¶r kontot som du anvÃ¤nder fÃ¶r att spegla Debian.
+Se till att du inte skriver Ã¶ver din riktiga ssh-nyckel genom att
+anvÃ¤nda flaggan -f, till exempel:
 </p>
 
 <pre>
 ssh-keygen -f ~/.ssh/identity.minserver
 </pre>
 
-<p>Se till att den nya öppna nyckeln (~/.ssh/identity.minserver.pub)
-innehåller följande i början där IPADRESS är din uppströmsspegels IP:
+<p>Se till att den nya Ã¶ppna nyckeln (~/.ssh/identity.minserver.pub)
+innehÃ¥ller fÃ¶ljande i bÃ¶rjan dÃ¤r IPADRESS Ã¤r din uppstrÃ¶msspegels IP:
 </p>
 
 <pre>
 no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADRESS" &amp;"
 </pre>
 
-<p>Du måste ställa in skriptet så att det kontaktar speglar nedströms.
-Skapa en fil med namnet <code>signal</code> med följande innehåll:
+<p>Du mÃ¥ste stÃ¤lla in skriptet sÃ¥ att det kontaktar speglar nedstrÃ¶ms.
+Skapa en fil med namnet <code>signal</code> med fÃ¶ljande innehÃ¥ll:
 </p>
 
 <protect>
 <pre>
 #!/bin/sh
 
-# Detta skript anropas för att signalera fjärrvärden att det är dags
+# Detta skript anropas fÃ¶r att signalera fjÃ¤rrvÃ¤rden att det Ã¤r dags
 # att spegla arkivet.
 
 echo Signalerar $1
@@ -107,36 +107,36 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
 </pre>
 </protect>
 
-<p>Detta skript kommer att logga in på fjärrvärden genom att använda den
-speciella ssh-nyckel du skapade ovan, förutsatt att varje nedströmsspegelsoperatör
-lägger till denna nyckel till deras egen ~/.ssh/authorized_keys (och ersätter
-<q>ftpsync</q> med namnet på deras kommando för att starta speglingen).
-Skriptet själv gör inget användbart på den andra sidan, 
-kommandot kommer att köras som specificerat i nyckelinställningarna.
+<p>Detta skript kommer att logga in pÃ¥ fjÃ¤rrvÃ¤rden genom att anvÃ¤nda den
+speciella ssh-nyckel du skapade ovan, fÃ¶rutsatt att varje nedstrÃ¶msspegelsoperatÃ¶r
+lÃ¤gger till denna nyckel till deras egen ~/.ssh/authorized_keys (och ersÃ¤tter
+<q>ftpsync</q> med namnet pÃ¥ deras kommando fÃ¶r att starta speglingen).
+Skriptet sjÃ¤lv gÃ¶r inget anvÃ¤ndbart pÃ¥ den andra sidan, 
+kommandot kommer att kÃ¶ras som specificerat i nyckelinstÃ¤llningarna.
 </p>
 
-<p>För att faktiskt signalera speglarna måste du köra
-<code>./signal &lt;plats&gt; &lt;användar-id&gt;</code> efter att din egen
-rsyncning utförts.
-Därmed kommer du, så snart som din plats har speglat klart från din uppströmsplats,
-att börja föra speglingen vidare (<q>push</q>) till de nedströms från dig.
+<p>FÃ¶r att faktiskt signalera speglarna mÃ¥ste du kÃ¶ra
+<code>./signal &lt;plats&gt; &lt;anvÃ¤ndar-id&gt;</code> efter att din egen
+rsyncning utfÃ¶rts.
+DÃ¤rmed kommer du, sÃ¥ snart som din plats har speglat klart frÃ¥n din uppstrÃ¶msplats,
+att bÃ¶rja fÃ¶ra speglingen vidare (<q>push</q>) till de nedstrÃ¶ms frÃ¥n dig.
 </p>
 
 <p>Du kan placera dessa kommandon antingen i slutet av ditt
-<code>ftpsync.conf</code> eller, om det är enklare för dig, i ett nytt
-skript och sedan köra detta skript från <code>anonftpsync</code>, exempelvis:
+<code>ftpsync.conf</code> eller, om det Ã¤r enklare fÃ¶r dig, i ett nytt
+skript och sedan kÃ¶ra detta skript frÃ¥n <code>anonftpsync</code>, exempelvis:
 </p>
 
 <protect>
 <pre>
 #!/bin/sh
 
-# Detta skript anropas av websync för att signalera nedströmsspeglarna.
+# Detta skript anropas av websync fÃ¶r att signalera nedstrÃ¶msspeglarna.
 
 cd $HOME
 
-./signal någon.annan.plats archvsync
-./signal och.ytterligare.en kontopåandrasidan
+./signal nÃ¥gon.annan.plats archvsync
+./signal och.ytterligare.en kontopÃ¥andrasidan
 </pre>
 </protect>
 

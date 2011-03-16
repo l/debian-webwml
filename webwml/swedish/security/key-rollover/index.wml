@@ -3,25 +3,25 @@
 
 <p>
 I
-<a href="$(HOME)/security/2008/dsa-1571">Debians säkerhetsbulletin 1571</a>
-avslöjade Debians säkerhetsgrupp en sårbarhet i slumptalsgeneratorn som
-användes av OpenSSL på Debian och dess avledda versioner.
-Som en följd av denna sårbarhet förekommer vissa kryptografiska nycklar
-mycket oftare än de skulle, så att en angripare kunde gissa nyckeln med
-ett &rdquo;brute force&rdquo;-angrepp givet grundläggande kunskap om
+<a href="$(HOME)/security/2008/dsa-1571">Debians sÃ¤kerhetsbulletin 1571</a>
+avslÃ¶jade Debians sÃ¤kerhetsgrupp en sÃ¥rbarhet i slumptalsgeneratorn som
+anvÃ¤ndes av OpenSSL pÃ¥ Debian och dess avledda versioner.
+Som en fÃ¶ljd av denna sÃ¥rbarhet fÃ¶rekommer vissa kryptografiska nycklar
+mycket oftare Ã¤n de skulle, sÃ¥ att en angripare kunde gissa nyckeln med
+ett &rdquo;brute force&rdquo;-angrepp givet grundlÃ¤ggande kunskap om
 systemet.
-Detta påverkar speciellt användningen av krypteringsnycklar i OpenSSH,
+Detta pÃ¥verkar speciellt anvÃ¤ndningen av krypteringsnycklar i OpenSSH,
 OpenVPN och SSL-certifikat.
 </p>
 
 <p>
-Denna sida beskriver hur du utför en nyckelbytesprocess för paket vars
-nycklar påverkas av OpenSSL-sårbarheten.
+Denna sida beskriver hur du utfÃ¶r en nyckelbytesprocess fÃ¶r paket vars
+nycklar pÃ¥verkas av OpenSSL-sÃ¥rbarheten.
 </p>
 
 <ul>
 <li><b><a href="#openssh">OpenSSH</a></b></li>
-<li><b><a href="#openssl">OpenSSL: Allmänna instruktioner för att generera PEM-nycklar</a></b></li>
+<li><b><a href="#openssl">OpenSSL: AllmÃ¤nna instruktioner fÃ¶r att generera PEM-nycklar</a></b></li>
 
 <li><a href="#bincimap">bincimap</a></li>
 <li><a href="#boxbackup">boxbackup</a></li>
@@ -45,8 +45,8 @@ nycklar påverkas av OpenSSL-sårbarheten.
 </ul>
 
 <p>
-Det finns ytterligare programvaror som använder kryptografiska nycklar men
-som <a href="notvuln">inte påverkas</a> eftersom OpenSSL inte använts för
+Det finns ytterligare programvaror som anvÃ¤nder kryptografiska nycklar men
+som <a href="notvuln">inte pÃ¥verkas</a> eftersom OpenSSL inte anvÃ¤nts fÃ¶r
 att generera eller kommunicera dess nycklar.
 </p>
 
@@ -58,46 +58,46 @@ att generera eller kommunicera dess nycklar.
 </ul>
 
 <p>
-För instruktioner om hur du byter nycklar för annan programvara kan du se
-användarinsänd information på <url http://wiki.debian.org/SSLkeys>.
+FÃ¶r instruktioner om hur du byter nycklar fÃ¶r annan programvara kan du se
+anvÃ¤ndarinsÃ¤nd information pÃ¥ <url http://wiki.debian.org/SSLkeys>.
 </p>
 
 <h1><a name="openssh">OpenSSH</a></h1>
 
 <p>
-Ett uppdaterat paket har släppts genom
+Ett uppdaterat paket har slÃ¤ppts genom
 <a href="$(HOME)/security/2008/dsa-1576">DSA-1576</a>,
-vilket förenklar uppdatering av nycklar.
+vilket fÃ¶renklar uppdatering av nycklar.
 </p>
 
-<p>1. Installera säkerhetsuppdateringarna i DSA-1576</p>
+<p>1. Installera sÃ¤kerhetsuppdateringarna i DSA-1576</p>
 
 <p>
-Denna uppdatering innehåller ett beroende på openssl-uppdateringen och
-kommer automatiskt installera en rättad version av libssl0.9.8-paketet, samt
+Denna uppdatering innehÃ¥ller ett beroende pÃ¥ openssl-uppdateringen och
+kommer automatiskt installera en rÃ¤ttad version av libssl0.9.8-paketet, samt
 det nya paketet openssh-blacklist.
 </p>
 
 <p>
-När uppdateringen har installerats kommer svaga användarnycklar automatiskt
-att avvisas när så är möjligt (även om de inte alltid kan identifieras).
-Om du använder sådana nycklar för autentisering av användare kommer de
-omedelbart att sluta fungera och måste ersättas (se steg 3).
+NÃ¤r uppdateringen har installerats kommer svaga anvÃ¤ndarnycklar automatiskt
+att avvisas nÃ¤r sÃ¥ Ã¤r mÃ¶jligt (Ã¤ven om de inte alltid kan identifieras).
+Om du anvÃ¤nder sÃ¥dana nycklar fÃ¶r autentisering av anvÃ¤ndare kommer de
+omedelbart att sluta fungera och mÃ¥ste ersÃ¤ttas (se steg 3).
 </p>
 
 <p>
-OpenSSH-värdnycklar kan omskapas automatiskt när
-OpenSSH-säkerhetsuppdateringen installeras.
-Uppdateringen kommer be dig om bekräftelse innan den gör det.
+OpenSSH-vÃ¤rdnycklar kan omskapas automatiskt nÃ¤r
+OpenSSH-sÃ¤kerhetsuppdateringen installeras.
+Uppdateringen kommer be dig om bekrÃ¤ftelse innan den gÃ¶r det.
 </p>
 
 <p>2. Uppdatera OpenSSH:s known_hosts-filer</p>
 
 <p>
-När värdnyckeln omskapas kommer det att göra så att en varning visas när du
-ansluter till systemet med SSH fram till att värdnyckeln uppdaterats i filen
-known_hosts på klienten.
-Varningen ser ut som följer:
+NÃ¤r vÃ¤rdnyckeln omskapas kommer det att gÃ¶ra sÃ¥ att en varning visas nÃ¤r du
+ansluter till systemet med SSH fram till att vÃ¤rdnyckeln uppdaterats i filen
+known_hosts pÃ¥ klienten.
+Varningen ser ut som fÃ¶ljer:
 </p>
 
 <pre lang="en">
@@ -111,77 +111,77 @@ It is also possible that the RSA host key has just been changed.
 
 
 <p>
-I det här fallet har nyckeln helt enkelt ändrats, och du bör uppdatera
+I det hÃ¤r fallet har nyckeln helt enkelt Ã¤ndrats, och du bÃ¶r uppdatera
 motsvarande known_hosts-fil, enligt beskrivningen i varningsmeddelandet.
 </p>
 
 <p>
-Vi rekommenderar att du använder en betrodd kanal för att hämta
+Vi rekommenderar att du anvÃ¤nder en betrodd kanal fÃ¶r att hÃ¤mta
 servernyckeln.
-Nyckeln finns i filen /etc/ssh/ssh_host_rsa_key.pub på severn; dess
+Nyckeln finns i filen /etc/ssh/ssh_host_rsa_key.pub pÃ¥ severn; dess
 fingeravtryck kan skrivas ut med kommandot:
 </p>
 
       <p>ssh-keygen -l -f /etc/ssh/ssh_host_rsa_key.pub</p>
 
 <p>
-Förutom användarspecifika known_hosts-filer kan det finnas en systemglobal
+FÃ¶rutom anvÃ¤ndarspecifika known_hosts-filer kan det finnas en systemglobal
 fil som heter /etc/ssh/ssh_known_hosts.
-Denna fil används både av ssh-klienten och av sshd för
+Denna fil anvÃ¤nds bÃ¥de av ssh-klienten och av sshd fÃ¶r
 hosts.equiv-funktionalitet.
-Även denna fil behöver uppdateras.
+Ã„ven denna fil behÃ¶ver uppdateras.
 </p>
 
-<p>3. Kontrollera samtliga OpenSSH-användarnycklar</p>
+<p>3. Kontrollera samtliga OpenSSH-anvÃ¤ndarnycklar</p>
 
 <p>
-Den mest säkra lösningen är att skapa alla OpenSSH-användarnycklar på nytt,
-förutom när det är möjligt att med tillräckligt hög sannolikhet avgöra att
+Den mest sÃ¤kra lÃ¶sningen Ã¤r att skapa alla OpenSSH-anvÃ¤ndarnycklar pÃ¥ nytt,
+fÃ¶rutom nÃ¤r det Ã¤r mÃ¶jligt att med tillrÃ¤ckligt hÃ¶g sannolikhet avgÃ¶ra att
 nyckeln har
-skapats på ett system som inte påverkats av problemet.
+skapats pÃ¥ ett system som inte pÃ¥verkats av problemet.
 </p>
 
 <p>
-Se om din nyckel påverkas genom att köra verktyget ssh-vulnkey, vilket
-medföljer denna säkerhetsuppdatering.
-Som standard kommer ssh-vulnkey att se på standardplatsen för
-användarnycklar (~/.ssh/id_rsa, ~/.ssh/id_dsa och ~/.ssh/identity), din
+Se om din nyckel pÃ¥verkas genom att kÃ¶ra verktyget ssh-vulnkey, vilket
+medfÃ¶ljer denna sÃ¤kerhetsuppdatering.
+Som standard kommer ssh-vulnkey att se pÃ¥ standardplatsen fÃ¶r
+anvÃ¤ndarnycklar (~/.ssh/id_rsa, ~/.ssh/id_dsa och ~/.ssh/identity), din
 authorized_keys-fil (~/.ssh/authorized_keys och ~/.ssh/authorized_keys2),
-samt systemets värdnycklar (/etc/ssh/ssh_host_dsa_key och
+samt systemets vÃ¤rdnycklar (/etc/ssh/ssh_host_dsa_key och
 /etc/ssh/ssh_host_rsa_key).
 </p>
 
 <p>
-För att kontrollera alla dina egna nycklar, förutsatt att de finns på
+FÃ¶r att kontrollera alla dina egna nycklar, fÃ¶rutsatt att de finns pÃ¥
 standardplatser (~/.ssh/id_rsa, ~/.ssh/id_dsa, eller ~/.ssh/identity):
 </p>
 
      <p>ssh-vulnkey</p>
 
 <p>
-För att kontrollera alla nycklar på ditt system:
+FÃ¶r att kontrollera alla nycklar pÃ¥ ditt system:
 </p>
 
      <p>sudo ssh-vulnkey -a</p>
 
 <p>
-För att kontrollera en nyckel på en icke-standardiserad plats:
+FÃ¶r att kontrollera en nyckel pÃ¥ en icke-standardiserad plats:
 </p>
 
-     <p>ssh-vulnkey /sökväg/till/nyckel</p>
+     <p>ssh-vulnkey /sÃ¶kvÃ¤g/till/nyckel</p>
 
 <p>
-Om ssh-vulnkey säger <q>Unknown (no blacklist information)</q> (okänd
-&ndash; svartlisteinformation saknas) så saknas information om huruvida
-nyckeln påverkas.
-Om du är osäker kan du ta bort nyckeln och skapa en ny.
+Om ssh-vulnkey sÃ¤ger <q>Unknown (no blacklist information)</q> (okÃ¤nd
+&ndash; svartlisteinformation saknas) sÃ¥ saknas information om huruvida
+nyckeln pÃ¥verkas.
+Om du Ã¤r osÃ¤ker kan du ta bort nyckeln och skapa en ny.
 </p>
 
-<p>4. Omskapa eventuella påverkade användarnycklar</p>
+<p>4. Omskapa eventuella pÃ¥verkade anvÃ¤ndarnycklar</p>
 
 <p>
-OpenSSH-nycklar som används för användarautentisering måste skapas om
-manuellt, och det gäller även de som har överförts till ett annat system
+OpenSSH-nycklar som anvÃ¤nds fÃ¶r anvÃ¤ndarautentisering mÃ¥ste skapas om
+manuellt, och det gÃ¤ller Ã¤ven de som har Ã¶verfÃ¶rts till ett annat system
 efter att de skapades.
 </p>
 
@@ -191,33 +191,33 @@ Nya nycklar kan skapas med ssh-keygen, t.ex:</p>
 <pre lang="en">
    $ ssh-keygen
    Generating public/private rsa key pair.
-   Enter file in which to save the key (/home/användare/.ssh/id_rsa):
+   Enter file in which to save the key (/home/anvÃ¤ndare/.ssh/id_rsa):
    Enter passphrase (empty for no passphrase):
    Enter same passphrase again:
-   Your identification has been saved in /home/användare/.ssh/id_rsa.
-   Your public key has been saved in /home/användare/.ssh/id_rsa.pub.
+   Your identification has been saved in /home/anvÃ¤ndare/.ssh/id_rsa.
+   Your public key has been saved in /home/anvÃ¤ndare/.ssh/id_rsa.pub.
    The key fingerprint is:
-   00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00 användare@värd
+   00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00 anvÃ¤ndare@vÃ¤rd
 </pre>
 
-<p>5. Uppdatera authorized_keys-filer (om nödvändigt)</p>
+<p>5. Uppdatera authorized_keys-filer (om nÃ¶dvÃ¤ndigt)</p>
 
 <p>
-När användarnycklarna har omskapats måste de relevanta öppna nycklarna
+NÃ¤r anvÃ¤ndarnycklarna har omskapats mÃ¥ste de relevanta Ã¶ppna nycklarna
 kopieras till alla authorized_keys-filer (och authorized_keys2-filer, om de
-behövs) på fjärrsystem.
-Se till att ta bort de nycklar som påverkas från dessa filer.
+behÃ¶vs) pÃ¥ fjÃ¤rrsystem.
+Se till att ta bort de nycklar som pÃ¥verkas frÃ¥n dessa filer.
 </p>
    
-<h1><a name="openssl">OpenSSL: Allmänna instruktioner för att generera PEM-nycklar</a></h1>
+<h1><a name="openssl">OpenSSL: AllmÃ¤nna instruktioner fÃ¶r att generera PEM-nycklar</a></h1>
 
 <p>
-Det här är bara en påminnelse till de som (om)skapar PEM-kodade certifikat.
-Din server har troligtvis en annan policy på plats för hur du hanterar
-nycklar som du bör följa.
-Dessutom kan du behöva få certifikaten signerade på nytt av ett
-tredjepartscertifieringsorgan, snarare än att använda ett självsignerat
-certifikat, vilket är vad som beskrivs här:
+Det hÃ¤r Ã¤r bara en pÃ¥minnelse till de som (om)skapar PEM-kodade certifikat.
+Din server har troligtvis en annan policy pÃ¥ plats fÃ¶r hur du hanterar
+nycklar som du bÃ¶r fÃ¶lja.
+Dessutom kan du behÃ¶va fÃ¥ certifikaten signerade pÃ¥ nytt av ett
+tredjepartscertifieringsorgan, snarare Ã¤n att anvÃ¤nda ett sjÃ¤lvsignerat
+certifikat, vilket Ã¤r vad som beskrivs hÃ¤r:
 </p>
 
 <pre>
@@ -230,10 +230,10 @@ openssl req -new -key ../private/minserver.pem -x509 -days 9999 -out minserver.p
 <h1><a name="bincimap">bincimap</a></h1>
 
 <p>
-Paketet bincimap skapar ett självsignerat certifikat för
-bincimap-ssl-tjänsten automatiskt, med hjälp av openssl-programmet, och
-lägger det i /etc/ssl/certs/imapd.pem.
-För att skapa ett nytt, kör:
+Paketet bincimap skapar ett sjÃ¤lvsignerat certifikat fÃ¶r
+bincimap-ssl-tjÃ¤nsten automatiskt, med hjÃ¤lp av openssl-programmet, och
+lÃ¤gger det i /etc/ssl/certs/imapd.pem.
+FÃ¶r att skapa ett nytt, kÃ¶r:
 </p>
 
 <pre>
@@ -244,87 +244,87 @@ dpkg-reconfigure bincimap
 <h1><a name="boxbackup">boxbackup</a></h1>
 
 <p>
-Boxbackup finns inte i Debians stabila utgåva, bara i
-uttestningsutgåvan/Lenny.
+Boxbackup finns inte i Debians stabila utgÃ¥va, bara i
+uttestningsutgÃ¥van/Lenny.
 </p>
 
 <p>
-Uppströmsförfattarna har publicerats en första konsekvensanalys för
-nyckelmaterial som skapats på system där slumptalsgeneratorn inte är
-tillräckligt slumpmässig.
+UppstrÃ¶msfÃ¶rfattarna har publicerats en fÃ¶rsta konsekvensanalys fÃ¶r
+nyckelmaterial som skapats pÃ¥ system dÃ¤r slumptalsgeneratorn inte Ã¤r
+tillrÃ¤ckligt slumpmÃ¤ssig.
 <a href="http://lists.warhead.org.uk/pipermail/boxbackup/2008-May/004476.html">Se
-detaljerna här</a>.
+detaljerna hÃ¤r</a>.
 </p>
 
 <p>
-Om slumptalsgeneratorn för din OpenSSL inte var tillräckligt slumpmässig
-måste du:
+Om slumptalsgeneratorn fÃ¶r din OpenSSL inte var tillrÃ¤ckligt slumpmÃ¤ssig
+mÃ¥ste du:
 </p>
 
 <ul>
-<li>Skapa om alla påverkade certifikat, vilka har skapats eller signerats på
-ett påverkat system</li>
+<li>Skapa om alla pÃ¥verkade certifikat, vilka har skapats eller signerats pÃ¥
+ett pÃ¥verkat system</li>
 <li>Skapa om alla datanycklar (*-FileEncKeys.raw)</li>
-<li>Förstör data lagrad på dina servrar med tillräcklig hög säkerhet (skriv
-åtminstone över med nollor, mer om du är paranoid)</li>
-<li>Sänd in allting igen</li>
-<li>Vidta lämpliga åtgärder under förutsättningen att du har lagrat dina data
-i klartext på en öppen server utan autentisering (dvs., starta från början,
-ta bort alla spår av säkerhetskopierade data, och vidta andra åtgärder för
+<li>FÃ¶rstÃ¶r data lagrad pÃ¥ dina servrar med tillrÃ¤cklig hÃ¶g sÃ¤kerhet (skriv
+Ã¥tminstone Ã¶ver med nollor, mer om du Ã¤r paranoid)</li>
+<li>SÃ¤nd in allting igen</li>
+<li>Vidta lÃ¤mpliga Ã¥tgÃ¤rder under fÃ¶rutsÃ¤ttningen att du har lagrat dina data
+i klartext pÃ¥ en Ã¶ppen server utan autentisering (dvs., starta frÃ¥n bÃ¶rjan,
+ta bort alla spÃ¥r av sÃ¤kerhetskopierade data, och vidta andra Ã¥tgÃ¤rder fÃ¶r
 att minska exponeringen av dina hemligheter)</li>
 </ul>
 
 <h1><a name="cryptsetup">cryptsetup</a></h1>
 
 <p>
-Cryptsetup använder i sig självt inte openssl för kryptering (gäller både
+Cryptsetup anvÃ¤nder i sig sjÃ¤lvt inte openssl fÃ¶r kryptering (gÃ¤ller bÃ¥de
 LUKS- och dm-crypt-enheter).
 </p>
 
 <p>
-<em>Om</em> cryptsetup har konfigurerats att använda SSL-krypterade
-nyckelfiler (en icke-standardinställning som måste konfigureras explicit av
-användaren), och nyckelfilen genererades av en trasig version av openssl, är
-krypteringen av nyckelfilen svagare än förväntad (eftersom saltet inte är
-verkligt slumpmässig).
+<em>Om</em> cryptsetup har konfigurerats att anvÃ¤nda SSL-krypterade
+nyckelfiler (en icke-standardinstÃ¤llning som mÃ¥ste konfigureras explicit av
+anvÃ¤ndaren), och nyckelfilen genererades av en trasig version av openssl, Ã¤r
+krypteringen av nyckelfilen svagare Ã¤n fÃ¶rvÃ¤ntad (eftersom saltet inte Ã¤r
+verkligt slumpmÃ¤ssig).
 </p>
 
 <p>
-Lösningen är antingen att kryptera nyckelfilen på nytt (om du är
-tillräckligt säker på att den krypterade nyckeln inte har tillhandahållits
-till några tredjeparter) eller att ta bort och ominstallera påverkade
+LÃ¶sningen Ã¤r antingen att kryptera nyckelfilen pÃ¥ nytt (om du Ã¤r
+tillrÃ¤ckligt sÃ¤ker pÃ¥ att den krypterade nyckeln inte har tillhandahÃ¥llits
+till nÃ¥gra tredjeparter) eller att ta bort och ominstallera pÃ¥verkade
 partitioner med en ny nyckel.
 </p>
 
 <p>
-Instruktioner för att kryptera en nyckelfil på nytt:
+Instruktioner fÃ¶r att kryptera en nyckelfil pÃ¥ nytt:
 </p>
 
 <p>
-Utför följande steg på varje SSL-krypterad nyckelfil, men ersätt
-&lt;sökväg_till_sslkrypterad_nyckel&gt; med den faktiska sökvägen till
+UtfÃ¶r fÃ¶ljande steg pÃ¥ varje SSL-krypterad nyckelfil, men ersÃ¤tt
+&lt;sÃ¶kvÃ¤g_till_sslkrypterad_nyckel&gt; med den faktiska sÃ¶kvÃ¤gen till
 nyckelfilen:
 </p>
 
 <pre>
 tmpkey=\$(tempfile)
-openssl enc -aes-256-cbc -d -salt -in &lt;sökväg_till_sslkrypterad_nyckel&gt; -out "$tmpkey"
-shred -uz &lt;sökväg_till_sslkrypterad_nyckel&gt;
-openssl enc -aes-256-cbc -e -salt -in "$tmpkey" -out &lt;sökväg_till_sslkrypterad_nyckel&gt;
+openssl enc -aes-256-cbc -d -salt -in &lt;sÃ¶kvÃ¤g_till_sslkrypterad_nyckel&gt; -out "$tmpkey"
+shred -uz &lt;sÃ¶kvÃ¤g_till_sslkrypterad_nyckel&gt;
+openssl enc -aes-256-cbc -e -salt -in "$tmpkey" -out &lt;sÃ¶kvÃ¤g_till_sslkrypterad_nyckel&gt;
 shred -uz "$tmpkey"
 </pre>
 
 <h1><a name="dropbear">dropbear</a></h1>
 
 <p>
-Om du har nycklar i /etc/ssh/*host* tar du antingen bort dem, eller följer
-<a href="#openssh">instruktionerna för openssh</a> först, innan du
+Om du har nycklar i /etc/ssh/*host* tar du antingen bort dem, eller fÃ¶ljer
+<a href="#openssh">instruktionerna fÃ¶r openssh</a> fÃ¶rst, innan du
 uppdaterar dropbears filer.
 </p>
 
 <p>
 Dropbears postinst konverterar openssh-nycklar till dropbear-format om den
-inte hittar dropbear-värdnycklar.
+inte hittar dropbear-vÃ¤rdnycklar.
 </p>
 
 <pre>
@@ -333,29 +333,29 @@ dpkg-reconfigure dropbear
 </pre>
 
 <p>
-Observera att nycklar som har skapats av Dropbear självt inte är sårbara
-(det använder libtomcrypt istället för OpenSSL).
+Observera att nycklar som har skapats av Dropbear sjÃ¤lvt inte Ã¤r sÃ¥rbara
+(det anvÃ¤nder libtomcrypt istÃ¤llet fÃ¶r OpenSSL).
 </p>
 
 <h1><a name="ekg">ekg</a></h1>
 
 <p>
-Användare av programmen ekg och ekg2 (det sistnämnda endast i den
-experimentella utgåvan), som använder
+AnvÃ¤ndare av programmen ekg och ekg2 (det sistnÃ¤mnda endast i den
+experimentella utgÃ¥van), som anvÃ¤nder
 <q>SIM</q>-krypteringsfunktionaliteten, och som har skapat ett nyckelpar med
-kommandot <q>/key [-g|--generate]</q> (som använder libssl för att göra sitt
-jobb) bör skapa nya nycklar efter att ha uppgraderat libssl och startat om
+kommandot <q>/key [-g|--generate]</q> (som anvÃ¤nder libssl fÃ¶r att gÃ¶ra sitt
+jobb) bÃ¶r skapa nya nycklar efter att ha uppgraderat libssl och startat om
 programmet.
 </p>
 
 <p>
-Uppströmsutvecklarna har publicerat information på sin webbplats:
+UppstrÃ¶msutvecklarna har publicerat information pÃ¥ sin webbplats:
 <a href="http://ekg.chmurka.net/index.php">http://ekg.chmurka.net/index.php</a>
 </p>
 
 <p>
-Om du behöver ytterligare hjälp, fråga på ekg-users@lists.ziew.org eller
-ekg2-users@lists.ziew.org (både på engelska och polska).
+Om du behÃ¶ver ytterligare hjÃ¤lp, frÃ¥ga pÃ¥ ekg-users@lists.ziew.org eller
+ekg2-users@lists.ziew.org (bÃ¥de pÃ¥ engelska och polska).
 </p>
 
 <h1><a name="ftpd-ssl">ftpd-ssl</a></h1>
@@ -366,53 +366,53 @@ dpkg-reconfigure ftpd-ssl
 </pre>
 
 <p>
-Detta täcker standardkonfigurationen.
-Om administratören lokalt har konfigurerat en SSL-infrastruktur utöver detta
-måste även dessa skapas på nytt.
+Detta tÃ¤cker standardkonfigurationen.
+Om administratÃ¶ren lokalt har konfigurerat en SSL-infrastruktur utÃ¶ver detta
+mÃ¥ste Ã¤ven dessa skapas pÃ¥ nytt.
 </p>
 
 <h1><a name="gforge">gforge</a></h1>
 
 <p>
-Paketet gforge-web-apache2 package i Sid och Lenny ställer in webbplatsen
+Paketet gforge-web-apache2 package i Sid och Lenny stÃ¤ller in webbplatsen
 med ett fuskcertifikat om det inte hittar ett riktigt certifikat.
-Användarna rekommenderas sedan att ersätta det med ett <q>riktigt</q>
+AnvÃ¤ndarna rekommenderas sedan att ersÃ¤tta det med ett <q>riktigt</q>
 certifikat.
-Fuskcertifikatet i fråga är det från Snake Oil, så det bör redan vara känt
-som svagt (även utan SSL-felet), men en del användare kanske godtar det utan
-att tänka efter.
+Fuskcertifikatet i frÃ¥ga Ã¤r det frÃ¥n Snake Oil, sÃ¥ det bÃ¶r redan vara kÃ¤nt
+som svagt (Ã¤ven utan SSL-felet), men en del anvÃ¤ndare kanske godtar det utan
+att tÃ¤nka efter.
 </p>
 
 <h1><a name="kerberos">MIT Kerberos (krb5)</a></h1>
 
 <p>
-Inga delar av MIT Kerberos i Debian 4.0 (<q>Etch</q>) använder OpenSSL, och
-därför påverkas inte Kerberos i Debian 4.0 överhuvudtaget.
+Inga delar av MIT Kerberos i Debian 4.0 (<q>Etch</q>) anvÃ¤nder OpenSSL, och
+dÃ¤rfÃ¶r pÃ¥verkas inte Kerberos i Debian 4.0 Ã¶verhuvudtaget.
 </p>
 
 <p>
-I Lenny använder det separata binärpaketet krb5-pkinit OpenSSL.
-MIT Kerberos självt genererar inte nyckelpar som skall användas över en
-längre tid, även om PKINIT-insticksprogrammet används, så eventuella
-nyckelpar tänkta att användas över längre tid har skapats utanför själva MIT
+I Lenny anvÃ¤nder det separata binÃ¤rpaketet krb5-pkinit OpenSSL.
+MIT Kerberos sjÃ¤lvt genererar inte nyckelpar som skall anvÃ¤ndas Ã¶ver en
+lÃ¤ngre tid, Ã¤ven om PKINIT-insticksprogrammet anvÃ¤nds, sÃ¥ eventuella
+nyckelpar tÃ¤nkta att anvÃ¤ndas Ã¶ver lÃ¤ngre tid har skapats utanfÃ¶r sjÃ¤lva MIT
 Kerberos-programvaran.
 PKINIT-insticksprogrammet bara refererar till befintliga nyckelpar och
-ansvarar inte för nyckelhantering.
+ansvarar inte fÃ¶r nyckelhantering.
 </p>
 <p>
-Nyckelpar som används med PKINIT över en längre tid kan vara påverkade om de
-skapats på ett påverkat Debiansystem, men alla sådana nycklar är utanför MIT
+Nyckelpar som anvÃ¤nds med PKINIT Ã¶ver en lÃ¤ngre tid kan vara pÃ¥verkade om de
+skapats pÃ¥ ett pÃ¥verkat Debiansystem, men alla sÃ¥dana nycklar Ã¤r utanfÃ¶r MIT
 Kerberos kontroll.
 </p>
 <p>
-OpenSSL:s slumptalsfunktioner används dock för DH-utbyte när
-PKINIT-autentisering används, vilket betyder att angriparen kanske kan
-använda sig av en &rdquo;brute force&rdquo;-teknik för att få tillgång till
-KDC-svaret till en PKINIT-autentisering, och därefter få tillgång till alla
-sessioner som använder tjänstebiljetter från denna autentisering.
+OpenSSL:s slumptalsfunktioner anvÃ¤nds dock fÃ¶r DH-utbyte nÃ¤r
+PKINIT-autentisering anvÃ¤nds, vilket betyder att angriparen kanske kan
+anvÃ¤nda sig av en &rdquo;brute force&rdquo;-teknik fÃ¶r att fÃ¥ tillgÃ¥ng till
+KDC-svaret till en PKINIT-autentisering, och dÃ¤refter fÃ¥ tillgÃ¥ng till alla
+sessioner som anvÃ¤nder tjÃ¤nstebiljetter frÃ¥n denna autentisering.
 </p>
 <p>
-Alla KDC:er som använder PKINIT-insticksprogrammet från Lenny bör uppdatera
+Alla KDC:er som anvÃ¤nder PKINIT-insticksprogrammet frÃ¥n Lenny bÃ¶r uppdatera
 sitt libssl0.9.8-paket omedelbart och starta om Kerberos KDC med:
 </p>
 <pre>
@@ -421,37 +421,37 @@ sitt libssl0.9.8-paket omedelbart och starta om Kerberos KDC med:
 <p>
 Alla Kerberos biljetterbjudande biljetter (TGT, <span
 lang="en">ticket-granting tickets</span>) eller krypterade sessioner som
-kommer från en PKINIT-autentisering med en Kerberos-KDC med den påverkade
-libssl bör ses på som misstänkt; det är möjligt att angripare med
-paketfångare kan kompromettera de nycklarna och sessionerna.
+kommer frÃ¥n en PKINIT-autentisering med en Kerberos-KDC med den pÃ¥verkade
+libssl bÃ¶r ses pÃ¥ som misstÃ¤nkt; det Ã¤r mÃ¶jligt att angripare med
+paketfÃ¥ngare kan kompromettera de nycklarna och sessionerna.
 </p>
 
 <h1><a name="nessus">Nessus</a></h1>
 
 <p>
-Nessus-serverpaketets (nessusd) skript som körs efter installationen skapar
-ett par SSL-nycklar för säker kommunikation mellan en Nessus-server och
--klient. Denna kommunikationskanal är att anse som komprometterad eftersom
-en illasinnad användare skulle kunna fånga informationen som sänds mellan
-servern och klienten (vilket innehåller information om sårbarheter på andra
-värdar) och möjligen sända kommandon som den inloggade användaren.
+Nessus-serverpaketets (nessusd) skript som kÃ¶rs efter installationen skapar
+ett par SSL-nycklar fÃ¶r sÃ¤ker kommunikation mellan en Nessus-server och
+-klient. Denna kommunikationskanal Ã¤r att anse som komprometterad eftersom
+en illasinnad anvÃ¤ndare skulle kunna fÃ¥nga informationen som sÃ¤nds mellan
+servern och klienten (vilket innehÃ¥ller information om sÃ¥rbarheter pÃ¥ andra
+vÃ¤rdar) och mÃ¶jligen sÃ¤nda kommandon som den inloggade anvÃ¤ndaren.
 </p>
 
 <p>
-Om administratören dessutom har skapat antingen en Nessus-CA-nyckel eller
-ett användarcertifikat (med nessus-mkcert-client) för fjärrautentisering på
-en server där en version av OpenSSL som påverkas av detta säkerhetsproblem
-är installerat bör dessa nycklar anses vara komprometterade.
-Observera att användare utifrån med tillgång till Nessus-servern kan starta
-angrepp mot servrar de har tillgång till att angripa, samt, om ativerat i
-den lokala konfigurationen (i Debian är standardvärdet <q>nej</q>) sända in
-insticksprogram som exekveras på Nessus-servern med rootbehörighet.
+Om administratÃ¶ren dessutom har skapat antingen en Nessus-CA-nyckel eller
+ett anvÃ¤ndarcertifikat (med nessus-mkcert-client) fÃ¶r fjÃ¤rrautentisering pÃ¥
+en server dÃ¤r en version av OpenSSL som pÃ¥verkas av detta sÃ¤kerhetsproblem
+Ã¤r installerat bÃ¶r dessa nycklar anses vara komprometterade.
+Observera att anvÃ¤ndare utifrÃ¥n med tillgÃ¥ng till Nessus-servern kan starta
+angrepp mot servrar de har tillgÃ¥ng till att angripa, samt, om ativerat i
+den lokala konfigurationen (i Debian Ã¤r standardvÃ¤rdet <q>nej</q>) sÃ¤nda in
+insticksprogram som exekveras pÃ¥ Nessus-servern med rootbehÃ¶righet.
 </p>
 
 <p>
 Paketskripten kommer att skapa nya OpenSSL-certifikat under konfigureringen
 om de inte hittar dem.
-Du måste ta bort de gamla certifikaten och skapa nya med:
+Du mÃ¥ste ta bort de gamla certifikaten och skapa nya med:
 </p>
 
 <pre>
@@ -463,20 +463,20 @@ dpkg-reconfigure nessusd
 </pre>
 
 <p>
-När detta är gjort måste du ta bort gamla användarnycklar i
-/var/lib/nessus/users/ANVÄNDARNAMN/auth och skapa dem på nytt med
+NÃ¤r detta Ã¤r gjort mÃ¥ste du ta bort gamla anvÃ¤ndarnycklar i
+/var/lib/nessus/users/ANVÃ„NDARNAMN/auth och skapa dem pÃ¥ nytt med
 nessus-mkcert-client.
-Gamla nycklar kommer att vara ogiltiga så fort CA-nyckeln har tagits bort.
+Gamla nycklar kommer att vara ogiltiga sÃ¥ fort CA-nyckeln har tagits bort.
 </p>
 
 <p>
-Efter att CA-nyckeln har skapats på nytt måste du även distribuera den nya
-CA_nyckeln till dina användare, och dina användare måste godta det nya
-certifikatet från Nessus-servern när de ansluter till den på nytt.
-Certifikatinställningar för den gamla servern bör tas bort automatiskt, men
-du kan även ta bort dem manuellt genom att redigera filen
-<code>.nessusrc.cert</code> (om du använder Nessus-klienten) eller
-<code>.openvasrc.cert</code> (om du använder OpenVAS-klienten).
+Efter att CA-nyckeln har skapats pÃ¥ nytt mÃ¥ste du Ã¤ven distribuera den nya
+CA_nyckeln till dina anvÃ¤ndare, och dina anvÃ¤ndare mÃ¥ste godta det nya
+certifikatet frÃ¥n Nessus-servern nÃ¤r de ansluter till den pÃ¥ nytt.
+CertifikatinstÃ¤llningar fÃ¶r den gamla servern bÃ¶r tas bort automatiskt, men
+du kan Ã¤ven ta bort dem manuellt genom att redigera filen
+<code>.nessusrc.cert</code> (om du anvÃ¤nder Nessus-klienten) eller
+<code>.openvasrc.cert</code> (om du anvÃ¤nder OpenVAS-klienten).
 </p>
 
 
@@ -489,49 +489,49 @@ dpkg-reconfigure (open|strong)swan
 </pre>
 
 <p>
-Varning: När du startar om ipsec-tjänsterna så avslutas alla öppna
-IPSec-anslutningar, vilka kanske behöver omstartas från andra sidan.
+Varning: NÃ¤r du startar om ipsec-tjÃ¤nsterna sÃ¥ avslutas alla Ã¶ppna
+IPSec-anslutningar, vilka kanske behÃ¶ver omstartas frÃ¥n andra sidan.
 </p>
 
 <h1><a name="openvpn">OpenVPN</a></h1>
 
 <p>
-Säkerhetskopiera dina hemliga nyckelfiler. Även om nyckelnamnen är
-godtyckliga kan de upptäckas genom att köra
+SÃ¤kerhetskopiera dina hemliga nyckelfiler. Ã„ven om nyckelnamnen Ã¤r
+godtyckliga kan de upptÃ¤ckas genom att kÃ¶ra
 </p>
 <pre>grep secret /etc/openvpn/*.conf</pre>
 
 <p>
-Skapa dem på nytt med
+Skapa dem pÃ¥ nytt med
 </p>
 <pre>openvpn --genkey --secret HEMLIG_FILNAMN</pre>
 
 <p>
-Kopiera därefter de delade hemliga nycklarna till fjärrvärdarna och starta
-om VPN:et på varje värd med
+Kopiera dÃ¤refter de delade hemliga nycklarna till fjÃ¤rrvÃ¤rdarna och starta
+om VPN:et pÃ¥ varje vÃ¤rd med
 </p>
 <pre>/etc/init.d/openvpn force-reload</pre>
 
 <h1><a name="proftpd">Proftpd</a></h1>
 
 <p>
-Debianpaketet innehåller inte skapande av nycklar, så stegen som följer bör
-endast vara nödvändiga om SSL-nycklar har skapats externt.
+Debianpaketet innehÃ¥ller inte skapande av nycklar, sÃ¥ stegen som fÃ¶ljer bÃ¶r
+endast vara nÃ¶dvÃ¤ndiga om SSL-nycklar har skapats externt.
 </p>
 
 <p>
-En kommande proftpd-insändning till den instabila utgåvan kommer innehålla
+En kommande proftpd-insÃ¤ndning till den instabila utgÃ¥van kommer innehÃ¥lla
 en tls.conf-mall med kommentaren nedan.
 <p>
 
 <p>
-Observera att en lite annan procedur används för att skapa självsignerade
-certifikat än vad som beskrivs i den allmänna openssl-sektionen, för att
-undvika att använda ett explicit lösenord när servern startar.
+Observera att en lite annan procedur anvÃ¤nds fÃ¶r att skapa sjÃ¤lvsignerade
+certifikat Ã¤n vad som beskrivs i den allmÃ¤nna openssl-sektionen, fÃ¶r att
+undvika att anvÃ¤nda ett explicit lÃ¶senord nÃ¤r servern startar.
 </p>
 
 <p>
-Du kan skapa (på nytt) ett självsignerat certifikat med kommandoraden:
+Du kan skapa (pÃ¥ nytt) ett sjÃ¤lvsignerat certifikat med kommandoraden:
 </p>
 <pre>
  openssl req -x509 -newkey rsa:1024 \
@@ -540,8 +540,8 @@ Du kan skapa (på nytt) ett självsignerat certifikat med kommandoraden:
 </pre>
 
 <p>
-De båda filerna måste vara läsbara endast av root. Filsökvägen kan
-kontrolleras/konfigureras genom följande konfigurationsdirektiv:
+De bÃ¥da filerna mÃ¥ste vara lÃ¤sbara endast av root. FilsÃ¶kvÃ¤gen kan
+kontrolleras/konfigureras genom fÃ¶ljande konfigurationsdirektiv:
 </p>
 <pre>
 TLSRSACertificateFile                   /etc/ssl/certs/proftpd.crt
@@ -553,37 +553,37 @@ TLSOptions                              NoCertRequest
 <h1><a name="puppet">puppet</a></h1>
 
 <p>
-Det finns två sätt att hantera certifikat i puppet, ett är via capistrano,
-det andra är manuellt.
+Det finns tvÃ¥ sÃ¤tt att hantera certifikat i puppet, ett Ã¤r via capistrano,
+det andra Ã¤r manuellt.
 </p>
 
 <p>
 Information om hur du nygenererar Puppet SSL-certifikat med capistrano
-beskrivs på
+beskrivs pÃ¥
 <a href="http://reductivelabs.com/trac/puppet/wiki/RegenerateSSL">http://reductivelabs.com/trac/puppet/wiki/RegenerateSSL</a>
 </p>
 
 <p>
-De manuella stegen är som följer:
+De manuella stegen Ã¤r som fÃ¶ljer:
 </p>
 
 <ol>
-<li>Du måste ta bort och skapa om din CA-information:
+<li>Du mÃ¥ste ta bort och skapa om din CA-information:
 <pre>
 /etc/init.d/puppetmaster stop
 rm -rf $vardir/ssl/*
 /etc/init.d/puppetmaster start
 </pre>
 <p>
-Om du använder mongrel måste du dock, istället för att starta puppetmaster
-från init-skriptet, först stoppa webblyssnarskalet (apache, nginx, osv.) och
-sedan göra följande:
+Om du anvÃ¤nder mongrel mÃ¥ste du dock, istÃ¤llet fÃ¶r att starta puppetmaster
+frÃ¥n init-skriptet, fÃ¶rst stoppa webblyssnarskalet (apache, nginx, osv.) och
+sedan gÃ¶ra fÃ¶ljande:
 </p>
 <pre>
 puppetmasterd --daemonize ; sleep 30 ; pkill -f 'ruby /usr/sbin/puppetmasterd'
 </pre>
 <p>
-Steget ovan behövs eftersom puppet som körs med mongrel av någon anledning
+Steget ovan behÃ¶vs eftersom puppet som kÃ¶rs med mongrel av nÃ¥gon anledning
 inte komer att omgenerera sin CA.
 </p>
 </li>
@@ -593,12 +593,12 @@ inte komer att omgenerera sin CA.
 rm $vardir/ssl/*
 </pre> 
 </li>
-<li>Be varje klient hämta ett nytt certifikat:
+<li>Be varje klient hÃ¤mta ett nytt certifikat:
 <pre>
 puppetd --onetime --debug --ignorecache --no-daemonize
 </pre> 
 </li>
-<li>När alla anrop har kommit in, kan du signera dem alla på en gång:
+<li>NÃ¤r alla anrop har kommit in, kan du signera dem alla pÃ¥ en gÃ¥ng:
 <pre>
 puppetca --sign --all
 </pre> 
@@ -611,32 +611,32 @@ puppetca --sign --all
 </ol>
 
 <p>
-Du kan även tillfälligt slå på autosign, om du tycker att det är ok.
+Du kan Ã¤ven tillfÃ¤lligt slÃ¥ pÃ¥ autosign, om du tycker att det Ã¤r ok.
 </p>
 
 <h1><a name="sendmail">sendmail</a></h1>
 
 <p>
-Sendmail (i både Etch och Lenny) skapar standard-OpenSSL-certifikat om man
-väljer det under installationen.
+Sendmail (i bÃ¥de Etch och Lenny) skapar standard-OpenSSL-certifikat om man
+vÃ¤ljer det under installationen.
 </p>
 
 <p>
-Det är enkelt att skapa nya nycklar:
+Det Ã¤r enkelt att skapa nya nycklar:
 </p>
 <pre>
 /usr/share/sendmail/update_tls new
 </pre>
 
 <p>
-Om du har ändrat i mallarna i /etc/mail/tls kommer dessa värden att
-återanvändas för att skapa de nya certifikaten.
+Om du har Ã¤ndrat i mallarna i /etc/mail/tls kommer dessa vÃ¤rden att
+Ã¥teranvÃ¤ndas fÃ¶r att skapa de nya certifikaten.
 </p>
 
 <h1><a name="ssl-cert">ssl-cert</a></h1>
 
 <p>
-Snakeoil-certifikatet /etc/ssl/certs/ssl-cert-snakeoil.pem kan skapas på
+Snakeoil-certifikatet /etc/ssl/certs/ssl-cert-snakeoil.pem kan skapas pÃ¥
 nytt med:
 </p>
 
@@ -650,79 +650,79 @@ dpkg-reconfigure telnetd-ssl
 </pre>
 
 <p>
-Detta täcker standardkonfigurationen.
-Om administratören lokalt har konfigurerat en SSL-infrastruktur utöver detta
-måste även dessa skapas på nytt.
+Detta tÃ¤cker standardkonfigurationen.
+Om administratÃ¶ren lokalt har konfigurerat en SSL-infrastruktur utÃ¶ver detta
+mÃ¥ste Ã¤ven dessa skapas pÃ¥ nytt.
 </p>
 
 <h1><a name="tinc">tinc</a></h1>
 
 <p>
-Ta bort alla misstänkta öppna och hemliga nyckelfiler:
+Ta bort alla misstÃ¤nkta Ã¶ppna och hemliga nyckelfiler:
 </p>
 <ol>
 <li>Ta bort rsa_key.priv.</li>
-<li>Redigera alla filer i hosts/-katalogen och ta bort blocken för öppen
+<li>Redigera alla filer i hosts/-katalogen och ta bort blocken fÃ¶r Ã¶ppen
 nyckel.</li>
 </ol>
 
 <p>
-Skapa ett nytt öppen/hemlig-nyckelpar:
+Skapa ett nytt Ã¶ppen/hemlig-nyckelpar:
 </p>
 <pre>
 tincd -n &lt;netname&gt; -K
 </pre>
 
 <p>
-Distribuera din värdkonfigurationsfil med din nya öppna nyckel till andra
-medlemmar på ditt VPN.
-Glöm inte att starta om dina tinc-servrar.
+Distribuera din vÃ¤rdkonfigurationsfil med din nya Ã¶ppna nyckel till andra
+medlemmar pÃ¥ ditt VPN.
+GlÃ¶m inte att starta om dina tinc-servrar.
 </p>
 
 <h1><a name="tor">tor</a></h1>
 
 <p>
-Tor finns inte i den stabila utgåvan, men påverkas i Lenny.
+Tor finns inte i den stabila utgÃ¥van, men pÃ¥verkas i Lenny.
 </p>
 
 <p>
-Klienter som kör 0.1.2.x påverkas inte. Tor-noder eller dolda
-tjänsteleverantörer som kör alla versioner, samt alla på 0.2.0.x påverkas.
+Klienter som kÃ¶r 0.1.2.x pÃ¥verkas inte. Tor-noder eller dolda
+tjÃ¤nsteleverantÃ¶rer som kÃ¶r alla versioner, samt alla pÃ¥ 0.2.0.x pÃ¥verkas.
 </p>
 
 <p>
 Se
-<a href="http://archives.seul.org/or/announce/May-2008/msg00000.html">sårbarhetsbulletinen</a>
-på Tors sändlista.
+<a href="http://archives.seul.org/or/announce/May-2008/msg00000.html">sÃ¥rbarhetsbulletinen</a>
+pÃ¥ Tors sÃ¤ndlista.
 </p>
 
 <p>
 Vi rekommenderar att du uppgraderar till 0.1.2.19-3 (finns i
-uttestningsutgåvan, den instabila utgåvan, på backports.org och i det
+uttestningsutgÃ¥van, den instabila utgÃ¥van, pÃ¥ backports.org och i det
 vanliga
 <a href="https://wiki.torproject.org/noreply/TheOnionRouter/TorOnDebian">noreply.org-arkivet</a>)
-eller 0.2.0.26-rc-1 (finns i den experimentella utgåvan och i det vanliga
+eller 0.2.0.26-rc-1 (finns i den experimentella utgÃ¥van och i det vanliga
 <a href="https://wiki.torproject.org/noreply/TheOnionRouter/TorOnDebian">noreply.org-arkivet</a>).
-Om du kör ett relä kommer dessa versioner tvinga fram att
+Om du kÃ¶r ett relÃ¤ kommer dessa versioner tvinga fram att
 nya servernycklar (/var/lib/tor/keys/secret_*) skapas.
 </p>
 
 <p>
-Om du kör en Tor-nod utan att använda paketets infrastruktur
-(debian-tor-användare, /var/lib/tor som DataDirectory osv.) måste du
-manuellt ta bort dåliga nycklar.
-Se bulletinlänken som finns ovan.
+Om du kÃ¶r en Tor-nod utan att anvÃ¤nda paketets infrastruktur
+(debian-tor-anvÃ¤ndare, /var/lib/tor som DataDirectory osv.) mÃ¥ste du
+manuellt ta bort dÃ¥liga nycklar.
+Se bulletinlÃ¤nken som finns ovan.
 </p>
 
 <p>
-Om du är en dold tjänsteleverantör och har skapat din nyckel under den
-påverkade tidsramen med ett trasigt libssl-paket, bör du ta bort din dolda
-tjänsts hemliga nyckel. Detta kommer att ändra din dolda tjänsts värdnamn
-och kan kräva att dina servrar konfigureras om.
+Om du Ã¤r en dold tjÃ¤nsteleverantÃ¶r och har skapat din nyckel under den
+pÃ¥verkade tidsramen med ett trasigt libssl-paket, bÃ¶r du ta bort din dolda
+tjÃ¤nsts hemliga nyckel. Detta kommer att Ã¤ndra din dolda tjÃ¤nsts vÃ¤rdnamn
+och kan krÃ¤va att dina servrar konfigureras om.
 </p>
 
 <p>
-Om du kör 0.2.0.x rekommenderas en uppgradering å det bestämdaste &ndash;
+Om du kÃ¶r 0.2.0.x rekommenderas en uppgradering Ã¥ det bestÃ¤mdaste &ndash;
 tre av de sex v3-auktoritetsservrarna har komprometterade nycklar.
 Gamla 0.2.0.x-versioner kommer sluta fungera om en eller ett par veckor.
 </p>
@@ -730,9 +730,9 @@ Gamla 0.2.0.x-versioner kommer sluta fungera om en eller ett par veckor.
 <h1><a name="xrdp">xrdp</a></h1>
 
 <p>
-xrdp använder genererade nycklar. De flesta klienter kontrollerar inte dessa
-nycklar som standard, därför är det inga problem att byta dem. Allt du
-behöver göra är:
+xrdp anvÃ¤nder genererade nycklar. De flesta klienter kontrollerar inte dessa
+nycklar som standard, dÃ¤rfÃ¶r Ã¤r det inga problem att byta dem. Allt du
+behÃ¶ver gÃ¶ra Ã¤r:
 </p>
 
 <pre>
@@ -741,5 +741,5 @@ rm /etc/xrdp/rsakeys.ini
 </pre>
 
 <p>
-xrdp finns inte i den stabila utgåvan.
+xrdp finns inte i den stabila utgÃ¥van.
 </p>
