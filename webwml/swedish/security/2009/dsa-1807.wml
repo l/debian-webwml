@@ -2,53 +2,53 @@
 <define-tag description>buffertspill</define-tag>
 
 <define-tag moreinfo>
-<p>James Ralston upptäckte att funktionen sasl_encode64() i cyrus-sasl2,
+<p>James Ralston upptÃ¤ckte att funktionen sasl_encode64() i cyrus-sasl2,
 ett fritt bibliotek som implementerar <q>Simple Authentication and Security Layer</q>,
 saknar en nullterminering i vissa situationer.  Detta orsakar
 several buffer overflows in situations where cyrus-sasl2 itself requires
-flera buffertspill i situationer där cyrus-sasl2 kräver
-kräver att ströngen är nullterminerad, vilket kan leda till överbelastning eller
+flera buffertspill i situationer dÃ¤r cyrus-sasl2 krÃ¤ver
+krÃ¤ver att strÃ¶ngen Ã¤r nullterminerad, vilket kan leda till Ã¶verbelastning eller
 exevering av godtycklig kod.</p>
 
-<p>Viktig information (ursprungligen från US-CERT, översatt här):
-Denna rättelse rättar visserligen kod som är sårbar, men den kan göra att
-existerande, icke-sårbar kod slutar fungera. Här är en funktionsprototyp från
-include/saslutil.h som illustrerar förklaringen:</p>
+<p>Viktig information (ursprungligen frÃ¥n US-CERT, Ã¶versatt hÃ¤r):
+Denna rÃ¤ttelse rÃ¤ttar visserligen kod som Ã¤r sÃ¥rbar, men den kan gÃ¶ra att
+existerande, icke-sÃ¥rbar kod slutar fungera. HÃ¤r Ã¤r en funktionsprototyp frÃ¥n
+include/saslutil.h som illustrerar fÃ¶rklaringen:</p>
 
 <pre>/* bas64-kodning
 * in -- indata
-* inlen -- indatalängd
+* inlen -- indatalÃ¤ngd
 * out -- utbuffert (kommer vara nullterminerad)
-* outmax -- största storlek på utbuffert
+* outmax -- stÃ¶rsta storlek pÃ¥ utbuffert
 * resultat:
-* outlen -- får faktisk längd av utbuffert (valfritt)
+* outlen -- fÃ¥r faktisk lÃ¤ngd av utbuffert (valfritt)
 *
-* Returnerar SASL_OK vid framgång, SASL_BUFOVER om resultatet inte får plats
+* Returnerar SASL_OK vid framgÃ¥ng, SASL_BUFOVER om resultatet inte fÃ¥r plats
 */
 LIBSASL_API int sasl_encode64(const char *in, unsigned inlen,
 char *out, unsigned outmax,
 unsigned *outlen);</pre>
 
-<p>Antag ett scenario där anropande kod har skrivits så att den
-beräknar den exakta storleken som krävs för bas64-kodning i förväg, sedan
+<p>Antag ett scenario dÃ¤r anropande kod har skrivits sÃ¥ att den
+berÃ¤knar den exakta storleken som krÃ¤vs fÃ¶r bas64-kodning i fÃ¶rvÃ¤g, sedan
 allokerar en buffert av precis den storleken och skickar en pekare till buffertedn in i
-sasl_encode64() som *out. Så länge denna kod inte väntar sig att
-bufferten är nullterminerad (exempelvis anropar den inte några stränghanterande funktioner som
-strlen()), kommer koden fungera och inte vara sårbar</p>
+sasl_encode64() som *out. SÃ¥ lÃ¤nge denna kod inte vÃ¤ntar sig att
+bufferten Ã¤r nullterminerad (exempelvis anropar den inte nÃ¥gra strÃ¤nghanterande funktioner som
+strlen()), kommer koden fungera och inte vara sÃ¥rbar</p>
 
-<p>När denna rättelse appliceras, kommer samma kod misslyckas eftersom sasl_encode64()
-kommer börja returnera SASL_BUFOVER.</p>
+<p>NÃ¤r denna rÃ¤ttelse appliceras, kommer samma kod misslyckas eftersom sasl_encode64()
+kommer bÃ¶rja returnera SASL_BUFOVER.</p>
 
 
-<p>För den gamla stabila utgåvan (Etch) har detta problem rättats
+<p>FÃ¶r den gamla stabila utgÃ¥van (Etch) har detta problem rÃ¤ttats
 i version 2.1.22.dfsg1-8+etch1 av cyrus-sasl2.</p>
 
-<p>För den stabila utgåvan (Lenny) har detta problem rättats i
+<p>FÃ¶r den stabila utgÃ¥van (Lenny) har detta problem rÃ¤ttats i
 version 2.1.22.dfsg1-23+lenny1 av cyrus-sasl2 och cyrus-sasl2-heimdal.</p>
 
-<p>För uttestningsutgåvan (Squeeze) kommer detta problem att rättas inom kort.</p>
+<p>FÃ¶r uttestningsutgÃ¥van (Squeeze) kommer detta problem att rÃ¤ttas inom kort.</p>
 
-<p>För den instabila utgåvan (Sid) har detta problem rättats i
+<p>FÃ¶r den instabila utgÃ¥van (Sid) har detta problem rÃ¤ttats i
 version 2.1.23.dfsg1-1 av cyrus-sasl2 och cyrus-sasl2-heimdal.</p>
 
 
