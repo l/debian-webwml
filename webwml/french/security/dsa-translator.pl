@@ -51,6 +51,7 @@ $translation = {
 		'heap overflow'					=>	'Débordement de zone de mémoire du système',
 		'authorization bypass'			=>	'Contournement d\'autorisation',
 		'insufficient input validation'	=>	'Validations des entrées insuffisantes',
+		'insufficient checks'			=>	'Vérifications insuffisantes',
 		'cross-site scripting'			=>	'Script intersite',
 		'design flaw'					=>	'Défaut de conception',
 		'design flaws'					=>	'Défauts de conception',
