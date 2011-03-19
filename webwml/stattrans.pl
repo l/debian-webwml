@@ -482,16 +482,16 @@ foreach $lang (@search_in) {
             print HTML "<colgroup span=\"4\" width=\"25%\"></colgroup>\n";
 
             print HTML '<tr><th><gettext domain="stats">Translated</gettext></th><th><gettext domain="stats">Up to date</gettext></th><th><gettext domain="stats">Outdated</gettext></th><th><gettext domain="stats">Not translated</gettext></th></tr>'."\n<tr>\n";
-            printf HTML "<td>%d files (%.1f%%)</td>", $wml{$lang}, $percent_a{$lang};
-            printf HTML "<td>%d files (%.1f%%)</td>", $translated{$lang}, $percent_t{$lang};
-            printf HTML "<td>%d files (%.1f%%)</td>", $outdated{$lang}, $percent_o{$lang};
-            printf HTML "<td>%d files (%.1f%%)</td>", $untranslated{$lang}, $percent_u{$lang};
+            printf HTML '<td>%d <gettext domain="stats">files</gettext> (%.1f%%)</td>', $wml{$lang}, $percent_a{$lang};
+            printf HTML '<td>%d <gettext domain="stats">files</gettext> (%.1f%%)</td>', $translated{$lang}, $percent_t{$lang};
+            printf HTML '<td>%d <gettext domain="stats">files</gettext> (%.1f%%)</td>', $outdated{$lang}, $percent_o{$lang};
+            printf HTML '<td>%d <gettext domain="stats">files</gettext> (%.1f%%)</td>', $untranslated{$lang}, $percent_u{$lang};
             print HTML "</tr>\n";
 	    print HTML "<tr>\n";
-	    printf HTML "<td>%d bytes (%.1f%%)</td>", $wml_s{$lang}, $percent_as{$lang};
-	    printf HTML "<td>%d bytes (%.1f%%)</td>", $translated_s{$lang}, $percent_ts{$lang};
-	    printf HTML "<td>%d bytes (%.1f%%)</td>", $outdated_s{$lang}, $percent_os{$lang};
-	    printf HTML "<td>%d bytes (%.1f%%)</td>", $nsize-$wml_s{$lang}, $percent_us{$lang};
+	    printf HTML '<td>%d <gettext domain="stats">bytes</gettext> (%.1f%%)</td>', $wml_s{$lang}, $percent_as{$lang};
+	    printf HTML '<td>%d <gettext domain="stats">bytes</gettext> (%.1f%%)</td>', $translated_s{$lang}, $percent_ts{$lang};
+	    printf HTML '<td>%d <gettext domain="stats">bytes</gettext> (%.1f%%)</td>', $outdated_s{$lang}, $percent_os{$lang};
+	    printf HTML '<td>%d <gettext domain="stats">bytes</gettext> (%.1f%%)</td>', $nsize-$wml_s{$lang}, $percent_us{$lang};
 	    print HTML "</tr>\n";
             print HTML "</table>\n";
 
