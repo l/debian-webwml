@@ -1,0 +1,61 @@
+#! /bin/sh
+
+umask 002
+
+excl="/doc/manuals /releases /doc/developers-reference /doc/maint-guide /doc/FAQ /searchtmpl /ports/powerpc/inst/yaboot-howto"
+
+wwwroot=/srv/www.debian.org/www
+dirout=/srv/www-master.debian.org/htdocs/build-logs/validate
+
+progname=`echo $0 | sed 's/.*\///'`
+
+opt_v=false
+opt_h=false
+for opt
+do
+    case $opt in
+    -h | --help )
+	shift
+        opt_h=true ;;
+    -v | --verbose )
+	shift
+        opt_v=true ;;
+    -* )
+        { echo "Error: unknown option
+Try $progname --help'" 1>&2; exit 1; } ;;
+    * )
+	break ;;
+    esac
+done
+
+#  Lang list
+if test $# = 0; then
+    set x `ls $wwwroot/index.*.html | sed -e 's/^.*index\.//' -e 's/\.html//'`
+    shift
+fi
+
+#  Exclude paths
+www_bs=`echo $wwwroot | sed -e 's/\//\\\\\//g'`
+excl_path=`echo $excl | sed -e "s/ / -o -path $www_bs/g"`
+
+test -d $dirout || mkdir -p $dirout
+
+for l
+do
+    case $l in
+      zh-hk | zh-cn ) continue ;; # only process zh-tw
+    esac
+    test -L $wwwroot/index.$l.html && continue
+    $opt_v && echo Processing language $l
+    find $wwwroot \( -path $wwwroot$excl_path \) -prune -o -name \*.$l.html -print | sort | xargs -n 20 -x $crondir/scripts/validate > $dirout/$l
+done
+
+l=ja
+for i in `find $wwwroot \( -path $wwwroot$excl_path \) -prune -o -name \*.$l.html -print | sort`;
+    do
+	enc=`grep -i '<meta http-equiv="Content-Type"' $i | sed -e 's/.*charset=//' -e 's/".*//'`
+	if iconv -f $enc -t utf-8 $i >/dev/null 2>&1;
+	then
+	    iconv -f $enc -t utf-8 $i | $crondir/scripts/validate --charset=utf-8 - 2>&1 | sed -e "s,\\*\\*\\* Errors,& validating $i,"
+	fi
+    done > $dirout/$l
