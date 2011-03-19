@@ -25,7 +25,7 @@ endif
 
 DESTSTATS = $(patsubst %.html,$(HTMLDIR)/%.html,$(STATS))
 
-%.$(LANGUAGE).html: $(ENGLISHDIR)/$(CUR_DIR)/%.wml
+%.$(LANGUAGE).html: $(ENGLISHDIR)/$(CUR_DIR)/%.wml $(LOCALEDIR)/stats.mo
 	$(WML) $(shell egrep '^-D (CUR_|CHAR)' $(WMLBASE)/.wmlrc) \
 	$(shell echo $<)
 ifeq "$(LANGUAGE)" "zh"
