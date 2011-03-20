@@ -3,7 +3,7 @@
 # This script copies a set of vote related files named on the command line, 
 # and adds the translation-check header to them. It also will create the
 # destination directory if necessary, and copy the Makefile from the source.
-# Written in 2006-2010 by Helge Kreutzmann <debian@helgefjell.de>
+# Written in 2006-2011 by Helge Kreutzmann <debian@helgefjell.de>
 
 # Based on a script "copyadvisory.pl" by Peter Karlsson <peterk@debian.org>:
 # Written in 2000-2006 by Peter Karlsson <peterk@debian.org>
@@ -71,7 +71,7 @@ if (exists $env{'DEBEMAIL'}) {
 }
 
 
-$year = 2010;
+$year = 2011;
 # Note: you may have to adjust the following path
 $srcdir = "/scr/build/content/debian/web-commit/webwml/english/vote/$year";
 # $srcdir = "../../english/vote/$year";
@@ -80,7 +80,8 @@ die "Unable to locate English version of vote $number.\n"
 
 # Locate vote files
 #vote_007_index.src vote_007_majority.src vote_007_quorum.src vote_007_quorum.txt vote_007_results.src vote_007.wml suppl_007_stats_detailed.wml suppl_007_stats.wml
-@vfiles = ("vote_".$number."_index.src", "vote_".$number."_majority.src", "vote_".$number."_quorum.src", "vote_".$number."_quorum.txt", "vote_".$number."_results.src", "vote_".$number.".wml", "suppl_".$number."_stats_detailed.wml", "suppl_".$number."_stats.wml");
+#@vfiles = ("vote_".$number."_index.src", "vote_".$number."_majority.src", "vote_".$number."_quorum.src", "vote_".$number."_quorum.txt", "vote_".$number."_results.src", "vote_".$number.".wml", "suppl_".$number."_stats_detailed.wml", "suppl_".$number."_stats.wml");
+@vfiles = ("vote_".$number.".wml");
 
 #$number = "vote_" . $number if $number !~ /^vote_/;
 foreach $vf (@vfiles)
