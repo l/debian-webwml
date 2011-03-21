@@ -44,7 +44,8 @@ security_FILES  = $(TEMPLDIR)/security.wml \
   $(TEMPLDIR)/securityreferences.wml \
   $(ENGLISHDIR)/security/faq.inc \
   $(ENGLISHDIR)/security/dsa.rdf.in \
-  $(ENGLISHDIR)/security/make-ref-table.pl 
+  $(ENGLISHDIR)/security/make-ref-table.pl \
+  $(ENGLISHDIR)/security/index.include
 stats_FILES 	= $(WMLBASE)/../stattrans.pl $(TEMPLDIR)/stats_tags.wml
 vendors_FILES   = $(ENGLISHDIR)/CD/vendors/vendors.CD.def
 vote_FILES      = $(TEMPLDIR)/votebar.wml
