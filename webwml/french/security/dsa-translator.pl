@@ -56,6 +56,8 @@ $translation = {
 		'design flaw'					=>	'Défaut de conception',
 		'design flaws'					=>	'Défauts de conception',
 		'denial of service'				=>	'Déni de service',
+		'directory traversal'				=>	'Traversée de répertoires',
+		'path traversal'				=>      'Traversée de répertoires',
 		'SQL injection'					=>	'Injection SQL',
 		'denial of service/privilege escalation'	=>	'Déni de service et augmentation de droits',
 		'<p>We recommend that you upgrade your <package> package.</p>'	=>	'<p>Nous vous recommandons de mettre à jour votre paquet <package>.</p>',
@@ -162,18 +164,41 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|,.which.may.result.in.the.execution.of.arbitrary.code|. Cela peut avoir pour conséquence l'exécution de code arbitraire|gs;
 	$output =~ s|,.which.might.allow.the.execution.of.arbitrary.code|. Cela peut permettre l'exécution de code arbitraire|gs;
 	$output =~ s|remote.attackers|des attaquants distants|gs;
+	$output =~ s|remote.attacker|un attaquant distant|gs;
+	$output =~ s|local.attackers|des attaquants locaux|gs;
+	$output =~ s|local.attacker|un attaquant local|gs;
+	$output =~ s|local.users|des utilisateurs locaux|gs;
+	$output =~ s|local.user|un utilisateur local|gs;
+	$output =~ s|local.users|desun utilisateur local|gs;
 	$output =~ s|denial.of.service|déni de service|gs;
 	$output =~ s|the.execution.of.arbitrary.code|l'exécution de code arbitraire|gs;
+	$output =~ s|execution.of.arbitrary.code|exécution de code arbitraire|gs;
 	$output =~ s|execute.arbitrary.code|exécuter du code arbitraire|gs;
+	$output =~ s|NULL.pointer.dereference|déréférencement de pointeur NULL|gs;
  
 	$output =~ s|the (\S+) parser|l'analyseur $1|gs;
 
 	# This need some check to be done in translated file
-	$output =~ s|have been discovered|ont été découvert(e)s|gs;
-	$output =~ s|have been found|ont été découvert(e)s|gs;
-	$output =~ s|has been discovered|a été découvert(e)|gs;
-	$output =~ s|has been found|a été découvert(e)|gs;
-	$output =~ s|was discovered|a été découvert(e)|gs;
+	$output =~ s|have.been.discovered|ont été découvertes|gs;
+	$output =~ s|have.been.found|ont été découvertes|gs;
+	$output =~ s|has.been.discovered|a été découverte|gs;
+	$output =~ s|has.been.found|a été découverte|gs;
+	$output =~ s|have.discovered|ont.découvert|gs;
+	$output =~ s|has.discovered|a découvert|gs;
+	$output =~ s|was.discovered|a été découverte|gs;
+	$output =~ s|discovered|a découvert|gs;
+
+	# usual words, ease copy and paste...
+	$output =~ s|attacker|attaquant|gs;
+	$output =~ s|attack|attaque|gs;
+	$output =~ s|crafted|trafiqué|gs;
+	$output =~ s|can.lead|peut conduire|gs;
+	$output =~ s|could.lead|pourrait conduire|gs;
+	$output =~ s|high-level|haut niveau|gs;
+	$output =~ s|low-level|bas niveau|gs;
+	$output =~ s|may.lead|pourrait conduire|gs;
+	$output =~ s|package|paquet|gs;
+	$output =~ s|vulnerable|vulnérable|gs;
 
 }
 
