@@ -47,7 +47,7 @@ $translation = {
 		'NULL pointer dereference'	=>		'Déréférencement de pointeur NULL',
 		'several vulnerabilities'		=>	'Plusieurs vulnérabilités',
 		'buffer overflow'				=>	'Débordement de mémoire tampon',
-		'buffer overflows'				=>	'Débordements de mémoire tampons',
+		'buffer overflows'				=>	'Débordements de mémoire tampon',
 		'programming error'				=>	'Erreur de programmation',
 		'heap overflow'					=>	'Débordement de zone de mémoire du système',
 		'authorization bypass'			=>	'Contournement d\'autorisation',
@@ -154,6 +154,10 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).do.not.contain.any.(\S+).packages\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne contiennent pas de paquet $5.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.not.contain.(\S+).packages\.[\n]?</p>|<p>La distribution $1 ($2) ne contient pas de paquets $3.</p>|gs;
 
+	$output =~ s|<p>[\n]?We.recommend.that.you.upgrade.your.(\S+).and.(\S+).packages\.[\n]?</p>|<p>Nous vous recommandons de mettre à jour vos paquets $1 et $2.</p>|gs;
+	$output =~ s|<p>[\n]?The.following.matrix.lists.additional.source.packages.that.were.rebuilt.for.compatibility.with.or.to.take.advantage.of.this.update:</p>|<p>Le tableau suivant liste les paquets supplémentaires qui ont été reconstruits à des fins de compatibilité ou pour tirer parti de cette mise à jour :</p>|gs;
+	$output =~ s|which.was.already.included.in.the.(\S+).release|qui a déjà été inclue dans la publication de $1|gs;
+
 	# Case adjustment
 	$output =~ s|\(etch\)|\(Etch\)|g;
 	$output =~ s|\(sid\)|\(Sid\)|g;
@@ -174,8 +178,10 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|local.attackers|des attaquants locaux|gs;
 	$output =~ s|local.attacker|un attaquant local|gs;
 	$output =~ s|local.users|des utilisateurs locaux|gs;
+	$output =~ s|Local.users|Des utilisateurs locaux|gs;
 	$output =~ s|local.user|un utilisateur local|gs;
-	$output =~ s|local.users|desun utilisateur local|gs;
+	$output =~ s|Local.user|Un utilisateur local|gs;
+        $output =~ s|a.denial.of.service|un déni de service|gs;
 	$output =~ s|denial.of.service|déni de service|gs;
 	$output =~ s|the.execution.of.arbitrary.code|l'exécution de code arbitraire|gs;
 	$output =~ s|arbitrary.code.execution|l'exécution de code arbitraire|gs;
@@ -195,6 +201,14 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|has.discovered|a découvert|gs;
 	$output =~ s|was.discovered|a été découverte|gs;
 	$output =~ s|discovered|a découvert|gs;
+	$output =~ s|reported.an.issue.in.the|a signalé un problème dans le|gs;
+        $output =~ s|reported.an.issue.in|a signalé un problème dans|gs;
+        $output =~ s|reported.an.issue|a signalé un problème|gs;
+        $output =~ s|reported.issues|a signalé des problèmes|gs;
+	$output =~ s|reported|a signalé|gs;
+	$output =~ s|an.issue.in.the|un problème dans le|gs;
+        $output =~ s|an.issue.in|un problème dans|gs;
+        $output =~ s|an.issue|un problème|gs;
 
 	# usual words, ease copy and paste...
 	$output =~ s|attacker|attaquant|gs;
@@ -204,11 +218,18 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|can.lead|peut conduire|gs;
 	$output =~ s|could.lead.to|pourrait conduire à|gs;
 	$output =~ s|could.lead|pourrait conduire|gs;
+	$output =~ s|cross-site scripting|script instersite|gs;
 	$output =~ s|high-level|haut niveau|gs;
+	$output =~ s|information.leak|fuite d'informations|gs;
+	$output =~ s|library|bibliothèque|gs;
+	$output =~ s|libraries|bibliothèques|gs;
 	$output =~ s|low-level|bas niveau|gs;
 	$output =~ s|may.lead.to|pourrait conduire à|gs;
 	$output =~ s|may.lead|pourrait conduire|gs;
 	$output =~ s|package|paquet|gs;
+	$output =~ s|privilege.escalation|augmentation de droits|gs;
+	$output =~ s|to.cause|de provoquer|gs;
+	$output =~ s|via.a|à l'aide d'un|gs;
 	$output =~ s|vulnerable|vulnérable|gs;
 
 }
