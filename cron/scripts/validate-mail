@@ -1,0 +1,67 @@
+#! /bin/sh
+
+# Copyright 2001,2,3,8 Martin Schulze <joey@debian.org>
+# Copyright 2011 David Prévot <david@tilapin.org>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+from='Debian Webmaster <webmaster@debian.org>'
+xloop=debian-www@lists.debian.org
+dirout=/srv/www-master.debian.org/htdocs/build-logs/validate/
+
+. `dirname $0`/../common.sh
+
+confile=${webtopdir}/webwml/english/devel/website/validation.data
+
+for file in $dirout*; do
+	if [ -s $file ]; then
+	       	(
+
+		echo "From: $from"
+		echo "To:" `grep "^${file#$dirout} " $confile | sed "s/^${file#$dirout} //"`
+		echo "X-Loop: $xloop"
+		echo "Subject: Validation failed"
+		echo
+		cat $file
+		echo
+		echo "--"
+		echo " You received this mail for the language code ${file#$dirout}."
+		echo " Please edit webwml/english/devel/website/validation.data if this is not accurate"
+		echo " Please also update webwml/english/devel/website/ with the new coordinator(s) data"
+
+		) | /usr/sbin/sendmail -t
+	fi
+done
+
+# Send a weekly mail to en listed team
+if [ `date +%u` -eq 1 ]; then
+    for file in $dirout*; do
+	if [ -s $file ]; then
+		(
+
+		echo "From: $from"
+		echo "To:" `grep "^en " $confile | sed "s/^$en //"`
+		echo "X-Loop: $xloop"
+		echo "Subject: Validation failed"
+		echo
+		cat $file
+		echo
+		echo "--"
+		echo " You received this mail for the language code ${file#$dirout}."
+		echo " Because you are listed in the language code en, lucky you!"
+		) | /usr/sbin/sendmail -t
+	fi
+    done
+fi
