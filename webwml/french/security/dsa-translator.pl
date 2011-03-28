@@ -59,6 +59,7 @@ $translation = {
 		'denial of service'				=>	'Déni de service',
 		'directory traversal'				=>	'Traversée de répertoires',
 		'path traversal'				=>      'Traversée de répertoires',
+		'privilege escalation'				=>	'Augmentation de droits',
 		'SQL injection'					=>	'Injection SQL',
 		'ssl certificate blacklist update'		=>	'Mise à jour de la liste noire des certificats',
 		'denial of service/privilege escalation'	=>	'Déni de service et augmentation de droits',
@@ -150,10 +151,10 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).is.not.affected|<p>La distribution $1 ($2) n'est pas concernée|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).are.not.affected.by.this.problem\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne sont pas concernées par ce problème.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).are.not.affected.by.these.problems\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne sont pas concernées par ces problèmes.</p>|gs;
-	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.not.contain.a.(\S+).package\.[\n]?</p>|<p>La distribution $1 ($2) ne contient pas de paquet $3.</p>|gs;
+	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.not.contain.a.(\S+).package\.|<p>La distribution $1 ($2) ne contient pas de paquet $3.|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).do.not.contain.any.(\S+).packages\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne contiennent pas de paquet $5.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.not.contain.(\S+).packages\.[\n]?</p>|<p>La distribution $1 ($2) ne contient pas de paquets $3.</p>|gs;
-
+	$output =~ s|The.(\S+).package.is.not.affected.by.this.issue\.|Le paquet $1 n'est pas concerné par ce problème.|gs;
 	$output =~ s|<p>[\n]?We.recommend.that.you.upgrade.your.(\S+).and.(\S+).packages\.[\n]?</p>|<p>Nous vous recommandons de mettre à jour vos paquets $1 et $2.</p>|gs;
 	$output =~ s|<p>[\n]?The.following.matrix.lists.additional.source.packages.that.were.rebuilt.for.compatibility.with.or.to.take.advantage.of.this.update:</p>|<p>Le tableau suivant liste les paquets supplémentaires qui ont été reconstruits à des fins de compatibilité ou pour tirer parti de cette mise à jour :</p>|gs;
 	$output =~ s|which.was.already.included.in.the.(\S+).release|qui a déjà été inclue dans la publication de $1|gs;
