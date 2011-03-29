@@ -157,7 +157,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|The.(\S+).package.is.not.affected.by.this.issue\.|Le paquet $1 n'est pas concerné par ce problème.|gs;
 	$output =~ s|<p>[\n]?We.recommend.that.you.upgrade.your.(\S+).and.(\S+).packages\.[\n]?</p>|<p>Nous vous recommandons de mettre à jour vos paquets $1 et $2.</p>|gs;
 	$output =~ s|<p>[\n]?The.following.matrix.lists.additional.source.packages.that.were.rebuilt.for.compatibility.with.or.to.take.advantage.of.this.update:</p>|<p>Le tableau suivant liste les paquets supplémentaires qui ont été reconstruits à des fins de compatibilité ou pour tirer parti de cette mise à jour :</p>|gs;
-	$output =~ s|which.was.already.included.in.the.(\S+).release|qui a déjà été inclue dans la publication de $1|gs;
+	$output =~ s|which.was.already.included.in.the.(\S+).release|qui a déjà été incluse dans la publication de $1|gs;
 
 	# Case adjustment
 	$output =~ s|\(etch\)|\(Etch\)|g;
