@@ -124,7 +124,7 @@ close(FILE);
 if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	# Translation of fixed version messages
 	#$output =~ s|<p>For.the.\S+.distribution.\S+.this.problem.has.been.fixed.in.version.\S+\.</p>|$translation->{$opt_l}{'<p>For the <distrib_release> distribution (<distrib_name>) this problem has been fixed in version <version>.</p>'}|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1 ($2), ce problème a été corrigé dans la version $3.|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.th(is\|e).problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1 ($2), ce problème a été corrigé dans la version $4.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1 ($2), ces problèmes ont été corrigés dans la version $3.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).distribution,?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1 ($2), ce problème a été corrigé dans la version $3.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).distribution,?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1 ($2), ces problèmes ont été corrigés dans la version $3.|gs;
@@ -133,7 +133,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?For.the.old.(\S+).distribution.\((\S+)\),?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour l'ancienne distribution $1 ($2), ce problème a été corrigé dans la version $3.|gs;
 	$output =~ s|<p>[\n]?For.the.old.(\S+).distribution.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour l'ancienne distribution $1 ($2), ces problèmes ont été corrigés dans la version $3.|gs;
 
-	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).distributions?.\((\S+)\),?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème a été corrigé dans la version $5.</p>|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).distributions?.\((\S+)\),?.th(is\|e).problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème a été corrigé dans la version $6.</p>|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).distributions?.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes ont été corrigés dans la version $5.</p>|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).\((\S+)\).distributions?,?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème a été corrigé dans la version $5.</p>|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).\((\S+)\).distributions?,?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes ont été corrigés dans la version $5.</p>|gs;
@@ -158,8 +158,10 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.not.contain.(\S+).packages\.[\n]?</p>|<p>La distribution $1 ($2) ne contient pas de paquets $3.</p>|gs;
 	$output =~ s|The.(\S+).package.is.not.affected.by.this.issue\.|Le paquet $1 n'est pas concerné par ce problème.|gs;
 	$output =~ s|<p>[\n]?We.recommend.that.you.upgrade.your.(\S+).and.(\S+).packages\.[\n]?</p>|<p>Nous vous recommandons de mettre à jour vos paquets $1 et $2.</p>|gs;
+	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).no.longer.contains.(\S+)\.|<p>La distribution $1 ($2) ne contient plus $3.|gs;
 	$output =~ s|<p>[\n]?The.following.matrix.lists.additional.source.packages.that.were.rebuilt.for.compatibility.with.or.to.take.advantage.of.this.update:</p>|<p>Le tableau suivant liste les paquets supplémentaires qui ont été reconstruits à des fins de compatibilité ou pour tirer parti de cette mise à jour :</p>|gs;
 	$output =~ s|which.was.already.included.in.the.(\S+).release|qui a déjà été incluse dans la publication de $1|gs;
+
 
 	# Case adjustment
 	$output =~ s|\(etch\)|\(Etch\)|g;
@@ -170,7 +172,9 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 
 	# Short recurrent part of text. Take care ! substitution order might be important
 	$output =~ s|Several.vulnerabilities.(have.been\|were).discovered in|Plusieurs vulnérabilités ont été découvertes dans|gs;
-	$output =~ s|A buffer.overflow has been discovered in|Un débordement de tampon a été découvert dans|gs; 
+	$output =~ s|It.was.discovered.that|On a découvert que|gs;
+	$output =~ s|It.was.discovered|On a découvert|gs;
+	$output =~ s|A.buffer.overflow has been discovered in|Un débordement de tampon a été découvert dans|gs; 
 	$output =~ s|The.Common.Vulnerabilities.and.Exposures.project.identifies.the.following.problems:|Le projet « Common Vulnerabilities and Exposures » (CVE) identifie les problèmes suivants :|s;
 	$output =~ s|,.which.may.lead.to.the.execution.of.arbitrary.code|. Cela peut permettre l'exécution de code arbitraire|gs;
 	$output =~ s|,.which.could.lead.to.the.execution.of.arbitrary.code|. Cela pourrait permettre l'exécution de code arbitraire|gs;
@@ -184,6 +188,8 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|Local.users|Des utilisateurs locaux|gs;
 	$output =~ s|local.user|un utilisateur local|gs;
 	$output =~ s|Local.user|Un utilisateur local|gs;
+	$output =~ s|denial.of.service.attacks|attaques par déni de service|gs;
+	$output =~ s|denial.of.service.attack|attaque par déni de service|gs;
         $output =~ s|a.denial.of.service|un déni de service|gs;
 	$output =~ s|denial.of.service|déni de service|gs;
 	$output =~ s|the.execution.of.arbitrary.code|l'exécution de code arbitraire|gs;
@@ -212,6 +218,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|an.issue.in.the|un problème dans le|gs;
         $output =~ s|an.issue.in|un problème dans|gs;
         $output =~ s|an.issue|un problème|gs;
+	$output =~ s|is.already.fixed|est déjà corrigé|gs;
 
 	# usual words, ease copy and paste...
 	$output =~ s|attacker|attaquant|gs;
@@ -224,6 +231,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|cross-site.request.forgery|contrefaçon de requête intersite|gs;
 	$output =~ s|cross-site.scripting|script instersite|gs;
 	$output =~ s|high-level|haut niveau|gs;
+	$output =~ s|information.disclosure|divulgation d'informations|gs;
 	$output =~ s|information.leak|fuite d'informations|gs;
 	$output =~ s|library|bibliothèque|gs;
 	$output =~ s|libraries|bibliothèques|gs;
