@@ -36,3 +36,22 @@ then
       grep -A 4 -B 15 "$regexp" $logfile
     ) | /usr/sbin/sendmail -t
 fi
+
+# DDP build logs
+mailto=ddp-build@lists.alioth.debian.org
+mailto=debian-doc@lists.alioth.debian.org
+logfile="${webtopdir}/release-notes/build.log ${webtopdir}/ddp-svn/make.log"
+regexp='\(Break\|Error\|ERROR\)'
+
+if grep -q "$regexp" $logfile
+then
+    (
+      echo "From: $from"
+      echo "To: $mailto"
+      echo "X-Loop: $xloop"
+      echo "Subject: ddp build failed"
+      echo
+      grep -A 4 -B 15 "$regexp" $logfile
+    ) | /usr/sbin/sendmail -t
+fi
+
