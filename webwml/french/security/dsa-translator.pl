@@ -59,6 +59,7 @@ $translation = {
 		'denial of service'				=>	'Déni de service',
 		'directory traversal'				=>	'Traversée de répertoires',
 		'path traversal'				=>      'Traversée de répertoires',
+		'double free'					=>	'Double libération de zone de mémoire',
 		'privilege escalation'				=>	'Augmentation de droits',
 		'SQL injection'					=>	'Injection SQL',
 		'ssl certificate blacklist update'		=>	'Mise à jour de la liste noire des certificats',
@@ -159,6 +160,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|The.(\S+).package.is.not.affected.by.this.issue\.|Le paquet $1 n'est pas concerné par ce problème.|gs;
 	$output =~ s|<p>[\n]?We.recommend.that.you.upgrade.your.(\S+).and.(\S+).packages\.[\n]?</p>|<p>Nous vous recommandons de mettre à jour vos paquets $1 et $2.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).no.longer.contains.(\S+)\.|<p>La distribution $1 ($2) ne contient plus $3.|gs;
+	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).doesn't.include.(\S+)\.|<p>La distribution $1 ($2) ne contient pas $3.|gs;
 	$output =~ s|<p>[\n]?The.following.matrix.lists.additional.source.packages.that.were.rebuilt.for.compatibility.with.or.to.take.advantage.of.this.update:</p>|<p>Le tableau suivant liste les paquets supplémentaires qui ont été reconstruits à des fins de compatibilité ou pour tirer parti de cette mise à jour :</p>|gs;
 	$output =~ s|which.was.already.included.in.the.(\S+).release|qui a déjà été incluse dans la publication de $1|gs;
 
@@ -188,10 +190,14 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|Local.users|Des utilisateurs locaux|gs;
 	$output =~ s|local.user|un utilisateur local|gs;
 	$output =~ s|Local.user|Un utilisateur local|gs;
+	$output =~ s|a.buffer.overflow|un débordement de mémoire tampon|gs;
+	$output =~ s|buffer.overflow|débordement de mémoire tampon|gs;
 	$output =~ s|denial.of.service.attacks|attaques par déni de service|gs;
 	$output =~ s|denial.of.service.attack|attaque par déni de service|gs;
         $output =~ s|a.denial.of.service|un déni de service|gs;
 	$output =~ s|denial.of.service|déni de service|gs;
+	$output =~ s|a.double.free|une double libération de zone de mémoire|gs;
+	$output =~ s|double.free|double libération de zone de mémoire|gs;
 	$output =~ s|the.execution.of.arbitrary.code|l'exécution de code arbitraire|gs;
 	$output =~ s|arbitrary.code.execution|l'exécution de code arbitraire|gs;
 	$output =~ s|execution.of.arbitrary.code|exécution de code arbitraire|gs;
@@ -238,6 +244,8 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|low-level|bas niveau|gs;
 	$output =~ s|may.lead.to|pourrait conduire à|gs;
 	$output =~ s|may.lead|pourrait conduire|gs;
+	$output =~ s|memory.consumption|consommation de mémoire|gs;
+	$output =~ s|memory.leak|fuite de mémoire|gs;
 	$output =~ s|package|paquet|gs;
 	$output =~ s|privilege.escalation|augmentation de droits|gs;
 	$output =~ s|to.cause|de provoquer|gs;
