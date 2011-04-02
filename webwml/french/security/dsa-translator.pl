@@ -182,6 +182,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|,.which.could.lead.to.the.execution.of.arbitrary.code|. Cela pourrait permettre l'exécution de code arbitraire|gs;
 	$output =~ s|,.which.may.result.in.the.execution.of.arbitrary.code|. Cela peut avoir pour conséquence l'exécution de code arbitraire|gs;
 	$output =~ s|,.which.might.allow.the.execution.of.arbitrary.code|. Cela peut permettre l'exécution de code arbitraire|gs;
+	$output =~ s|,.which.allows|. Cela permet|gs;
 	$output =~ s|remote.attackers|des attaquants distants|gs;
 	$output =~ s|remote.attacker|un attaquant distant|gs;
 	$output =~ s|local.attackers|des attaquants locaux|gs;
@@ -192,6 +193,10 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|Local.user|Un utilisateur local|gs;
 	$output =~ s|a.buffer.overflow|un débordement de mémoire tampon|gs;
 	$output =~ s|buffer.overflow|débordement de mémoire tampon|gs;
+	$output =~ s|cross.site.request.forgery|contrefaçon de requête intersite|gs;
+	$output =~ s|cross.site.scripting.attacks|attaques par script instersite|gs;
+	$output =~ s|cross.site.scripting.issues|problème de script instersite|gs;
+	$output =~ s|cross.site.scripting|script instersite|gs;
 	$output =~ s|denial.of.service.attacks|attaques par déni de service|gs;
 	$output =~ s|denial.of.service.attack|attaque par déni de service|gs;
         $output =~ s|a.denial.of.service|un déni de service|gs;
@@ -208,14 +213,14 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|the (\S+) parser|l'analyseur $1|gs;
 
 	# This need some check to be done in translated file
-	$output =~ s|have.been.discovered|ont été découvertes|gs;
-	$output =~ s|have.been.found|ont été découvertes|gs;
-	$output =~ s|has.been.discovered|a été découverte|gs;
-	$output =~ s|has.been.found|a été découverte|gs;
-	$output =~ s|have.discovered|ont.découvert|gs;
-	$output =~ s|has.discovered|a découvert|gs;
-	$output =~ s|was.discovered|a été découverte|gs;
-	$output =~ s|discovered|a découvert|gs;
+	$output =~ s|have.been.(discovered\|found).in|ont été découvertes dans|gs;
+	$output =~ s|have.been.(discovered\|found)|ont été découvertes|gs;
+	$output =~ s|(has.been\|was).(discovered\|found).in|a été découverte dans|gs;
+	$output =~ s|(has.been\|was).(discovered\|found)|a été découverte|gs;
+	$output =~ s|have.discovered.in|ont découvert dans|gs;
+	$output =~ s|have.discovered|ont découvert|gs;
+	$output =~ s|(has.)?discovered.in|a découvert dans|gs;
+	$output =~ s|(has.)?discovered|a découvert|gs;
 	$output =~ s|reported.an.issue.in.the|a signalé un problème dans le|gs;
         $output =~ s|reported.an.issue.in|a signalé un problème dans|gs;
         $output =~ s|reported.an.issue|a signalé un problème|gs;
@@ -234,8 +239,6 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|can.lead|peut conduire|gs;
 	$output =~ s|could.lead.to|pourrait conduire à|gs;
 	$output =~ s|could.lead|pourrait conduire|gs;
-	$output =~ s|cross-site.request.forgery|contrefaçon de requête intersite|gs;
-	$output =~ s|cross-site.scripting|script instersite|gs;
 	$output =~ s|high-level|haut niveau|gs;
 	$output =~ s|information.disclosure|divulgation d'informations|gs;
 	$output =~ s|information.leak|fuite d'informations|gs;
@@ -248,6 +251,8 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|memory.leak|fuite de mémoire|gs;
 	$output =~ s|package|paquet|gs;
 	$output =~ s|privilege.escalation|augmentation de droits|gs;
+	$output =~ s|remote.vulnerabilities|vulnérabilités distantes|gs;
+	$output =~ s|Several|Plusieurs|gs;
 	$output =~ s|to.cause|de provoquer|gs;
 	$output =~ s|via.a|à l'aide d'un|gs;
 	$output =~ s|vulnerable|vulnérable|gs;
