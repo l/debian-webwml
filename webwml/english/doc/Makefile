@@ -19,5 +19,6 @@ cvs.$(LANGUAGE).html: cvs.wml $(TEMPLDIR)/ddp.wml $(ENGLISHSRCDIR)/doc/dirtree.j
 topics.$(LANGUAGE).html: topics.wml $(TEMPLDIR)/ddp.wml
 user-manuals.$(LANGUAGE).html: user-manuals.wml $(TEMPLDIR)/ddp.wml \
   $(ENGLISHSRCDIR)/doc/manuals.defs $(ENGLISHSRCDIR)/doc/version.defs
-devel-manuals.$(LANGUAGE).html: devel-manuals.wml $(TEMPLDIR)/ddp.wml $(ENGLISHSRCDIR)/doc/manuals.defs
+devel-manuals.$(LANGUAGE).html: devel-manuals.wml $(TEMPLDIR)/ddp.wml \
+  $(ENGLISHSRCDIR)/doc/manuals.defs $(ENGLISHSRCDIR)/doc/devel-manuals.defs
 misc-manuals.$(LANGUAGE).html: misc-manuals.wml $(TEMPLDIR)/ddp.wml $(ENGLISHSRCDIR)/doc/manuals.defs
