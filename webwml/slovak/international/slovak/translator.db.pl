@@ -48,20 +48,20 @@ sub init_translators {
                 },
                 'Ivan Masar' => {
                         email       => 'helix84@centrum.sk',
-                        summary     => 1,
-                        logs        => 1,
-                        diff        => 1,
-                        tdiff       => 1,
-                        file        => 1,
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 3,
+                        file        => 3,
                         compress    => 'none'
                 },
                 'Slavko' => {
                         email       => 'linux@slavino.sk',
-                        summary     => 1,
-                        logs        => 1,
-                        diff        => 1,
-                        tdiff       => 1,
-                        file        => 1,
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 3,
+                        file        => 3,
                         compress    => 'none'
                 },
         };
