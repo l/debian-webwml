@@ -149,7 +149,7 @@ sub print_multiline_html
     my $i=1;
     while ($i <= $#lines) {
 	if ($lines[$i] eq ".") {
-	    printf OUT "%s<p></p>\n", $space;
+	    printf OUT "%s<br><br>\n", $space;
 	} else {
 	    printf OUT "%s%s\n", $space, $lines[$i];
 	}
@@ -231,12 +231,12 @@ head::title=Mailing lists served by the Debian Project
 body::title=Mailing lists served by the Debian Project
 body::links=
 <font face="Arial,Helvetica"><b><a href="http://www.infodrom.north.de/Debian/user.html">#Debian</a></b></font><p>
-<font face="Arial,Helvetica"><b><a href="pr/">Public Relations</a></b></font><p>
-<font face="Arial,Helvetica"><b><a href="goals/">Our Goals</a></b></font><p>
+<font face="Arial,Helvetica"><b><a href="pr/">Public Relations</a></b></font></p><p>
+<font face="Arial,Helvetica"><b><a href="goals/">Our Goals</a></b></font></p><p>
 <font face="Arial,Helvetica"><b><a href="links.html">Links</a></b></font><br>
-<font face="Arial,Helvetica"><b><a href="machines.html">Machines</a></b></font><br>
-<p><br><p>
-<b>Sections</b><br>
+<font face="Arial,Helvetica"><b><a href="machines.html">Machines</a></b></font><br></p>
+<p><br></p><p>
+<b>Sections</b><br></p>
 EOF
     foreach my $section (@sections) {
 	printf OUT "&nbsp;<a href=\"#%s\">%s</a><br>\n", $section, $section;
@@ -268,7 +268,7 @@ EOF
 	    &print_multiline_html("  ",\@lines);
 
 	    foreach my $l (@lists) {
-	        printf OUT "\n<p><b>%s</b><p>\n\n", $l;
+	        printf OUT "\n<p><b>%s</b></p>\n\n", $l;
 	        my @lines = split(/\n/,$list{$l}->{'Description'});
 	        printf OUT "      Description :<br>\n<blockquote>\n  %s\n", $lines[0];
 	        &print_multiline_html("  ",\@lines);
@@ -314,12 +314,12 @@ EOF
 #	&print_multiline_html("  ",\@lines);
 
 	print OUT <<END;
-<p><see_also_subscribe>
-<p><mail_address_warn>
+<p><see_also_subscribe></p>
+<p><mail_address_warn></p>
 
 <hr>
 
-<p><select_subscribe>
+<p><select_subscribe></p>
 
 <form method="post" action="http://lists.debian.org/cgi-bin/subscribe.pl">
 END
@@ -340,9 +340,11 @@ END
 			die "can't find description of the section $section!\n" unless exists $list{''}->{$section};
 			my @lines = split(/\n/,$list{''}->{$section});
 			printf OUT "\n<h3><a name=\"%s\">%s</a></h3>\n\n", $section, $lines[0];
-			print OUT "<p>\n";
-			&print_multiline_html("  ",\@lines);
-			print OUT "</p>\n";
+                        if ( scalar(@lines) > 1 ) {
+			    print OUT "<p>\n";
+			    &print_multiline_html("  ",\@lines);
+			    print OUT "</p>\n";
+                        }
 			print OUT "<DL>\n";
 			foreach my $l (@lists) {
 				my $slist = $l; $slist =~ s/@.*//;
@@ -395,7 +397,7 @@ END
 	print OUT "</p>\n</FORM>\n\n";
 
 	print OUT <<END;
-<p><respect_ad_policy>
+<p><respect_ad_policy></p>
 END
 
 #	@lines = split(/\n/,$list{''}->{'Advertising'});
@@ -424,11 +426,11 @@ EOF
 #	&print_multiline_html("  ",\@lines);
 
 	print OUT <<END;
-<p><see_also_unsubscribe>
+<p><see_also_unsubscribe></p>
 
 <hr>
 
-<p><select_unsubscribe>
+<p><select_unsubscribe></p>
 
 <form method="post" action="http://lists.debian.org/cgi-bin/subscribe.pl">
 END
@@ -493,7 +495,7 @@ END
 	print OUT "</p>\n</FORM>\n\n";
 
 	print OUT <<END;
-<p><respect_ad_policy>
+<p><respect_ad_policy></p>
 END
 }
 
