@@ -13,7 +13,8 @@ include $(WMLBASE)/../Makefile.common
 SHELL = /bin/bash
 BIN = $(WMLBASE)/bin
 #B5TOGB = LD_LIBRARY_PATH=$(BIN) $(BIN)/autogb -i big5 -o gb
-B5TOGB = /usr/bin/iconv -f big5 -t gb2312
+ICONV = /usr/bin/iconv
+B5TOGB = ( $(ICONV) -t big5 | $(ICONV) -f big5 -t gb2312 | $(ICONV) -f gb2312 )
 TOCN = $(BIN)/tocn.pl
 TOHK = $(BIN)/tohk.pl
 TOTW = $(BIN)/totw.pl
@@ -94,30 +95,32 @@ ifndef NOGENERICDEP
 		$(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
 		$(TOCN) $(TOHK) $(TOTW) $(ZHTEMPLATE) $(GETTEXTDEP) \
 		$(COMMONPICS_ZH)
-	$(WML) $(<F)
-	@echo -n " * Converting: [zh_CN.GB2312], "
+	@echo -n "Processing $(<F): "
+	@$(WML) $(<F)
+	@echo -n "[zh_CN], "
 	@$(B5TOGB) < $*.zh-cn.html.tmp > $*.zh-cn.html
 	@rm -f $*.zh-cn.html.tmp
 	@$(TOCN) $*.zh-cn.html
-	@echo -n "[zh_HK.Big5], "
+	@echo -n "[zh_HK], "
 	@mv -f $*.zh-hk.html.tmp $*.zh-hk.html
 	@$(TOHK) $*.zh-hk.html
-	@echo "[zh_TW.Big5]."
+	@echo "[zh_TW]."
 	@mv -f $*.zh-tw.html.tmp $*.zh-tw.html
 	@$(TOTW) $*.zh-tw.html
 else
 %.zh-cn.html %.zh-hk.html %.zh-tw.html: %.wml \
 		$(TOCN) $(TOHK) $(TOTW) $(ZHTEMPLATE) $(GETTEXTDEP) \
 		$(COMMONPICS_ZH)
-	cd $(@D) && $(WML) $(notdir $(<))
-	@echo -n " * Converting: [zh_CN.GB2312], "
+	@echo -n "Processing $(@D)/$(<F): "
+	@cd $(@D) && $(WML) $(notdir $(<))
+	@echo -n "[zh_CN], "
 	@$(B5TOGB) < $*.zh-cn.html.tmp > $*.zh-cn.html
 	@rm -f $*.zh-cn.html.tmp
 	@$(TOCN) $*.zh-cn.html
-	@echo -n "[zh_HK.Big5], "
+	@echo -n "[zh_HK], "
 	@mv -f $*.zh-hk.html.tmp $*.zh-hk.html
 	@$(TOHK) $*.zh-hk.html
-	@echo "[zh_TW.Big5]."
+	@echo "[zh_TW]."
 	@mv -f $*.zh-tw.html.tmp $*.zh-tw.html
 	@$(TOTW) $*.zh-tw.html
 endif
