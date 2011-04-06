@@ -1,27 +1,36 @@
-#!/usr/bin/perl -p
+#!/usr/bin/perl -p -CSD
+
+# $Id$
+
+use strict;
+use warnings;
+use utf8;
+binmode STDIN, ':encoding(utf8)';
+binmode STDOUT, ':encoding(utf8)';
 
 # Fix backslashes in Big5 Chinese characters
-s/^((?:[\x00-\x7F]|(?:[\x80-\xFF].))+[\x80-\xFF]\\)$/$1\\/;
+#s/^((?:[\x00-\x7F]|(?:[\x80-\xFF].))+[\x80-\xFF]\\)$/$1\\/;
 
 # Protect "{:" when the "{" is a second byte of a Big5 Chinese character
 # while (s%^((?:[\x00-\x7f]|[\x80-\xff].)*)([\x80-\xFF]x)%$1$2%) {}
-while ( s{^((?:[\x00-\x7F]|(?:[\x80-\xFF].))+?)([\x80-\xFF]\{)(?!</protect>)}
-	 {$1<protect>$2</protect>} ) {}
+#while ( s{^((?:[\x00-\x7F]|(?:[\x80-\xFF].))+?)([\x80-\xFF]\{)(?!</protect>)}
+#	 {$1<protect>$2</protect>} ) {}
 
 # Convert the Big5 forward slash that's not in the GB2312 code table
 # to the forward slash that's convertible.
-s/¢A/¡ş/g;
+s/âˆ•/ï¼/g;
+s/ç€/è‘—/g;
 
 # Note: the following should be automatically generated in the future.
-s/<tw¤ä´©>/[CN:¤ä´©:][HKTW:¤ä«ù:]/g;
-s/<tw(ÀÉ|ÀÉ®×)>/[CN:¤å¥ó:][HKTW:$1:]/g;
-s/<tw¤å¥ó>/[CN:¤åÀÉ:][HKTW:¤å¥ó:]/g;
-s/<tw¸ê°T>/[CN:«H®§:][HKTW:¸ê°T:]/g;
-s/<tw³sµ²>/[CN:Ãì±µ:][HKTW:³sµ²:]/g;
-s/<tw®Ö¤ß>/[CN:®Ö¤ß:][HKTW:®Ö¤ß:]/g;
-s/<tw¸ê®Æ(®w)?>/[CN:¼Æ¾Ú$1:][HKTW:¸ê®Æ$1:]/g;
-s/<tw¶×(¥X|¤J)>/[CN:¾É$1:][HKTW:¶×$1:]/g;
-s/<tw¸Ë¸m>/[CN:³]³Æ:][HKTW:¸Ë¸m:]/g;
-s/<tw³s±µ°ğ>/[CN:ºİ¤f:][HKTW:³s±µ°ğ:]/g;
-s/<tw²M³æ>/[CN:¦Cªí:][HKTW:²M³æ:]/g;
-s/<tw¥¬ªL>/[CNHK:¥¬º¸:][TW:¥¬ªL:]/g;
+s/<twæ”¯æ´>/[CN:æ”¯æ´:][HKTW:æ”¯æŒ:]/g;
+s/<tw(æª”|æª”æ¡ˆ)>/[CN:æ–‡ä»¶:][HKTW:$1:]/g;
+s/<twæ–‡ä»¶>/[CN:æ–‡æª”:][HKTW:æ–‡ä»¶:]/g;
+s/<twè³‡è¨Š>/[CN:ä¿¡æ¯:][HKTW:è³‡è¨Š:]/g;
+s/<twé€£çµ>/[CN:éˆæ¥:][HKTW:é€£çµ:]/g;
+s/<twæ ¸å¿ƒ>/[CN:æ ¸å¿ƒ:][HKTW:æ ¸å¿ƒ:]/g;
+s/<twè³‡æ–™(åº«)?>/[CN:æ•¸æ“š$1:][HKTW:è³‡æ–™$1:]/g;
+s/<twåŒ¯(å‡º|å…¥)>/[CN:å°$1:][HKTW:åŒ¯$1:]/g;
+s/<twè£ç½®>/[CN:è¨­å‚™:][HKTW:è£ç½®:]/g;
+s/<twé€£æ¥åŸ >/[CN:ç«¯å£:][HKTW:é€£æ¥åŸ :]/g;
+s/<twæ¸…å–®>/[CN:åˆ—è¡¨:][HKTW:æ¸…å–®:]/g;
+s/<twå¸ƒæ—>/[CNHK:å¸ƒçˆ¾:][TW:å¸ƒæ—:]/g;
