@@ -43,6 +43,7 @@ $translation = {
 		'insufficient input sanitization' =>	'Vérification d\'entrée manquante',
 		'missing input validation'		=>	'Validations des entrées insuffisantes',
 		'missing input sanitising'	=>		'Absence de vérification des entrées',
+		'missing input sanitizing'      =>              'Absence de vérification des entrées',
 		'missing input sanitization'    =>              'Absence de vérification des entrées',
 		'NULL pointer dereference'	=>		'Déréférencement de pointeur NULL',
 		'several vulnerabilities'		=>	'Plusieurs vulnérabilités',
@@ -142,6 +143,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\) distributions?,?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?</p>|<p>Pour les distributions $1 ($2) et $3 ($4), ces problèmes ont été corrigés dans la version $5.</p>|gs;
 	$output =~ s|<p>[\n]?For.the.upcoming.(\S+).distribution.\((\S+)\).and.the.(\S+)..??distribution.\((\S+)\),?.this.problem.has.a?l?s?o?.?been.fixed.in.version..??(\S+)\.[\n]?</p>|<p>Pour la distribution $1 à venir ($2) et la distribution $3 ($4), ce problème a été corrigé dans la version $5.</p>|gs;
 	$output =~ s|<p>[\n]?For.the.upcoming.(\S+).distribution.\((\S+)\).and.the.(\S+)..??distribution.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version..??(\S+)\.[\n]?</p>|<p>Pour la distribution $1 à venir ($2) et la distribution $3 ($4), ces problèmes ont été corrigés dans la version $5.</p>|gs;
+	$output =~ s|of.the.(\S+).package\.|du paquet $1.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\).and.t?h?e?.??(\S+).distribution.\((\S+)\),?.this.problem.will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème sera corrigé prochainement.</p>|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\).and.t?h?e?.??(\S+).distribution.\((\S+)\),?.these.problems.will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes seront corrigés prochainement.</p>|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\).distributions?,?.these.problems.will.be.fixed.soon\.[\n]?</p>|<p>Pour les distributions $1 ($2) et $3 ($4), ces problèmes seront corrigés prochainement.</p>|gs;
@@ -238,13 +240,17 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	# usual words, ease copy and paste...
 	$output =~ s|attacker|attaquant|gs;
 	$output =~ s|attack|attaque|gs;
+	$output =~ s|correctly|correctement|gs;
+	$output =~ s|specially.crafted|trafiqué pour l'occasion|gs;
 	$output =~ s|crafted|trafiqué|gs;
 	$output =~ s|can.lead.to|peut conduire à|gs;
 	$output =~ s|can.lead|peut conduire|gs;
 	$output =~ s|could.lead.to|pourrait conduire à|gs;
 	$output =~ s|could.lead|pourrait conduire|gs;
+	$output =~ s|could|pourrait|gs;
 	$output =~ s|design.flaws|défauts de conception|gs;
 	$output =~ s|design.flaw|défaut de conception|gs;
+	$output =~ s|frontend|interface|gs;
 	$output =~ s|high-level|haut niveau|gs;
 	$output =~ s|information.disclosure|divulgation d'informations|gs;
 	$output =~ s|information.leak|fuite d'informations|gs;
@@ -256,14 +262,30 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|memory.consumption|consommation de mémoire|gs;
 	$output =~ s|memory.leak|fuite de mémoire|gs;
 	$output =~ s|package|paquet|gs;
+	$output =~ s|perform|réaliser|gs;
 	$output =~ s|privilege.escalation|augmentation de droits|gs;
 	$output =~ s|race.conditions|situations de compétition|gs;
 	$output =~ s|race.condition|situation de compétition|gs;
 	$output =~ s|remote.vulnerabilities|vulnérabilités distantes|gs;
 	$output =~ s|Several|Plusieurs|gs;
 	$output =~ s|to.cause|de provoquer|gs;
+	$output =~ s| tools | outils |gs;
+	$output =~ s| tool | outil |gs;
 	$output =~ s|via.a|à l'aide d'un|gs;
 	$output =~ s|vulnerable|vulnérable|gs;
+	$output =~ s|that in |que dans |gs;
+	$output =~ s| and | et |gs;
+	$output =~ s| in order to | afin de |gs;
+	$output =~ s| in order | afin |gs;
+	$output =~ s| in | dans |gs;
+	$output =~ s|if.a.user.is.tricked.into.opening|si un utilisateur est piégé dans l'ouverture|gs;
+	$output =~ s|if.a.user.is.tricked.into|si un utilisateur est piégé dans|gs;
+	$output =~ s|if.a.user.is.tricked|si un utilisateur est piégé|gs;
+	$output =~ s|if.a.user|si un utilisateur|gs;
+	$output =~ s|is.tricked.into|est piégé dans|gs;
+	$output =~ s| if | si |gs;
+	$output =~ s| or | ou |gs;
+	$output =~ s| with | avec |gs;
 
 }
 
