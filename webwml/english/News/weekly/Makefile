@@ -73,18 +73,7 @@ endif
 	    done; \
 	done
 
-	@echo -n " * Converting: [zh_CN.GB2312], "
-	@$(B5TOGB) < $*.zh-cn.html.tmp > $*.zh-cn.html
-	@rm -f $*.zh-cn.html.tmp
-	@$(TOCN) $*.zh-cn.html
-
-	@echo -n "[zh_HK.Big5], "
-	@mv -f $*.zh-hk.html.tmp $*.zh-hk.html
-	@$(TOHK) $*.zh-hk.html
-
-	@echo "[zh_TW.Big5]."
-	@mv -f $*.zh-tw.html.tmp $*.zh-tw.html
-	@$(TOTW) $*.zh-tw.html
+	@$(GENERATE_ZH_VARIANTS) $* html
 
 install:: $(HTMLDESTFILES) $(PNGDESTFILES)
 ifeq "$(LANGUAGE)" "en"

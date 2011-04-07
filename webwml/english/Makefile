@@ -33,19 +33,11 @@ $(SITEMAP): $(ENGLISHDIR)/sitemap.wml $(TEMPLDIR)/card.wml \
   $(TEMPLDIR)/links.tags.wml $(TEMPLDIR)/template.wml $(GETTEXTDEP) \
   $(TEMPLDIR)/release_info.wml $(ENGLISHDIR)/MailingLists/mklist.tags
 ifeq "$(LANGUAGE)" "zh"
+	@echo -n "Processing $(<F): "
 	$(subst :.zh,:sitemap.zh,$(WML)) \
           $(shell egrep '^-D (CUR_|CHAR)' .wmlrc) \
             $(shell echo $(ENGLISHDIR) | sed s,./,,)/sitemap.wml
-	@echo -n " * Converting: [zh_CN.GB2312], "
-	@$(B5TOGB) < sitemap.zh-cn.html.tmp > sitemap.zh-cn.html
-	@rm -f sitemap.zh-cn.html.tmp
-	@$(TOCN) sitemap.zh-cn.html
-	@echo -n "[zh_HK.Big5], "
-	@mv -f sitemap.zh-hk.html.tmp sitemap.zh-hk.html
-	@$(TOHK) sitemap.zh-hk.html
-	@echo "[zh_TW.Big5]."
-	@mv -f sitemap.zh-tw.html.tmp sitemap.zh-tw.html
-	@$(TOTW) sitemap.zh-tw.html
+	@$(GENERATE_ZH_VARIANTS) sitemap html
 else
 	$(WML) $(shell egrep '^-D (CUR_|CHAR)' .wmlrc) \
           $(shell echo $(ENGLISHDIR) | sed s,./,,)/sitemap.wml

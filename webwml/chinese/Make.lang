@@ -9,6 +9,8 @@ include $(WMLBASE)/../Makefile.common
 # If you need to modify that is already defined in ../Makefile.common
 # you can put it below
 
+export LANG=C
+
 # Experimental tag by the Debian Chinese Translation Team
 SHELL = /bin/bash
 BIN = $(WMLBASE)/bin
@@ -16,8 +18,9 @@ BIN = $(WMLBASE)/bin
 ICONV = /usr/bin/iconv
 B5TOGB = ( $(ICONV) -f UTF-8 -t big5 | $(ICONV) -f big5 -t gb2312 | $(ICONV) -f gb2312 -t UTF-8 )
 TOCN = $(BIN)/tocn.pl
-TOHK = $(BIN)/tohk.pl
 TOTW = $(BIN)/totw.pl
+TOHK = $(BIN)/tohk.pl
+GENERATE_ZH_VARIANTS = $(BIN)/generate-zh-variants.sh
 FIX_BIG5 = $(BIN)/fix_big5.pl
 ZHTEMPLATE = $(WMLBASE)/template/debian-zh/template.tmpl
 
@@ -97,32 +100,14 @@ ifndef NOGENERICDEP
 		$(COMMONPICS_ZH)
 	@echo -n "Processing $(<F): "
 	@$(WML) $(<F)
-	@echo -n "[zh_CN], "
-	@$(B5TOGB) < $*.zh-cn.html.tmp > $*.zh-cn.html
-	@rm -f $*.zh-cn.html.tmp
-	@$(TOCN) $*.zh-cn.html
-	@echo -n "[zh_HK], "
-	@mv -f $*.zh-hk.html.tmp $*.zh-hk.html
-	@$(TOHK) $*.zh-hk.html
-	@echo "[zh_TW]."
-	@mv -f $*.zh-tw.html.tmp $*.zh-tw.html
-	@$(TOTW) $*.zh-tw.html
+	@$(GENERATE_ZH_VARIANTS) $* html
 else
 %.zh-cn.html %.zh-hk.html %.zh-tw.html: %.wml \
 		$(TOCN) $(TOHK) $(TOTW) $(ZHTEMPLATE) $(GETTEXTDEP) \
 		$(COMMONPICS_ZH)
-	@echo -n "Processing $(@D)/$(<F): "
+	@echo -n "Processing $(<F): "
 	@cd $(@D) && $(WML) $(notdir $(<))
-	@echo -n "[zh_CN], "
-	@$(B5TOGB) < $*.zh-cn.html.tmp > $*.zh-cn.html
-	@rm -f $*.zh-cn.html.tmp
-	@$(TOCN) $*.zh-cn.html
-	@echo -n "[zh_HK], "
-	@mv -f $*.zh-hk.html.tmp $*.zh-hk.html
-	@$(TOHK) $*.zh-hk.html
-	@echo "[zh_TW]."
-	@mv -f $*.zh-tw.html.tmp $*.zh-tw.html
-	@$(TOTW) $*.zh-tw.html
+	@$(GENERATE_ZH_VARIANTS) $* html
 endif
 
 # template dependencies

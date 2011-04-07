@@ -34,16 +34,7 @@ ifeq "$(LANGUAGE)" "zh"
 	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:news.zh-$$1.rdf,g') \
           $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
             $(ENGLISHDIR)/News/news.rdf.in
-	@echo -n " * Converting: [zh_CN.GB2312], "
-	@$(B5TOGB) < news.zh-cn.rdf.tmp > news.zh-cn.rdf
-	@rm -f news.zh-cn.rdf.tmp
-	@$(TOCN) news.zh-cn.rdf
-	@echo -n "[zh_HK.Big5], "
-	@mv -f news.zh-hk.rdf.tmp news.zh-hk.rdf
-	@$(TOHK) news.zh-hk.rdf
-	@echo "[zh_TW.Big5]."
-	@mv -f news.zh-tw.rdf.tmp news.zh-tw.rdf
-	@$(TOTW) news.zh-tw.rdf
+	@$(GENERATE_ZH_VARIANTS) news rdf
 else
 	$(WML) $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
 	    $(ENGLISHDIR)/News/news.rdf.in
