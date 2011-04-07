@@ -21,17 +21,27 @@ use open ':std', ':utf8';
 # to the forward slash that's convertible.
 s/∕/／/g;
 s/着/著/g;
+s/á/&aacute;/g;
+s/è/&egrave;/g;
 
 # Note: the following should be automatically generated in the future.
 s/<tw支援>/[CN:支援:][HKTW:支持:]/g;
 s/<tw(檔|檔案)>/[CN:文件:][HKTW:$1:]/g;
+s/<cn文件>/[CN:文件:][HKTW:檔案:]/g;
 s/<tw文件>/[CN:文檔:][HKTW:文件:]/g;
 s/<tw資訊>/[CN:信息:][HKTW:資訊:]/g;
 s/<tw連結>/[CN:鏈接:][HKTW:連結:]/g;
-s/<tw核心>/[CN:核心:][HKTW:核心:]/g;
+s/<tw核心>/[CN:內核:][HKTW:核心:]/g;
 s/<tw資料(庫)?>/[CN:數據$1:][HKTW:資料$1:]/g;
 s/<tw匯(出|入)>/[CN:導$1:][HKTW:匯$1:]/g;
 s/<tw裝置>/[CN:設備:][HKTW:裝置:]/g;
 s/<tw連接埠>/[CN:端口:][HKTW:連接埠:]/g;
 s/<tw清單>/[CN:列表:][HKTW:清單:]/g;
 s/<tw布林>/[CNHK:布爾:][TW:布林:]/g;
+s/<tw碟>/[CN:盤:][HKTW:碟:]/g;
+s/<tw儲存>/[CN:存儲:][HKTW:儲存:]/g;
+s/<cn倉庫>/[CN:倉庫:][HKTW:檔案庫:]/g;
+s/<tw檔案庫>/[CN:倉庫:][HKTW:檔案庫:]/g;
+s/<cn信息>/[CN:信息:][HKTW:資訊:]/g;
+s/<tw資訊>/[CN:信息:][HKTW:資訊:]/g;
+s/<cn項目>/[CN:項目:][HK:計劃:][TW:計畫:]/g;

@@ -57,19 +57,11 @@ $(DSARDF): $(ENGLISHDIR)/security/dsa.rdf.in \
   $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dsa-*.data) \
   $(TEMPLDIR)/recent_list.wml $(GETTEXTDEP)
 ifeq "$(LANGUAGE)" "zh"
+	@echo -n "Processing $(<F): "
 	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:dsa.zh-$$1.rdf,g') \
           $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
             $(ENGLISHDIR)/security/dsa.rdf.in
-	@echo -n " * Converting: [zh_CN.GB2312], "
-	@$(B5TOGB) < dsa.zh-cn.rdf.tmp > dsa.zh-cn.rdf
-	@rm -f dsa.zh-cn.rdf.tmp
-	@$(TOCN) dsa.zh-cn.rdf
-	@echo -n "[zh_HK.Big5], "
-	@mv -f dsa.zh-hk.rdf.tmp dsa.zh-hk.rdf
-	@$(TOHK) dsa.zh-hk.rdf
-	@echo "[zh_TW.Big5]."
-	@mv -f dsa.zh-tw.rdf.tmp dsa.zh-tw.rdf
-	@$(TOTW) dsa.zh-tw.rdf
+	@$(GENERATE_ZH_VARIANTS) dsa rdf
 else
 	$(WML) $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
             $(ENGLISHDIR)/security/dsa.rdf.in
@@ -81,19 +73,11 @@ $(DSALONGRDF): $(ENGLISHDIR)/security/dsa-long.rdf.in \
   $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dsa-*.data) \
   $(TEMPLDIR)/recent_list.wml $(GETTEXTDEP)
 ifeq "$(LANGUAGE)" "zh"
+	@echo -n "Processing $(<F): "
 	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:dsa-long.zh-$$1.rdf,g') \
           $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
             $(ENGLISHDIR)/security/dsa-long.rdf.in
-	@echo -n " * Converting: [zh_CN.GB2312], "
-	@$(B5TOGB) < dsa-long.zh-cn.rdf.tmp > dsa-long.zh-cn.rdf
-	@rm -f dsa-long.zh-cn.rdf.tmp
-	@$(TOCN) dsa-long.zh-cn.rdf
-	@echo -n "[zh_HK.Big5], "
-	@mv -f dsa-long.zh-hk.rdf.tmp dsa-long.zh-hk.rdf
-	@$(TOHK) dsa-long.zh-hk.rdf
-	@echo "[zh_TW.Big5]."
-	@mv -f dsa-long.zh-tw.rdf.tmp dsa-long.zh-tw.rdf
-	@$(TOTW) dsa-long.zh-tw.rdf
+	@$(GENERATE_ZH_VARIANTS) dsa-long rdf
 else
 	$(WML) $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
             $(ENGLISHDIR)/security/dsa-long.rdf.in
@@ -105,19 +89,11 @@ $(DSAALLRDF): $(ENGLISHDIR)/security/dsa-all.rdf.in \
   $(wildcard $(ENGLISHDIR)/security/????/dsa-*.data) \
   $(TEMPLDIR)/recent_list.wml $(GETTEXTDEP)
 ifeq "$(LANGUAGE)" "zh"
+	@echo -n "Processing $(<F): "
 	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:dsa-all.zh-$$1.rdf,g') \
           $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
             $(ENGLISHDIR)/security/dsa-all.rdf.in
-	@echo -n " * Converting: [zh_CN.GB2312], "
-	@$(B5TOGB) < dsa-all.zh-cn.rdf.tmp > dsa-all.zh-cn.rdf
-	@rm -f dsa-all.zh-cn.rdf.tmp
-	@$(TOCN) dsa-all.zh-cn.rdf
-	@echo -n "[zh_HK.Big5], "
-	@mv -f dsa-all.zh-hk.rdf.tmp dsa-all.zh-hk.rdf
-	@$(TOHK) dsa-all.zh-hk.rdf
-	@echo "[zh_TW.Big5]."
-	@mv -f dsa-all.zh-tw.rdf.tmp dsa-all.zh-tw.rdf
-	@$(TOTW) dsa-all.zh-tw.rdf
+	@$(GENERATE_ZH_VARIANTS) dsa-all rdf
 else
 	$(WML) $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
             $(ENGLISHDIR)/security/dsa-all.rdf.in
