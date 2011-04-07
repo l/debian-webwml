@@ -1,12 +1,13 @@
-#!/usr/bin/perl -p -CSD
+#!/usr/bin/perl -p
 
 # $Id$
 
 use strict;
 use warnings;
 use utf8;
-binmode STDIN, ':encoding(utf8)';
-binmode STDOUT, ':encoding(utf8)';
+use open ':std', ':utf8';
+#binmode STDIN, ':encoding(utf8)';
+#binmode STDOUT, ':encoding(utf8)';
 
 # Fix backslashes in Big5 Chinese characters
 #s/^((?:[\x00-\x7F]|(?:[\x80-\xFF].))+[\x80-\xFF]\\)$/$1\\/;

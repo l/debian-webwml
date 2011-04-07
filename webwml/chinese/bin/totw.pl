@@ -1,12 +1,13 @@
-#!/usr/bin/perl -pi -CSD
+#!/usr/bin/perl -pi
 
 # $Id$
 
 use strict;
 use warnings;
 use utf8;
-binmode(STDIN, ':encoding(utf8)');
-binmode(STDOUT, ':encoding(utf8)');
+use open ':std', ':utf8';
+#binmode(STDIN, ':encoding(utf8)');
+#binmode(STDOUT, ':encoding(utf8)');
 
 $0 =~ m|to(..)\.pl$|;
 my $sublang = $1;

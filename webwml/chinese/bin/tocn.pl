@@ -1,12 +1,13 @@
-#!/usr/bin/perl -pi -CSD
+#!/usr/bin/perl -pi
 
 # $Id$
 
 use strict;
 use warnings;
 use utf8;
-binmode(STDIN, ':encoding(utf8)');
-binmode(STDOUT, ':encoding(utf8)');
+use open ':std', ':utf8';
+#binmode(STDIN, ':encoding(utf8)');
+#binmode(STDOUT, ':encoding(utf8)');
 
 s|^(<html lang="zh)">|$1-CN">|i;
 # s|^(\s*<meta http-equiv=.*charset)=big5">|$1=gb2312">|i;
