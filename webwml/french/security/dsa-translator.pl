@@ -269,12 +269,17 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|race.conditions|situations de compétition|gs;
 	$output =~ s|race.condition|situation de compétition|gs;
 	$output =~ s|remote.vulnerabilities|vulnérabilités distantes|gs;
+	$output =~ s|root.privileges|droits du superutilisateur|gs;
 	$output =~ s|Several|Plusieurs|gs;
+	$output =~ s|This.allows|Cela permet|gs;
+	$output =~ s|this.allows|cela permet|gs;
 	$output =~ s|to.cause|de provoquer|gs;
 	$output =~ s| tools | outils |gs;
 	$output =~ s| tool | outil |gs;
 	$output =~ s|via.a|à l'aide d'un|gs;
 	$output =~ s|vulnerable|vulnérable|gs;
+	$output =~ s|vulnerabilities|vulnérabilités|gs;
+
 	$output =~ s|that in |que dans |gs;
 	$output =~ s| and | et |gs;
 	$output =~ s| in order to | afin de |gs;
