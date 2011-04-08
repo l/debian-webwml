@@ -13,7 +13,7 @@ DOMAINS = templates bugs cdimage consultants countries date distrib \
 	  ports search security stats vendors vote wnpp others
 
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
-cdimage_FILES   = $(TEMPLDIR)/cdimage.wml
+cdimage_FILES   = $(TEMPLDIR)/cdimage.wml $(ENGLISHDIR)/CD/CD-keys.data
 consultants_FILES = $(TEMPLDIR)/consultant.wml \
   $(ENGLISHDIR)/consultants/consultant.defs
 countries_FILES = $(TEMPLDIR)/countries.wml
