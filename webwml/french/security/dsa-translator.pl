@@ -61,6 +61,7 @@ $translation = {
 		'directory traversal'				=>	'Traversée de répertoires',
 		'path traversal'				=>      'Traversée de répertoires',
 		'double free'					=>	'Double libération de zone de mémoire',
+		'use-after-free'				=>	'Utilisation de mémoire après libération',
 		'privilege escalation'				=>	'Augmentation de droits',
 		'SQL injection'					=>	'Injection SQL',
 		'ssl certificate blacklist update'		=>	'Mise à jour de la liste noire des certificats',
@@ -166,6 +167,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).doesn't.include.(\S+)\.|<p>La distribution $1 ($2) ne contient pas $3.|gs;
 	$output =~ s|<p>[\n]?The.following.matrix.lists.additional.source.packages.that.were.rebuilt.for.compatibility.with.or.to.take.advantage.of.this.update:</p>|<p>Le tableau suivant liste les paquets supplémentaires qui ont été reconstruits à des fins de compatibilité ou pour tirer parti de cette mise à jour :</p>|gs;
 	$output =~ s|which.was.already.included.in.the.(\S+).release|qui a déjà été incluse dans la publication de $1|gs;
+	$output =~ s|as.it.does.not.include|car elle ne contient pas|gs;
 
 
 	# Case adjustment
