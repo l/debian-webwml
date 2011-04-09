@@ -15,11 +15,6 @@ ifeq "$(LANGUAGE)" "ja"
 ABS_DIR = $(CURDIR)
 endif
 
-ifeq "$(LANGUAGE)" "zh"
-# Ugly hack to handle the "cd" just before wml...
-FIX_BIG5 := $(CURDIR)/$(FIX_BIG5)
-endif
-
 # This Makefile will handle converting all .wml files in this directory
 # and all subdirectories to .html files. It does it this way so
 # a new Makefile isn't needed for each new issue.
@@ -54,27 +49,6 @@ else
 endif
 endif
 
-# Special case for Chinese
-%.zh-cn.html %.zh-hk.html %.zh-tw.html : %.wml \
-			   $(TEMPLDIR)/weeklynews/footer.wml \
-			   $(TEMPLDIR)/weeklynews/header.wml $(GETTEXTDEP) \
-			   $(TOCN) $(TOHK) $(TOTW)
-	cd $(@D) && $(WML) $(notdir $(<))
-
-# *.imgdot-1x1-transp.gif are evil!  Get rid of them!
-# Must set nullglob or else the following fails - foka, July 2000
-
-	@shopt -s nullglob; \
-	for i in *.imgdot-1x1-transp.gif; do \
-	    rm -f $$i; \
-	    j=`basename $$i .imgdot-1x1-transp.gif` ; \
-	    for k in $$j.$(LANGUAGE)-??.html.tmp; do \
-		perl -pi -e "s|$$j\\.(?=imgdot-1x1-transp\\.gif)|$(WMLBASE)/Pics/|g" $$k; \
-	    done; \
-	done
-
-	@$(GENERATE_ZH_VARIANTS) $* html
-
 install:: $(HTMLDESTFILES) $(PNGDESTFILES)
 ifeq "$(LANGUAGE)" "en"
 # Set up current issue symlink. In case you're wondering, the only
@@ -103,43 +77,16 @@ $(HTMLDIR)/%.png: %.png
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
 
-# Special case for Chinese
-$(HTMLDIR)/%.zh-cn.html: %.zh-cn.html
-	@test -d $(@D) || mkdir -m g+w -p $(@D)
-	@echo copying $(@F) to $(@D)
-	-@install -m 664 -p $(<) $(@D)
-$(HTMLDIR)/%.zh-hk.html: %.zh-hk.html
-	@test -d $(@D) || mkdir -m g+w -p $(@D)
-	@echo copying $(@F) to $(@D)
-	-@install -m 664 -p $(<) $(@D)
-$(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
-	@test -d $(@D) || mkdir -m g+w -p $(@D)
-	@echo copying $(@F) to $(@D)
-	-@install -m 664 -p $(<) $(@D)
-
 # Have to add to the default clean rule to clean up all the html the
 # above target produces.
 clean::
-ifeq "$(LANGUAGE)" "zh"
-	-find . -type f -name \*.$(LANGUAGE)-??.html | xargs rm -f
-else
 ifeq "$(LANGUAGE)" "ja"
 	-find . -type f -name \*.$(LANGUAGE).html.tmp | xargs rm -f
 endif
 	-find . -type f -name \*.$(LANGUAGE).html | xargs rm -f
-endif
 
 # Need to rebuild the index when anything changes.
 index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/*/index.wml) \
-      $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(CUR_YEAR)/*/index.wml) \
-      $(ENGLISHSRCDIR)/$(CUR_DIR)/CURRENT-ISSUE-IS \
-      $(TEMPLDIR)/weeklynews/header.wml \
-      $(TEMPLDIR)/weeklynews/index.wml \
-      $(TEMPLDIR)/weeklynews/footer.wml $(GETTEXTDEP)
-
-# Special case for Chinese
-index.zh-cn.html index.zh-hk.html index.zh-tw.html: index.wml \
-      $(wildcard $(CUR_YEAR)/*/index.wml) \
       $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(CUR_YEAR)/*/index.wml) \
       $(ENGLISHSRCDIR)/$(CUR_DIR)/CURRENT-ISSUE-IS \
       $(TEMPLDIR)/weeklynews/header.wml \
@@ -154,17 +101,6 @@ index.zh-cn.html index.zh-hk.html index.zh-tw.html: index.wml \
         $(TEMPLDIR)/weeklynews/header.wml \
         $(TEMPLDIR)/weeklynews/index.wml \
         $(TEMPLDIR)/weeklynews/footer.wml $(GETTEXTDEP)
-
-# again special cases for Chinese, ugh
-ifeq "$(LANGUAGE)" "zh"
-[0-9]*/index.zh-cn.html [0-9]*/index.zh-hk.html [0-9]*/index.zh-tw.html: \
-	$(shell find $* -name index.wml) \
-	$(wildcard 1999/*/index.wml) \
-	$(wildcard $(ENGLISHSRCDIR)/News/weekly/$*/*/index.wml) \
-	$(TEMPLDIR)/weeklynews/header.wml \
-	$(TEMPLDIR)/weeklynews/index.wml \
-	$(TEMPLDIR)/weeklynews/footer.wml $(GETTEXTDEP)
-endif
 
 CURRENT_ISSUE=$(shell cat $(ENGLISHSRCDIR)/$(CUR_DIR)/CURRENT-ISSUE-IS)/index.wml
 DWN_CURRENT=$(shell test -f $(CURRENT_ISSUE) && echo "yes" || echo)
