@@ -18,8 +18,11 @@ ICONV = /usr/bin/iconv
 TOCN = $(BIN)/tocn.pl
 TOTW = $(BIN)/totw.pl
 TOHK = $(BIN)/tohk.pl
+FORMAT_ZH = $(BIN)/format_zh.pl
 GENERATE_ZH_VARIANTS = $(BIN)/generate-zh-variants.sh
 ZHTEMPLATE = $(WMLBASE)/template/debian-zh/template.tmpl
+
+COMMON_SCRIPTS = $(TOCN) $(TOTW) $(TOHK) $(FORMAT_ZH) $(GENERATE_ZH_VARIANTS)
 
 # how to include openlogo-nd-50.png here? it's in logos, not in Pics/ ...
 COMMONPICS = debian.png \
@@ -53,6 +56,7 @@ ZHMAGIC = @if `echo $(HTMLDIR) | grep -q '^$(WMLBASE)/$(RELHTMLBASE)/internation
 WMLOUTPUT = -o UNDEFuZH@uCNuCNHKuCNTW:$(*F).zh-cn.html.tmp@g+w \
 	-o UNDEFuZH@uHKuCNHKuHKTWuTWHK:$(*F).zh-hk.html.tmp@g+w \
 	-o UNDEFuZH@uTWuCNTWuHKTWuTWHK:$(*F).zh-tw.html.tmp@g+w
+WMLPROLOG = --prolog=$(FORMAT_ZH)
 WML = wml $(WMLOPTIONS) $(WMLOUTPUT) $(WMLPROLOG) $(WMLEPILOG)
 
 install::
@@ -92,14 +96,14 @@ $(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
 ifndef NOGENERICDEP
 %.zh-cn.html %.zh-hk.html %.zh-tw.html: %.wml \
 		$(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
-		$(TOCN) $(TOHK) $(TOTW) $(ZHTEMPLATE) $(GETTEXTDEP) \
+		$(COMMON_SCRIPTS) $(ZHTEMPLATE) $(GETTEXTDEP) \
 		$(COMMONPICS_ZH)
 	@echo -n "Processing $(<F): "
 	@$(WML) $(<F)
 	@$(GENERATE_ZH_VARIANTS) $* html
 else
 %.zh-cn.html %.zh-hk.html %.zh-tw.html: %.wml \
-		$(TOCN) $(TOHK) $(TOTW) $(ZHTEMPLATE) $(GETTEXTDEP) \
+		$(COMMON_SCRIPTS) $(ZHTEMPLATE) $(GETTEXTDEP) \
 		$(COMMONPICS_ZH)
 	@echo -n "Processing $(<F): "
 	@cd $(@D) && $(WML) $(notdir $(<))
