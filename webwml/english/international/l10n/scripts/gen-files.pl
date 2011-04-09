@@ -715,6 +715,10 @@ sub get_stats_podebconf {
                 foreach (@pd_langs) {
                         $list{uc $_}  = 0;
                 }
+		# avoid deprecated characters in anchors
+		my $pkgid = $pkg;
+	       	$pkgid =~ s/\+/plus/;
+
                 if ($data->has_errors($pkg)) {
                         $podebconf_errors->{$pkg} = { charsetname => [], invalidpo => [], charset => [], missingfile => [], unknownlanguage => [], outofdatetemplate => [], outofdatepo => [] };
                         my $found = 0;
@@ -770,7 +774,7 @@ sub get_stats_podebconf {
                                 "/$opt_d/".$data->pooldir($pkg).
                                 "/$link.gz\">$pofile</a>]";
                 }
-                $orig .= "<li><a name=\"$pkg\" href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>$addorig</li>\n"
+                $orig .= "<li><a name=\"$pkgid\" href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>$addorig</li>\n"
                         if $addorig;
 
                 my $addtotal = 0;
@@ -860,7 +864,7 @@ sub get_stats_podebconf {
 			} elsif (defined $podebconf_errors_by_language->{$pkg}->{$lang}) {
 			    $str .= " (<a href=\"errors-by-pkg#P$pkg\">!</a>)";
 			}
-                        $str .= "<a href=\"pot#$pkg\">$pkg</a>";
+                        $str .= "<a href=\"pot#$pkgid\">$pkg</a>";
 			my $add = "";
 			if (defined $status_db{$l}) {
 			   if (    $status_db{$l}->has_package($pkg)
