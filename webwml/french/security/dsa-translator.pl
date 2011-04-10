@@ -55,6 +55,7 @@ $translation = {
 		'insufficient input validation'	=>	'Validations des entrées insuffisantes',
 		'insufficient checks'			=>	'Vérifications insuffisantes',
 		'cross-site scripting'			=>	'Script intersite',
+		'Cross-Site Request Forgery'		=>	'Contrefaçon de requête intersite',
 		'design flaw'					=>	'Défaut de conception',
 		'design flaws'					=>	'Défauts de conception',
 		'denial of service'				=>	'Déni de service',
@@ -168,6 +169,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?The.following.matrix.lists.additional.source.packages.that.were.rebuilt.for.compatibility.with.or.to.take.advantage.of.this.update:</p>|<p>Le tableau suivant liste les paquets supplémentaires qui ont été reconstruits à des fins de compatibilité ou pour tirer parti de cette mise à jour :</p>|gs;
 	$output =~ s|which.was.already.included.in.the.(\S+).release|qui a déjà été incluse dans la publication de $1|gs;
 	$output =~ s|as.it.does.not.include|car elle ne contient pas|gs;
+	$output =~ s|it.does.not.include|elle ne contient pas|gs;
 
 
 	# Case adjustment
@@ -200,6 +202,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|buffer.overflow|débordement de mémoire tampon|gs;
 	$output =~ s|cross.site.request.forgeries|contrefaçons de requête intersite|gs;
 	$output =~ s|cross.site.request.forgery|contrefaçon de requête intersite|gs;
+	$output =~ s|Cross.Site.Request.Forgery|contrefaçon de requête intersite|gs;
 	$output =~ s|cross.site.scripting.attacks|attaques par script instersite|gs;
 	$output =~ s|cross.site.scripting.issues|problème de script instersite|gs;
 	$output =~ s|cross.site.scripting|script instersite|gs;
