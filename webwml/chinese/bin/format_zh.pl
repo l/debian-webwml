@@ -49,5 +49,11 @@ $c =~ s/<tw裝置>/[CN:設備:][HKTW:裝置:]/g;
 $c =~ s/<tw連接埠>/[CN:端口:][HKTW:連接埠:]/g;
 $c =~ s/<tw清單>/[CN:列表:][HKTW:清單:]/g;
 $c =~ s/<tw布林>/[CNHK:布爾:][TW:布林:]/g;
+$c =~ s/<tw檔案庫>/[CN:倉庫:][HKTW:檔案庫:]/g;
+$c =~ s/<tw碟>/[CN:盤:][HKTW:碟:]/g;
+$c =~ s/<cn倉庫>/[CN:倉庫:][HKTW:檔案庫:]/g;
+$c =~ s/<cn文件>/[CN:文件:][HKTW:檔案:]/g;
+$c =~ s/<cn信息>/[CN:信息:][HKTW:資訊:]/g;
+$c =~ s/<cn項目>/[CN:項目:][HKTW:計畫:]/g;
 
 print $c;
