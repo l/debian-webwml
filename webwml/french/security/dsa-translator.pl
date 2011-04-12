@@ -203,9 +203,9 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|cross.site.request.forgeries|contrefaçons de requête intersite|gs;
 	$output =~ s|cross.site.request.forgery|contrefaçon de requête intersite|gs;
 	$output =~ s|Cross.Site.Request.Forgery|contrefaçon de requête intersite|gs;
-	$output =~ s|cross.site.scripting.attacks|attaques par script instersite|gs;
-	$output =~ s|cross.site.scripting.issues|problème de script instersite|gs;
-	$output =~ s|cross.site.scripting|script instersite|gs;
+	$output =~ s|cross.site.scripting.attacks|attaques par script intersite|gs;
+	$output =~ s|cross.site.scripting.issues|problème de script intersite|gs;
+	$output =~ s|cross.site.scripting|script intersite|gs;
 	$output =~ s|(denial.of.service\|DoS).attacks|attaques par déni de service|gs;
 	$output =~ s|(denial.of.service\|DoS).attack|attaque par déni de service|gs;
 	$output =~ s|(denial.of.service\|DoS).issues|problèmes de déni de service|gs;
