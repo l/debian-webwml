@@ -123,6 +123,7 @@ sub rdf_add
     $body =~ s/&/&amp;/g;
     $body =~ s/</&lt;/g;
     $body =~ s/>/&gt;/g;
+    $headline =~ s/&mdash;/-/g;
 
 		$headline =~ s/<[\/]*[a-z0-9]*>//g;
 
@@ -161,6 +162,7 @@ $rss->channel (title          => $loctitle,
 my $count = 0;
 my $headline = '';
 my $body = '';
+my $name = '';
 
 if (open (F, $current . '/index.wml')) {
     while (<F>) {
@@ -180,16 +182,22 @@ if (open (F, $current . '/index.wml')) {
             $headline = $1;
             $body = $2."\n";
             chop ($headline) if ($headline =~ /\.$/);
+	} elsif (/^<toc-add-entry name="(.*)">(.*)<\/toc-add-entry>(?:<br \/>)?\s*(.*)/) {
+	    $name = $1;
+	    $headline = $2;
+	    $body = $3."\n";
+	    chop ($headline) if ($headline =~ /\.$/);
         } elsif (/^<p>(.*)/) {
             $body = $1."\n";
 	} elsif (/(.*)<\/p>/) {
 	    $body .= $1;
 
-	    if ($body !~ /(main\/newpkg|removals.txt|wnpp\/help_requeste|href="mailto:debian-publicity\@lists.debian.org"|www.debian.org\/security)/) {
+	    if ($name !~ /(newcontributors|rcstats|dsa|nnwp|wnpp|continuedpn)/) {
 		if (!$headline) {
-		    rdf_add ($rss, $count++, $locdesc, $body) if ($count == 0);
+		    rdf_add ($rss, 'content', $locdesc, $body) if ($count == 0);
+		    $count++
 		} else {
-		    rdf_add ($rss, $count++, $headline, $body);
+		    rdf_add ($rss, $name, $headline, $body);
 		}
 	    }
 
