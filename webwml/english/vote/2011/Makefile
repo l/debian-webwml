@@ -27,13 +27,12 @@ $(foreach i, $(basename $(wildcard suppl_*_stats.wml)), $(i).$(LANGUAGE).html): 
 
 ifeq "$(LANGUAGE)" "en"
 
-textfiles :=  
-	      # vote_001_quorum.err  vote_001_quorum.log  \
-              # vote_001_tally.txt   vote_001_voters.txt  \
-              # vote_001_results.dot vote_001_results.txt \
-              # vote_001_results.png vote_001_quorum.txt  \
-              # vote_001_vote.png                         \
-              # vote_001_vote_detailed.png                \
+textfiles := vote_001_quorum.err  vote_001_quorum.log  \
+		vote_001_tally.txt   vote_001_voters.txt  \
+		vote_001_results.dot vote_001_results.txt \
+		vote_001_results.png vote_001_quorum.txt  \
+		vote_001_vote.png                         \
+		vote_001_vote_detailed.png
               # vote_002_tally.txt   vote_002_voters.txt  \
               # vote_002_vote.png    vote_002_results.png \
               # vote_002_results.dot vote_002_results.txt \
