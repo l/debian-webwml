@@ -44,7 +44,7 @@ sub print_maintainer {
            print "$lastname";
 	} else {
 	   my $linkname = $lastname;
-	   $linkname =~ tr{ /'+&\;#///}{_}; # get rid of special char in tag in order to shut tidy up
+	   $linkname =~ tr{ /'+&\;#~///}{_}; # get rid of special char in tag in order to shut tidy up
 	   $linkname = "MAINT_" . $linkname;
 	   print "<a name=\"$linkname\">$lastname</a>";
            $ppl_ref{lc($lastname)} = 1;
