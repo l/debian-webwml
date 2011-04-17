@@ -1,1 +1,1 @@
-include $(subst webwml/french,webwml/english,$(CURDIR))/Makefile
+include $(subst webwml/norwegian,webwml/english,$(CURDIR))/Makefile
