@@ -34,16 +34,19 @@ sub print_maintainer {
 	   my $userid = $People{$names}{email};
 	   $userid =~ s/@.*//;
 	   if (!$ppl_ref{lc($userid)}) {
-	      print "<a name=\"$userid\"></a>";
+	      my $linkname = $userid;
+	      $linkname = "MAINT_" . $linkname;
+	      print "<a name=\"$linkname\"></a>";
 	      $ppl_ref{lc($userid)} = 1;
 	   }
         }
 	if ($ppl_ref{lc($lastname)}) {
            print "$lastname";
 	} else {
-	   my $lastname_underscore = $lastname;
-	   $lastname_underscore =~ s/ /_/g; # get rid of spaces in tag in order to shut tidy up
- 	   print "<a name=\"$lastname_underscore\">$lastname</a>";
+	   my $linkname = $lastname;
+	   $linkname =~ tr{ /'+&\;#///}{_}; # get rid of special char in tag in order to shut tidy up
+	   $linkname = "MAINT_" . $linkname;
+	   print "<a name=\"$linkname\">$lastname</a>";
            $ppl_ref{lc($lastname)} = 1;
 	}
 	if ($lastname ne "Wookey") {
