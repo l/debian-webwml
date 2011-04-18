@@ -1,0 +1,79 @@
+#use wml::debian::translation-check translation="1.2" maintainer="David Prévot"
+<define-tag description>Empoisonnement du cache DNS</define-tag>
+<define-tag moreinfo>
+<p>
+Plusieurs vulnérabilités d'empoisonnement
+du cache DNS ont été découvertes dans BIND.
+
+Ces vulnérabilités ne touchent que les installation où la validation
+DNSSEC est activée et les ancres de confiance (<q>trust anchors</q>)
+ont été installées, ce qui n'est pas le cas par défaut.
+</p>
+
+<p>Le projet « Common Vulnerabilities et Exposures » (CVE) identifie les problèmes suivants :</p>
+
+<ul>
+
+<li><p><a href="http://security-tracker.debian.org/tracker/CVE-2010-0097">CVE-2010-0097</a>
+<p>
+BIND ne valide pas correctement les enregistrements DNSSEC NSEC.
+
+Cela permet aux attaquants distants d'ajouter l'option <q>Authenticated
+Data</q> (AD) à une réponse NXDOMAIN contrefaite pour un domaine existant.
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-0290">CVE-2010-0290</a>
+<p>
+Lors du traitement de réponses trafiquées contenant des enregistrements
+CNAME ou DNAME, BIND est exposé à une vulnérabilité d'empoisonnement du
+cache DNS, à condition que la validation DNSSEC soit activée et que les
+ancres de confiance (<q>trust anchors</q>) aient été installées.
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2010-0382">CVE-2010-0382</a>
+<p>
+Lors du traitement de certaines réponses contenant des données de fin
+de bailliage, BIND est exposé à une vulnérabilité d'empoisonnement du
+cache DNS, à condition que la validation DNSSEC soit activée et que
+les ancres de confiance (<q>trust anchors</q>) aient été installées.
+</p></li>
+
+</ul>
+
+<p>
+De plus, cette mise à jour introduit un comportement de requête plus conservateur
+en présence d'échecs répétés de validation DNSSEC, qui permet de s'occuper du
+phénomène de recouvrement suivi d'échec (<q>roll over and die</q>).
+
+La nouvelle version prend également en charge l'algorithme
+cryptographique utilisé par la racine DNS de l'ICANN (RSASHA256
+de la RFC 5702), et l'algorithme sécurisé de déni d'existence
+NSEC3 utilisé par certains domaines de premier niveau signés.
+</p>
+
+<p>
+
+<p>
+Cette mise à jour est basée sur une nouvelle
+version amont de BIND 9 : 9.6-ESV-R1.
+
+En raison de la portée des modifications, une attention particulière
+est conseillée lors de l'installation de cette mise à jour.
+
+À cause de modifications de l'ABI, de nouveaux paquets
+Debian sont inclus, et la mise à jour doit être
+installée en utilisant <code>apt-get dist-upgrade</code>
+ou une commande <code>aptitude</code> équivalente).
+</p>
+
+
+<p>Pour la distribution stable (Lenny), ces problèmes ont été corrigés dans la version 1:9.6.ESV.R1+dfsg-0+lenny1.</p>
+
+<p>Pour la distribution unstable (Sid), ces problèmes ont été corrigés dans la version 1:9.7.0.dfsg-1.</p>
+
+<p>Nous vous recommandons de mettre à jour vos paquets bind9.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2010/dsa-2054.data"
+# $Id$
