@@ -7,28 +7,10 @@
 my $host = `hostname -f`;
 chomp($host);
 
-use Net::LDAP;
+use SOAP::Lite;
 use Date::Parse;
 use HTML::Entities;
 use Encode qw(decode);
-
-# this is ok this way.  It says which server to query, on which port and what
-# to fetch from it.  The attribs array could be reduced.
-
-my $server = "bts2ldap.debian.net";
-my $port = "10101";
-my $base   = "dc=current,dc=bugs,dc=debian,dc=org";
-my $attrs  = [
-    'debbugsID',
-    'debbugsTitle',
-    'debbugsSubmitter',
-    'debbugsPackage',
-    'debbugsSeverity',
-    'debbugsState',
-    'debbugsTag',
-    'debbugsDate',
-    'debbugsMergedWith',
-];
 
 # The maintainers flat database
 my $maintainers_file = "$(ENGLISHDIR)/devel/wnpp/Maintainers";
@@ -42,33 +24,27 @@ while (<MAINTAINERS>) {
 }
 close MAINTAINERS;
 
-my $ldap = Net::LDAP->new($server, 'port' => $port) or die "Couldn't make connection to ldap server: $@";
-$ldap->bind;
-my $mesg = $ldap->search('base' => $base,
-                      'filter' => "(&(debbugsPackage=wnpp)(!(debbugsState=done))(!(debbugsState=archived)))",
-                      'attrs' => $attrs) or die;
+my $soap = SOAP::Lite->uri('Debbugs/SOAP')->proxy('http://bugs.debian.org/cgi-bin/soap.cgi')
+       or die "Couldn't make connection to SOAP insterface: $@";;
+my $bugs = $soap->get_bugs(package=>'wnpp')->result;
+my $status = $soap->get_status($bugs)->result() or die;
 
 my $curdate = time;
 
 my ( %rfa, %orphaned, %rfabymaint, %rfp, %ita, %itp, %age,
      %rfh, %oth );
- ALLPKG: foreach my $entry ($mesg->entries) {
+ ALLPKG: foreach my $bugid (@$bugs) {
      use integer;
-     my $bugid = @{$entry->get('debbugsID')}[0];
-     next if @{$entry->get('debbugsState')}[0] eq 'done';
-     next if @{$entry->get('debbugsState')}[0] eq 'archived';
-     my $subject = "";
-     $subject = decode("MIME-Header", @{$entry->get('debbugsTitle')}[0])
-     	if $entry->get('debbugsTitle');
+     next if $status->{$bugid}->{done};
+     next if $status->{$bugid}->{archived};
+     my $subject = $status->{$bugid}->{subject};
      # If a bug is merged with another, then only consider the youngest
      # bug and throw the others away.  This will weed out duplicates.
-     my @mergedwith = ();
-     @mergedwith = @{$entry->get('debbugsMergedWith')} if $entry->get('debbugsMergedWith');
-     foreach my $merged (@mergedwith) {
+     my $mergedwith = $status->{$bugid}->{mergedwith};
+     foreach my $merged (split ' ',$mergedwith) {
          next ALLPKG if int($merged) < int($bugid);
      }
-     $age{$bugid} = ($curdate - @{$entry->get('debbugsDate')}[0])/86400;    
-     chomp $subject;
+     $age{$bugid} = ($curdate - $status->{$bugid}->{date})/86400;
      $subject = encode_entities($subject);    
      # Make order out of chaos    
      if ($subject =~ m/^(?:ITO|RFA):\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
@@ -94,8 +70,6 @@ my ( %rfa, %orphaned, %rfabymaint, %rfp, %ita, %itp, %age,
 #         print STDERR "What is this ($bugid): $subject\n" if ( $host ne "klecker.debian.org" );
      }
  }
-
-$ldap->unbind;
 
 my (@rfa_bypackage_html, @rfa_bymaint_html, @orphaned_html);
 my (@being_adopted_html, @being_packaged_html, @requested_html);
