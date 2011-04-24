@@ -271,6 +271,7 @@ af:Afrikaans
 am:Amharic
 ar:Arabic
 as:Assamese
+ast:Asturian
 ay:Aymara
 az:Azerbaijani
 
