@@ -89,6 +89,9 @@ endif
 index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/*/index.wml) \
       $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(CUR_YEAR)/*/index.wml) \
       $(ENGLISHSRCDIR)/$(CUR_DIR)/CURRENT-ISSUE-IS \
+      $(TEMPLDIR)/projectnews/header.wml \
+      $(TEMPLDIR)/projectnews/index.wml \
+      $(TEMPLDIR)/projectnews/footer.wml \
       $(TEMPLDIR)/weeklynews/header.wml \
       $(TEMPLDIR)/weeklynews/index.wml \
       $(TEMPLDIR)/weeklynews/footer.wml $(GETTEXTDEP)
@@ -98,6 +101,9 @@ index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/*/index.wml) \
 [0-9]*/index.$(LANGUAGE).html: %/index.$(LANGUAGE).html: \
 	$(shell find $* -name index.wml) \
         $(wildcard $(ENGLISHSRCDIR)/News/weekly/$*/*/index.wml) \
+	$(TEMPLDIR)/projectnews/header.wml \
+        $(TEMPLDIR)/projectnews/index.wml \
+        $(TEMPLDIR)/projectnews/footer.wml \
         $(TEMPLDIR)/weeklynews/header.wml \
         $(TEMPLDIR)/weeklynews/index.wml \
         $(TEMPLDIR)/weeklynews/footer.wml $(GETTEXTDEP)
