@@ -76,7 +76,7 @@ my ( %rfa, %orphaned, %rfabymaint, %rfp, %ita, %itp, %age,
 
 my (@rfa_bypackage_html, @rfa_bymaint_html, @orphaned_html);
 my (@being_adopted_html, @being_packaged_html, @requested_html);
-my (@rfh_html, @oth_html);
+my (@rfh_html, @oth_html, %rfh_count);
 my (@rfa_byage_html, @orphaned_byage_html, @being_adopted_byage_html, @being_adopted_byactivity_htm);
 my (@being_packaged_byage_html, @being_packaged_byactivity_html, @requested_html, @rfh_byage_html);
 my ($rfa_number, $orphaned_number, $adopted_number, $packaged_number, $requested_number, $help_number );
@@ -91,7 +91,7 @@ foreach my $bug (sort { $rfa{$a} cmp $rfa{$b} } keys %rfa) {
     push @rfa_bypackage_html, "</li>\n";
 }
 if ($#rfa_bypackage_html == -1) { @rfa_bypackage_html = ('<li><norfa /></li>') }
-else { $rfa_number = scalar(@rfa_bypackage_html) / 4 };
+else { $rfa_number = scalar(keys %rfa) };
 
 foreach my $maint (sort keys %rfabymaint) {
     push @rfa_bymaint_html, "<li>$maint";
@@ -132,7 +132,7 @@ foreach my $bug (sort { $orphaned{$a} cmp $orphaned{$b} } keys %orphaned) {
     push @orphaned_html, "</li>\n";
 }
 if ($#orphaned_html == -1) { @orphaned_html = ('<li><noo /></li>') }
-else { $orphaned_number = scalar(@orphaned_html) / 4 };
+else { $orphaned_number = scalar(keys %orphaned) };
 
 foreach (sort {$a <=> $b} keys %orphaned) {
     push @orphaned_byage_html, "<li><btsurl bugnr=\"$_\">$orphaned{$_}</btsurl>";
@@ -161,7 +161,7 @@ foreach my $bug (sort { $ita{$a} cmp $ita{$b} } keys %ita) {
     push @being_adopted_html, "</li>\n";
 }
 if ($#being_adopted_html == -1) { @being_adopted_html = ('<li><noita /></li>') }
-else { $adopted_number = scalar(@being_adopted_html) / 4 };
+else { $adopted_number = scalar(keys %ita) };
 
 foreach (sort {$a <=> $b} keys %ita) {
     (my $pkg = $ita{$_}) =~ s/^(.+?):\s+.*$/$1/;
@@ -208,7 +208,7 @@ foreach (sort { $itp{$a} cmp $itp{$b} } keys %itp) {
     push @being_packaged_html, "</li>\n";
 }
 if ($#being_packaged_html == -1) { @being_packaged_html = ('<li><noitp /></li>') }
-else { $packaged_number = scalar(@being_packaged_html) / 3 };
+else { $packaged_number = scalar(keys %itp) };
 
 foreach (sort {$a <=> $b} keys %itp) {
     push @being_packaged_byage_html,
@@ -246,7 +246,7 @@ foreach (sort { $rfp{$a} cmp $rfp{$b} } keys %rfp) {
     push @requested_html, "</li>\n";
 }
 if ($#requested_html == -1) { @requested_html = ('<li><norfp /></li>') }
-else { $requested_number = scalar(@requested_html) / 3 };
+else { $requested_number = scalar(keys %rfp) };
 
 foreach (sort {$a <=> $b} keys %rfp) {
     push @requested_byage_html,
@@ -269,9 +269,12 @@ foreach (sort { $rfh{$a} cmp $rfh{$b} } keys %rfh) {
     elsif ( $age{$_} == 1 ) { push @rfh_html, '<req-yesterday />' }
     else { push @rfh_html, "<req-days \"$age{$_}\" />" };
     push @rfh_html, "</li>\n";
+    # There might be more than one RFH for one package, we want to
+    # display them all, but don't want to count the same package twice.
+    $rfh_count{$pkg} = $_;
 }
 if ($#rfh_html == -1) { @rfh_html = ('<li><norfh /></li>') }
-else { $help_number = scalar(@rfh_html) / 4 };
+else { $help_number = scalar(keys %rfh_count) }
 
 foreach (sort {$a <=> $b} keys %rfh) {
     (my $pkg = $rfh{$_}) =~ s/^(.+?):\s+.*$/$1/;
