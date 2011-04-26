@@ -38,6 +38,7 @@ $translation = {
 		'interpretation conflict'		=>	'conflit d\'interprétation',
 		'incorrect API usage'			=>	'Mauvaise utilisation de l\'interface de programmation',
 		'integer overflow'				=>	'Débordement d\'entier',
+		'integer underflow'                             =>      'Débordement d\'entier par le bas',
 		'insecure temp file generation'	=>	'Fichiers temporaires peu sûrs',
 		'insufficient input sanitising' =>	'Vérification d\'entrée manquante',
 		'insufficient input sanitization' =>	'Vérification d\'entrée manquante',
@@ -151,7 +152,11 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?For.the.upcoming.(\S+).distribution.\((\S+)\).and.the.(\S+)..??distribution.\((\S+)\),?.this.problem.has.a?l?s?o?.?been.fixed.in.version..??(\S+)\.[\n]?|<p>Pour la distribution $1 à venir ($2) et la distribution $3 ($4), ce problème a été corrigé dans la version $5.|gs;
 	$output =~ s|<p>[\n]?For.the.upcoming.(\S+).distribution.\((\S+)\).and.the.(\S+)..??distribution.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version..??(\S+)\.[\n]?|<p>Pour la distribution $1 à venir ($2) et la distribution $3 ($4), ces problèmes ont été corrigés dans la version $5.|gs;
 	$output =~ s|of.the.(\S+).package\.|du paquet $1.|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\).and.t?h?e?.??(\S+).distribution.\((\S+)\),?.this.problem.will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème sera corrigé prochainement.</p>|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).distributions?.\((\S+)\),?.these.problems.will.be.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes seront corrigés dans la version $5.|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).distributions?.\((\S+)\),?.this.problem.will.be.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème sera corrigé dans la version $5.|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).\((\S+)\).distributions?,?.these.problems.will.be.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes seront corrigés dans la version $5.|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).distributions?.\((\S+)\),?.this.problem.will.be.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème sera corrigé dans la version $5.|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.and.t?h?e?.??(\S+).distribution.\((\S+)\),?.this.problem.will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème sera corrigé prochainement.</p>|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\).and.t?h?e?.??(\S+).distribution.\((\S+)\),?.these.problems.will.be.fixed.soon\.[\n]?</p>|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes seront corrigés prochainement.</p>|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\).distributions?,?.these.problems.will.be.fixed.soon\.[\n]?</p>|<p>Pour les distributions $1 ($2) et $3 ($4), ces problèmes seront corrigés prochainement.</p>|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\).distributions?,?.this.problem.?[\n]?will.be.fixed.soon\.[\n]?</p>|<p>Pour les distributions $1 ($2) et $3 ($4), ce problème sera corrigé prochainement.</p>|gs;
@@ -168,6 +173,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.?n.t.contain.(\S+).packages\.[\n]?</p>|<p>La distribution $1 ($2) ne contient pas de paquets $3.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.?n.t.contain.(\S+)\.[\n]?</p>|<p>La distribution $1 ($2) ne contient pas $3.</p>|gs;
 	$output =~ s|The.(\S+).package.is.not.affected.by.this.issue\.|Le paquet $1 n'est pas concerné par ce problème.|gs;
+	$output =~ s|<p>[\n]?We.recommend.that.you.upgrade.your.(\S+).packages\.|<p>Nous vous recommandons de mettre à jour vos paquets $1.|gs;
 	$output =~ s|<p>[\n]?We.recommend.that.you.upgrade.your.(\S+,?.??\S+?),?.and.(\S+).packages\.[\n]?</p>|<p>Nous vous recommandons de mettre à jour vos paquets $1 et $2.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).no.longer.contains.(\S+)\.|<p>La distribution $1 ($2) ne contient plus $3.|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).doesn't.include.(\S+)\.|<p>La distribution $1 ($2) ne contient pas $3.|gs;
@@ -175,6 +181,8 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|which.was.already.included.in.the.(\S+).release|qui a déjà été incluse dans la publication de $1|gs;
 	$output =~ s|as.it.does.not.include|car elle ne contient pas|gs;
 	$output =~ s|it.does.not.include|elle ne contient pas|gs;
+	$output =~ s|The.packages.for.the.(\S+).architecture.are.not.included.in.this.upgrade|Les paquets pour l'architecture $1 ne sont pas inclus dans cette mise à niveau|gs;
+	$output =~ s|They.will.be.released.as.soon.as.they.become.available|Ils seront publiés dès qu'ils seront disponibles|gs;
 
 
 	# Case adjustment
@@ -226,7 +234,9 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|execute.arbitrary.code|exécuter du code arbitraire|gs;
 	$output =~ s|NULL.pointer.dereference|déréférencement de pointeur NULL|gs;
 	$output =~ s|application.crash|plantage d'application|gs;
- 
+	$output =~ s|insufficient.input.saniti(s\z)(ing\|ation)|vérification d'entrée manquante|gs;
+	$output =~ s|missing.input.saniti(s\z)(ing\|ation)|absence de vérification des entrées|gs;
+	$output =~ s|missing.input.validation|validations des entrées insuffisantes|gs;
 	$output =~ s|the (\S+) parser|l'analyseur $1|gs;
 
 	# This need some check to be done in translated file
@@ -266,6 +276,8 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|high-level|haut niveau|gs;
 	$output =~ s|information.disclosure|divulgation d'informations|gs;
 	$output =~ s|information.leak|fuite d'informations|gs;
+	$output =~ s|integer.overflow|débordement d'entier|gs;
+	$output =~ s|integer.underflow|débordement d'entier par le bas|gs;
 	$output =~ s|library|bibliothèque|gs;
 	$output =~ s|libraries|bibliothèques|gs;
 	$output =~ s|low-level|bas niveau|gs;
