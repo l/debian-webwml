@@ -1,4 +1,3 @@
-#use wml::debian::language_names
 #use wml::debian::common_tags
 
 <bind-gettext-domain domain="bugs" />
