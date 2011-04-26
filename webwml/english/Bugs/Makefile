@@ -14,7 +14,7 @@ clean::
 	rm -f pseudo-packages.description 
 endif
 
-$(ENGLISHDIR)/Bugs/pkgreport-opts.inc: $(TEMPLDIR)/language_names.wml \
+$(ENGLISHDIR)/Bugs/pkgreport-opts.inc: \
   $(TEMPLDIR)/common_tags.wml $(GETTEXTDEP) $(call locale,bugs)
 	touch $@ # because of $(?F)
 index.$(LANGUAGE).html: $(TEMPLDIR)/template.wml $(ENGLISHDIR)/Bugs/footer.inc \
