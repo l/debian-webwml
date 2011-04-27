@@ -22,3 +22,21 @@ user-manuals.$(LANGUAGE).html: user-manuals.wml $(TEMPLDIR)/ddp.wml \
 devel-manuals.$(LANGUAGE).html: devel-manuals.wml $(TEMPLDIR)/ddp.wml \
   $(ENGLISHSRCDIR)/doc/manuals.defs $(ENGLISHSRCDIR)/doc/devel-manuals.defs
 misc-manuals.$(LANGUAGE).html: misc-manuals.wml $(TEMPLDIR)/ddp.wml $(ENGLISHSRCDIR)/doc/manuals.defs
+
+ifeq "$(LANGUAGE)" "en"
+
+textfiles := map-reference.txt
+
+desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
+
+$(desttextfiles): $(HTMLDIR)/%: %
+	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
+	install -m 664 -p $< $(HTMLDIR)
+
+install:: $(desttextfiles)
+
+cleandest::
+	rm -f $(desttextfiles)
+
+endif
+
