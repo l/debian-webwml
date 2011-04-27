@@ -1,4 +1,3 @@
-#use wml::debian::language_names
 #use wml::debian::common_tags
 
 <bind-gettext-domain domain="l10n" />
@@ -139,38 +138,47 @@
 </table>
 </define-tag>
 
-#use wml::debian::language_names
-
 <:
 use lib '$(ENGLISHDIR)/../Perl';
 use Locale::Language;
-use Locale::Country;
+use Locale::gettext;
 
 sub language_name {
         my $lang=shift;
         my $country=undef;
+	my $loc=language2code($(CUR_LANG));
 
+	$lang  =~ s/@.*$//;
         if ($lang =~ m,^(..)_(..)$,) {
                 $lang=$1;
                 $country=$2;
         }
-        # Looking for something like $trans{'de'}{'finnish'}
-        # Translations in wml::debian::language_names
-        if (defined ($trans{language2code($(CUR_LANG))}{lc(code2language($lang))})) {
-	        $lang = $trans{language2code($(CUR_LANG))}{lc(code2language($lang))};
+        if (`isoquery -i 639-3 --name $lang 2>/dev/null`) {
+		# isoquery fails for unavailable locale, included en, see #624147
+		if ($loc eq 'en'){
+			$lang = `isoquery -i 639-3 -n $lang`;
+		}
+		else {
+			$lang = `isoquery -i 639-3 -l $loc -n $lang`;
+		}
+		chomp $lang;
+		$lang =~ s/^.*\t//g;
+		# Fix a bug in iso-codes: French typography expect languages to start with a lowercase
+		$lang = lcfirst $lang if ($loc eq 'fr');
         } else {
-                $lang = code2language($lang) or return qq(<Unknown_Language>);
+                return qq(<Unknown_Language>);
         }
         if (defined $country) {
-	        $country=uc($country);
-	        # Looking for something like $countries{'AT'}{'FI'} (for _AT in finnish
-                if (defined ($countries{$country}{uc(language2code($(CUR_LANG)))})) {
-		        $country=$countries{$country}{uc(language2code($(CUR_LANG)))};
-                } elsif (defined ($countries{$country}{'EN'})) {
-	                $country=$countries{$country}{'EN'};
-                } elsif (defined (code2country($country))) {
-	 	        $country=code2country($country);
+		if (`isoquery --name $country 2>/dev/null`) {
+			if ($loc eq 'en'){
+				$country = `isoquery --name $country`;
+			}
+			else {
+				$country = `isoquery -l $loc --name $country`;
+			}
                 }
+		chomp $country;
+		$country =~ s/^.*\t//g;
 	        return "<langcountryoutput $lang $country>";
         } else {
                 return $lang;
@@ -196,7 +204,7 @@ while (<LANGS>) {
 close(LANGS);
 print "<ul>\n" if (@po4alangs);
 foreach my $l (sort @po4alangs) {
-        print "<li>$l (<a href=\"$l\">".language_name($l)."</a>)</li>\n";
+        print "<li>$l &mdash; <a href=\"$l\">".language_name($l)."</a></li>\n";
 }
 print "</ul>\n" if (@po4alangs);
 :>
@@ -232,7 +240,7 @@ while (<LANGS>) {
 close(LANGS);
 print "<ul>\n" if (@polangs);
 foreach my $l (sort @polangs) {
-        print "<li>$l (<a href=\"$l\">".language_name($l)."</a>)</li>\n";
+        print "<li>$l &mdash; <a href=\"$l\">".language_name($l)."</a></li>\n";
 }
 print "</ul>\n" if (@polangs);
 :>
@@ -268,7 +276,7 @@ while (<LANGS>) {
 close(LANGS);
 print "<ul>\n" if (@podebconflangs);
 foreach my $l (sort @podebconflangs) {
-        print "<li>$l (<a href=\"$l\">".language_name($l)."</a>)</li>\n";
+        print "<li>$l &mdash; <a href=\"$l\">".language_name($l)."</a></li>\n";
 }
 print "</ul>\n" if (@podebconflangs);
 :>
