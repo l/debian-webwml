@@ -64,6 +64,24 @@ sub init_translators {
                        file            => 0,
                        compress        => 'none'
                 },
+		'Nima Sahraneshin' => {
+                       email           => 'behrad_es@yahoo.com',
+                       summary         => 2,
+                       logs            => 2,
+                       diff            => 2,
+                       tdiff           => 0,
+                       file            => 0,
+                       compress        => 'none'
+                },
+		'Mohammad Rafiee' => {
+                       email           => 'behrad_es@yahoo.com',
+                       summary         => 2,
+                       logs            => 2,
+                       diff            => 2,
+                       tdiff           => 0,
+                       file            => 0,
+                       compress        => 'none'
+                },
 
 
         };
