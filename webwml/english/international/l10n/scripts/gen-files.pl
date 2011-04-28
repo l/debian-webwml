@@ -13,6 +13,7 @@ use vars qw($opt_h $opt_d $opt_l $opt_s $opt_D $opt_P $opt_T $opt_L $opt_M);
 my %LanguageList = (
 	AR    => 'arabic',
 	CA    => 'catalan',
+	CS    => 'czech',
 	DE    => 'german',
 	RU    => 'russian',
 # Used by the Smith project, not for translations
