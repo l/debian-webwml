@@ -24,3 +24,6 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml $(TEMPLDIR)/release_in
 
 misc.$(LANGUAGE).html: misc.wml $(TEMPLDIR)/cdimage.wml $(GETTEXTDEP)
 	$(WML) $(<F)
+
+verify.$(LANGUAGE).html: verify.wml $(TEMPLDIR)/cdimage.wml $(GETTEXTDEP) $(ENGLISHDIR)/CD/CD-keys.data
+	$(WML) $(<F)
