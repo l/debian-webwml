@@ -157,31 +157,20 @@ sub language_name {
                 $country=$2;
         }
         if (`isoquery -i 639 --name $lang 2>/dev/null`) {
-		# isoquery fails for unavailable locale, included en, see #624147
-		if ($loc eq 'en'){
-			$lang = `isoquery -i 639 -n $lang`;
-		}
-		else {
-			$lang = `isoquery -i 639 -l $loc -n $lang`;
-		}
+		$lang = `isoquery -i 639 -n $lang`;
 		chomp $lang;
-		$lang =~ s/^.*\t//g;
-		# Fix a bug in iso-codes: French typography expect languages to start with a lowercase
+                $lang =~ s/^.*\t//g;
+		$lang = dgettext("iso_639", "$lang");
+		# #624476 workaround: French typography expect languages to start with a lowercase
 		$lang = lcfirst $lang if ($loc eq 'fr');
         } else {
                 return qq(<Unknown_Language>);
         }
-        if (defined $country) {
-		if (`isoquery --name $country 2>/dev/null`) {
-			if ($loc eq 'en'){
-				$country = `isoquery --name $country`;
-			}
-			else {
-				$country = `isoquery -l $loc --name $country`;
-			}
-                }
+        if ((defined $country) && (`isoquery --name $country 2>/dev/null`)) {
+		$country = `isoquery --name $country`;
 		chomp $country;
 		$country =~ s/^.*\t//g;
+		$country = dgettext("iso_3166", "$country");
 	        return "<langcountryoutput $lang $country>";
         } else {
                 return $lang;
