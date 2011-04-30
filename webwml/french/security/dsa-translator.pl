@@ -314,6 +314,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|if.a.user|si un utilisateur|gs;
 	$output =~ s|is.tricked.into|est piégé dans|gs;
 	$output =~ s| if | si |gs;
+	$output =~ s| for | pour |gs;
 	$output =~ s| or | ou |gs;
 	$output =~ s| with | avec |gs;
 
