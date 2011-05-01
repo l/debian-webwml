@@ -287,18 +287,19 @@ sub process_po4a {
 
         open (GEN, "> $opt_l/po4a/gen/rank.inc")
                 || die "Unable to write into $opt_l/po4a/gen/rank.inc";
-        print GEN "<dl>\n";
+        print GEN "<ul>\n";
+	my $str_total = $total{main}+$total{contrib}+$total{'non-free'};
         foreach my $lang (sort {$score{uc $b} <=> $score{uc $a}} @p4_langs) {
-                print GEN "<dt><a href=\"$lang\">$lang</a> ".$score{uc $lang}."</dt>\n";
-                print GEN "<dd><language-name $lang /></dd>\n";
+                print GEN "<li><strong><a href=\"$lang\">$lang</a> ".$score{uc $lang}.
+                        " (".podebconf_stats_ranking($score{uc $lang}, $str_total),
+                        "\%)</strong> &ndash;\n";
+                print GEN "<language-name $lang /></li>\n";
         }
-        print GEN "</dl>\n";
+        print GEN "</ul>\n";
         close (GEN);
         open (GEN, "> $opt_l/po4a/gen/total")
                 || die "Unable to write into $opt_l/po4a/gen/total";
-        print GEN "<define-tag po-total-strings>".
-                ($total{main}+$total{contrib}+$total{'non-free'}).
-                "</define-tag>\n";
+        print GEN "<define-tag po4a-total-strings>$str_total</define-tag>\n";
         close (GEN);
         open (GEN, "> $opt_l/po4a/gen/stats")
                 || die "Unable to write into $opt_l/templates/gen/stats";
@@ -442,18 +443,19 @@ sub process_po {
 
         open (GEN, "> $opt_l/po/gen/rank.inc")
                 || die "Unable to write into $opt_l/po/gen/rank.inc";
-        print GEN "<dl>\n";
+        print GEN "<ul>\n";
+	my $str_total = $total{main}+$total{contrib}+$total{'non-free'};
         foreach my $lang (sort {$score{uc $b} <=> $score{uc $a}} @po_langs) {
-                print GEN "<dt><a href=\"$lang\">$lang</a> ".$score{uc $lang}."</dt>\n";
-                print GEN "<dd><language-name $lang /></dd>\n";
+                print GEN "<li><strong><a href=\"$lang\">$lang</a> ".$score{uc $lang}.
+                          " (".podebconf_stats_ranking($score{uc $lang}, $str_total),
+                          "\%)</strong> &ndash;\n";
+                print GEN "<language-name $lang /></li>\n";
         }
-        print GEN "</dl>\n";
+        print GEN "</ul>\n";
         close (GEN);
         open (GEN, "> $opt_l/po/gen/total")
                 || die "Unable to write into $opt_l/po/gen/total";
-        print GEN "<define-tag po-total-strings>".
-                ($total{main}+$total{contrib}+$total{'non-free'}).
-                "</define-tag>\n";
+        print GEN "<define-tag po-total-strings>$str_total</define-tag>\n";
         close (GEN);
         open (GEN, "> $opt_l/po/gen/stats")
                 || die "Unable to write into $opt_l/templates/gen/stats";
@@ -1033,15 +1035,15 @@ sub process_podebconf {
 
         open (GEN, "> $opt_l/po-debconf/gen/rank.inc")
                 || die "Unable to write into $opt_l/po-debconf/gen/rank.inc";
-        print GEN "<dl>\n";
+        print GEN "<ul>\n";
         my $str_total = $total{main}+$total{contrib}+$total{'non-free'};
         foreach my $lang (sort {$score{uc $b} <=> $score{uc $a}} @pd_langs) {
-                print GEN "<dt><a href=\"$lang\">$lang</a> ".$score{uc $lang}.
+                print GEN "<li><strong><a href=\"$lang\">$lang</a> ".$score{uc $lang}.
                         " (".podebconf_stats_ranking($score{uc $lang}, $str_total),
-                        "\%)</dt>\n";
-                print GEN "<dd><language-name $lang /></dd>\n";
+                        "\%)</strong> &ndash;\n";
+                print GEN "<language-name $lang /></li>\n";
         }
-        print GEN "</dl>\n";
+        print GEN "</ul>\n";
         open (GEN, "> $opt_l/po-debconf/gen/errors-by-maint.inc");
         foreach my $maint (sort keys %$podebconf_errors_maint) {
                 my $anchor_maint = lc $maint;
