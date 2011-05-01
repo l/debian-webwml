@@ -123,6 +123,7 @@ my @po_langs = ();
 my @p4_langs = ();
 my @pd_langs = ();
 my @td_langs = ();
+my @al_langs = ();
 
 my @main    = ();
 my @contrib = ();
@@ -421,6 +422,23 @@ sub process_po {
         get_stats_po('main', \@main);
         get_stats_po('contrib', \@contrib);
         get_stats_po('non-free', \@nonfree);
+
+	# Rule out languages with no string translated
+	my @po_langs_notempty;
+	foreach (@po_langs) {
+		if ($score{uc $_} != 0) {
+			push @po_langs_notempty,$_;
+		}
+		else {
+			unlink("$opt_l/po/gen/main-$_.exc")
+				|| die ("Unable to delete main-$_.exc\n");
+			unlink("$opt_l/po/gen/contrib-$_.exc")
+				|| die ("Unable to delete contrib-$_.exc\n");
+			unlink("$opt_l/po/gen/non-free-$_.exc")
+				|| die ("Unable to delete non-free-$_.exc\n");
+		}
+	}
+	@po_langs = @po_langs_notempty;
 
         open (GEN, "> $opt_l/po/gen/rank.inc")
                 || die "Unable to write into $opt_l/po/gen/rank.inc";
@@ -1049,8 +1067,6 @@ sub process_podebconf {
 }
 
 sub process_langs {
-        my $store = shift;
-
         my $langs = {
                 po              => {},
                 po4a            => {},
@@ -1098,15 +1114,17 @@ sub process_langs {
         @po_langs = keys %{$langs->{po}};
         @td_langs = keys %{$langs->{templates}};
         @pd_langs = keys %{$langs->{podebconf}};
-        return unless $store;
+	@al_langs = keys %{$langs->{all}};
+}
 
+sub write_langs {
         open (GEN, "> $opt_l/data/langs")
                 || die "Unable to write into $opt_l/data/langs";
-        foreach my $material (sort keys %$langs) {
-                print GEN "$material: ";
-                print GEN join(" ", sort keys %{$langs->{$material}});
-                print GEN "\n";
-        }
+	print GEN 'all: '	. join(' ', sort @al_langs) . "\n";
+	print GEN 'po: '	. join(' ', sort @po_langs) . "\n";
+	print GEN 'po4a: '	. join(' ', sort @p4_langs) . "\n";
+	print GEN 'podebconf: '	. join(' ', sort @pd_langs) . "\n";
+	print GEN 'templates: '	. join(' ', sort @td_langs) . "\n";
         close (GEN);
 }
 
@@ -1157,10 +1175,10 @@ print GEN <<"EOT";
 EOT
 close (GEN);
 
-process_langs($opt_L);
+process_langs();
 process_po4a()      if $opt_M;
 process_po()        if $opt_P;
 process_templates() if $opt_T;
 process_podebconf() if $opt_D;
-
+write_langs()       if $opt_L;
 1;
