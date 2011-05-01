@@ -8,6 +8,51 @@ shift; shift
 
 for code
 do
+
+# TODO: share this code from dtc.def
+    langname=${code%@*}
+    country=''
+    if [ `expr index $langname '_'` -ne 0 ]
+    then
+        country=${langname#*_}
+        langname=${langname%_*}
+    fi
+    if [ "`isoquery -i 639 --name $langname`" != '' ]
+    then
+        langname=`isoquery -i 639 -n $langname | sed 's/^.*\t//'`
+        langname=`perl -e "use Locale::gettext; print dgettext('iso_639', '$langname')"`
+        # #624476 workaround: French typography expect languages to start with a lowercase
+	if [ $lang = 'fr' ]
+        then
+            langname=`perl -e "print lcfirst '$langname'"`
+        fi
+	if [ "$country" != '' ]
+       	then
+            if [ "`isoquery --name $country`" != '' ]
+            then
+                country=`isoquery -n $country | sed 's/^.*\t//'`
+	        country=`perl -e "use Locale::gettext; print dgettext('iso_3166', '$country')"`
+	        langname="$langname \&ndash; $country"
+            fi
+        fi
+        # Workaround for Languages not in UTF-8 yet
+        if [ $lang = 'en' ]
+        then
+            langname=`echo $langname | iconv -f utf8 -t latin1`
+        elif [ $lang = 'es' ]
+        then
+            langname=`echo $langname | iconv -f utf8 -t latin1`
+	elif [ $lang = 'pl' ]
+        then
+            langname=`echo $langname | iconv -f utf8 -t latin2`
+        elif [ $lang = 'pt' ]
+        then
+            langname=`echo $langname | iconv -f utf8 -t latin1`
+        fi		
+    else
+        langname=''
+    fi
+
     for dist in main contrib non-free
     do
         echo 'DELETE-ME' > $dir/${dist}-$code.todo-nostatus
@@ -32,8 +77,7 @@ do
     done
 
     stat=`grep "^$code:" $dir/stats|sed 's/^.*://'`
-
-    sed -e "s/@tmpl_lang@/$code/" \
+    sed -e "s/@tmpl_lang@/$code \&mdash; $langname /" \
         -e "s/@tmpl_lang_stats@/$stat/" \
         -e "s/href=\"tmpl\\./href=\"$code./" \
         -e "/LINE: todo-main /r     $dir/main-$code.todo" \
