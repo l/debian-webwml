@@ -140,13 +140,11 @@
 
 <:
 use lib '$(ENGLISHDIR)/../Perl';
-use Locale::Language;
 use Locale::gettext;
 
 sub language_name {
         my $lang=shift;
         my $country=undef;
-	my $loc=language2code($(CUR_LANG));
 
 	# make the build fail if isoquery is not available
 	`isoquery >/dev/null`;
@@ -159,17 +157,19 @@ sub language_name {
         if (`isoquery -i 639 --name $lang 2>/dev/null`) {
 		$lang = `isoquery -i 639 -n $lang`;
 		chomp $lang;
-                $lang =~ s/^.*\t//g;
+		$lang =~ s/^.*\t//;
 		$lang = dgettext("iso_639", "$lang");
 		# #624476 workaround: French typography expect languages to start with a lowercase
-		$lang = lcfirst $lang if ($loc eq 'fr');
+		$lang = lcfirst $lang if ($(CUR_LANG) eq 'French');
+		# UTF-8 workaround for English
+		$lang = `echo '$lang' | iconv -f utf8 -t latin1`  if ($(CUR_LANG) eq 'English');
         } else {
                 return qq(<Unknown_Language>);
         }
         if ((defined $country) && (`isoquery --name $country 2>/dev/null`)) {
 		$country = `isoquery --name $country`;
 		chomp $country;
-		$country =~ s/^.*\t//g;
+		$country =~ s/^.*\t//;
 		$country = dgettext("iso_3166", "$country");
 	        return "<langcountryoutput $lang $country>";
         } else {
