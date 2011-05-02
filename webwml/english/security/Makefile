@@ -123,7 +123,7 @@ ifeq "$(LANGUAGE)" "en"
 map := $(HTMLDIR)/map-dsa.txt
 
 $(map): $(wildcard $(CUR_YEAR)/dsa-*.wml)
-	for i in 2*/dsa-*.wml; do echo $$i $$i | sed -E 's/^.+\/(.+) /\1 /' | sed 's/\.wml//g' | sed 's/^dsa-//' ;done > $(HTMLDIR)/map-dsa.txt
+	for i in 2*/dsa-*.wml; do echo $$i $$i | sed -r 's/^.+\/(.+) /\1 /' | sed 's/\.wml//g' | sed 's/^dsa-//' ;done > $(HTMLDIR)/map-dsa.txt
 
 install:: $(map)
 
