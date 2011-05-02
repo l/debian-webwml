@@ -19,8 +19,12 @@ do
     fi
     if [ "`isoquery -i 639 --name $langname`" != '' ]
     then
-        langname=`isoquery -i 639 -n $langname | sed 's/^.*\t//'`
-        langname=`perl -e "use Locale::gettext; print dgettext('iso_639', '$langname')"`
+	if [ $lang = 'en' ]
+	then
+	    langname=`isoquery -i 639 -n $langname | sed 's/^.*\t//'`
+	else
+            langname=`isoquery -i 639 -l $lang -n $langname | sed 's/^.*\t//'`
+	fi
         # #624476 workaround: French typography expect languages to start with a lowercase
 	if [ $lang = 'fr' ]
         then
@@ -30,8 +34,12 @@ do
        	then
             if [ "`isoquery --name $country`" != '' ]
             then
-                country=`isoquery -n $country | sed 's/^.*\t//'`
-	        country=`perl -e "use Locale::gettext; print dgettext('iso_3166', '$country')"`
+		if [ $lang = 'en' ]
+		then
+		    country=`isoquery -n $country | sed 's/^.*\t//'`
+	        else
+		    country=`isoquery -l $lang -n $country | sed 's/^.*\t//'`
+	        fi
 	        langname="$langname \&ndash; $country"
             fi
         fi
