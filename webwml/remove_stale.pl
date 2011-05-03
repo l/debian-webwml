@@ -45,8 +45,6 @@ use constant INSTALLDIR => '../www';
 
 	# Read the list of languages
 	my @languages = sort Webwml::Langs->new()->names();
-	#@languages = ('spanish');
-	@languages = ('dutch','spanish');
 
 	# check all subdirs to find stale html files
 	my @files;
@@ -121,12 +119,6 @@ sub find_stale_files
 	# started translations
 	return 0  unless  -d $dir;
 
-	# Don't try to do anything in subdirectories of l10n.
-	return 0  if  $dir =~ m'l10n/[^/]+$';
-
-	# Don't try to do anything in stats either.
-	return 0  if  $dir =~ m'stats$';
-
 	# create a list of *.html files and a hash of *.wml files in this translation
 	#my (%wmlfiles,@htmlfiles);
 	#find( sub { $wmlfiles{$File::Find::name}++     if -f and /\.wml$/  }, $dir );
@@ -145,6 +137,15 @@ sub find_stale_files
 		my $source = $htmlfile;
 		$source =~ s/(?:\.[-\w]+)?\.html$/.wml/  
 			or die("Can't determine WML source file for `$htmlfile'");
+
+		# Don't try to do anything in subdirectories of l10n.
+		next  if  $htmlfile =~ m{/international/l10n/po[-\w]*/[\w_\@]+\.[-\w]+\.html$};
+		
+		# Don't try to do anything in stats either.
+		next  if  $htmlfile =~ m{/devel/website/stats/[-\w]+\.[-\w]+\.html$};
+
+		# Don't try to remove yaboot-howto.
+		next  if  $htmlfile =~ m{/ports/powerpc/inst/yaboot-howto.html};
 
 		# does the wml source file exist?
 		my $haswml = exists( $wmlfiles{$source} ) || -f $source || 0;
