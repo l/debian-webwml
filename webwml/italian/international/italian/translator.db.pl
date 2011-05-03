@@ -72,6 +72,15 @@ sub init_translators {
 			tdiff		=> 0,
 			file		=> 0,
 			compress	=> 'none'
+		},
+		'Mirco Scottà' => {
+			email		=> 'mscotta@libero.it',
+			summary		=> 3,
+			logs		=> 0,
+			diff		=> 0,
+			tdiff		=> 0,
+			file		=> 0,
+			compress	=> 'none'
 		},                
                 # Below are special users, used to handle special cases
                 #     default:      default values
