@@ -150,7 +150,7 @@ sub find_stale_files
 		my $haswml = exists( $wmlfiles{$source} ) || -f $source || 0;
 
 		# is the html file checked in the VCS?
-		my $checkedin = vcs_file_info($htmlfile) ? 1 : 0;
+		my $checkedin = vcs_file_info($htmlfile , quiet => 1 ) ? 1 : 0;
 
 		#if ($checkedin) 
 		#{ print "==> `$htmlfile' : `$source' : $haswml : $checkedin\n"; }
