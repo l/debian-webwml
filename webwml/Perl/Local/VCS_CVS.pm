@@ -267,6 +267,9 @@ Example use:
 sub vcs_file_info
 {
 	my $file = shift or carp("No file specified");
+	my %options = @_;
+
+	my $quiet = $options{quiet} || undef;
 
 	my ($basename,$dirname) = fileparse( rel2abs $file );
 
@@ -275,7 +278,7 @@ sub vcs_file_info
 
 	if ( not ( exists $info{$basename} and $info{$basename} ) )
 	{
-		carp("No info found about `$file' (does the file exist?)");
+		carp("No info found about `$file' (does the file exist?)") if ( ! $quiet );
 		return;
 	}
 
