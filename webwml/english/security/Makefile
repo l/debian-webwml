@@ -107,15 +107,9 @@ install:: $(DESTDSARDF) $(DESTDSALONGRDF)
 $(DESTDSARDF): $(HTMLDIR)/%: %
 	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
 	install -m 664 -p $< $(HTMLDIR)
-ifeq "$(LANGUAGE)" "en"
-	ln -sf dsa.en.rdf $(HTMLDIR)/dsa.rdf
-endif
 $(DESTDSALONGRDF): $(HTMLDIR)/%: %
 	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
 	install -m 664 -p $< $(HTMLDIR)
-ifeq "$(LANGUAGE)" "en"
-	ln -sf dsa-long.en.rdf $(HTMLDIR)/dsa-long.rdf
-endif
 
 
 ifeq "$(LANGUAGE)" "en"

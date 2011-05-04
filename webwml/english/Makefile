@@ -53,8 +53,6 @@ all:: $(SITEMAP)
 
 install:: $(DESTSITEMAP)
 ifeq "$(LANGUAGE)" "en"
-	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
-	test -L $(HTMLDIR)/mirrors || ln -sf mirror $(HTMLDIR)/mirrors
 
 install:: $(HTMLDIR)/favicon.ico
 
