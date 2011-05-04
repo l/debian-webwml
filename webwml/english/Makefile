@@ -3,7 +3,7 @@
 
 WMLBASE=.
 CUR_DIR=
-SUBS=Bugs CD MailingLists News Pics banners chinese consultants devel \
+SUBS=Bugs CD MailingLists News Pics banners consultants devel \
 distrib doc events intro international legal logos mirror misc partners \
 ports releases security users volatile vote y2k
 
