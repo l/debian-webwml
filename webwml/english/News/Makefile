@@ -43,16 +43,10 @@ endif
 all:: $(NEWSRDF)
 
 install:: $(DESTNEWSRDF)
-ifeq "$(LANGUAGE)" "en"
-	test -L $(HTMLDIR)/project || ln -sf weekly $(HTMLDIR)/project
-endif
 
 $(DESTNEWSRDF): $(HTMLDIR)/%: %
 	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
 	install -m 664 -p $< $(HTMLDIR)
-ifeq "$(LANGUAGE)" "en"
-	ln -sf news.en.rdf $(HTMLDIR)/news.rdf
-endif
 
 index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.wml) \
      $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/$(CUR_YEAR)*.wml) \
