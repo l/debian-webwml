@@ -1,0 +1,89 @@
+#! /bin/sh
+
+umask 002
+
+excl="/doc/manuals /releases /doc/developers-reference /doc/maint-guide /doc/FAQ /searchtmpl /ports/powerpc/inst/yaboot-howto"
+
+wwwroot=/srv/www.debian.org/www
+dirout=/srv/www-master.debian.org/htdocs/build-logs/tidy
+
+progname=`echo $0 | sed 's/.*\///'`
+
+PATH=$HOME/extra/bin:$PATH
+export PATH
+
+opt_v=false
+opt_h=false
+opt_t=false
+for opt
+do
+    case $opt in
+    -h | --help )
+        shift
+        opt_h=true ;;
+    -v | --verbose )
+        shift
+        opt_v=true ;;
+    -d | --debug )
+        shift
+        set -x ;;
+    -t | --ignore-trim )
+        shift
+        opt_t=true ;;
+    -* )
+        { echo "Error: unknown option
+Try $progname --help'" 1>&2; exit 1; } ;;
+    * )
+        break ;;
+    esac
+done
+
+if $opt_h; then
+    cat <<EOT
+Usage: $progname [options] file ...
+Options:
+  -h --help            display this help
+  -v  --verbose        run verbose
+  -t  --ignore-trim    remove tidy messages about 'trimming'
+EOT
+    exit 0
+fi
+
+#  Lang list
+if test $# = 0; then
+    set x `ls $wwwroot/index.*.html | sed -e 's/^.*index\.//' -e 's/\.html//'`
+    shift
+fi
+
+#  Exclude paths
+www_bs=`echo $wwwroot | sed -e 's/\//\\\\\//g'`
+excl_path=`echo $excl | sed -e "s/ / -o -path $www_bs/g"`
+
+test -d $dirout || mkdir -p $dirout
+
+if $opt_t; then
+    excludetrim='grep -v trimming'
+else
+    excludetrim=cat
+fi
+
+for l
+do
+    tidyopts=
+    case $l in
+      zh-hk | zh-cn ) continue ;; # only process zh-tw
+    esac
+    test -L $wwwroot/index.$l.html && continue
+    $opt_v && echo Processing language $l
+    for i in `find $wwwroot \( -path $wwwroot$excl_path \) -prune -o -name \*.$l.html -print | sort`;
+    do
+        echo \*\*\* $i
+	enc=`grep -i '<meta http-equiv="Content-Type"' $i | sed -e 's/.*charset=//' -e 's/".*//'`
+	if iconv -f $enc -t utf-8 $i >/dev/null 2>&1;
+	then
+	    iconv -f $enc -t utf-8 $i | tidy -eq -utf8 - 2>&1 | grep ^line | $excludetrim
+	else
+	    echo $i 1>&2
+	fi
+    done | perl -e 'while (<>) {unless (m/^line/) {$last=$_; next;} if ($last) {print $last; $last="";} print;}' > $dirout/$l
+done
