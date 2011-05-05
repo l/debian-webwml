@@ -3,6 +3,8 @@
 umask 002
 
 excl="/doc/manuals /releases /doc/developers-reference /doc/maint-guide /doc/FAQ /searchtmpl /ports/powerpc/inst/yaboot-howto"
+# Workaround for #621709 
+excl_file="/international/l10n/po/sk"
 
 wwwroot=/srv/www.debian.org/www
 dirout=/srv/www-master.debian.org/htdocs/build-logs/tidy
@@ -15,6 +17,7 @@ export PATH
 opt_v=false
 opt_h=false
 opt_t=false
+opt_q=true
 for opt
 do
     case $opt in
@@ -30,6 +33,9 @@ do
     -t | --ignore-trim )
         shift
         opt_t=true ;;
+    -q | --nested-q )
+	shift
+	opt_q=false ;;
     -* )
         { echo "Error: unknown option
 Try $progname --help'" 1>&2; exit 1; } ;;
@@ -45,6 +51,7 @@ Options:
   -h --help            display this help
   -v  --verbose        run verbose
   -t  --ignore-trim    remove tidy messages about 'trimming'
+  -q  --nested-q       don't ignore tidy messages about nested q elements
 EOT
     exit 0
 fi
@@ -62,9 +69,11 @@ excl_path=`echo $excl | sed -e "s/ / -o -path $www_bs/g"`
 test -d $dirout || mkdir -p $dirout
 
 if $opt_t; then
-    excludetrim='grep -v trimming'
+    excludetrim='trimming'
+elif $opt_q; then
+    excludetrim='nested q elements'
 else
-    excludetrim=cat
+    excludetrim='NoWayThatThisStringReallyMatch'
 fi
 
 for l
@@ -75,13 +84,20 @@ do
     esac
     test -L $wwwroot/index.$l.html && continue
     $opt_v && echo Processing language $l
-    for i in `find $wwwroot \( -path $wwwroot$excl_path \) -prune -o -name \*.$l.html -print | sort`;
+    if [ $excl_file != '' ]
+    then
+	excl_name="-o -wholename $wwwroot"`echo $excl_file | sed -e "s/ /.$l.html -o -wholename $www_bs/g"`".$l.html"
+    else
+	excl_name=''
+    fi
+    for i in `find $wwwroot \( -path $wwwroot$excl_path $excl_name \) \
+		-prune -o -name \*.$l.html -print | sort`;
     do
         echo \*\*\* $i
 	enc=`grep -i '<meta http-equiv="Content-Type"' $i | sed -e 's/.*charset=//' -e 's/".*//'`
 	if iconv -f $enc -t utf-8 $i >/dev/null 2>&1;
 	then
-	    iconv -f $enc -t utf-8 $i | tidy -eq -utf8 - 2>&1 | grep ^line | $excludetrim
+	    iconv -f $enc -t utf-8 $i | tidy -eq -utf8 - 2>&1 | grep ^line | grep -v "$excludetrim"
 	else
 	    echo $i 1>&2
 	fi
