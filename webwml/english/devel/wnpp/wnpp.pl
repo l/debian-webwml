@@ -9,17 +9,15 @@ chomp($host);
 
 use SOAP::Lite;
 use Date::Parse;
-use HTML::Entities;
-use Encode qw(decode);
 
 # The maintainers flat database
 my $maintainers_file = "$(ENGLISHDIR)/devel/wnpp/Maintainers";
 
 my %maintainer;
-open MAINTAINERS, '<:utf8', $maintainers_file or die "Can't find $maintainers_file file at $host: $!\n";
+open MAINTAINERS, '<', $maintainers_file or die "Can't find $maintainers_file file at $host: $!\n";
 while (<MAINTAINERS>) {
     if (/^(\S+)\s+(.*)$/) {
-	$maintainer{$1} = encode_entities($2);
+	$maintainer{$1} = $2;
     }
 }
 close MAINTAINERS;
@@ -46,7 +44,7 @@ my ( %rfa, %orphaned, %rfabymaint, %rfp, %ita, %itp, %age,
      }
      $age{$bugid} = ($curdate - $status->{$bugid}->{date})/86400;
      $activity{$bugid} = ($curdate - $status->{$bugid}->{log_modified})/86400;
-     $subject = encode_entities($subject);    
+     $subject = $subject;    
      # Make order out of chaos    
      if ($subject =~ m/^(?:ITO|RFA):\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
          $rfa{$bugid} = $1 . ($2?": ":"") . $2;
