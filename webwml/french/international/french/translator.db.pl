@@ -84,6 +84,14 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
+		'Cédric Boutillier' => {
+			email       => 'cedric.boutillier@gmail.com',
+			summary     => 2,
+			logs        => 2,
+			diff        => 0,
+			tdiff       => 0,
+			file        => 0
+		},
 		'Cyril Brulebois' => {
                         email       => 'debian-l10n-french@lists.debian.org',
 		        summary     => 3,
@@ -248,9 +256,9 @@ sub init_translators {
                 'David Prévot' => {
                        email           => 'david@tilapin.org',
                        summary         => 3,
-                       logs            => 3,
-                       diff            => 3,
-                       tdiff           => 3,
+                       logs            => 0,
+                       diff            => 0,
+                       tdiff           => 0,
                        file            => 0,
                        compress        => 'none'
                 },
