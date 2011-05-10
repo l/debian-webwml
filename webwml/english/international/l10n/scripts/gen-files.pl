@@ -178,6 +178,7 @@ sub get_stats_po4a {
         my %done  = ();
         my %todo  = ();
         my %excl  = ();
+	my %ref   = ();
         my $none  = '';
         my $orig  = '';
 
@@ -219,7 +220,12 @@ sub get_stats_po4a {
                               get_color(percent_stat($stat)).
                               "\"><td>";
 		        $str .= (percent_stat($stat) eq "100%" ? $pkg : "<a href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>");
-		        $str .= "</td><td>".show_stat($stat)."</td><td><a href=\"";
+		        $str .= "</td><td>".show_stat($stat)."</td><td><a ";
+			if (! $ref{"$lang:$pkg"}){
+				$str .= "name=\"$pkg\" ";
+				$ref{"$lang:$pkg"} = 1;
+			}
+		       	$str .= "href=\"";
                         $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/$opt_d/";
                         $str .= $data->pooldir($pkg)."/$link.gz\">$po4afile</a></td>";
 		        $str .= "<td>$translator</td><td>$team</td>".
@@ -316,6 +322,7 @@ sub get_stats_po {
         my %done  = ();
         my %todo  = ();
         my %excl  = ();
+	my %ref   = ();
         my $none  = '';
         my $orig  = '';
 
@@ -358,7 +365,12 @@ sub get_stats_po {
                               get_color(percent_stat($stat)).
                               "\"><td>";
 		        $str .= (percent_stat($stat) eq "100%" ? $pkg : "<a href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>");
-		        $str .= "</td><td>".show_stat($stat)."</td><td><a href=\"";
+		        $str .= "</td><td>".show_stat($stat)."</td><td><a ";
+			if (! defined $ref{"$lang:$pkg"}){
+				$str .= "name=\"$pkg\" ";
+				$ref{"$lang:$pkg"} = 1;
+			}
+			$str .= " href=\"";
                         $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/$opt_d/";
                         $str .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>";
 		        $str .= "<td>$translator</td><td>$team</td>".
@@ -708,6 +720,7 @@ sub get_stats_podebconf {
         my %todo  = ();
         my %excl_pending  = ();
         my %excl  = ();
+        my %ref   = ();
         my $orig  = '';
 	my $podebconf_errors = {};
 	my $podebconf_errors_by_language = {};
@@ -831,7 +844,12 @@ sub get_stats_podebconf {
 			    $str .= "&nbsp;&nbsp;";
 			}
 		        $str .= (percent_stat($stat) eq "100%" ? $pkg : "<a href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>");
-		        $str .= "</td><td>".show_stat($stat)."</td><td><a href=\"";
+		        $str .= "</td><td>".show_stat($stat)."</td><td><a ";
+                        if (! $ref{"$lang:$pkg"}){
+                                $str .= "name=\"$pkgid\" ";
+                                $ref{"$lang:$pkg"} = 1;
+                        }
+                        $str .= "href=\"";
                         $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/$opt_d/";
                         $str .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>";
 		        $str .= "<td>$translator</td>";
