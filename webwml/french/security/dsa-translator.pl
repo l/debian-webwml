@@ -187,6 +187,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|it.does.not.include|elle ne contient pas|gs;
 	$output =~ s|The.packages.for.the.(\S+).architecture.are.not.included.in.this.upgrade|Les paquets pour l'architecture $1 ne sont pas inclus dans cette mise à niveau|gs;
 	$output =~ s|They.will.be.released.as.soon.as.they.become.available|Ils seront publiés dès qu'ils seront disponibles|gs;
+	$output =~ s|and.will.migrate.to.the.(\S+).distribution.\((\S+)\).shortly\.|qui migrera bientôt vers la distribution $1 ($2).|gs;
 
 
 	# Case adjustment
