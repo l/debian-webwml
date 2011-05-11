@@ -93,6 +93,7 @@ while (<SRC>)
 	s/We recommend that you update your (.*) package/Vi anbefaler at du opdaterer din $1-pakke/;
 	s/buffer overflows?/bufferoverløb/;
 	s/integer overflow/heltalsoverløb/;
+	s/directory traversal/mappegennemløb/;
 	s/format string vulnerability/formatstrengssårbarhed/;
 	s/format string vulnerabilities/formatstrengssårbarheder/;
 	s/insecure temporary files/usikre midlertidige filer/;
@@ -102,6 +103,7 @@ while (<SRC>)
 	s/>symlink attack</>symbolsk lænke-angreb</;
 	s/>remote exploit</>fjernangreb</;
 	s/>missing input sanitising</>manglende kontrol af inddata</;
+	s/missing input validation/manglende fornuftighedskontrol af inddata/;
 	s/Several vulnerabilities/Flere sårbarheder/;
 	s/several vulnerabilities/flere sårbarheder/;
 	s/>several</>flere</;
@@ -137,14 +139,16 @@ while (<SRC>)
 	s/([Ff])or the unstable/I den ustabile/;
 	s/current stable distribution/nuværende stabile distribution/;
 	s/unstable distribution/ustabile distribution/;
-	s/The old stable distribution/Den gamle stabile distribution/;
+	s/([Tt])he old stable distribution/Den gamle stabile distribution/;
+	s/([Tt])he oldstable distribution/Den gamle stabile distribution/;
 	s/^stable distribution/stabile distribution/;
 	s/^unstable distribution/ustabile distribution/;
 	s/does(?: not|n't) contain a(?:ny)? ([^ ]) package/indeholder ikke pakken $1/;
-	s/distribution (\(potato|woody|sarge\))/distributionen $1/;
+	s/testing distribution/distributionen testing/;
 	s/privilege escalation/rettighedsforøgelse/;
 	s/cross site/på tværs af servere/;
-	s/\bis not affected/er ikke påvirket/;
+	s/heap-based/heap-baseret/;
+	s/\bis not affected by this problem/er ikke påvirket at dette problem/;
 	s/does not contain ([[:word:]]*) packages?/indeholder ikke pakker $1-pakker/;
 	s/does not contain a(?:ny)? ([[:word:]]*) packages/indeholder ikke $1-pakker/;
 	s/does not contain a(?:ny)? ([[:word:]]*) package/indeholder ikke pakken $1/;
@@ -152,6 +156,9 @@ while (<SRC>)
 	s/\(potato\)/(potato)/;
 	s/\(woody\)/(woody)/;
 	s/\(sarge\)/(sarge)/;
+	s/\(lenny\)/(lenny)/;
+	s/\(squeeze\)/(squeeze)/;
+	s/\(wheezy\)/(wheezy)/;
 	s/\(sid\)/(sid)/;
 	s/Refer to Debian (<.*>)?bug #([0-9]+)</Se Debians $1fejl nummer $2</;
 
