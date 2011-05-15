@@ -70,8 +70,8 @@ $translation = {
 		'sql injection'                                 =>      'Injection SQL',
 		'ssl certificate blacklist update'		=>	'Mise à jour de la liste noire des certificats',
 		'denial of service/privilege escalation'	=>	'Déni de service et augmentation de droits',
-		'<p>We recommend that you upgrade your <package> package.</p>'	=>	'<p>Nous vous recommandons de mettre à jour votre paquet <package>.</p>',
-		'<p>We recommend that you upgrade your <package> packages.</p>'	=>	'<p>Nous vous recommandons de mettre à jour vos paquets <package>.</p>',
+		'<p>We recommend that you upgrade your <package> package.</p>'	=>      '<p>Nous vous recommandons de mettre à jour votre paquet <package>.</p>',
+		'<p>We recommend that you upgrade your <package> packages.</p>'	=>      '<p>Nous vous recommandons de mettre à jour vos paquets <package>.</p>',
 	},
 };
 
@@ -142,6 +142,8 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution,?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1, ces problèmes ont été corrigés dans la version $2.|gs;
 	$output =~ s|<p>[\n]?For.the.old.(\S+).distribution.\((\S+)\),?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour l'ancienne distribution $1 ($2), ce problème a été corrigé dans la version $3.|gs;
 	$output =~ s|<p>[\n]?For.the.old.(\S+).distribution.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour l'ancienne distribution $1 ($2), ces problèmes ont été corrigés dans la version $3.|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.these.problems.will.be.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2), ces problèmes seront corrigés dans la version $3.|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.this.problem.will.be.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2), ce problème sera corrigé dans la version $3.|gs;
 
 	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).distributions?.\((\S+)\),?.th(is\|e).problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème a été corrigé dans la version $6.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).distributions?.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes ont été corrigés dans la version $5.|gs;
@@ -169,6 +171,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).are.not.affected.by.this.problem\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne sont pas concernées par ce problème.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).are.not.affected.by.these.problems\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne sont pas concernées par ces problèmes.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.?n.t.contain.a.(\S+).package\.|<p>La distribution $1 ($2) ne contient pas de paquet $3.|gs;
+	$output =~ s|<p>[\n]?The.old.(\S+).distribution.\((\S+)\).does.?n.t.contain.a.(\S+).package\.|<p>L'ancienne distribution $1 ($2) ne contient pas de paquet $3.|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).do.?n.t.contain.any.(\S+).packages\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne contiennent pas de paquet $5.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.?n.t.contain.(\S+).packages\.[\n]?</p>|<p>La distribution $1 ($2) ne contient pas de paquets $3.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.?n.t.contain.(\S+)\.[\n]?</p>|<p>La distribution $1 ($2) ne contient pas $3.</p>|gs;
@@ -188,6 +191,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|The.packages.for.the.(\S+).architecture.are.not.included.in.this.upgrade|Les paquets pour l'architecture $1 ne sont pas inclus dans cette mise à niveau|gs;
 	$output =~ s|They.will.be.released.as.soon.as.they.become.available|Ils seront publiés dès qu'ils seront disponibles|gs;
 	$output =~ s|and.will.migrate.to.the.(\S+).distribution.\((\S+)\).shortly\.|qui migrera bientôt vers la distribution $1 ($2).|gs;
+	$output =~ s|<p>[\n]?We.recommend.that.you.upgrade.your.(\S+).packages|<p>Nous vous recommandons de mettre à jour vos paquets $1|gs;
 
 
 	# Case adjustment
