@@ -20,6 +20,7 @@
 from='Debian Webmaster <webmaster@debian.org>'
 xloop=debian-www@lists.debian.org
 dirout=/srv/www-master.debian.org/htdocs/build-logs/validate/
+dirtidy=/srv/www-master.debian.org/htdocs/build-logs/tidy/
 
 . `dirname $0`/../common.sh
 
@@ -42,6 +43,22 @@ for file in $dirout*; do
 		echo " Please also update webwml/english/devel/website/ with the new coordinator(s) data"
 
 		) | /usr/sbin/sendmail -t
+	elif [ -s ${dirtidy}${file#$dirout} ]; then
+		(
+
+		echo "From: $from"
+		echo "To:" `grep "^${file#$dirout} " $confile | sed "s/^${file#$dirout} //"`
+		echo "X-Loop: $xloop"
+		echo "Subject: Tidy validation failed"
+		echo
+		cat ${dirtidy}${file#$dirout}
+		echo
+		echo "--"
+		echo " You received this mail for the language code ${file#$dirout}."
+		echo " Please edit webwml/english/devel/website/validation.data if this is not accurate."
+		echo " Please also update webwml/english/devel/website/ with the new coordinator(s) data."
+
+		) | /usr/sbin/sendmail -t
 	fi
 done
 
@@ -59,8 +76,24 @@ if [ `date +%u` -eq 1 ]; then
 		cat $file
 		echo
 		echo "--"
-		echo " You received this mail for the language code ${file#$dirout}."
-		echo " Because you are listed in the language code en, lucky you!"
+		echo " You received this mail for the language code ${file#$dirout}"
+		echo " because you are listed for the language code en, lucky you!"
+
+		) | /usr/sbin/sendmail -t
+        elif [ -s ${dirtidy}${file#$dirout} ]; then
+		(
+
+		echo "From: $from"
+		echo "To:" `grep "^en " $confile | sed "s/^$en //"`
+		echo "X-Loop: $xloop"
+		echo "Subject: Tidy validation failed"
+		echo
+		cat ${dirtidy}${file#$dirout}
+		echo
+		echo "--"
+		echo " You received this mail for the language code ${file#$dirout}"
+		echo " because you are listed for the language code en, lucky you!"
+
 		) | /usr/sbin/sendmail -t
 	fi
     done
