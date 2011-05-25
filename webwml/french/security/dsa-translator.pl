@@ -180,7 +180,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?We.recommend.that.you.upgrade.your.(\S+,?.??\S+?),?.and.(\S+).packages\.[\n]?</p>|<p>Nous vous recommandons de mettre à jour vos paquets $1 et $2.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\),?.no.longer.contains.(\S+).packages|<p>La distribution $1 ($2) ne contient plus de paquets $3|gs;
         $output =~ s|<p>[\n]?The.upcoming.(\S+).distribution.\((\S+)\),?.no.longer.contains.(\S+).packages|<p>La distribution $1 à venir ($2) ne contient plus de paquets $3|gs;
-
+	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).\((\S+)\).distributions?.do.?n.t.contain.(\S+).anymore\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne contiennent plus $5.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\),?.no.longer.contains.(\S+)|<p>La distribution $1 ($2) ne contient plus $3|gs;
 	$output =~ s|<p>[\n]?The.upcoming.(\S+).distribution.\((\S+)\),?.no.longer.contains.(\S+)|<p>La distribution $1 à venir ($2) ne contient plus $3|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).doesn't.include.(\S+)\.|<p>La distribution $1 ($2) ne contient pas $3.|gs;
@@ -243,6 +243,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|execute.arbitrary.code|exécuter du code arbitraire|gs;
 	$output =~ s|NULL.pointer.dereference|déréférencement de pointeur NULL|gs;
 	$output =~ s|application.crash|plantage d'application|gs;
+	$output =~ s|deamon.crash|plantage du démon|gs;
 	$output =~ s|insufficient.input.saniti(s\|z)(ing\|ation)|vérification d'entrée manquante|gs;
 	$output =~ s|missing.input.saniti(s\|z)(ing\|ation)|absence de vérification des entrées|gs;
 	$output =~ s|input.saniti(s\|z)(ing\|ation)|vérification des entrées|gs;
