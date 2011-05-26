@@ -1,84 +1,84 @@
 #use wml::debian::translation-check translation="1.6"
-<define-tag description>várias vulnerabilidades</define-tag>
+<define-tag description>vÃ¡rias vulnerabilidades</define-tag>
 <define-tag moreinfo>
 <p>Alexander Hvostov, Julien Blache e Aurelien Jarno descobriram 
-vários problemas relacionados a segurança no pacote sane-backends,
-que contém uma biblioteca API para scanners incluindo um daemon
+vÃ¡rios problemas relacionados a seguranÃ§a no pacote sane-backends,
+que contÃ©m uma biblioteca API para scanners incluindo um daemon
 (no pacote libsane) que pode ser explorado remotamente. Estes 
 problemas permitem que o atacante remoto cause uma falha de
-segmentação e/ou consuma quantidades arbitrárias de memória.
+segmentaÃ§Ã£o e/ou consuma quantidades arbitrÃ¡rias de memÃ³ria.
 O ataque obtem sucesso mesmo que o computador do atacante
-não esteja listado no saned.conf.</p>
+nÃ£o esteja listado no saned.conf.</p>
 
-<p>Você está vulnerável a este ataque somente se você rodar o saned,
+<p>VocÃª estÃ¡ vulnerÃ¡vel a este ataque somente se vocÃª rodar o saned,
 por exemplo, no xinetd ou inetd. Se as entradas no arquivo de
-configuração do xinetd ou inetd estiverem comentadas ou não
-existirem, você está seguro.</p>
+configuraÃ§Ã£o do xinetd ou inetd estiverem comentadas ou nÃ£o
+existirem, vocÃª estÃ¡ seguro.</p>
 
 <p>Tente "<kbd>telnet localhost 6566</kbd>" no servidor que pode 
-estar rodando saned. Se você obtiver "conexão recusada", o 
-saned não está rodando e você está seguro.</p>
+estar rodando saned. Se vocÃª obtiver "conexÃ£o recusada", o 
+saned nÃ£o estÃ¡ rodando e vocÃª estÃ¡ seguro.</p>
 
-<p>O projeto de Vulnerabilidades e Exposições Comuns identifica
+<p>O projeto de Vulnerabilidades e ExposiÃ§Ãµes Comuns identifica
 os seguintes problemas:
 
 <ul>
 
 <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0773">CAN-2003-0773</a>:
 
-<p>O saned verifica a identidade (endereço IP) do computador
-   remoto somente depois que a primeira comunicação ocorre
+<p>O saned verifica a identidade (endereÃ§o IP) do computador
+   remoto somente depois que a primeira comunicaÃ§Ã£o ocorre
    (SANE_NET_INIT). Portanto, qualquer um podem enviar
-   aquele RPC, mesmo que o computador remoto não tenha permissão
-   para scannear (não esteja listado no saned.conf).</p></li>
+   aquele RPC, mesmo que o computador remoto nÃ£o tenha permissÃ£o
+   para scannear (nÃ£o esteja listado no saned.conf).</p></li>
 
 <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0774">CAN-2003-0774</a>:
 
-<p>O saned não possui verificações de erro praticamente em nenhum
-   lugar do código. Portanto, perdas de conexão são datectadas 
-   muito tarde. Se a queda da conexão não for detectada, o
-   acesso ao buffer interno wire deixa os limites da memória alocada.
-   Assim, memória aleatória "após" o buffer wire é lida, o que será
-   seguido por uma falha de segmentação.</p></li>
+<p>O saned nÃ£o possui verificaÃ§Ãµes de erro praticamente em nenhum
+   lugar do cÃ³digo. Portanto, perdas de conexÃ£o sÃ£o datectadas 
+   muito tarde. Se a queda da conexÃ£o nÃ£o for detectada, o
+   acesso ao buffer interno wire deixa os limites da memÃ³ria alocada.
+   Assim, memÃ³ria aleatÃ³ria "apÃ³s" o buffer wire Ã© lida, o que serÃ¡
+   seguido por uma falha de segmentaÃ§Ã£o.</p></li>
 
 <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0775">CAN-2003-0775</a>:
 
-<p>Se o saned espera strings, ele aloca (malloc) a memória necessária
+<p>Se o saned espera strings, ele aloca (malloc) a memÃ³ria necessÃ¡ria
    para armazenar a string completa depois que ele recebe o tamanho 
-   da string. Se a conexão for perdida antes que ela receber o
-   tamanho da string, o malloc irá reservar uma quantidade arbitrária
-   de memória. Dependendo deste tamanho e da quantidade de memória
-   disponívelou o malloc falha (-&gt;o saned fecha amigavelmente)
-   ou uma grande quantidade de memória é alocada. Podem ocorrrer
-   uso de swap e medidas "Sem Memória", dependendo do kernel.</p></li>
+   da string. Se a conexÃ£o for perdida antes que ela receber o
+   tamanho da string, o malloc irÃ¡ reservar uma quantidade arbitrÃ¡ria
+   de memÃ³ria. Dependendo deste tamanho e da quantidade de memÃ³ria
+   disponÃ­velou o malloc falha (-&gt;o saned fecha amigavelmente)
+   ou uma grande quantidade de memÃ³ria Ã© alocada. Podem ocorrrer
+   uso de swap e medidas "Sem MemÃ³ria", dependendo do kernel.</p></li>
 
 <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0776">CAN-2003-0776</a>:
 
-<p>O saned não verifica a validade dos números RPC que ele recebe
-   antes de obter os parâmetros.</p></li>
+<p>O saned nÃ£o verifica a validade dos nÃºmeros RPC que ele recebe
+   antes de obter os parÃ¢metros.</p></li>
 
 <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0777">CAN-2003-0777</a>:
 
-<p>Se mensagens de depuração estiverem habilitadas e uma conexão for
-   perdida, strings não terminadas por null podem ser impressas e
-   podem ocorrer falhas de segmentação.</p></li>
+<p>Se mensagens de depuraÃ§Ã£o estiverem habilitadas e uma conexÃ£o for
+   perdida, strings nÃ£o terminadas por null podem ser impressas e
+   podem ocorrer falhas de segmentaÃ§Ã£o.</p></li>
 
 <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0778">CAN-2003-0778</a>:
 
-<p>É possível alocar uma quantidade arbitrária de memória no servidor
-   rodando o saned mesmo se a conexão não for perdida. No momento,
-   isto não pode ser facilmente corrigido no momento, de acordo com o 
-   autor. É melhor limitar a quantidade total de memória que o saned 
+<p>Ã‰ possÃ­vel alocar uma quantidade arbitrÃ¡ria de memÃ³ria no servidor
+   rodando o saned mesmo se a conexÃ£o nÃ£o for perdida. No momento,
+   isto nÃ£o pode ser facilmente corrigido no momento, de acordo com o 
+   autor. Ã‰ melhor limitar a quantidade total de memÃ³ria que o saned 
    pode usar (ulimit).</p></li>
 </ul>
 
-<p>Para a distribuição estável (woody), este problema foi corrigido
-na versão 1.0.7-4.</p>
+<p>Para a distribuiÃ§Ã£o estÃ¡vel (woody), este problema foi corrigido
+na versÃ£o 1.0.7-4.</p>
 
-<p>Para a distribuição instável (sid), este problema foi corrigido
-na versão 1.0.11-1 e posteriores.</p>
+<p>Para a distribuiÃ§Ã£o instÃ¡vel (sid), este problema foi corrigido
+na versÃ£o 1.0.11-1 e posteriores.</p>
 
-<p>Nós recomendamos que você atualiza seus pacotes libsane.</p>
+<p>NÃ³s recomendamos que vocÃª atualiza seus pacotes libsane.</p>
 </define-tag>
 
 # do not modify the following line
