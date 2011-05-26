@@ -21,13 +21,13 @@ do 'documents-bd.pl';
 #		'unknown' - 8
 # In french:
 #		'non-disponible'
-#		'à traduire'
+#		'Ã  traduire'
 #		'en cours de traduction'
-#		'à relire'
-#		'traduction à jour',
-#		'à reviser'
-#		'en cours de révision'
-#		'obsolète'
+#		'Ã  relire'
+#		'traduction Ã  jour',
+#		'Ã  reviser'
+#		'en cours de rÃ©vision'
+#		'obsolÃ¨te'
 #
 #	'since'			=> '',
 #	'diff'			=> '',

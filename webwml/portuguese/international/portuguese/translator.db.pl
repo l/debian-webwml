@@ -108,14 +108,14 @@ sub init_translators {
 	unmaintained        => {
 	    email       => 'debian-l10n-portuguese@lists.debian.org',
 	    summary     => 2,
-	    mailsubject => '[webwml] Páginas desatualizadas sem mantenedor',
+	    mailsubject => '[webwml] PÃ¡ginas desatualizadas sem mantenedor',
 	    mailbody    => 'portuguese/international/portuguese/mail_unmaintained.txt',
 	},
 	maxdelta            => {
 	    email       => 'debian-l10n-portuguese@lists.debian.org',
 	    summary     => 2,
 	    maxdelta    => 5,
-	    mailsubject => '[webwml: Importante] Páginas desatualizadas',
+	    mailsubject => '[webwml: Importante] PÃ¡ginas desatualizadas',
 	    mailbody    => 'portuguese/international/portuguese/mail_obsolete.txt',
 	},
 	# this is a special name containing the default values
@@ -129,7 +129,7 @@ sub init_translators {
 	    tdiff       => 0,
 	    file        => 0,
 	    frequency   => ['nunca', 'mensalmente', 'semanalmente', 'diariamente'],
-	    mailsubject => '[wml] Páginas desatualizadas',
+	    mailsubject => '[wml] PÃ¡ginas desatualizadas',
 	    mailbody    => 'portuguese/international/portuguese/mail_user.txt',
 	    compress    => 'none'
 	},

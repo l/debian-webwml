@@ -1,14 +1,14 @@
 <p>Other BTS pages:
 
 <ul>
-  <li><a href="./">Página principal dos conteúdos do sistema de gerenciamento de bugs.</a>
-  <li><a href="Reporting">Instruções para reportar bugs.</a>
+  <li><a href="./">PÃ¡gina principal dos conteÃºdos do sistema de gerenciamento de bugs.</a>
+  <li><a href="Reporting">InstruÃ§Ãµes para reportar bugs.</a>
   <li><a href="Access">Acessando os logs do sistema de gerenciamento de bugs.</a>
-  <li><a href="Developer">Informações para desenvolvedor no sistema de gerenciamento 
+  <li><a href="Developer">InformaÃ§Ãµes para desenvolvedor no sistema de gerenciamento 
   de bugs.</a>
-  <li><a href="server-control">Informações do desenvolvedor na manipulação
+  <li><a href="server-control">InformaÃ§Ãµes do desenvolvedor na manipulaÃ§Ã£o
       de bugs usando a interface de controle de e-mail.</a>
-  <li><a href="server-refcard">Cartão de referência de servidores de mail.</a>
+  <li><a href="server-refcard">CartÃ£o de referÃªncia de servidores de mail.</a>
   <li><a href="server-request">Requisitando reports de bug pelo e-mail.</a>
 #  <li><a href="db/ix/full.html">Full list of outstanding and recent bug
 #      reports.</a>
