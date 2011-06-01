@@ -163,7 +163,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.and.t?h?e?.??(\S+).distribution.\((\S+)\),?.this.problem.will.be.fixed.soon|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème sera corrigé prochainement|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\).and.t?h?e?.??(\S+).distribution.\((\S+)\),?.these.problems.will.be.fixed.soon|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes seront corrigés prochainement|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\).distributions?,?.these.problems.will.be.fixed.soon|<p>Pour les distributions $1 ($2) et $3 ($4), ces problèmes seront corrigés prochainement|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\).distributions?,?.this.problem.will.be.fixed[\n]?</p>|<p>Pour les distributions $1 ($2) et $3 ($4), ce problème sera corrigé prochainement|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\).distributions?,?.this.problem.will.be.fixed.soon|<p>Pour les distributions $1 ($2) et $3 ($4), ce problème sera corrigé prochainement|gs;
 	$output =~ s|<p>[\n]?For the.(\S+).distribution.\((\S+)\),?.this problem.will.be.fixed.soon|<p>Pour la distribution $1 ($2), ce problème sera corrigé prochainement|gs;
 	$output =~ s|<p>[\n]?For the.(\S+).distribution.\((\S+)\),?.these problems.will.be.fixed.soon|<p>Pour la distribution $1 ($2), ces problèmes seront corrigés prochainement|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\),?.and.t?h?e?.??(\S+).distribution.\((\S+)\).will.be.fixed.soon|<p>La distribution $1 ($2) et la distribution $3 ($4) seront corrigées prochainement|gs;
@@ -177,7 +177,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?The.old.(\S+).distribution.\((\S+)\).does.?n.t.contain.a.(\S+).package\.|<p>L'ancienne distribution $1 ($2) ne contient pas de paquet $3.|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).do.?n.t.contain.any.(\S+).packages\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne contiennent pas de paquet $5.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.?n.t.contain.(\S+).packages\.[\n]?</p>|<p>La distribution $1 ($2) ne contient pas de paquets $3.</p>|gs;
-	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.?n.t.contain.(\S+)\.[\n]?</p>|<p>La distribution $1 ($2) ne contient pas $3.</p>|gs;
+	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\),?.does.?n.t.contain.(\S+)\.[\n]?</p>|<p>La distribution $1 ($2) ne contient pas $3.</p>|gs;
 	$output =~ s|The.(\S+).package.is.not.affected.by.this.issue\.|Le paquet $1 n'est pas concerné par ce problème.|gs;
 	$output =~ s|<p>[\n]?We.recommend.that.you.upgrade.your.(\S+).packages\.|<p>Nous vous recommandons de mettre à jour vos paquets $1.|gs;
 	$output =~ s|<p>[\n]?We.recommend.that.you.upgrade.your.(\S+,?.??\S+?),?.and.(\S+).packages\.[\n]?</p>|<p>Nous vous recommandons de mettre à jour vos paquets $1 et $2.</p>|gs;
