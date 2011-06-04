@@ -173,6 +173,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).is.not.affected|<p>La distribution $1 ($2) n'est pas concernée|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).are.not.affected.by.this.problem\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne sont pas concernées par ce problème.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).are.not.affected.by.these.problems\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne sont pas concernées par ces problèmes.</p>|gs;
+	$output =~ s|<p>[\n]?The.(\S+).(distribution.)?\((\S+)\),.(the.)?(\S+).(distribution.)?\((\S+)\),?.and.(the.)?(\S+).distributions?.\((\S+)\).are.not.affected.by.this.problem\.[\n]?</p>|<p>La distribution $1 ($3), la distribution $5 ($7) et la distribution $9 ($10) ne sont pas concernées par ce problème.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.?n.t.contain.a.(\S+).package\.|<p>La distribution $1 ($2) ne contient pas de paquet $3.|gs;
 	$output =~ s|<p>[\n]?The.old.(\S+).distribution.\((\S+)\).does.?n.t.contain.a.(\S+).package\.|<p>L'ancienne distribution $1 ($2) ne contient pas de paquet $3.|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).do.?n.t.contain.any.(\S+).packages\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne contiennent pas de paquet $5.</p>|gs;
