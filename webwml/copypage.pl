@@ -152,7 +152,7 @@ if (open WMLRC, "$language/.wmlrc")
 	{
 		if (s/^-D CHARSET=//)
 		{
-			$recode = 1 unless /^iso-8859-1$/i;
+			$recode = 1 unless /^utf-8$/i;
 			if ($recode && /^iso-8859-([0-9]+)$/)
 			{
 				my $compattablename = 'iso_8859_' . $1 . '_compat';
