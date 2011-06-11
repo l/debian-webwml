@@ -6,9 +6,7 @@
 <p>
 This document aims to provide an easy and relatively painless set of
 instructions on how to get Debian GNU/Hurd up and running by hand with a minimum
-amount of effort. Note that the Debian installer is now working, see the <a
-href="hurd-cd">prepared CD images</a>. Then the following steps will be needed
-for proper configuration.
+amount of effort.
 </p>
 
 <p>
@@ -16,26 +14,7 @@ It is based in Neal H. Walfield's <q>The Hurd Installation Guide</q>.
 Many thanks to Neal for his contribution.
 </p>
 
-#<p>
-#Note that some points in this manual are a bit inconvenient because they take a
-#lot of time and may cause problems. You may prefer the installation over the
-#<a href="hurd-cd">prepared CD images</a>, especially if you are a beginner.
-#Even if they are outdated, they usually work. You can still get updates from
-#the online repositories.
-#</p>
-
 <h2>Overview </h2>
-
-#<p>
-#The Debian GNU/Hurd distribution, unlike distributions of other operating
-#systems, does not have a nice installation program. One day it will and maybe
-#you will help design and implement it; however, until that day, installing
-#Debian GNU/Hurd requires another operating system, specifically, another
-#Unix-like system. Users have indicated successful installations using different
-#flavors of GNU/Linux as well as the BSDs. The minimum requirements of the
-#bootstrap operating system are the ability: to create an ext2 file system; to
-#extract a tar archive on to it; and to install GNU Grub.
-#</p>
 
 <p>
 GNU is similar in nature to any Unix-like system: after logging in, the user is
@@ -362,6 +341,14 @@ gladly accepted.
 #</p>
 
 
+<h2> Installation </h2>
+
+<p>
+You can simply use the Debian installer, see the
+<a href="hurd-cd">prepared CD images</a>.
+Then the following steps will be needed for proper configuration.
+</p>
+
 <h2> Configuration </h2>
 
 <h3> The Network </h3>
@@ -390,7 +377,7 @@ automatic yet.
 This can also be done by hand by using <code>inetutils-ifconfig</code>
 from the <code>inetutils-tools</code> package, and <code>ping</code> is
 available in the <code>inetutils-ping</code> package.
-Last but not least, this can be done by hand using the
+Last but not least, this can be done (and recorded for good) by hand using the
 <code>settrans</code> command to attach a translator to a given
 filesystem node. When programs access the node by, for example sending an RPC,
 the operating system will transparently start the server to handle the request.
@@ -452,8 +439,8 @@ Next, edit <tt><q>/etc/fstab</q></tt> to add any additional filesystems as well 
 swap space. It is <em>very important</em> that swap space be used; the Hurd
 will be an order of magnitude more stable. Note that the Hurd can transparently
 share a swap partition with Linux but will happily page to any device including
-a raw partition such as your home partition. By default, <code>nano</code> is
-the only editor installed by the base distribution.
+a raw partition such as your home partition. By default, <code>nano</code> and <code>vi</code> are
+the only editors installed by the base distribution.
 </p>
 
 <p>
@@ -468,13 +455,29 @@ Here is an example <tt><q>/etc/fstab</q></tt> file:
 </pre></td></tr></table>
 
 <p>
-Remember to create any devices using the <code>MAKEDEV</code> command:
+If any <code>/dev</code> device entry is missing, remember to create it using the <code>MAKEDEV</code> command:
 </p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
  \# cd /dev
  \# ./MAKEDEV hd0s1 hd0s2 hd0s3
 </pre></td></tr></table>
+
+<p>
+You can also mount a filesystem by hand by calling <code>settrans</code>:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# settrans /mnt /hurd/ext2fs /dev/hd0s5
+</pre></td></tr></table>
+
+<p>
+The idea behind this command is that you set on the <code>/mnt</code> node the
+<code>/hurd/ext2fs /dev/hd0s5</code> translator. <code>/hurd/ext2fs</code> will
+get executed and start read/writing <code>/dev/hd0s5</code> and show its content
+on <code>/mnt</code>. More information can be found in the
+<a href="hurd-doc-translator">Translator documentation</a>.
+</p>
 
 <p>
 To mount an nfs filesystem, <code>/hurd/nfs</code> translator is used. When
@@ -514,6 +517,13 @@ To mount this from a GNU box and assuming that nfs server's ip address is
 
 <h2>Final Words </h2>
 
+<p>
+The following are just install-time quickies, make sure to also read
+documentation for the installed system: the <a href=hurd-doc>Debian GNU/Hurd documentation</a>,
+but also the <a href=http://hurd.gnu.org/>Upstream website</a>.
+</p>
+
+</p>
 
 #<h3> 8.1 The Grub Menu </h3>
 #
@@ -574,7 +584,7 @@ GNU system. The easiest way to do this is to use apt off-line. Refer to
 <p>
 Besides the Mach console you encountered during installation, the GNU/Hurd
 features a powerful user-space console providing virtual terminals.
-Currently, you have to start the Hurd console manually with the following
+You can start the Hurd console manually with the following
 command:
 </p>
 
