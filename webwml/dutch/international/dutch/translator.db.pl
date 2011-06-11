@@ -28,15 +28,6 @@
 
 sub init_translators {
         my $translators = {
-                'Luk Claes' => {
-			email		=> 'luk@debian.org',
-			summary		=> 3,
-			logs		=> 3,
-			diff		=> 0,
-			tdiff		=> 0,
-			file		=> 0,
-			compress	=> 'none'
-		},
 		'Wouter Verhelst' => {
 			email		=> 'wouter@debian.org',
 			summary		=> 3,
@@ -56,13 +47,6 @@ sub init_translators {
                         email       => '',
                         mailsubject => '',
                         mailbody    => '',
-                },
-                unmaintained        => {
-                        email       => 'luk@debian.org',
-                        summary     => 3,
-			logs        => 3,
-                        mailsubject => 'Verouderde webpagina\'s die geupdated moeten worden',
-                        mailbody    => 'dutch/international/dutch/mail_unmaintained.txt',
                 },
                 maxdelta            => {
                         email       => 'debian-l10n-dutch@lists.debian.org',
