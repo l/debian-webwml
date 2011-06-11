@@ -14,111 +14,47 @@ part of the GNU project while the Linux kernel is an independent project.</p>
 
 <h2>Using the Debian Installer installation CD-ROM</h2>
 
-<p>A pre-release of a hurd-i386 port of the standard Debian Installer can be
-downloaded from <url "http://people.debian.org/~sthibault/hurd-i386/installer/cdimage/">. It works
-like the usual Linux port of the Debian Installer, i.e. automatically, except
-that it does not support dhcp. This is the recommended way.
-Make sure to also read <a href="hurd-install">the notes about manual
-installation</a> which document some of the final configuration steps.
-</p>
+<p>A hurd-i386 port of the standard Debian Installer can be
+downloaded from <url "http://people.debian.org/~sthibault/hurd-i386/installer/cdimage/">
+(updated 2011/06/10). It works
+like the usual Linux port of the Debian Installer, i.e. automatically, except a
+few details:</p>
 
-<h2>Using the unofficial Debian GNU/Hurd installation CD-ROMs</h2>
+<ul>
 
-<p>This is the older way of installing GNU/Hurd and might still be useful,
-notably for places which do not have an Internet connection.</p>
+<li>Make sure to enable swap space, else Mach will have troubles if you use all
+your memory.</li>
 
-<p>Current Debian GNU/Hurd <cdserie> series.</p>
+<li>Do not mount a separate partition on <code>/usr</code>, else the boot will
+fail.</li>
 
-<p>Only the first image has been released for this series.</p>
-<p>A small mini image (<cdbasename>-mini.iso) has been built which
-should be useful for those who want to install via a network.</p>
+<li>
+Read <a href="hurd-install">the notes about manual installation</a> which
+document some of the final configuration steps.
+</li>
 
-<p><cdbasetarball> (a tarball of the base GNU system) has been specially
-built for this set.</p>
-
-<h3>Download.</h3>
-
-<p>The current iso images are <cdbasename>-DVDx.iso and <cdbasename>-mini.iso.
-All of the binaries specific to a GNU system are found on this first image,
-and all the required, important and standard packages are found on the first
-image. So a basic GNU system can be installed using the first image.</p>
-
-<p>These sites usually mirror the images, but check first.</p>
-
-<p>The main site is <url "http://ftp.debian-ports.org/debian-cd/"> in France,
-and mirrors for these images are
-<url "http://www.gtlib.gatech.edu/pub/gnuab/debian-cd/"> in USA and
-<url "ftp://ftp.duckcorp.org/hurdfr/hurd/"> in France.
-</p>
-
-<p>A search at <url "http://www.filesearching.com/"> for hurd-L could find
-a closer site.</p>
+</ul>
 
 <p>Instructions for burning CDs from the images can be found in the
 <a href="$(HOME)/CD/faq/">Debian CD FAQ</a>.</p>
 
-<h3>CD-ROMs</h3>
-
-<p>See <a href="$(HOME)/CD/vendors/">this page for GNU/Hurd CD vendors</a>.
-Look for "hurd" using your browser's search facility. 
-<url "http://www.copyleft.co.nz/"> will 
-definitely have the latest CDs (warning, that is me).</p>
-
-<h3>How the Installation Disc works</h3>
-
-<p>The potato Debian GNU/Linux installation CDs used the cross
-install method to install the base system.  A ramdisk is created in
-memory and a mini GNU/Linux system installed into this disk.  This
-mini system is used to partition and format drives, and to prepare the
-target machine for the main installation.  The critical phase is to
-unpack a tarball with the essential base packages onto the drives of
-the target system.  The new system is then rebooted using the packages
-unpacked onto the HDD.  Further packages are then installed and
-configured to create the desired system.</p>
-
-<p>As GNU also uses the cross install method, this meant that the
-scripts to build the GNU installation CDs could be adapted from the
-Debian GNU/Linux boot and CD scripts so that the GNU rather than the 
-GNU/Linux tarball would be unpacked.</p>
-
-<p>Installing a GNU system using a cd-rom set has several advantages.</p>
-<ul>
-<li>
-As the GNU/Linux system runs in a ramdisk and the tarball is on the cdrom,
-a GNU system can be installed onto a bare machine, or onto a machine where
-people do not want to use the installed operating system.</li>
-
-<li>
-The file system storing the packages on the CDs could be reorganised
-to incorporate work-arounds.</li>
-
-<li>
-While a GNU/Hurd version of "parted" is available, some people 
-may prefer to use the GNU/Linux "cfdisk" in the boot-disks.</li>
-
-<li>
-It is faster, less fiddle and most people are familiar with the process.</li>
-</ul>
-
-
-<h3>Hurd Partitions</h3>
+<h2>Hurd Partitions</h2>
 
 <p>The Hurd uses extensions to the ext2 file system, the call is
-<code>mke2fs -b 4096 -I 128 -o hurd /dev/[Hurd partition]</code>. The
+<code>mke2fs -o hurd /dev/[Hurd partition]</code>. The
 installation CDs use this when creating Hurd partitions.</p>
 
 
-<h3>Using the Installation CD</h3>
-
-<h4>Preparation.</h4>
+<h2>Making a GRUB boot-disk</h2>
 
 <p>
-Hurd specific documentation is found in ./doc/hurd.  hurd-install-guide
-and Cook-book are "must read" documents before you start.
-</p>
+If you are installing the Hurd alone on your system, you can let the installer
+install GRUB itself. If you are installing the Hurd along an existing system,
+you will most probably want to be able to choose between both. If your existing
+system is Linux, you can probably simply run update-grub and it will detect your
+newly-installed Hurd system. Otherwise, or if you do not manage to boot the Hurd
+that way, you can use a GRUB boot-disk.</p>
 
-<ol>
-<li><em>Make a GRUB boot-disk</em>
 <p>
 Install the package grub-disk or grub-rescue-pc, they contain a GRUB floppy
 image. You can use "dd" if you are working in GNU/Linux or rawrite if you are
@@ -152,113 +88,4 @@ drive if you only have one IDE drive, or it could refer to the second IDE drive.
 So it is important that you have worked out the various names of your partitions
 before you start.</p>
 
-<h4>Installation</h4>
-
-<ol>
-<li><em>Boot the CD.</em>
-<p>
-Any of the methods of booting a Debian 3.0 beta (woody) CD will
-work, ie. from the CD, from MS and by any of the boot/root floppy images.
-A complete set of base floppies can created if there is no cdrom drive.</p></li>
-
-<li><em>After the opening screens, open "Partition a Hard Disk".</em>
-<p>
-If you are going to copy the .deb packages onto the HDD then you will need 
-to create other partitions, one for each CD. While parted is available 
-for GNU/Hurd you may as well use this facility. About 
-500 Mb will be enough to start with for the main system.  If you need to 
-create another partition then you may find it easier to reboot the first CD 
-and use the tools in the Linux ramdisk to do this.</p></li>
-
-<li><em>Work out the GRUB and Hurd names of the partition you will be using.</em></li>
-
-<li><em>Prepare your partitions using "Partition a Hard Disk"</em>
-and make certain that you have a swap partition. GNU/Hurd is fussy about swap.</li>
-
-<li><em>Format your Hurd partition</em>
-using "Initialize a Hurd Partition" and mount it on "/".
-Do not mount any other partitions.</li>
-
-<li><em>Install the base system using "Install the Base System".</em></li>
-
-<li><em>Insert a GRUB floppy in the drive and reboot with "Reboot the System"</em>
-(don't forget to reset the bios).  That is it!  [First reboot]</li>
-</ol>
-
-<p>The default setting of the GRUB image assumes your GNU/Hurd partition
-is "(hd0,0)" [GRUB1 nomenclature], "(hd0,1)" [GRUB2 nomenclature], and
-"sd0s1" [GNU/Hurd], which being interpreted means the first partition on the
-first HDD which is SCSI and there are no IDE drives. However, for the first
-boots, you need to pass the <code>-s</code> option to the GNU Mach kernel
-to boot into single user mode, and remove the <code>--readonly</code> option from the
-<code>ext2fs.static</code> command line.
-</p>
-
-<p>
-THIS IS IMPORTANT, watch the boot messages and note carefully where the
-cdrom is, and keep you hands off the keyboard until the boot process has
-completed.
-</p>
-
-<p><q>/boot/grub/menu.lst</q> or <q>/boot/grub/grub.cfg</q> on the GRUB floppy can be
-edited so your system will boot the way you want.</p>
-
-
-<h3>The next steps.</h3>
-
-<ol>
-<li><em>After the system has booted, create the necessary devices.</em>
-I.e., for the cdrom, the swap partition and any other HDD partitions.
-
-<p>Eg <kbd>cd /dev</kbd> and <kbd>MAKEDEV hd2 hd0s2 hd0s3</kbd></p>
-</li>
-
-<li><em>Activate the swap.</em>
-<pre>
-$ /hurd/mach-defpager
-$ swapon /dev/hd0s2
-</pre>
-Check to see that is has worked.  Swap is HIGHLY recommended with the Hurd.</li>
-
-<li><em>Run ./native-install.</em> A whole bundle of packages will be
-configured. Reboot the system using <kbd>reboot</kbd>. [Second reboot].
-You will now have a system to configure.<br />
-Login as root, <kbd>login root</kbd>.</li>
-
-<li><em>Edit /etc/fstab, <kbd>nano /etc/fstab</kbd></em>.
-(nano is not a bad editor.)
-<p>Add the HDD partitions, eg,</p>
-<pre>
-/dev/[Hurd partition name]	none	swap		sw		0	0
-/dev/[Hurd partition name]	/CD1	ext2		rw		1	1
-/dev/[GNU drive name]		/cdrom	iso9660fs	ro,noauto	1	1
-</pre>
-
-<p>The Hurd uses the ext2 fs.  "/CD1" is a suggested mount-point for 
-the partition which contains the packages from <cdbasename>-CD1.
-Swap can be shared with Linux.</p></li>
-
-<li><em>Set up the translator that accesses the cdrom,</em> eg
-<p>
-"settrans -a /cdrom /hurd/iso9660fs /dev/[Hurd drive name]"<br />
-While this is the GNU way of doing it, "mount /cdrom" will also work.</p></li>
-
-<li><em>Run "/cdrom/upgrade/install.sh"</em>.
-<p>This will install the required, important and standard packages.</p></li>
-
-<li><em>You may want to run "/cdrom/upgrade/gui.sh"</em>.
-<p>This will install the X Window System.</p></li>
-
-<li><em>Further packages can be installed using "apt or "dselect".</em>
-<p>If you are unfamiliar with these Debian tools, see 
-"info apt" and "info dselect".</p></li>
-
-<li><em>Unmounting the cdrom</em>
-<p>The cdrom drive is unmounted with "settrans -agf /cdrom".<br />
-The cdrom drive drawer should then be unlocked.</p></li>
-
-</ol>
-
-<p>This is where this guide finishes and you start exploring.  Enjoy the Hurd.</p>
-<p>Comments about the CDs are welcome.<br />
-Philip Charles, philipc@debian.org</p>
+<p>Enjoy the Hurd.</p>
