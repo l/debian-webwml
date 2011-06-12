@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd&nbsp;&ndash;&nbsp;Installation" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.84" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.86" maintainer="David Prévot"
 
 # Translators:
 # Jérome Abela, 1999.
@@ -15,12 +15,6 @@
 Ce document vise à fournir un jeu d'instructions facile et relativement peu
 fastidieux sur la façon d'obtenir et de faire fonctionner Debian&nbsp;GNU/Hurd
 non automatiquement avec un minimum d'efforts.
-
-Remarquez que l'installateur Debian est dorénavant
-fonctionnel,
-consultez les <a href="hurd-cd">images de CD préparées</a>.
-
-Les étapes suivantes sont ensuite nécessaires pour une configuration adéquate.
 </p>
 
 <p>
@@ -28,29 +22,8 @@ Il est basé sur le <q>Guide d'installation du Hurd</q> de Neal H. Walfield.
 Merci beaucoup à Neal pour sa contribution.
 </p>
 
-#<p>
-#Veuillez noter que quelques points de ce manuel sont peu commodes parce qu'ils
-#prennent beaucoup de temps et peuvent causer des problèmes. Vous préférerez
-#peut-être l'installation à l'aide d'<a href="hurd-cd">images de CD
-#préparées</a>, particulièrement si vous êtes débutant. Même s'ils sont périmés,
-#normalement, ils fonctionnent. Vous pouvez toujours obtenir des mises à jour
-#depuis les dépôts mis en ligne.
-#</p>
 
 <h2>Vue d'ensemble</h2>
-
-#<p>
-#La distribution Debian&nbsp;GNU/Hurd, contrairement à des distributions
-#d'autres systèmes d'exploitation, n'a pas de joli programme d'installation. Un
-#jour il y en aura un, et vous aiderez peut-être à sa conception et à son
-#implantation. Toutefois, en attendant ce jour, installer Debian&nbsp;GNU/Hurd
-#requiert un autre système d'exploitation, plus spécifiquement un autre système
-#de type Unix. Des utilisateurs ont indiqué avoir réussi des installations en
-#utilisant aussi bien différentes versions de GNU/Linux que des BSD. Le minimum
-#requis sur le système d'exploitation d'amorçage est la capacité&nbsp;: de créer
-#des systèmes de fichiers ext2, d'y extraire une archive tar, d'installer
-#GNU&nbsp;Grub.
-#</p>
 
 <p>
 GNU est de nature similaire à n'importe quel système de type Unix&nbsp;: après
@@ -439,6 +412,16 @@ critiques&nbsp;; toutes seront acceptées avec plaisir.
 #</p>
 
 
+<h2> Installation </h2>
+
+<p>
+Vous pouvez simplement utiliser l'installateur Debian, en
+utilisant les <a href="hurd-cd">images de CD préparées</a>.
+
+Les étapes suivantes seront ensuite
+nécessaires pour une configuration correcte.
+</p>
+
 <h2>Configuration</h2>
 
 
@@ -473,7 +456,7 @@ du paquet <code>inetutils-tools</code> et <code>ping</code> est
 disponible dans le paquet <code>inetutils-ping</code>.
 
 Enfin, vous pouvez aussi exécuter la commande <code>settrans</code>
-pour attacher un traducteur à un nœud
+pour attacher (et enregistrer pour de bon) un traducteur à un nœud
 de système de fichiers donné. Quand les programmes accéderont au nœud, par
 exemple en envoyant un RPC, le système d'exploitation lancera de manière
 transparente le serveur afin de prendre en charge la requête.
@@ -541,7 +524,8 @@ important</em> que l'espace d'échange soit utilisé&nbsp;; le Hurd sera plus
 stable. Notez que le Hurd peut partager une partition d'échange de
 manière transparente avec Linux, mais pourra sans problème paginer sur quelque
 périphérique que ce soit, y compris une partition brute comme votre partition
-home. Par défaut, <code>nano</code> est le seul éditeur de texte installé par
+home. Par défaut, <code>nano</code> et <code>vi</code>
+sont les seuls éditeurs de texte installés par
 la distribution de base.
 </p>
 
@@ -557,7 +541,8 @@ Voici un exemple de fichier <tt>/etc/fstab</tt>&nbsp;:
 </pre></td></tr></table>
 
 <p>
-N'oubliez pas de créer tous les périphériques avec la commande
+Si une entrée de périphérique <code>/dev</code> manque,
+n'oubliez pas de la créer avec la commande
 <code>MAKEDEV</code>&nbsp;:
 </p>
 
@@ -565,6 +550,26 @@ N'oubliez pas de créer tous les périphériques avec la commande
  \# cd /dev
  \# ./MAKEDEV hd0s1 hd0s2 hd0s3
 </pre></td></tr></table>
+
+<p>
+Vous pouvez aussi monter un système de fichiers
+vous-même avec <code>settrans</code> :
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# settrans /mnt /hurd/ext2fs /dev/hd0s5
+</pre></td></tr></table>
+
+<p>
+L'idée derrière cette commande est que vous configurez le traducteur
+<code>/hurd/ext2fs /dev/hd0s5</code> sur le nœud <code>/mnt</code>.
+
+<code>/hurd/ext2fs</code> sera exécuté et commencera à lire et écrire sur
+<code>/dev/hd0s5</code> et montrer son contenu dans <code>/mnt</code>.
+
+De plus amples renseignements sont disponibles dans la <a
+href="hurd-doc-translator">documentation sur les traducteurs</a>.
+</p>
 
 <p>
 Pour monter un système de fichiers NFS, le traducteur <code>/hurd/nfs</code> est
@@ -605,6 +610,14 @@ serveur NFS est <tt>192.168.1.1</tt>&nbsp;:
 #</p>
 
 <h2>Derniers mots</h2>
+
+<p>
+Ce qui suit n'est qu'une succession de choses vite faites au moment de
+l'installation, assurez-vous aussi de lire la documentation pour le
+système installé : la <a href=hurd-doc>documentation Debian GNU/Hurd</a>,
+mais aussi le <a href=http://hurd.gnu.org/>site web amont</a>.
+</p>
+
 
 #<h3>8.1 Le menu de Grub</h3>
 #
@@ -670,7 +683,7 @@ détaillées.
 <p>
 Outre la console Mach que vous rencontrez pendant l'installation, GNU/Hurd
 possède une puissante console en espace utilisateur qui fournit des terminaux
-virtuels. Actuellement, vous devez lancer la console Hurd manuellement avec la
+virtuels. Vous pouvez lancer la console Hurd vous-même avec la
 commande suivante&nbsp;:
 </p>
 
@@ -722,7 +735,7 @@ Vous risquez néanmoins de devoir utiliser le pilote VESA dans certains cas.
 Enfin, exécutez <code>startx</code>.
 </p>
 
-<h3>Derniers mots</h3>
+<h3>Le mot de la fin</h3>
 
 <p>
 Le <q>System V</q> rc n'est pas encore utilisé.
