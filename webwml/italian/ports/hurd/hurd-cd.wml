@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; CD di Hurd" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.72" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.74" maintainer="Luca Monducci"
 
 <define-tag cdserie>L1</define-tag>
 <define-tag cdbasetarball>gnu-2009-10-18.tar.gz</define-tag>
@@ -15,132 +15,55 @@ serie di serventi in esecuzione sopra il microkernel GNU Mach. Sia l'Hurd
 che GNU Mach fanno parte del progetto GNU diversamente dal kernel Linux
 che è un progetto indipendente.</p>
 
+
 <h2>Uso del CD-ROM di installazione dell'installatore Debian</h2>
 
-<p>Un pre-rilascio dell'installatore Debian per hurd-i386 può essere scaricato
-da <url "http://people.debian.org/~sthibault/hurd-i386/installer/cdimage/">. Funziona come il normale
-installatore Debian per Linux, cioè in maniera automatica, eccetto per il fatto
-che non supporta dhcp. Questo è il metodo raccomandato. Si raccomanda di leggere
-le <a href="hurd-install">note nella guida all'installazione</a> in cui sono
-documentati le parti finali dell'installazione.</p>
+<p>Un port per hurd-i386 del normale Installatore Debian può essere scaricato
+da <url "http://people.debian.org/~sthibault/hurd-i386/installer/cdimage/">
+(aggiornato il 10/06/2011). Funziona come l'Installatore Debian per Linux,
+cioè in maniera automatica, eccetto che per alcuni dettagli:</p>
 
-<h2>Uso dei CD-ROM di installazione non ufficiali di Debian GNU/Hurd</h2>
+<ul>
+<li>Attivare lo spazio di swap, altrienti Mach avrà dei problemi quando
+si utilizza tutta la memoria;</li>
 
-<p>Questo è il vecchio metodo di installazione di GNU/Hurd e potrebbe ancora essere
-utile, in particolare per quei luoghi in cui non è disponibile una connessione 
-Internet.</p>
+<li>Non montare una partizione separata per <code>/usr</code>, altrimenti
+è impossibile avviare il sistema;</li>
 
-<p>L'attuale serie di CD è la <cdserie/>.</p>
-
-<p>Per questa serie è stata rilasciata solo la prima immagine ISO.</p>
-
-<p>Una mini-immagine (<cdbasename/>-mini.iso) è stata costruita per coloro che
-vogliono installare tramite la rete.</p>
-
-<p><cdbasetarball/> (un tarball del sistema GNU di base) è stato specificamente
-costruito per questa serie.</p>
-
-
-<h3>Download</h3>
-
-<p>Le attuali immagini ISO sono <cdbasename/>-DVDx.iso e <cdbasename/>-mini.iso.
-Tutti i binari specifici del sistema GNU si trovano nella prima immagine
-insieme a tutti i pacchetti required, important e standard. In questo
-modo è possibile installare un sistema GNU di base usando solo la prima
-immagine.</p>
-
-<p>Il sito ha dei mirror, quindi è opportuno fare dei controlli prima di
-iniziare il download.</p>
-
-<p>Il sito principale è <url "http://ftp.debian-ports.org/pub/debian-cd/">
-e si trova in Francia. I mirror sono
-<url "http://www.gtlib.gatech.edu/pub/gnuab/debian-cd/"/> negli Stati Uniti
-d'America e <url "ftp://ftp.duckcorp.org/hurdfr/hurd/"/> in Francia.</p>
-
-<p>Cercare su <url "http://www.filesearching.com/" /> hurd-L, è possibile
-trovare un sito più vicino.</p>
+<li>Leggere le <a href="hurd-install">note sull'installazione manuale</a>
+in cui sono spiegati alcuni dei passi finali della configurazione.</li>
+</ul>
 
 <p>Le istruzioni per masterizzare i CD a partire dalle immagini si trovano
 nelle <a href="$(HOME)/CD/faq/">FAQ di Debian CD</a>.</p>
 
-<h3>CD-ROM</h3>
 
-<p>Vedere la pagina con l'elenco <a href="$(HOME)/CD/vendors/">dei rivenditori
-dei CD di GNU/Hurd</a> e cercare "hurd" con la funzionalità di ricerca del
-browser. Come ultima risorsa usare <url "http://www.copyleft.co.nz/" />,
-contiene gli ultimi CD (vi avverto, quel sito sono io).</p>
+<h2>Partizioni Hurd</h2>
 
-<h3>Come funzionano i CD d'installazione</h3>
-
-<p>I CD d'installazione di Debian GNU/Linux potato possono essere usati per la
-cross-installazione del sistema di base. Viene creato un ramdisk in memoria e
-un mini-sistema GNU/Linux viene installato su questo disco. Usando questo
-mini-sistema si possono partizionare e formattare i dischi e si può preparare
-la macchina per l'installazione. La fase critica è l'estrazione del tarball
-con i pacchetti di base essenziali sul disco della macchina. In seguito il nuovo
-sistema viene riavviato usando i pacchetti che vi sono stati estratti e
-successivamente sono installati e configurati altri pacchetti per creare il
-sistema che si desidera.</p>
-
-<p>Usare con GNU la cross-installazione comporta che gli script per creare i
-CD di installazione di GNU sono realizzati adattando gli script di avvio e
-CD di Debian GNU/Linux in modo che sia estratto il tarball di GNU anziché quello
-di GNU/Linux.</p>
-
-<p>L'installazione del sistema GNU usando un insieme di CD ha molti
-vantaggi.</p>
-
-<ul>
-    <li>
-	Dato che il sistema GNU/Linux è in esecuzione in un ramdisk e il
-	tarball è su un cdrom, è possibile installare un sistema GNU su una
-	macchina vuota o su una macchina su cui gli utenti non vogliono usare
-	il sistema operativo già installato.</li>
-
-    <li>
-	Il filesystem che memorizza i pacchetti sui CD può essere
-	riorganizzato per incorporare delle correzioni dei bug.</li>
-
-    <li>
-	Nonostante sia disponibile la versione per GNU/Hurd di "parted",
-	alcuni potrebbero preferire usare GNU/Linux "cfdisk" nei dischetti
-	di avvio.</li>
-
-    <li>
-	È più veloce, con meno gingilli e il procedimento è conosciuto
-	da un maggior numero di persone.</li>
-</ul>
-
-
-<h3>Partizioni Hurd</h3>
-
-<p>L'Hurd usa delle estensioni del filesystem ext2, la chiamata è <code>mk2fs -b 4096 -I 128 -o hurd /dev/[partizione di Hurd]</code>. 
+<p>L'Hurd usa delle estensioni del filesystem ext2, il comando da usare è
+<code>mke2fs -o hurd /dev/[Hurd partition]</code>. 
 L'installazione da CD usa questa chiamata quando crea le partizioni per Hurd.</p>
 
 
-<h3>Uso dei CD di installazione</h3>
+<h2>Creazione di un disco di avvio con GRUB</h2>
 
-<h4>Preparazione</h4>
-
-<p>La documentazione specifica per Hurd è contenuta in ./doc/hurd.
-hurd-install-guide e Cook-book sono dei "must", devono essere assolutamente
-letti prima di iniziare.</p>
-
-<ol>
-<li>
-<em>Creare un disco di avvio con GRUB</em>
+<p>Quando si installa un sistema con solo Hurd, si può permettere
+all'installatore di installare GRUB. Invece se si installa Hurd al fianco
+di un sistema già esistente, si vorrà poter scegliere quale dei due
+avviare. Se il sistema esistente è Linux, probabilmente è sufficiente
+eseguire upgrade-grub per far rilevare il sistema Hurd appena installato.
+Altrimenti, o se non si vuole gestire l'avvio di Hurd in questo modo,
+è possibile usare un discchetto di avvio con GRUB.</p>
 
 <p>Installare il pacchetto grub-disk o grub-rescue-pc, entrambi contengono
-l'immagine di un dischetto con GRUB. Si può usare "dd" se si sta usando
-GNU/Linux oppure "rawrite" se si sta usando MS.</p></li>
+l'immagine di un dischetto con GRUB. Si può usare <q>dd</q> se si sta usando
+GNU/Linux oppure <q>rawrite</q> se si sta usando MS.</p>
 
-<li>
-Assicurarsi di aver ben chiari i metodi con cui Linux, GRUB e Hurd
+<p>Assicurarsi di aver ben chiari i metodi con cui Linux, GRUB e Hurd
 nominano i dischi e le partizioni, sarà necessario usarli tutti	e
-tre e le relazioni fra questi possono creare confusione.</li>
-</ol>
+tre e le relazioni fra questi possono creare confusione.</p>
 
-<p>Hurd usa dei nomi delle partizioni diversi da Linux, quindi fate
+<p>Hurd usa dei nomi delle partizioni diversi da Linux, quindi occorre fare
 attenzione. Gli hard disk IDE sono numerati secondo il loro ordine partendo
 da hd0 per il master primario e hd1 il suo slave, seguito da hd2 il master
 secondario e hd3 lo slave di quest'ultimo.
@@ -159,149 +82,9 @@ i dischi seguono un ordine diverso, prima tutti i dischi IDE e poi tutti i
 dischi SCSI. Questa volta la prima partizione sul primo disco IDE è (hd0,0).
 GRUB2 fa la stessa cosa ma le partizioni sono indicizzate a partire da uno,
 quindi la prima partizione sul primo disco IDE è (hd0,1).
-Per far veramente confusione (hd1,2) può indicare il primo disco SCSI se sul
-sistema c'è un solo disco IDE oppure può indicare il secondo disco IDE.
+Per far veramente confusione (hd1,2) può indicare il primo disco SCSI, se sul
+sistema c'è un solo disco IDE, oppure può indicare il secondo disco IDE.
 Quindi è importante aver ben chiaro i vari nomi delle partizioni prima di
 iniziare.</p>
 
-<h4>Installazione</h4>
-
-<ol>
-    <li>
-	<em>Avviare da CD.</em>
-
-	<p>Va bene qualsiasi metodo per avviare un CD di Debian 3.0 beta
-	(woody), cioè direttamente dal CD stesso, da MS e dalle immagini dei
-	dischetti boot/root. Se non si dispone di un lettore cdrom è
-	possibile creare un insieme di dischetti di base.</p></li>
-
-    <li>
-	<em>Dopo le schermate iniziali si cominci con "Partition a Hard
-	Disk".</em>
-
-	<p>Se si stanno per copiare i pacchetti .deb sull'hard disk allora
-	sono necessarie altre partizioni, una per CD. Dato che parted è
-	disponibile per GNU/Hurd lo si può usare anche per questo scopo. Per
-	avviare il sistema principale dovrebbero bastare circa 500 MB. Nel
-	caso sia necessario creare un'altra partizione può risultare anche
-	molto comodo riavviare con il primo CD e usare gli strumenti nel
-	ramdisk Linux.</p></li>
-
-    <li>
-	<em>Scoprite i nomi secondo GRUB e secondo Hurd della partizione
-	su cui fare l'installazione.</em></li>
-
-    <li>
-	<em>Preparare le partizioni usando "Partition a Hard Disk"</em> e
-	assicurarsi di aver creato una partizione di swap. GNU/Hurd è molto
-	esigente riguardo alla swap.</li>
-
-    <li>
-	<em>Formattare la partizione per Hurd</em> usando "Initialize a
-	Hurd Partition" e montarla su "/". Non si devono montare altre
-	partizioni.</li>
-
-    <li>
-	<em>Installare il sistema di base usando "Install the Base
-	System".</em></li>
-
-    <li>
-	<em>Inserire il dischetto con GRUB nel drive e riavviare usando
-	"Reboot the System"</em>
-	(non scordarsi di reimpostare il BIOS). È tutto! [Primo
-	riavvio]</li>
-</ol>
-
-<p>L'impostazione predefinita dell'immagine di GRUB assume che la partizione
-di GNU/Hurd sia "(hd0,0)" [secondo la nomenclatura di GRUB1], "(hd0,1)"
-[secondo la nomenclatura di GRUB2] e "sd0s1" [GNU/Hurd], cioè la prima
-partizione sul primo hard disk SCSI e che non ci sono altri dischi IDE.
-Comunque, per il primi avvii è necessario passare l'opzione <code>-s</code>
-al kernel GNU/Mach per avviare in modalità singolo utente e rimuovere
-l'opzione <code>--readonly</code> dalla riga di comando
-<code>ext2fs.static</code>.</p>
-
-<p>IMPORTANTE: guardare attentamente i messaggi durante
-l'avvio e prendere nota di dov'è il cdrom. Tenere le mani lontano dalla
-tastiera fino a quando il processo di avvio non è completato.</p>
-
-<p><q>/boot/grub/menu.lst</q> o <q>/boot/grub/grub.cfg</q> sul dischetto
-di GRUB può essere modificato in modo che il sistema si avvii nel modo
-che si desidera.</p>
-
-
-<h3>I passi successivi</h3>
-
-<ol>
-    <li>
-	<em>Dopo che il sistema è stato avviato, creare i device necessari.</em>
-	Cioè per il cdrom, per la partizione di swap e per ogni altra
-	partizione dell'hard disk.
-
-	<p>Per esempio <kbd>cd /dev</kbd> e <kbd>MAKEDEV hd2 hd0s2
-	hd0s3</kbd></p></li>
-
-    <li><em>Attivare lo swap.</em>
-<pre>
-$ /hurd/mach-defpager
-$ swapon /dev/hd0s2
-</pre>
-	Assicurarsi che il precedente comando abbia funzionato. La swap è
-	ALTAMENTE consigliata con l'Hurd.</li>
-
-    <li>
-	<em>Eseguire ./native-install.</em> Verrà configurato l'intero
-	insieme dei pacchetti. Riavviare usando <kbd>reboot</kbd>.
-	[Secondo riavvio]. Adesso è necessario configurare il sistema.<br />
-	Fare il login come root, <kbd>login root</kbd>.</li>
-
-    <li>
-	<em>Modificare /etc/fstab con <kbd>nano /etc/fstab</kbd>.</em>
-	(nano è un editor niente male)
-
-	<p>Aggiungere le partizioni dell'hard disk, per esempio</p>
-<pre>
-/dev/[Hurd partition name]	none	swap		sw		0	0
-/dev/[Hurd partition name]	/CD1	ext2		rw		1	1
-/dev/[GNU drive name]		/cdrom	iso9660fs	ro,noauto	1	1
-</pre>
-
-	<p>L'Hurd usa il filesystem ext2. "/CD1" è il mount point suggerito
-	per le partizioni che contengono i pacchetti di <cdbasename>-CD1. La
-	partizione di swap può essere condivisa con Linux.</p></li>
-
-    <li>
-	<em>Impostare un traduttore per accedere al cdrom,</em> per esempio
-
-	<p>"settrans -a /cdrom /hurd/iso9660fs /dev/[Hurd drive name]"<br />
-	Mentre il modo GNU di fare la stessa cosa è "mount /cdrom" che
-	funziona comunque.</p></li>
-
-    <li>
-	<em>Eseguire "/cdrom/upgrade/install.sh".</em>
-
-	<p>Per installare i pacchetti required, important e standard.</p></li>
-
-    <li>
-	<em>Se volete, eseguire "/cdrom/upgrade/gui.sh".</em>
-
-	<p>Per installare X Window System.</p></li>
-
-    <li>
-	<em>Installazione di altri pacchetti con "apt" o "dselect".</em>
-
-	<p>Se non si ha familiarità con questi strumenti Debian si veda
-	"info apt" e "info deslect".</p></li>
-
-    <li>
-	<em>Smontare il cdrom.</em>
-
-	<p>Per smontare il cdrom usare "settrans -agf /cdrom".<br />
-	Il carrello del lettore cdrom si dovrebbe sbloccare.</p></li>
-</ol>
-
-<P>Qui è dove finisce la guida e dove inizia la vostra esplorazione. Godetevi
-l'Hurd.</p>
-
-<p>Commenti sui CD sono benvenuti.<br />
-Philip Charles, philipc@debian.org</p>
+<p>Buon divertimento con Hurd.</p>

@@ -1,36 +1,18 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; Installazione" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.84" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.86" maintainer="Luca Monducci"
 
 <h1>Installazione manuale di Debian GNU/Hurd</h1>
 
 <p>Questo documento vuole fornire un insieme di istruzioni semplici e
 relativamente indolori su come installare manualmente e far funzionare
-Debian GNU/Hurd con il minimo sforzo. Notare che l'Installatore Debian
-funziona ed è preferibile usarlo, si veda le <a href="hurd-cd">immagini
-dei CD</a>.</p>
+Debian GNU/Hurd con il minimo sforzo.</p>
 
 <p>È basato su <q>The Hurd Installation Guide</q> di Neal H. Walfield.
 Grazie a Neal per il suo contributo.</p>
 
-#<p>Notare che alcuni punti di questo manuale sono un po' fastidiosi perché
-#richiedono molto tempo e potrebbero essere causa di problemi. Potrebbe essere
-#preferibile, in particolare se si è agli inizi, l'installazione tramite le
-#<a href="hurd-cd">immagini dei CD già pronte</a>. Anche se sono vecchie di
-#solito funzionano e in seguito si possono prelevare gli aggiornamenti dai
-#repository online.</p>
 
 <h2>Introduzione</h2>
-
-#<p>La distribuzione Debian GNU/Hurd, diversamente dalle distribuzioni di
-#altri sistemi operativi, non ha un bel sistema di installazione. Prima o poi
-#verrà realizzato e forse voi contribuirete al suo progetto o alla sua
-#implementazione, comunque, fino ad allora l'installazione di Debian GNU/Hurd
-#richiede un altro sistema operativo e in particolare un altro sistema
-#Unix-like. Molti utenti hanno riportato installazioni concluse con successo
-#usando varie versioni di GNU/Linux e addirittura con BSD. I requisiti minimi
-#del sistema di avvio sono la capacità di: creare un filesystem ext2, estrarre
-#un archivio tar e installare GNU Grub.</p>
 
 <p>La natura di GNU è simile a qualsiasi altro sistema Unix-like: dopo il
 login all'utente viene presentata una shell e il familiare VFS (filesystem
@@ -321,8 +303,15 @@ piacere.</p>
 #in modalità multi-utente. Fatto questo, Hurd è pronto!</p>
 #
 
-<h2>Configurazione</h2>
 
+<h2>Installazione</h2>
+
+<p>È possibile usare l'Installatore Debian, si veda le
+<a href="hurd-cd">immagini dei CD</a>. Poi seguire i passi proposti per
+eseguire un'installazione corretta.</p>
+
+
+<h2>Configurazione</h2>
 
 <h3>La rete</h3>
 
@@ -402,7 +391,8 @@ spazio di swap, l'Hurd risulterà di un ordine di grandezza più stabile. Notare
 che l'Hurd può condividere in modo trasparente una partizione di swap con
 Linux ma sarà anche lieto di condividere qualsiasi altro dispositivo comprese
 partizioni grezze come la partizione con la home. Normalmente <code>nano</code>
-è l'unico editor installato con la distribuzione di base.</p>
+e <code>vi</code> sono gli unici editor installati con la distribuzione di
+base.</p>
 
 <p>Questo è un esempio del file <tt>/etc/fstab</tt>:</p>
 
@@ -413,12 +403,27 @@ partizioni grezze come la partizione con la home. Normalmente <code>nano</code>
 /dev/hd0s3      none            swap    sw         0       0
 </pre></td></tr></table>
 
-<p>Ricordarsi di creare tutti i device con il comando <code>MAKEDEV</code>:</p>
+<p>Qualora manchi un qualsiasi device in <code>/dev</code>, ricordarsi di
+crearlo con il comando <code>MAKEDEV</code>:</p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
 \# cd /dev
 \# ./MAKEDEV hd0s1 hd0s2 hd0s3
 </pre></td></tr></table>
+
+<p>È anche possibile montare manualmente un filesystem usando
+<code>settrans</code>:</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+\# settrans /mnt /hurd/ext2fs /dev/hd0s5
+</pre></td></tr></table>
+
+<p>L'idea dietro a questo comando è impostare sul nodo <code>/mnt</code> il
+traduttore <code>/hurd/ext2fs /dev/hd0s5</code>. Verrà avviato
+<code>/hurd/ext2fs</code> che inizierà a leggere/scrivere <code>/dev/hd0s5</code>
+e a mostrarne il contenuto su <code>/mnt</code>. Ulteriori informazioni possono
+essere trovate nella <a href="hurd-doc-translator">documentazione sui
+traduttori</a>.</p>
 
 <p>Per montare un filesystem nfs viene usato il traduttore
 <code>/hurd/nfs</code>. Quando è eseguito da un utente non privilegiato il
@@ -452,6 +457,11 @@ sia <tt>192.168.1.1</tt> usare:</p>
 #
 
 <h2>Ritocchi finali</h2>
+
+<p>Seguono dei suggerimenti veloci utili durante l'installazione, si
+raccomanda di leggere anche la documentazione: la <a href=hurd-doc>\
+documentazione su Debian GNU/Hurd</a> e anche il sito web di
+<a href=http://hurd.gnu.org/>Hurd</a>.</p>
 
 #<h3>8.1 Il menu di Grub</h3>
 #
@@ -502,9 +512,8 @@ dettagliate.</p>
 <h3>La console Hurd</h3>
 
 <p>Oltre alla console Mach già vista durante l'installazione, GNU/Hurd ha
-una potente console in spazio-utente che fornisce terminali virtuali.
-Attualmente è necessario avviare manualmente la console Hurd con il seguente
-comando:</p>
+una potente console in spazio-utente che fornisce terminali virtuali. È
+possibile avviare manualmente la console Hurd con il seguente comando:</p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
 \# console -d vga -d pc_mouse --repeat=mouse -d pc_kbd --repeat=kbd -d generic_speaker -c /dev/vcs
