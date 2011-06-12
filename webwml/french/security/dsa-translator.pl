@@ -187,7 +187,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).\((\S+)\).distributions?.do.?n.t.contain.(\S+).anymore\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne contiennent plus $5.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\),?.no.longer.contains.(\S+)|<p>La distribution $1 ($2) ne contient plus $3|gs;
 	$output =~ s|<p>[\n]?The.upcoming.(\S+).distribution.\((\S+)\),?.no.longer.contains.(\S+)|<p>La distribution $1 à venir ($2) ne contient plus $3|gs;
-	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).doesn't.include.(\S+)\.|<p>La distribution $1 ($2) ne contient pas $3.|gs;
+	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.?n.t.include.(\S+)\.|<p>La distribution $1 ($2) ne contient pas $3.|gs;
 	$output =~ s|<p>[\n]?The.following.matrix.lists.additional.source.packages.that.were.rebuilt.for.compatibility.with.or.to.take.advantage.of.this.update:</p>|<p>Le tableau suivant liste les paquets supplémentaires qui ont été reconstruits à des fins de compatibilité ou pour tirer parti de cette mise à jour :</p>|gs;
 	$output =~ s|which.was.already.included.in.the.(\S+).release|qui a déjà été incluse dans la publication de $1|gs;
 	$output =~ s|as.it.does.not.include|car elle ne contient pas|gs;
