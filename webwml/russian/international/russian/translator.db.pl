@@ -37,6 +37,19 @@ sub init_translators {
 			file		=> 0,
 			compress	=> 'none'
 		},
+	default   => {
+			email       => '',
+			missing     => 0,
+			summary     => 0,
+			logs        => 0,
+			diff        => 0,
+			tdiff       => 0,
+			file        => 0,
+			frequency   => ['never', 'monthly', 'weekly', 'daily'],
+			mailsubject => 'Страницы www.d.o, требующие обновления',
+			mailbody    => 'russian/international/russian/mail_user.txt',
+			compress    => 'none'
+		},
 
         };
         return $translators;
