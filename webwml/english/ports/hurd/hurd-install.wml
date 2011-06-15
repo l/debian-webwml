@@ -503,6 +503,64 @@ To mount this from a GNU box and assuming that nfs server's ip address is
 </pre></td></tr></table>
 
 
+<h2> Have fun with Debian GNU/Hurd </h2>
+
+<p>
+Now, what nice things can we do with the Hurd?
+</p>
+
+<h3> Mount disk images </h3>
+
+<p>
+Accessing the content of a CD image is a bit tedious with standard Unix systems
+if you are not root. On GNU/Hurd, it amounts to this:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+settrans ~/mnt /hurd/iso9660fs CD_image.iso
+</pre></td></tr></table>
+
+<p>
+And it is completely safe: the <code>iso9660fs</code> translator is running
+under your identity, not root. You can even code your own translator for any
+kind of filesystem. Yes, this is like FUSE. Without all the kludge.
+</p>
+
+<h3> Transparent FTP </h3>
+
+<p>
+The following sets up a transparent ftp directory:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+settrans -c /ftp: /hurd/hostmux /hurd/ftpfs /
+</pre></td></tr></table>
+
+<p>
+Now, <code>cd</code> to e.g. <code>/ftp://ftp.gnu.org/</code>, and run ls there.
+Yes, you can from your home simply run <code>tar xf ftp://ftp.gnu.org/pub/gnu/gcc/gcc-4.6.0/gcc-4.6.0.tar.bz2</code> !
+</p>
+
+<h3> Sub-hurd </h3>
+
+<p>
+A <a href="http://www.gnu.org/software/hurd/hurd/subhurd.html">sub-hurd</a> is a
+complete subsystem. Very much like virtualization containers on first
+sight. Except that you do not need to be root at all to run one.
+</p>
+
+<h3> gdb ext2fs, pfinet, ... </h3>
+
+<p>
+Yes, you can run gdb on e.g. the ext2fs implementation, the <code>pfinet</code> TCP/IP stack, etc.
+</p>
+
+<h3> And many more things! </h3>
+
+<p>
+Some in-progress work include <code>mboxfs</code>, <code>tarfs</code>, <code>xmlfs</code>, <code>gopherfs</code>, ...
+</p>
+
 #<h3> 7.3 Rebooting </h3>
 #
 #<p>
