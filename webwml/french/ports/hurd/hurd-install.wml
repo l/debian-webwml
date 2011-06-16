@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd&nbsp;&ndash;&nbsp;Installation" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.86" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.88" maintainer="David Prévot"
 
 # Translators:
 # Jérome Abela, 1999.
@@ -594,6 +594,80 @@ serveur NFS est <tt>192.168.1.1</tt>&nbsp;:
 <table><tr><td>&nbsp;</td><td class=example><pre>
 \# settrans -cgap /mount/point /hurd/nfs 192.168.1.1:/home
 </pre></td></tr></table>
+
+
+<h2>Amusez-vous avec Debian GNU/Hurd</h2>
+
+<p>
+Et maintenant, quelles sont les choses sympathiques à faire avec le Hurd ?
+</p>
+
+<h3>Montages d'images de disque</h3>
+
+<p>
+Accéder au contenu d'une image de CD est un peu fastidieux avec
+les systèmes de la norme Unix quand on n'est pas superutilisateur.
+
+Sur GNU/Hurd, il suffit de :
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+settrans ~/mnt /hurd/iso9660fs CD_image.iso
+</pre></td></tr></table>
+
+<p>
+Et c'est tout à fait sûr : le traducteur <code>iso9660fs</code> est
+exécuté sous l'identité du l'utilisateur, et non du superutilisateur.
+
+Vous pouvez même mettre en place votre propre traducteur
+pour n'importe quel type de système de fichier.
+
+Oui, ça ressemble à FUSE, mais sans le kludge.
+</p>
+
+<h3>FTP transparent</h3>
+
+<p>
+La commande suivante configure un répertoire <code>ftp</code> transparent :
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+settrans -c /ftp: /hurd/hostmux /hurd/ftpfs /
+</pre></td></tr></table>
+
+<p>
+Maintenant, <code>cd</code> vers, par exemple,
+<code>/ftp://ftp.gnu.org/</code>, et exécutez-y <code>ls</code>.
+
+Oui, vous pouvez, depuis chez vous, exécuter simplement
+<code>tar xf ftp://ftp.gnu.org/pub/gnu/gcc/gcc-4.6.0/gcc-4.6.0.tar.bz2</code> !
+</p>
+
+<h3>Sous-Hurd</h3>
+
+<p>
+Un <a href="http://www.gnu.org/software/hurd/hurd/subhurd.html">sous-Hurd</a>
+est un sous-système complet.
+
+Ça ressemble beaucoup à un conteneur de virtualisation au premier abord.
+
+La différence c'est qu'il n'est pas du tout nécessaire
+d'être superutilisateur pour en exécuter un.
+</p>
+
+<h3>gdb ext2fs, pfinet, etc.</h3>
+
+<p>
+Oui, vous pouvez exécuter gdb par exemple sur l'implémentation
+ext2fs, le <code>pfinet</code>, la pile TCP/IP, etc.
+</p>
+
+<h3>Et plein d'autres choses !</h3>
+
+<p>
+Parmi le travail en cours, <code>mboxfs</code>, <code>tarfs</code>,
+<code>xmlfs</code>, <code>gopherfs</code>, etc. sont au programme.
++</p>
 
 
 #<h3>7.3 Réamorçage</h3>
