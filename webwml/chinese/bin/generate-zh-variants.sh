@@ -5,7 +5,14 @@ ext=$2
 
 MYPATH=`/usr/bin/dirname $0`
 ICONV=/usr/bin/iconv
+OPENCC=/usr/bin/opencc
+if [ -x $OPENCC ]; then
+HANT_TO_HANS="$OPENCC -c mix2zhs.ini"
+HANS_TO_HANT="$OPENCC -c mix2zht.ini"
+else
 HANT_TO_HANS="$ICONV -f UTF-8 -t big5 | $ICONV -f big5 -t gb2312 | $ICONV -f gb2312 -t UTF-8"
+HANS_TO_HANT="cat"
+fi
 TOCN=$MYPATH/tocn.pl
 TOTW=$MYPATH/totw.pl
 TOHK=$MYPATH/tohk.pl
@@ -24,9 +31,9 @@ generate_zh_variants () {
 	echo -n "[zh_CN]"
 	( eval $HANT_TO_HANS | $TOCN ) < $base.zh-cn.$ext.tmp > $base.zh-cn.$ext
 	echo -n ", [zh_TW]"
-	$TOTW < $base.zh-tw.$ext.tmp > $base.zh-tw.$ext
+	( eval $HANS_TO_HANT | $TOTW ) < $base.zh-tw.$ext.tmp > $base.zh-tw.$ext
 	echo -n ", [zh_HK]"
-	$TOHK < $base.zh-hk.$ext.tmp > $base.zh-hk.$ext
+	( eval $HANS_TO_HANT | $TOHK ) < $base.zh-hk.$ext.tmp > $base.zh-hk.$ext
 	rm -f $base.zh-??.$ext.tmp
 	echo "."
 }
