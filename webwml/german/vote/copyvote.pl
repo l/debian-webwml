@@ -80,8 +80,8 @@ die "Unable to locate English version of vote $number.\n"
 
 # Locate vote files
 #vote_007_index.src vote_007_majority.src vote_007_quorum.src vote_007_quorum.txt vote_007_results.src vote_007.wml suppl_007_stats_detailed.wml suppl_007_stats.wml
-#@vfiles = ("vote_".$number."_index.src", "vote_".$number."_majority.src", "vote_".$number."_quorum.src", "vote_".$number."_quorum.txt", "vote_".$number."_results.src", "vote_".$number.".wml", "suppl_".$number."_stats_detailed.wml", "suppl_".$number."_stats.wml");
-@vfiles = ("vote_".$number.".wml");
+@vfiles = ("vote_".$number."_index.src", "vote_".$number."_majority.src", "vote_".$number."_quorum.src", "vote_".$number."_quorum.txt", "vote_".$number."_results.src", "vote_".$number.".wml", "suppl_".$number."_stats_detailed.wml", "suppl_".$number."_stats.wml");
+#@vfiles = ("vote_".$number.".wml");
 
 #$number = "vote_" . $number if $number !~ /^vote_/;
 foreach $vf (@vfiles)
@@ -199,6 +199,7 @@ while (<SRC>)
 	    s/Pair-wise defeats/Paarweise Niederlagen/;
 	    s/The Schwartz Set contains/Die Schwartz-Menge enthält/;
 	    s/The winners/Die Gewinner/;
+	    s/The winner/Der Gewinner/;
 	    s/received (.*) votes over/$1 Stimmen gegenüber/;
 	    s#<br/>#<br />#;
 	    s#To Be determined#Muss noch bestimmt werden#;
@@ -279,6 +280,7 @@ while (<SRC>)
 	    s#it requires a 3:1 majority to pass.#benötigt er eine 3:1-Mehrheit, um angenommen zu werden.#;
 	    s#Not determinted yet#Noch nicht bestimmt#;
 	    s#Debian Project Secretary#Debian-Projekt-Schriftführer#;
+	    s#The amendment need simple majority#Die Änderungsvorschläge benötigen eine einfache Mehrheit#;
 
 	    #Generic
 	    s#January#Januar#;
