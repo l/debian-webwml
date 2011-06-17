@@ -136,9 +136,9 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	#$output =~ s|<p>For.the.\S+.distribution.\S+.this.problem.has.been.fixed.in.version.\S+\.</p>|$translation->{$opt_l}{'<p>For the <distrib_release> distribution (<distrib_name>) this problem has been fixed in version <version>.</p>'}|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.th(is\|e).problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1 ($2), ce problème a été corrigé dans la version $4.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1 ($2), ces problèmes ont été corrigés dans la version $3.|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).distribution,?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1 ($2), ce problème a été corrigé dans la version $3.|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).distribution,?.th(is\|e).problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1 ($2), ce problème a été corrigé dans la version $4.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).distribution,?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1 ($2), ces problèmes ont été corrigés dans la version $3.|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).distribution,?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1, ce problème a été corrigé dans la version $2.|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).distribution,?.th(is\|e).problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1, ce problème a été corrigé dans la version $3.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution,?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1, ces problèmes ont été corrigés dans la version $2.|gs;
 	$output =~ s|<p>[\n]?For.the.old.(\S+).distribution.\((\S+)\),?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour l'ancienne distribution $1 ($2), ce problème a été corrigé dans la version $3.|gs;
 	$output =~ s|<p>[\n]?For.the.old.(\S+).distribution.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour l'ancienne distribution $1 ($2), ces problèmes ont été corrigés dans la version $3.|gs;
@@ -147,8 +147,8 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?For.the.other.distributions.\((.+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version..??(\S+)\.[\n]?|<p>Pour les autres distribution ($1), ces problèmes ont été corrigés dans la version $2.|gs;
 	$output =~ s|<p>[\n]?For.the.other.distributions.\((.+)\),?.this.problem.has.a?l?s?o?.?been.fixed.in.version..??(\S+)\.[\n]?|<p>Pour les autres distribution ($1), ce problème a été corrigé dans la version $2.|gs;
 
-	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).distributions?.\((\S+)\),?.th(is\|e).problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème a été corrigé dans la version $6.|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).distributions?.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes ont été corrigés dans la version $5.|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.f?o?r?.??t?h?e?.??(\S+).distributions?.\((\S+)\),?.th(is\|e).problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème a été corrigé dans la version $6.|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.f?o?r?.??t?h?e?.??(\S+).distributions?.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes ont été corrigés dans la version $5.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).\((\S+)\).distributions?,?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème a été corrigé dans la version $5.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).\((\S+)\).distributions?,?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes ont été corrigés dans la version $5.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\) distributions?,?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?|<p>Pour les distributions $1 ($2) et $3 ($4), ce problème a été corrigé dans la version $5.|gs;
@@ -167,6 +167,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?For the.(\S+).distribution.\((\S+)\),?.this problem.will.be.fixed.soon|<p>Pour la distribution $1 ($2), ce problème sera corrigé prochainement|gs;
 	$output =~ s|<p>[\n]?For the.(\S+).distribution.\((\S+)\),?.these problems.will.be.fixed.soon|<p>Pour la distribution $1 ($2), ces problèmes seront corrigés prochainement|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\),?.and.t?h?e?.??(\S+).distribution.\((\S+)\).will.be.fixed.soon|<p>La distribution $1 ($2) et la distribution $3 ($4) seront corrigées prochainement|gs;
+	$output =~ s|<p>[\n]?For the.(\S+).distribution.\((\S+)\),?.no.update.is.available.at.this.time|<p>Pour la distribution $1 ($2), aucune mise à jour n'est disponible pour le moment|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).will.be.fixed.soon|<p>La distribution $1 ($2) sera corrigée prochainement|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).is.not.affected.by.this.problem|<p>La distribution $1 ($2) n'est pas concernée par ce problème|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).is.not.affected.by.these.problems|<p>La distribution $1 ($2) n'est pas concernée par ces problèmes|gs;
@@ -193,7 +194,9 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|as.it.does.not.include|car elle ne contient pas|gs;
 	$output =~ s|it.does.not.include|elle ne contient pas|gs;
 	$output =~ s|The.packages.for.the.(\S+).architecture.are.not.included.in.this.upgrade|Les paquets pour l'architecture $1 ne sont pas inclus dans cette mise à niveau|gs;
+	$output =~ s|The.packages.for.the.(\S+).distribution.are.not.included.in.this.advisory|Les paquets pour la distribution $1 ne sont pas inclus dans cette annonce|gs;
 	$output =~ s|They.will.be.released.as.soon.as.they.become.available|Ils seront publiés dès qu'ils seront disponibles|gs;
+	$output =~ s|An.update.will.be.released.soon|Une mise à jour sera bientôt publiée|gs;
 	$output =~ s|and.will.migrate.to.the.(\S+).distribution.\((\S+)\).shortly\.|qui migrera bientôt vers la distribution $1 ($2).|gs;
 	$output =~ s|<p>[\n]?We.recommend.that.you.upgrade.your.(\S+).packages|<p>Nous vous recommandons de mettre à jour vos paquets $1|gs;
 
