@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; Installazione" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.86" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.88" maintainer="Luca Monducci"
 
 <h1>Installazione manuale di Debian GNU/Hurd</h1>
 
@@ -444,6 +444,58 @@ sia <tt>192.168.1.1</tt> usare:</p>
 <table><tr><td>&nbsp;</td><td class=example><pre>
 \# settrans -cgap /mount/point /hurd/nfs 192.168.1.1:/home
 </pre></td></tr></table>
+
+
+<h2>Buon divertimento con Debian GNU/Hurd</h2>
+
+<p>Cosa si può fare con Hurd?</p>
+
+<h3>Montare immagini di dischi</h3>
+
+<p>Le operazioni per accedere al contenuto di un'immagine di CD con un
+utente diverso da root su un sistema Unix standard sono un po' noiose.
+Su GNU/Hurd è sufficiente:</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+settrans ~/mnt /hurd/iso9660fs CD_image.iso
+</pre></td></tr></table>
+
+<p>Ciò è anche estremamente sicuro: il traduttore <code>iso9660fs</code>
+è eseguito con l'identità dell'utente, non di root. È possibile anche
+scrivere in proprio un traduttore per qualsiasi tipo si file system.
+Esatto, è come FUSE ma senza tutte le schifezze.</p>
+
+<h3>FTP transparente</h3>
+
+<p>Quseto comando imposta un <code>ftp</code> trasparente su una
+directory:</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+settrans -c /ftp: /hurd/hostmux /hurd/ftpfs /
+</pre></td></tr></table>
+
+<p>Adesso, è possibile fare <code>cd</code> su, per esempio,
+<code>/ftp://ftp.gnu.org/</code> ed eseguire <code>ls</code>.
+Quindi è possible eseguire dalla propria home
+<code>tar xf ftp://ftp.gnu.org/pub/gnu/gcc/gcc-4.6.0/gcc-4.6.0.tar.bz2</code>
+!</p>
+
+<h3>Sub-Hurd</h3>
+
+<p>Un <a href="http://www.gnu.org/software/hurd/hurd/subhurd.html">sub-Hurd</a>
+è un sottosistema completo; a prima vista è molto simile a un contenitore per
+la virtualizzazione, con l'eccezione che non è assolutamente necessario essere
+root per attivarlo.</p>
+
+<h3>gdb ext2fs, pfinet, ...</h3>
+
+<p>Sì, è possibile eseguire gdb su, per esempio, l'implementazione di ext2fs,
+lo stack TCP/IP <code>pfinet</code>, ecc.</p>
+
+<h3>E molto altro!</h3>
+
+<p>Tra le cose su cui si sta lavorando ci sono <code>mboxfs</code>,
+<code>tarfs</code>, <code>xmlfs</code>, <code>gopherfs</code>, ...</p>
 
 #
 #<h3>7.3 Riavvio</h3>
