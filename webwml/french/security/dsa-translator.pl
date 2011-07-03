@@ -271,6 +271,8 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
         $output =~ s|reported.an.issue|a signalé un problème|gs;
         $output =~ s|reported.issues|a signalé des problèmes|gs;
 	$output =~ s|reported|a signalé|gs;
+	$output =~ s|security.issues|problèmes de sécurité|gs;
+	$output =~ s|security.issue|problème de sécurité|gs;
 	$output =~ s|an.issue.in.the|un problème dans le|gs;
         $output =~ s|an.issue.in|un problème dans|gs;
         $output =~ s|an.issue|un problème|gs;
@@ -304,8 +306,10 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|memory.consumption|consommation de mémoire|gs;
 	$output =~ s|memory.leak|fuite de mémoire|gs;
 	$output =~ s|package|paquet|gs;
+	$output =~ s|potentially|éventuellement|gs;
 	$output =~ s|perform|réaliser|gs;
 	$output =~ s|privilege.escalation|augmentation de droits|gs;
+	$output =~ s|prone|prédisposé|gs;
 	$output =~ s|race.conditions|situations de compétition|gs;
 	$output =~ s|race.condition|situation de compétition|gs;
 	$output =~ s|remote.vulnerabilities|vulnérabilités distantes|gs;
@@ -316,6 +320,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|to.cause|de provoquer|gs;
 	$output =~ s| tools | outils |gs;
 	$output =~ s| tool | outil |gs;
+	$output =~ s|use.after.free|utilisation de mémoire après libération|gs;
 	$output =~ s|via.a|à l'aide d'un|gs;
 	$output =~ s|vulnerable|vulnérable|gs;
 	$output =~ s|vulnerability|vulnérabilité|gs;
