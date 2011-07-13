@@ -556,7 +556,8 @@ foreach $lang (@search_in) {
 		print HTML '<tr><th><gettext domain="stats">File</gettext></th>'."\n";
 		print HTML '<th><gettext domain="stats">Up to date</gettext></th>'."\n";
 		print HTML '<th><gettext domain="stats">Fuzzy</gettext></th>'."\n";
-		print HTML '<th><gettext domain="stats">Untranslated</gettext></th></tr>'."\n";
+		print HTML '<th><gettext domain="stats">Untranslated</gettext></th>'."\n";
+		print HTML '<th><gettext domain="stats">Total</gettext></th></tr>'."\n";
                 foreach my $domain (sort keys %po_total) {
                     next if $domain eq 'total';
                     print HTML "<tr>";
