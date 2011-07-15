@@ -20,6 +20,7 @@ my %LanguageList = (
 #	EN    => 'english',
 	ES    => 'spanish',
 	FR    => 'french',
+	GL    => 'galician',
 # Not supported yet by the robot. Not all messages are sent ot the list
 #	NL    => 'dutch',
 	PT_BR => 'portuguese',
