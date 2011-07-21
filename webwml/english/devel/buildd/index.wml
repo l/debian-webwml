@@ -1,8 +1,8 @@
 #use wml::debian::template title="Autobuilder network"
 
-<p>The autobuilder network is a Debian development that helps speed
-up package recompilations for all the architectures
-<a href="$(HOME)/ports/">Debian currently supports</a>. This
+<p>The autobuilder network is a Debian development that manages
+package compilations for all the architectures <a
+href="$(HOME)/ports/">Debian currently supports</a>. This
 network is made up of several machines that use a specific software
 package called <em>buildd</em> to pick up packages from the Debian
 archive and rebuild them for the target architecture.</p>
@@ -10,19 +10,20 @@ archive and rebuild them for the target architecture.</p>
 <h2>Why is the autobuilder network needed?</h2>
 
 <p>The Debian distribution supports <a href="$(HOME)/ports/">quite a
-few architectures</a>,
-but the package maintainers usually only compile binary versions for
-a single architecture (usually i386 or amd64).
-Developers for other architectures have to watch out for new
-versions of packages and recompile them if they want to stay
-up-to-date with the Intel distribution.</p>
+few architectures</a>, but the package maintainers usually only
+compile binary versions for a single architecture they have access to
+(usually i386 or amd64).  The other builds are produced automatically,
+ensuring that every package is only built once.  Failures are tracked
+in the autobuilder database.</p>
 
 <p>
-As Debian/m68k (the first non-Intel port) started, all this was done
-manually: developers watched the upload mailing list for new packages and
-took some of them for building. Coordination that no package
-is built twice by different people was done by announcing on a mailing
-list. It's obvious that this procedure is error-prone and
+As Debian/m68k (the first non-Intel port) started, developers for
+it had to watch out for new versions of packages and recompile them
+if they wanted to stay up-to-date with the Intel distribution.  All
+this was done manually: developers watched the upload mailing list for
+new packages and took some of them for building. Coordination that no
+package is built twice by different people was done by announcing on a
+mailing list. It's obvious that this procedure is error-prone and
 time-consuming. This was, however, the usual way for keeping non-i386
 distributions current for a long time.
 </p>
@@ -32,9 +33,9 @@ The build daemon system automates most of this process. It consists of
 a set of scripts (written in Perl and Python) that have evolved over
 time to help porters with various tasks. They have finally developed
 into a system that is able to keep Debian distributions up-to-date nearly
-automatically.
+automatically. The security updates are built on the same set of
+machines to ensure their timely availability.
 </p>
-
 
 <h2>How does buildd work?</h2>
 
@@ -47,8 +48,10 @@ autobuilder network, but it's really made of different parts:</p>
 <dd>
 a tool that helps coordinate package (re)building through a database
 that keeps a list of packages and their status. There is one central
-database per architecture  that stores package states, versions, and some other
-information.
+database per architecture that stores package states, versions, and
+some other information. It's fed with Sources and Packages files
+retrieved from the various package archives Debian has (e.g.
+ftp-master and security-master).
 </dd>
 
 <dt><a href="http://packages.debian.org/buildd">buildd</a></dt>
@@ -66,12 +69,6 @@ It ensured that all needed source dependencies are installed into the
 chroot before building and then calls standard Debian tools to start
 the build process.  Build logs are submitted to the
 <a href="http://buildd.debian.org">build log database</a>.
-</dd>
-
-<dt><a href="http://packages.debian.org/quinn-diff">quinn-diff</a></dt>
-<dd>
-compares the available package versions for two architectures and outputs the
-differences (comparing a Sources file and a Packages file).
 </dd>
 
 </dl>
