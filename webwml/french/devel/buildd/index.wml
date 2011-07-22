@@ -1,12 +1,12 @@
 #use wml::debian::template title="Réseau de serveurs d'empaquetage automatique" BARETITLE="true"
-#use wml::debian::translation-check translation="1.24" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.25" maintainer="David Prévot"
 
 # Translators:
 # Mohammed Adnène Trojette, 2005-2007.
-# David Prévot, 2010
+# David Prévot, 2010, 2011.
 
 <p>Le réseau de serveurs d'empaquetage automatique est un
-développement de Debian qui permet d'accélérer les empaquetages de
+développement de Debian qui s'occupe des empaquetages de
 paquet pour toutes les architectures que <a href="$(HOME)/ports/">Debian
 gère actuellement</a>. Ce réseau est constitué de plusieurs serveurs qui
 utilisent un programme empaqueté dédié appelé <em>buildd</em> afin de
@@ -18,17 +18,24 @@ nécessaire&nbsp;?</h2>
 
 <p>La distribution Debian gère <a href="$(HOME)/ports/">pas mal
 d'architectures</a>, mais les responsables de paquets construisent
-habituellement des versions binaires pour une seule architecture (i386 ou amd64
-habituellement). Les développeurs pour les autres architectures doivent
-surveiller les nouvelles versions de paquets et les empaqueter à nouveau
-s'ils souhaitent rester à jour avec la distribution Intel.</p>
+habituellement des versions binaires pour une seule architecture
+à laquelle ils ont accès (i386 ou amd64 habituellement).
+
+Les autres constructions sont réalisées automatiquement, en
+s'assurant que chaque paquet n'est construit qu'une seule fois.
+
+Les échecs sont suivis dans la base de données du service d'empaquetage.
+</p>
 
 <p>Quand le projet Debian/m68k (le premier portage non-Intel) a débuté,
-tout ceci était fait à la main&nbsp;: les développeurs surveillaient sur
+ses développeurs devaient
+surveiller les nouvelles versions de paquets et les empaqueter à nouveau
+s'ils souhaitaient rester à jour avec la distribution Intel.
+Tout ceci était fait à la main&nbsp;: les développeurs surveillaient sur
 la liste de diffusion les envois de nouveaux paquets et les récupéraient
 pour les construire. Afin qu'aucun paquet ne soit construit deux
 fois, la coordination se faisait par des annonces sur la liste de
-diffusion. Évidemment, cette procédure mène à des erreurs et prend du
+diffusion. Évidemment, cette procédure menait à des erreurs et prenait du
 temps. Ça a pourtant été, pendant longtemps, la méthode habituelle pour
 maintenir les distributions non-i386 à niveau.</p>
 
@@ -36,7 +43,11 @@ maintenir les distributions non-i386 à niveau.</p>
 Il consiste en une série de scripts (écrits en Perl et Python) qui
 ont évolué à travers le temps pour aider les porteurs dans diverses
 tâches. Ils ont finalement développé un système capable de maintenir
-à niveau presque automatiquement les distributions Debian.</p>
+à niveau presque automatiquement les distributions Debian.
+
+Les mises à jour de sécurité sont construites sur le même jeu de
+machines pour s'assurer de leur disponibilité en temps utile.
+</p>
 
 <h2>Comment fonctionne le service d'empaquetage
 «&nbsp;buildd&nbsp;»&nbsp;?</h2>
@@ -54,6 +65,9 @@ travers une base de données qui maintient une liste des paquets et de
 leurs statuts. Il y a une base de données centrale par architecture qui
 stocke les états, les versions et quelques autres informations sur les
 paquets.
+
+Elle est alimentée avec les fichiers Sources et Packages récupérés des
+diverses archives Debian (par exemple ftp-master et security-master).
 </dd>
 
 <dt><a href="http://packages.debian.org/buildd">buildd</a></dt>
@@ -75,13 +89,6 @@ de Debian pour commencer le processus de construction.
 Les journaux de construction sont envoyés sur la <a
 href="http://buildd.debian.org">base de données des journaux de
 construction</a>.
-</dd>
-
-<dt><a href="http://packages.debian.org/quinn-diff">quinn-diff</a></dt>
-<dd>
-Il compare les versions disponibles d'un paquet
-pour deux architectures, et renvoie les différences (en comparant
-les fichiers <em>Sources</em> et <em>Packages</em>).
 </dd>
 
 </dl>
