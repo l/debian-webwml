@@ -2,10 +2,11 @@
 #use wml::debian::translation-check translation="1.24"
 # $Id$
 # Translator: Helge Kreutzmann <debian@helgefjell.de> 2006-04-26
+# Updated: Holger Wansing <linux@wansing-onlilne.de>, 2011
 
-<p>Das Autobuilder-Netz ist eine Debian-Entwicklung die hilft, die 
-   Paket-Neuübersetzung für alle Architekturen, die <a href="$(HOME)/ports/">\
-   Debian derzeit unterstützt</a>, zu beschleunigen. Dieses Netz besteht aus
+<p>Das Autobuilder-Netz ist eine Debian-Entwicklung, die die 
+   Paket-Übersetzung für alle Architekturen verwaltet, die <a href="$(HOME)/ports/">\
+   Debian derzeit unterstützt</a>. Dieses Netz besteht aus
    mehreren Maschinen, die ein spezielles Software-Paket namens <em>buildd</em> 
    verwenden, um Pakete aus dem Debian-Archiv herauszuholen und sie für die 
    Ziel-Architektur neu zu bauen.
@@ -15,16 +16,19 @@
 
 <p>Die Debian-Distribution unterstützt <a href="$(HOME)/ports/">etliche 
    Architekturen</a>, aber die Paket-Betreuer kompilieren Binärversionen
-   gewöhnlich nur für eine einzige Architektur (normalerweise i386 oder Amd64). Entwickler
-   für andere Architekturen müssen auf neue Versionen von Paketen aufpassen und
-   diese rekompilieren, falls sie aktuell zu der Intel-Distribution bleiben
-   wollen.
+   gewöhnlich nur für eine einzige Architektur, zu der sie Zugriff haben
+   (normalerweise i386 oder Amd64). Die anderen Builds werden automatisch
+   erstellt, wobei sichergestellt wird, dass jedes Paket nur einmal gebaut
+   wird. Fehler werden in der Autobuilder-Datenbank gelistet und verfolgt.
 </p>
 
-<p>Als Debian/m68k (die erste nicht-Intel-Portierung) begann, wurde all dies
-   manuell durchgeführt: Entwickler beobachteten die Upload-Mailingliste für
-   neue Pakete und nahmen einige von ihnen zum Bauen. Die Koordination, dass
-   kein Paket zweimal von verschiedenen Leuten gebaut werde, geschah über 
+<p>Als Debian/m68k (die erste nicht-Intel-Portierung) begann, mussten
+   m68k-Entwickler nach neuen Paket-Versionen Ausschau halten und diese
+   rekompilieren, falls sie zu der Intel-Distribution synchron bleiben wollten.
+   Dies wurde alles manuell durchgeführt:
+   Entwickler beobachteten die Upload-Mailingliste für
+   neue Pakete und nahmen einige von ihnen, um sie zu bauen. Die Koordination, dass
+   kein Paket zweimal von verschiedenen Leuten gebaut wurde, geschah über 
    Ankündigungen auf einer Mailingliste. Es ist offensichtlich, dass diese
    Prozedur fehlerbehaftet und zeitraubend ist. Dies war allerdings lange der
    normale Weg, um nicht-i386-Distributionen aktuell zu halten.
@@ -33,9 +37,10 @@
 <p>Das build-Daemon-System automatisiert den Großteil dieses Prozesses. Es 
    besteht aus einer Reihe von Skripten (die in Perl und Python geschrieben
    sind), die sich im Laufe der Zeit entwickelt haben, um den Portierern bei
-   verschiedenen Aufgaben zu helfen. Sie haben sich schließlich in ein System
+   verschiedenen Aufgaben zu helfen. Sie haben sich schließlich zu einem System
    entwickelt, das in der Lage ist, Debian-Distributionen fast
-   automatisch aktuell zu halten.
+   automatisch aktuell zu halten. Die Sicherheits-Aktualisierungen werden auf den
+   gleichen Maschinen gebaut, um sicherzustellen, dass sie zeitnah verfügbar sind.
 </p>
 
 <h2>Wie funktioniert buildd?</h2>
@@ -50,9 +55,11 @@
 <dt>wanna-build</dt>
 <dd>
    ein Werkzeug, dass bei der Koordination des (Neu-)Bauens über eine Datenbank
-   hilft, die eine Liste von Paketen und ihrem Status hält. Dort ist eine
-   zentrale Datenbank pro Architektur vorhanden, die Paket-Statusse, Versionen
-   und einige andere Informationen aufbewahrt.
+   hilft, die eine Liste von Paketen und ihrem Status enthält. Dort ist eine
+   zentrale Datenbank pro Architektur vorhanden, die Paket-Status, Versionen
+   und einige andere Informationen speichert. Sie wird mit Quell- und Paketdateien
+   gefüttert, welche von verschiedenen Paketarchiven, die für Debian existieren
+   (z.B. ftp-master und security-master), empfangen werden.
 </dd>
 
 <dt><a href="http://packages.debian.org/buildd">buildd</a></dt>
@@ -73,22 +80,16 @@
    href="http://buildd.debian.org">Bauprotokolldatenbank</a> eingereicht.
 </dd>
 
-<dt><a href="http://packages.debian.org/quinn-diff">quinn-diff</a></dt>
-<dd>
-   vergleicht die verfügbaren Paketversionen für zwei Architekturen und gibt
-   die Unterschiede aus (vergleicht die Datei Sources und Packages).
-</dd>
-
 </dl>
 
-<p>Alle diese Teile <a href="operation">arbeiten</a> zusammen, um das Bau-Netz
+<p>Alle diese Teile <a href="operation">arbeiten</a> zusammen, um das Buildd-Netz
    zum Laufen zu bekommen.</p>
 
 <h2>Was muss ein Debian-Entwickler machen?</h2>
 
 <p>In der Tat muss ein durchschnittlicher Debian-Entwickler das buildd-Netz
    nicht explizit benutzen. Immer wenn er ein Paket in das Archiv hochlädt
-   (binär übersetzt für eine gegebene Architektur) wird es zu der Datenbank
+   (binär übersetzt für eine gegebene Architektur), wird es zu der Datenbank
    für alle Architekturen (im Zustand <em>Needs-Build</em>) hinzugefügt.
    Bau-Maschinen fragen die Datenbank nach Paketen in diesem Zustand ab und
    werden routinemäßig Pakete von dieser Liste nehmen. Die Liste wird nach
@@ -102,13 +103,13 @@
 <p>Falls der Bau auf allen Architekturen gelingt, braucht der Betreuer nichts
    zu machen. Alle diese Binärpakete werden in das korrespondierende Archiv 
    hochgeladen. Falls der Bau nicht gelingt, kommt das Paket in einen speziellen
-   Zustand ((<em>Build-Attempted</em> für Baufehler, die noch nicht geprüft 
+   Zustand (<em>Build-Attempted</em> für Baufehler, die noch nicht geprüft 
    wurden, <em>Failed</em> für geprüfte und eingereichte Fehler im Paket oder
    <em>Dep-Wait</em>, falls das Paket spezielle Bau-Abhängigkeiten hat, die 
    nicht verfügbar sind). Der Administrator
    des Autobuilders wird die Pakete, die nicht bauen, durchsehen und wird dies
    dem Betreuer zurückmelden, gewöhnlich indem er einen Fehler in der
-   Fehlerdatenbank öffnet.
+   Fehlerdatenbank eröffnet.
 </p>
 
 <p>Manchmal braucht ein Paket lange, um auf einer gegebenen Architektur zu
@@ -128,7 +129,7 @@
 
 <p>Für weitere Informationen über die verschiedenen Zustände, in denen ein
    Paket sein kann, lesen Sie bitte die <a href="wanna-build-states">\
-   wanna-build-states</a>.
+   wanna-build-Zustände</a>.
 </p>
 
 <h2>Wo kann ich weitere Informationen finden?</h2>
@@ -145,7 +146,7 @@
    Paket-Bauer</a> und <a 
    href="$(HOME)/doc/manuals/developers-reference/tools#tools-porting">\
    Portierungs-Werkzeuge</a> bereit, die sowohl an dem Prozess des Aufsetzens
-   als auch des Wartens des buildd-Netzes beteiligt sind.
+   wie auch der Wartung des buildd-Netzes beteiligt sind.
 </p>
 
 <p>Auf <a href="http://buildd.debian.org/stats/">der Buildd-Statusseite</a> 
@@ -164,25 +165,25 @@
  <li>Um die Auswirkungen einer gegebenen Compiler-Optimierung oder Patches zu
      ermitteln, indem eine große Teilmenge von Paketen neu übersetzt wird.</li>
  <li>Um Werkzeuge laufen zu lassen, die Pakete nach bekannten Fehlern
-     durchsuchen und mit compilierten Paketen arbeiten müssen. Dies wird sogar
+     durchsuchen und mit kompilierten Paketen arbeiten müssen. Dies wird sogar
      für Quellcode-Analysen benötigt, zum Beispiel als Hilfskonstruktion für
-     Pakete die <tt>dpatch</tt> verwenden.</li>
+     Pakete, die <tt>dpatch</tt> verwenden.</li>
 </ul>
 
-<p>Sie können weitere Information darüber, wie Sie einen <a 
+<p>Sie können weitere Informationen darüber lesen, wie Sie einen <a 
    href="http://buildd.debian.org/docs/buildd-setup.txt">\
-   Autobuilder aufsetzen können</a>, lesen.
+   Autobuilder aufsetzen</a>.
 </p>
 
 <h2>Die Buildd-Administratoren kontaktieren</h2>
   	 
-<p>Die Administratoren, die für die Buildds für einer bestimmten
+<p>Die Administratoren, die für die Buildds einer bestimmten
 Architektur verantwortlich sind, können unter 
  <email arch@buildd.debian.org> erreicht werden, zum Beispiel
 <email i386@buildd.debian.org>.</p>
   	 
 <hrline />
-<p><small>Diese Einführung in das Autobuilder-Netz wurde mit Teilen und Stücken
+<p><small>Diese Einführung in das Autobuilder-Netz wurde geschrieben mit Teilen und Stücken
    bereitgestellt von Roman Hodek, Christian T. Steigies, Wouter Verhelst,
    Andreas Barth, Francesco Paolo Lovergine, Javier Fernández-Sanguino und 
-   Philipp Kern geschrieben.</small></p>
+   Philipp Kern.</small></p>
