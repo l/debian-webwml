@@ -1,37 +1,39 @@
-#use wml::debian::template title="Autobuilder network" BARETITLE="true"
-#use wml::debian::translation-check translation="1.19"
+#use wml::debian::template title="Autobuilder-netwerk"
+#use wml::debian::translation-check translation="1.25"
 
-<p>Het autobuilder-netwerk is een Debian-ontwikkeling die het
-hercompileren van pakketten voor alle architecturen die <a
-href="$(HOME)/ports/">Debian op dit moment ondersteunt</a>,
-vergemakkelijkt. Dit network bestaat uit verschillende machines die een
-specifiek software-pakket gebruiken wat <em>buildd</em> heet, om
-pakketten uit het Debian-archief op te pikken en ze te hercompileren
-voor de doelarchitectuur.</p>
+<p>Het autobuilder-netwerk is een door Debian ontwikkeld systeem dat zorg
+draagt voor het compileren van pakketten voor alle architecturen die <a
+href="$(HOME)/ports/">Debian op dit moment ondersteund</a>. Dit netwerk bestaat
+uit verschillende machines die een specifiek software-pakket gebruiken wat
+<em>buildd</em> heet, om pakketten uit het Debian-archief op te pikken en ze te
+hercompileren voor de doelarchitectuur.</p>
 
 <h2>Waarom is het autobuilder-netwerk nodig?</h2>
-<p>De Debian-distributie ondersteunt <a href="$(HOME)/ports/">een flink
-aantal architecturen</a>, maar de onderhouders van de pakketten
-compileren normaliter de binaire pakketten voor slechts één architectuur
-(gewoonlijk i386). Ontwikkelaars voor andere architecturen moeten
-uitkijken naar nieuwe versies van pakketten en ze hercompileren als ze
-up-to-date willen blijven met de Intel-distributie.</p>
 
-<p>Toen Debian/m68k (de eerste niet-Intel port) opgestard werd, werd dit
-allemaal manueel gedaan: ontwikkelaars volgden de upload mailinglijst
-voor nieuwe pakketten en startten de compilatie van één of meerdere
-daarvan op hun systemen. De noodzakelijke coordinatie om te voorkomen
-dat pakketten twee keer gecompileerd werden door verschillende personen
-werd gedaan via een eigen mailinglijst. Het is duidelijk dat met deze
-procedure makkelijk fouten gemaakt worden, terwijl ze ook veel tijd
-vraagt. Toch was dit de normale gang van zaken om niet-i386 distributies
-up-to-date te houden voor een lange tijd.</p>
+<p>De Debian-distributie ondersteunt <a href="$(HOME)/ports/">een flink aantal
+architecturen</a>, maar de pakketbeheerders compileren normaliter de binaire
+pakketten voor slechts één architectuur (gewoonlijk i386 of amd64).  De andere
+binaire pakketten worden automatisch geproduceerd, waarbij er voor wordt
+gezorgd dat elk pakket maar eenmaal wordt gemaakt. Mislukte pogingen worden
+bijgehouden in de database van de autobuilder.</p>
 
-<p>Het "build daemon"-systeem automatiseert het meeste van dit proces.
-Het bestaat uit een set scripts (geschreven in Perl en Python) die
-mettertijd gegroeid zijn om porters te helpen met verschillende
-taken. Ze zijn uiteindelijk geëvolueerd in een systeem dat in staat is
-om de niet-i386 distributies bijna volautomatisch up-to-date te houden.</p>
+<p>Toen Debian/m86k (de eerste niet-Intel port) werd opgestart moesten de
+ontwikkelaars voor deze architectuur zelf in de gaten houden of er nieuwe
+versies van pakketten beschikbaar kwamen en deze hercompileren om de
+Intel-distributie bij te houden. Dit werd allemaal handmatig gedaan: De
+ontwikkelaars keken op de upload-mailinglijst naar nieuwe pakketten en
+compileerden sommigen. De noodzakelijke coordinatie om te voorkomen dat
+pakketten twee keer gecompileerd werden door verschillende personen werd gedaan
+via een eigen mailinglijst. Het is duidelijk dat met deze procedure makkelijk
+fouten gemaakt worden, terwijl ze ook veel tijd vraagt. Toch was dit voor een
+lange tijd de normale manier om niet-i386 distributies actueel te houden.</p>
+
+<p>Het "build daemon"-systeem automatiseert het grootste gedeelte van dit
+proces.  Het bestaat uit een set scripts (geschreven in Perl en Python) die
+mettertijd gegroeid zijn om porters te helpen met verschillende taken. Ze zijn
+uiteindelijk geëvolueerd in een systeem dat in staat is om Debian-distributies
+bijna volautomatisch up-to-date te houden. De beveiligingsupdates worden op
+dezelfde machines gecompileerd zodat deze snel beschikbaar zijn.</p>
 
 <h2>Hoe werkt buildd?</h2>
 
@@ -40,65 +42,72 @@ software die gebruikt wordt door het autobuilder-netwerk, maar het
 bestaat eigenlijk uit verschillende onderdelen:</p>
 
 <dl>
-<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">wanna-build</a></dt>
-<dd>een hulpmiddel dat pakket-(her)compilaties helpt coordineren via een
-database die een lijst van pakketten en hun status bijhoudt. Er is één
-centrale database per architectuur die per pakket de status, versie, en
-nog wat informatie bijhoudt.</dd>
-<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">buildd</a></dt>
-<dd>Een daemon die periodiek de database onderhouden door
-<em>wanna-build</em> nakijkt, en <em>sbuild</em> aanroept om de
-pakketten te compileren. Het kijkt na of compilaties al dan niet
-geslaagd zijn, en zal pakketten ook uploaden nadat de compilatielog
-goedgekeurd is door de beheerder.</dd>
+<dt>wanna-build</dt>
+<dd>
+Een hulpmiddel dat pakket-(her)compilaties helpt coördineren via een database
+die een lijst van pakketten en hun status bijhoudt. Er is één centrale database
+per architectuur die per pakket de status, versie en nog wat informatie
+bijhoudt. Hij krijgt de Sources- en Packages-bestanden aangeleverd vanaf de
+verschillende pakketarchieven van Debian (bv. ftp-master en security-master).
+</dd>
+<dt><a href="http://packages.debian.org/buildd">buildd</a></dt>
+<dd>
+Een achtergronddienst die periodiek de database onderhouden door
+<em>wanna-build</em> nakijkt en <em>sbuild</em> aanroept om de pakketten te
+compileren. Nadat het compilatielogboek is goedgekeurd door de buildd-beheerder
+uploadt hij het pakket naar het juiste archief.
+</dd>
 <dt><a href="http://packages.debian.org/sbuild">sbuild</a></dt>
-<dd>is verantwoordelijk voor de eigenlijke compilatie van pakketten in
-geïsoleerde chroot-omgevingen. Het gebruikt hier vooral standaard
-Debian-hulpmiddelen voor, maar zorgt ook voor bron-afhankelijkheden en
-een aantal andere nukken.</dd>
-<dt>quinn-diff</dt>
-<dd>Voedt de wanna-build database met nieuwe pakketten. Het vergelijkt
-de beschikbare pakketversies voor twee architecturen en toont de
-verschillen (zoals die gevonden worden na vergelijken van een Sources-
-en een Packages-bestand).</dd>
+<dd>
+Is verantwoordelijk voor de daadwerkelijke compilatie van pakketten in
+geïsoleerde chroot-omgevingen. Er wordt gezorgd dat alle bron-afhankelijkheden
+in de chroot zijn geïnstalleerd voor de compilatie begint. Vervolgens worden de
+standaard Debian-gereeedschappen aangeroepen voor het compilatieproces.
+Logbestanden worden naar de <a
+href="http://buildd.debian.org">buildlog-database</a> gestuurd.
+</dd>
 </dl>
 
 <p>Al deze componenten <a href="operation">werken samen</a> om het
 builder-netwerk te laten werken.</p>
 
-<h2>Wat moet een Debian developer doen?</h2>
-<p>Eigenlijk moet een gemiddelde Debian developer het buildd-netwerk
-niet expliciet gebruiken. Elke keer hij een pakket naar het
-Debian-archief uploadt (met een binaire versie voor een bepaalde
-architectuur) zal het toegevoegd worden aan de database voor alle
-architecturen (in de status <em>Needs-Build</em>). Build machines zullen
-de database bevragen voor pakketten in deze status, en zullen routineus
-pakketten van die lijst oppikken. De lijst wordt geprioritizeerd op de
-vorige compilatiestatus, de prioriteit van het pakket, de sectie, en tot
-slot de pakketnaam.</p>
+<h2>Wat moet een Debian-ontwikkelaar doen?</h2>
 
-<p>Als de compilatie succesvol is in alle architecturen, dan moet een
-pakketbeheerder niets doen. Al deze binaire pakketten worden geuploaded
-naar het Debian-archief. Als de compilatie niet succesvol is, dan zal
-het pakket een speciale status krijgen (<em>Failed</em>, of
-<em>Dep-Wait</em> als ze bron-afhankelijkheden kennen die niet
-beschikbaar zijn).
-De autobuilder-beheerders zullen pakketten die niet compileren,
-nakijken, en informatie sturen naar de pakketbeheerder, gewoonlijk via
-het openen van een bug in het Bug Tracking System.</p>
+<p>Eigenlijk hoeft een gemiddelde Debian-ontwikkelaar het buildd-netwerk niet
+expliciet te gebruiken. Elke keer hij een pakket naar het Debian-archief
+uploadt (met een binaire versie voor een bepaalde architectuur) zal het
+toegevoegd worden aan de database voor alle architecturen (in de status
+<em>Needs-Build</em>). Build-machines zullen de database bevragen voor
+pakketten in deze status, en zullen routineus pakketten van die lijst oppikken.
+De lijst wordt geprioritizeerd op de vorige compilatiestatus
+(<em>out-of-date</em> of <em>uncompiled</em>), de prioriteit van het pakket, de
+sectie, en pakketnaam. Tot slot worden de prioriteiten nog dynamisch bijgesteld
+op basis van wachttijd, dit om te voorkomen dat sommige pakketten achter in de
+wachtrij blijven steken.</p>
+
+<p>Als de compilatie succesvol is in alle architecturen, dan hoeft een
+pakketbeheerder niets doen. Al deze binaire pakketten worden geüploaded naar
+het desbetreffende archief. Als de compilatie niet succesvol is, dan zal het
+pakket een speciale status krijgen (<em>Build-Attempted</em> voor
+compilatiepogingen die nog niet zijn nagekeken, <em>Failed</em> indien
+nagekeken en als bug gemeld bij het pakket of <em>Dep-Wait</em> als ze
+bron-afhankelijkheden kennen die niet beschikbaar zijn).
+De autobuilder-beheerders zullen pakketten die niet compileren nakijken en
+informatie sturen naar de pakketbeheerder, gewoonlijk via het openen van een
+bug in het Bug Tracking System.</p>
 
 <p>Soms duurt het lang om een pakket te compileren voor een gegeven
 architectuur, en houdt dat de migratie naar <a
-href="$(HOME)/devel/testing">testing</a> van dat pakket tegen. Helaas
-zal het pakket moeten wachten totdat een machine het oppikt. Buildd
-beheerders aanvaarden geen vragen om het compileren van een pakket
-sneller te laten verlopen vermits de prioriteitslijst al ingesteld is.</p>
+href="$(HOME)/devel/testing">testing</a> van dat pakket tegen.  Indien een
+pakket een belangrijke overgang tegenhoudt dan zal de prioriteit meestal op
+verzoek van het Release-team worden bijgesteld. Andere verzoeken worden niet
+geaccepteerd omdat de langere wachttijd in de rij automatisch tot een hogere
+prioriteit leidt.</p>
 
-<p>U kan de status van de verschillende compilatiepogingen van de
-pakketten die onder het beheer van een bepaalde pakketbeheerder vallen,
-bekijken via de <a href="https://buildd.debian.org/status/">buildd
-logs</a>. Er is ook een link naar deze logs vanuit het "Packages'
-Maintainer Overview".</p>
+<p>U kunt de status van de verschillende compilatiepogingen van de pakketten
+die onder het beheer van een bepaalde pakketbeheerder vallen, bekijken via de
+<a href="https://buildd.debian.org/status/">buildd-logs</a>. Er is ook een link
+naar deze logbestanden vanuit het "Packages' Maintainer Overview".</p>
 
 <p>Voor meer informatie over de verschillende statussen waarin een
 pakket zich kan bevinden, gelieve <a
@@ -135,15 +144,17 @@ architectuur (wanneer autobuilders nodig zijn)</li>
 <li>Om de impact van een gegeven compiler-optimalisatie of patch na te
 gaan door een grote groep pakketten te hercompileren.</li>
 <li>Om hulpmiddelen uit te voeren die pakketten controleren op bekende
-vergissingen en die gedraaid moeten in gecompileerde pakket-directories.
+vergissingen en die gedraaid moeten in gecompileerde pakket-mappen.
 Dit is zelfs nodig wanneer men broncode-analyse wilt doen, bijvoorbeeld,
 als een workaround voor pakketten die <tt>dpatch</tt> gebruiken.</li>
 </ul>
 
-<p>U kan meer informatie vinden over hoe u een <a
-href="setting-up">autobuilder moet opzetten</a>.</p>
+<p>U kan meer informatie vinden over hoe u <a
+href="http://buildd.debian.org/docs/buildd-setup.txt">een autobuilder kunt
+opzetten</a>.</p>
 
-<h2>De autobuilder-beheerders contacteren</h2>
+<h2>Contact opnemen met de autobuilder-beheerders</h2>
+
 <p>De beheerders die verantwoordelijk zijn voor de autobuilders voor een
 bepaalde architectuur kunnen bereikt worden via <email
 arch@buildd.debian.org>, bijvoorbeeld <email
@@ -153,4 +164,4 @@ i386@buildd.debian.org>.</p>
 <p><small>Deze introductie tot het autobuilder-netwerk werd geschreven
 op basis van informatie verstrekt door Roman Hodek, Christian T. Steigies,
 Wouter Verhelst, Andreas Barth, Francesco Paolo Lovergine en Javier
-Fernández-Sanguino Peña</small></p>
+Fernández-Sanguino Peña en Philipp Kern.</small></p>
