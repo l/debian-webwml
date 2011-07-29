@@ -36,9 +36,9 @@ do
             then
 		if [ $lang = 'en' ]
 		then
-		    country=`isoquery -n $country | sed 's/^.*\t//'`
+		    country=`isoquery -c -n $country | sed 's/^.*\t//'`
 	        else
-		    country=`isoquery -l $lang -n $country | sed 's/^.*\t//'`
+		    country=`isoquery -c -l $lang -n $country | sed 's/^.*\t//'`
 	        fi
 	        langname="$langname \&ndash; $country"
             fi
