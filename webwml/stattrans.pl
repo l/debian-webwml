@@ -386,6 +386,7 @@ foreach $lang (@search_in) {
                     $o_body .= sprintf "<td>%s</td>", $transversion{"$lang/$file"};
                     $o_body .= sprintf "<td>%s</td>", $version{"$orig/$file"};
                     $o_body .= sprintf "<td>%s</td>", $msg;
+                    $o_body .= sprintf "<td style='font-family: monospace' title='<gettext domain=\"stats\">Click to fetch diffstat data.</gettext>' onClick=\"setDiffstat('%s', '%s', '%s', this)\">+/-</td>", $file, $transversion{"$lang/$file"}, $version{"$orig/$file"};
 		    if ($msg eq '<gettext domain="stats">Wrong translation version</gettext>' || $msg eq '<gettext domain="stats">The original no longer exists</gettext>') {
 		        $o_body .= "<td></td><td></td>";
 		    } else {
@@ -475,7 +476,8 @@ foreach $lang (@search_in) {
 
         if (open (HTML, ">$config{'htmldir'}/$l.wml")) {
 	    printf HTML "#use wml::debian::template title=\"<:=\$trans{\$CUR_ISO_LANG}{%s}:>\"\n", $lang;
-	    print HTML "#use wml::debian::toc\n\n";
+	    print HTML "#use wml::debian::toc\n";
+            print HTML "<script src='diffstat.js'></script>\n\n";
             $color = get_color ($percent_a{$lang});
 
             printf HTML '<table summary="<gettext domain="stats">Translation summary for</gettext> <:=$trans{$CUR_ISO_LANG}{'.$lang.'} :>" style="background-color: %s; width: 100%; font-weight: bold; margin: 0; text-align: center;">'."\n", $color;
@@ -509,6 +511,7 @@ foreach $lang (@search_in) {
 		print HTML '<th><gettext domain="stats">Translation</gettext></th>'."\n";
 		print HTML '<th><gettext domain="stats">Origin</gettext></th>'."\n";
 		print HTML '<th><gettext domain="stats">Comment</gettext></th>'."\n";
+		print HTML '<th><gettext domain="stats">Diffstat</gettext></th>'."\n";
                 if ($opt_d eq "u") { print HTML '<th><gettext domain="stats">Unified diff</gettext></th><th><gettext domain="stats">Colored diff</gettext></th>'; }
                 elsif ($opt_d eq "h") { print HTML '<th><gettext domain="stats">Colored diff</gettext></th><th><gettext domain="stats">Unified diff</gettext></th>'; }
                 else { print HTML '<th><gettext domain="stats">Diff</gettext></th>'; }
