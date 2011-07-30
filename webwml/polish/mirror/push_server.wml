@@ -1,6 +1,6 @@
 #use wml::debian::template title="Konfiguracja serwera push"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.17"
+#use wml::debian::translation-check translation="1.20"
 
 <p>Konfigurowanie serwera w metodzie push sk³ada siê z dwóch
 podstawowych kroków: skonfigurowania dostêpu przez rsync (jak dla normalnego
@@ -50,7 +50,7 @@ authorized_accountN:password
 <p>W ten sposób da³e¶ serwerom podrzêdnym dostêp do swojego komputera.</p>
 
 <p>Prawdopodobnie bêdziesz chcia³ uruchamiaæ demona rsync z inetd. Aby
-to osi±gnaæ, musisz dodaæ us³ugê rsync do pliku
+to osi±gn±æ, musisz dodaæ us³ugê rsync do pliku
 <code>/etc/services</code> (je¶li jeszcze jej tam nie ma) w nastêpuj±cy
 sposób:</p>
 
@@ -83,10 +83,10 @@ ssh-keygen -f ~/.ssh/identity.mysite
 </pre>
 
 <p>Upewnij siê, ¿e nowy klucz publiczny (~/.ssh/identity.mysite.pub)
-zawiera na pocz±tku taki wpis:</p>
+zawiera na pocz±tku nastêpuj±cy wpis, gdzie IPADDRESS to IP nadrzêdnego serwera:</p>
 
 <pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/sync &amp;"
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADDRESS" &amp;"
 </pre>
 
 <p>Musisz utworzyæ skrypt, który bêdzie siê kontaktowa³ z serwerami
@@ -108,19 +108,19 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
 <p>Skrypt ten zaloguje siê na zdalnym komputerze u¿ywaj±c
 specjalnego klucza ssh, który utworzy³e¶ powy¿ej, przy za³o¿eniu, ¿e ka¿dy
 administrator mirrora podrzêdnego doda ten klucz do pliku
-~/.ssh/authorized_keys (zamieniaj±c <q>sync</q> na <q>anonftpsync</q> lub
-co¶ innego, co powoduje rozpoczêcie procesu synchronizacji).
+~/.ssh/authorized_keys (zamieniaj±c <q>ftpsync</q> na komendê powoduj±c±
+rozpoczêcie procesu synchronizacji).
 Sam skrypt nie robi niczego u¿ytecznego na zdalnym komputerze, zostanie
-uruchomione polecenie wyspecyfikowane w kluczu.</p>
+uruchomione polecenie okre¶lone w kluczu.</p>
 
 <p>Aby zawiadomiæ serwery lustrzane, musisz dodaæ liniê <code>./signal
 &lt;site&gt; &lt;username&gt;</code> po zakoñczeniu procesu synchronizacji
 Twojego serwera. Tak wiêc, kiedy tylko zakoñczy siê synchronizacja z
-serwerm nadrzêdnym, rozpoczyna siê synchronizacja serwerów zale¿nych
+serwerem nadrzêdnym, rozpoczyna siê synchronizacja serwerów zale¿nych
 od Twojego.
 </p>
 
-<p>Mo¿esz umie¶ciæ te polecenia albo na koñcu skryptu <code>anonftpsync</code>
+<p>Mo¿esz umie¶ciæ te polecenia albo na koñcu pliku <code>ftpsync.conf</code>
 albo, je¶li to Ci bardziej odpowiada, w nowym skrypcie, wywo³ywanym
 przez <code>anonftpsync</code>, na przyk³ad:
 </p>
