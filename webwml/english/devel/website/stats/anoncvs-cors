@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+# A CORS-enabled proxy for the anonymous web frontend to the webwml CVS
+# repository. Used by the diffstat viewing component of translation statistics
+# page.
+# Copyright 2011 Marcin Owsiany <porridge@debian.org>
+use warnings;
+use strict;
+use CGI;
+use CGI::Carp 'fatalsToBrowser';
+use LWP::UserAgent;
+
+my $q = CGI->new;
+my $url = 'http://anonscm.debian.org/viewvc/webwml/webwml/' . $q->path_info .'?'. $ENV{'QUERY_STRING'};
+my $req = HTTP::Request->new(GET => $url);
+my $res = LWP::UserAgent->new->request($req);
+
+print $q->header(-type => $res->content_type, -status => $res->code, '-Access-Control-Allow-Origin' => '*');
+print $res->decoded_content;
+
