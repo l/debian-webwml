@@ -35,3 +35,12 @@ endif
 all:: $(STATS)
 
 install:: $(DESTSTATS)
+
+ifeq "$(LANGUAGE)" "en"
+install:: $(HTMLDIR)/diffstat.js
+$(HTMLDIR)/diffstat.js: diffstat.js
+	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
+	@echo copying $(@F) to $(HTMLDIR)
+	-@install -m 664 -p $(@F) $(HTMLDIR)
+endif
+
