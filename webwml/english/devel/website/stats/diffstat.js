@@ -75,7 +75,7 @@ function diffstat_pretty(diff_or_error) {
 		var ret;
 		ret = document.createElement('span');
 		ret.setAttribute('title', diff_or_error.message);
-		ret.innerText = ':-(';
+		ret.innerHTML = ':-(';
 		topspan.appendChild(ret);
 	} else {
 		var counts = diffstat(diff_or_error);
@@ -83,14 +83,14 @@ function diffstat_pretty(diff_or_error) {
 			var ret;
 			ret = document.createElement('span');
 			ret.setAttribute('title', 'parse error');
-			ret.innerText = ':-(';
+			ret.innerHTML = ':-(';
 			topspan.appendChild(ret);
 		} else {
 			var ret;
 
 			ret = document.createElement('span');
 			ret.setAttribute('style', 'color: green');
-			ret.innerText = '+' + counts[0];
+			ret.innerHTML = '+' + counts[0];
 			topspan.appendChild(ret);
 
 		//	ret = document.createElement('br');
@@ -99,7 +99,7 @@ function diffstat_pretty(diff_or_error) {
 
 			ret = document.createElement('span');
 			ret.setAttribute('style', 'color: red');
-			ret.innerText = '-' + counts[1];
+			ret.innerHTML = '-' + counts[1];
 			topspan.appendChild(ret);
 		}
 	}
