@@ -11,8 +11,6 @@ include $(WMLBASE)/Make.lang
 submit.$(LANGUAGE).html: submit.wml $(ENGLISHDIR)/mirror/submit.inc \
   $(ENGLISHSRCDIR)/releases/sid/archive.data  $(GETTEXTDEP)
 
-webmirror.$(LANGUAGE).html: webmirror.wml $(TEMPLDIR)/template.wml \
-  $(ENGLISHSRCDIR)/mirror/webmirrors.data $(GETTEXTDEP)
 official_sponsors.$(LANGUAGE).html: official_sponsors.wml \
   $(TEMPLDIR)/template.wml $(ENGLISHDIR)/mirror/official_sponsors.list \
   $(GETTEXTDEP)
@@ -40,7 +38,6 @@ ifeq "$(LANGUAGE)" "en"
 # Note: the masterlist file is kept private since it contains e-mail addresses
 mirrorstuff := anonftpsync ftpsync.conf \
   id_rsa.pub.ftp-master id_rsa.pub.syncproxy.eu id_rsa.pub.syncproxy.wna \
-  websync websync.conf id_rsa.pub.www-master
 	
 destmirrorstuff := $(patsubst %,$(HTMLDIR)/%,$(mirrorstuff))
 
@@ -74,9 +71,6 @@ $(ENGLISHDIR)/mirror/official_sponsors.list: \
 $(ENGLISHDIR)/mirror/sponsors.list: \
   $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
 	./mirror_list.pl -m Mirrors.masterlist -t sponsors > $@
-
-$(ENGLISHDIR)/mirror/webmirrors.data: $(TEMPLDIR)/countries.wml \
-  $(ENGLISHDIR)/mirror/Mirrors.masterlist
 
 $(ENGLISHDIR)/mirror/official.data: $(TEMPLDIR)/countries.wml \
   $(ENGLISHDIR)/mirror/Mirrors.masterlist
