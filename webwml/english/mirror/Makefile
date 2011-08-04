@@ -33,9 +33,6 @@ list-non-US.$(LANGUAGE).html: list-non-US.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHDIR)/mirror/list-non-US.inc
 size.$(LANGUAGE).html: size.wml $(ENGLISHDIR)/mirror/size.data
 
-backports.$(LANGUAGE).html: backports.wml \
- $(TEMPLDIR)/template.wml $(ENGLISHDIR)/mirror/backports.inc
-
 # there only needs to be one version of the following so
 # the non-english directories shouldn't try to install them
 ifeq "$(LANGUAGE)" "en"
@@ -106,12 +103,6 @@ $(ENGLISHDIR)/mirror/list-non-US.inc: \
 $(ENGLISHDIR)/mirror/list-footer.inc: \
   $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
 	./mirror_list.pl -m Mirrors.masterlist -t wml-footer > $@
-
-
-$(ENGLISHDIR)/mirror/backports.inc: \
-  $(ENGLISHDIR)/mirror/Mirrors.masterlist $(ENGLISHDIR)/mirror/mirror_list.pl
-	$(ENGLISHDIR)/mirror/mirror_list.pl -m $(ENGLISHDIR)/mirror/Mirrors.masterlist -t backports-wml > backports.inc
-
 
 endif
 
