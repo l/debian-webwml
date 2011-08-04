@@ -11,7 +11,7 @@ require 5.001;
 my @filter_arches=qw(); # Architectures not to list.
 
 my $officialsiteregex = q{^ftp\d?(?:\.wa)?\...\.debian\.org$};
-my $internalsiteregex = q{^((ftp|www|security|volatile|backports)-master|ftp)\.debian\.org$};
+my $internalsiteregex = q{^((ftp|security|volatile|backports)-master|ftp)\.debian\.org$};
 
 use Getopt::Long;
 my ($mirror_source, $output_type, $help);
@@ -79,7 +79,7 @@ sub process_line {
       $mirror[$count-1]{$field} = $2;
     }
   }
-  elsif ($line=~ /^((Archive|NonUS|Security|WWW|CDimage|Jigdo|Old|Volatile|Backports)-(\w*)):\s*(.*)\s*$/i) {
+  elsif ($line=~ /^((Archive|NonUS|Security|CDimage|Jigdo|Old|Volatile|Backports)-(\w*)):\s*(.*)\s*$/i) {
     my $type = lc $1;
     my $value = $4;
     $mirror[$count-1]{method}{$type} = $value;
@@ -812,8 +812,6 @@ access method for each type.
 <dt><strong>Volatile packages</strong>
   <dd>Packages from the debian-volatile project. See
   <a href="http://www.debian.org/volatile/">http://www.debian.org/volatile/</a> for details.
-<dt><strong>WWW pages</strong>
-  <dd>The Debian web pages.
 </dl>
 
 <p>The following access methods are possible:
@@ -945,7 +943,6 @@ EOF
         $display =~ s/archive-/Packages /;
         $display =~ s/nonus-/Non-US packages /;
         $display =~ s/security-/Security updates /;
-        $display =~ s/www-/WWW pages /;
         $display =~ s/cdimage-/CD Images /;
         $display =~ s/jigdo-/Jigdo files /;
         $display =~ s/old-/Old releases /;
