@@ -5,4 +5,5 @@
   <li> Karsten Merker
   <li> Martin Michlmayr
   <li> Peter De Schrijver
+  <li> Andi Barth
 </ul>
