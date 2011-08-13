@@ -1,23 +1,23 @@
 <!--translation 1.1-->
 
-<p>Otras p醙inas del Sistema de seguimiento de fallos (BTS en 
-ingl閟):
+<p>Otras p谩ginas del Sistema de seguimiento de fallos (BTS en 
+ingl茅s):
 
 <ul>
-  <li><a href="./">P醙ina de contenidos principal del Sistema de
+  <li><a href="./">P谩gina de contenidos principal del Sistema de
        seguimiento de fallos de Debian.</a>
-  <li><a href="Reporting">Instrucciones de c髆o informar de un 
+  <li><a href="Reporting">Instrucciones de c贸mo informar de un 
 fallo.</a>
   <li><a href="Access">Otras formas de acceder a los registros de seguimiento
        de fallos que no sean por WWW.</a>
-  <li><a href="Developer">Informaci髇 para desarrolladores sobre
-       c髆o utilizar el sistema.</a>
-  <li><a href="server-control">Informaci髇 para desarrolladores sobre
-       c髆o manipular fallos utilizando el interfaz de correo
-       electr髇ico.</a>
+  <li><a href="Developer">Informaci贸n para desarrolladores sobre
+       c贸mo utilizar el sistema.</a>
+  <li><a href="server-control">Informaci贸n para desarrolladores sobre
+       c贸mo manipular fallos utilizando el interfaz de correo
+       electr贸nico.</a>
   <li><a href="server-refcard">Tarjeta de referencia del servidor de 
 correo.</a>
-  <li><a href="server-request">C髆o pedir informes de error por 
+  <li><a href="server-request">C贸mo pedir informes de error por 
 correo.</a>
 #  <li><a href="db/ix/full.html">Lista completa de informes de errores
 #       pendientes y recientes.</a>

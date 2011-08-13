@@ -2,23 +2,23 @@
 #use wml::debian::translation-check translation="1.17"
 #use wml::debian::toc
 
-<p>Configurar un servidor push consiste en dos tareas b·sicas: configurar
-el acceso rsync (el normal, para replicaciÛn <q>pull</q>) y configurar los
-mecanismos de activaciÛn por ssh (para hacer <q>push</q> a la replicaciÛn pull).</p>
+<p>Configurar un servidor push consiste en dos tareas b√°sicas: configurar
+el acceso rsync (el normal, para replicaci√≥n <q>pull</q>) y configurar los
+mecanismos de activaci√≥n por ssh (para hacer <q>push</q> a la replicaci√≥n pull).</p>
 
-<p><small>(Para m·s informaciÛn sobre lo que es un servidor push, lea
-<a href="push_mirroring">la explicaciÛn de la replicaciÛn push</a>.)</small></p>
+<p><small>(Para m√°s informaci√≥n sobre lo que es un servidor push, lea
+<a href="push_mirroring">la explicaci√≥n de la replicaci√≥n push</a>.)</small></p>
 
 <toc-display />
 
 <toc-add-entry name="rsync">Configurando rsync</toc-add-entry>
 
-<p>Instale <code>rsync</code> 2.1.1 o superior. Si su sitio est· ejecutando
-Debian, sÛlo instale el ˙ltimo paquete de
+<p>Instale <code>rsync</code> 2.1.1 o superior. Si su sitio est√° ejecutando
+Debian, s√≥lo instale el √∫ltimo paquete de
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>.</p>
 
 <p>Cree el archivo <code>rsyncd.conf</code> y ponga algo similar a esto
-en Èl:</p>
+en √©l:</p>
 
 <pre>
 uid = nobody
@@ -34,27 +34,27 @@ socket options = SO_KEEPALIVE
   secrets file = /etc/rsyncd/debian.secrets
 </pre>
 
-<p>AÒada una entrada para cada sitio del que estÈ haciendo push en el archivo
+<p>A√±ada una entrada para cada sitio del que est√© haciendo push en el archivo
 <code>/etc/rsyncd/debian.secrets</code>:</p>
 
 <pre>
-authorized_account1:una_contraseÒa
-authorized_account2:otra_contraseÒa
-authorized_accountN:contraseÒa
+authorized_account1:una_contrase√±a
+authorized_account2:otra_contrase√±a
+authorized_accountN:contrase√±a
 </pre>
 
-<p>Ahora ha dado acceso a los sitios de rÈplica de flujo de bajada al archivo
-de su m·quina.</p>
+<p>Ahora ha dado acceso a los sitios de r√©plica de flujo de bajada al archivo
+de su m√°quina.</p>
 
 <p>Probablemente quiere iniciar el demonio rsync desde inetd. Para hacer esto,
-tiene que aÒadir el servicio en el archivo <code>/etc/services</code> (si no
-est· ya allÌ), algo asÌ como:</p>
+tiene que a√±adir el servicio en el archivo <code>/etc/services</code> (si no
+est√° ya all√≠), algo as√≠ como:</p>
 
 <pre>
 rsync           873/tcp
 </pre>
 
-<p>Para activar el demonio desde inetd, aÒada lo siguiente a su archivo
+<p>Para activar el demonio desde inetd, a√±ada lo siguiente a su archivo
 <code>/etc/inetd.conf</code>:</p>
 
 <pre>
@@ -62,28 +62,28 @@ rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daem
 </pre>
 
 <p>
-(Recuerde enviar a inetd una seÒal HUP para decirle que vuelva a leer su
-archivo de configuraciÛn tras modificar el archivo.)
+(Recuerde enviar a inetd una se√±al HUP para decirle que vuelva a leer su
+archivo de configuraci√≥n tras modificar el archivo.)
 </p>
 
 <toc-add-entry name="sshtrigger">Configurando el mecanismo de disparo de ssh</toc-add-entry>
 
-<p>Cree una nueva clave ssh para la cuenta que va a usar rÈplica de Debian.
-Aseg˙rese de que no sobreescribe su clave original ssh usando la opciÛn -f,
+<p>Cree una nueva clave ssh para la cuenta que va a usar r√©plica de Debian.
+Aseg√∫rese de que no sobreescribe su clave original ssh usando la opci√≥n -f,
 por ejemplo:</p>
 
 <pre>
 ssh-keygen -f ~/.ssh/identidad.misitio
 </pre>
 
-<p>Aseg˙rese de que la nueva clave p˙blica (~/.ssh/identidad.misitio.pub)
+<p>Aseg√∫rese de que la nueva clave p√∫blica (~/.ssh/identidad.misitio.pub)
 contiene esto al inicio:</p>
 
 <pre>
 no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/sync &amp;"
 </pre>
 
-<p>Necesita configurar un script que contacte con los sitios de rÈplica
+<p>Necesita configurar un script que contacte con los sitios de r√©plica
 de flujo de bajada. Cree un archivo llamado <code>signal</code> que
 contenga esto:</p>
 
@@ -99,23 +99,23 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
 </pre>
 </protect>
 
-<p>Este script entrar· a una m·quina remota usando la clave ssh especial que
-creÛ antes, proporcionada para que cada operador de rÈplica la aÒada a su
-propio ~/.ssh/authorized_keys (reemplazando tambiÈn <q>sync</q> por <q>anonftpsync</q> o como se llame su script para iniciar la replicaciÛn). El script por sÌ mismo no har· nada ˙til remotamente, la ˙nica orden que se ejecutar· es la que se ha especificado en la configuraciÛn de la clave.</p>
+<p>Este script entrar√° a una m√°quina remota usando la clave ssh especial que
+cre√≥ antes, proporcionada para que cada operador de r√©plica la a√±ada a su
+propio ~/.ssh/authorized_keys (reemplazando tambi√©n <q>sync</q> por <q>anonftpsync</q> o como se llame su script para iniciar la replicaci√≥n). El script por s√≠ mismo no har√° nada √∫til remotamente, la √∫nica orden que se ejecutar√° es la que se ha especificado en la configuraci√≥n de la clave.</p>
 
-<p>Realmente, para seÒalizar a las rÈplicas, necesita aÒadir las lÌneas
-<code>./signal &lt;sitio&gt; &lt;usuario&gt;</code> tras la ejecuciÛn de rsync.
-AsÌ, en cuanto su sitio haya terminado de replicarse del sitio fuente, 
-empezar· a lanzar la replicaciÛn de los que repliquen de usted.
+<p>Realmente, para se√±alizar a las r√©plicas, necesita a√±adir las l√≠neas
+<code>./signal &lt;sitio&gt; &lt;usuario&gt;</code> tras la ejecuci√≥n de rsync.
+As√≠, en cuanto su sitio haya terminado de replicarse del sitio fuente, 
+empezar√° a lanzar la replicaci√≥n de los que repliquen de usted.
 </p>
 
-<p>Puede emplazar estas Ûrdenes o al final de su script <code>anonftpsync</code> o, si lo cree m·s conveniente, en otro script y ejecutar este desde <code>anonftpsync</code>, por ejemplo:</p>
+<p>Puede emplazar estas √≥rdenes o al final de su script <code>anonftpsync</code> o, si lo cree m√°s conveniente, en otro script y ejecutar este desde <code>anonftpsync</code>, por ejemplo:</p>
 
 <protect>
 <pre>
 #!/bin/sh
 
-# Este script es llamado por websync para seÒalizar las rÈplicas de bajada.
+# Este script es llamado por websync para se√±alizar las r√©plicas de bajada.
 
 ./signal some.other.site archvsync
 ./signal and.another.site othersiteaccount
@@ -123,8 +123,8 @@ empezar· a lanzar la replicaciÛn de los que repliquen de usted.
 </protect>
 
 <p>Entonces, tan pronto como su sitio haya finalizado de replicar desde el
-sitio del flujo de subida, iniciar· el proceso de push a aquellos flujos
+sitio del flujo de subida, iniciar√° el proceso de push a aquellos flujos
 de bajada que tenga.
 
-<p>Si tiene alg˙n problema con esto,
-<a href="mailto:mirrors@debian.org">\ pÛngase en contacto con nosotros</a>.</p>
+<p>Si tiene alg√∫n problema con esto,
+<a href="mailto:mirrors@debian.org">\ p√≥ngase en contacto con nosotros</a>.</p>
