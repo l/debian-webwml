@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-#  Copyright 2000 Javier Fern醤dez-Sanguino Pe馻 <jfs@debian.org>
+#  Copyright 2000 Javier Fern谩ndez-Sanguino Pe帽a <jfs@debian.org>
 #  Copyright 1998-1999 Christophe Le Bars <clebars@debian.org>
 #  Copyright 1998 Paolo Molaro <lupus@debian.org> for update_db_CVS load_entries check_file
 #
@@ -51,11 +51,11 @@ $TRANSWEB = 'http://www.debian.org/international/spanish/translations';
 # This way we do not have to put it in the %translation database
 $status[0]= 'no disponible';
 $status[1]= 'no traducido';
-$status[2]= 'en fase de traducci髇';
-$status[3]= 'pendiente de revisi髇';
-$status[4]= 'traducci髇 al d韆';
-$status[5]= 'necesita actualizaci髇';
-$status[6]= 'en fase de revisi髇';
+$status[2]= 'en fase de traducci贸n';
+$status[3]= 'pendiente de revisi贸n';
+$status[4]= 'traducci贸n al d铆a';
+$status[5]= 'necesita actualizaci贸n';
+$status[6]= 'en fase de revisi贸n';
 $status[7]= 'obsoleto';
 $status[8]= 'desconocido';
 
@@ -63,20 +63,20 @@ $status[8]= 'desconocido';
 # Wml goes through pass2 before perl substituion in pass3, either make
 # the file outside of wml and parse it afterwards or do it this way
 $tag{'Source'}= 'fuente';
-$tag{'CVSpage'}='p醙ina CVS';
-$tag{'devel-url'}='URL de desarrollo de la traducci髇';
-$tag{'translation_maintainer'}='Responsable de la traducci髇';
+$tag{'CVSpage'}='p谩gina CVS';
+$tag{'devel-url'}='URL de desarrollo de la traducci贸n';
+$tag{'translation_maintainer'}='Responsable de la traducci贸n';
 $tag{'status'}='Estado';
-$tag{'translation_revision'}='Revisi髇 de la traducci髇';
+$tag{'translation_revision'}='Revisi贸n de la traducci贸n';
 $tag{'since'}='desde';
-$tag{'base_revision'}='Versi髇 del documento sobre el que se basa la traducci髇';
-$tag{'diff'}='Diferencias entre la versi髇 traducida y la actual';
+$tag{'base_revision'}='Versi贸n del documento sobre el que se basa la traducci贸n';
+$tag{'diff'}='Diferencias entre la versi贸n traducida y la actual';
 $tag{'diff-file'}='Fichero con las diferencias';
 $tag{'available'}='Disponible en el paquete';
 $tag{'originaldoc'}='Documento original';
-$tag{'revision'}='versi髇';
+$tag{'revision'}='versi贸n';
 $tag{'included'}='incluido en el paquete';
-$tag{'lines'}='N鷐ero de l韓eas en el documento';
+$tag{'lines'}='N煤mero de l铆neas en el documento';
 
 
 # In english

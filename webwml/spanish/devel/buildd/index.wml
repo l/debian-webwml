@@ -5,44 +5,44 @@
 incrementar la velocidad de las recompilaciones de paquetes para
 todas las arquitecturas <a href="$(HOME)/ports/">en las que se puede
 utilizar actualmente
-por Debian</a>. Esta red está constituida por varias máquinas que usan 
-un paquete de software específico denominado <em>buildd</em> para coger
+por Debian</a>. Esta red estÃ¡ constituida por varias mÃ¡quinas que usan 
+un paquete de software especÃ­fico denominado <em>buildd</em> para coger
 los paquetes del repositorio de Debian y reconstruirlos para la 
 arquitectura que se requiera.</p>
 
-<h2>¿Por qué se necesita la red autocompiladora?</h2>
+<h2>Â¿Por quÃ© se necesita la red autocompiladora?</h2>
 
-<p>La distribución Debian soporta <a href="$(HOME)/ports/">en realidad
+<p>La distribuciÃ³n Debian soporta <a href="$(HOME)/ports/">en realidad
 unas pocas arquitecturas</a>, pero los responsables de los paquetes 
 generalmente solo compilan versiones binarias para una sola arquitectura
 (en general i386 amd64). Los desarrolladores para otras arquitecturas tienen 
 que vigilar cuando hay nuevas versiones y recompilarlos si quieren 
-permanecer actualizados con la distribución de Intel.</p>
+permanecer actualizados con la distribuciÃ³n de Intel.</p>
 
 <p>
-En el momento que empezó Debian/m68k (la primera adaptación distinta de
+En el momento que empezÃ³ Debian/m68k (la primera adaptaciÃ³n distinta de
 la arquitectura Intel), 
 todo esto se hizo manualmente: los desarrolladores miraban los nuevos 
-paquetes en la lista de correo de envíos y cogían algunos de ellos para 
-construirlos. La coordinación para que ningún paquete se construya dos 
-veces por personas distintas se hacía anunciándolo en una lista de correo.
+paquetes en la lista de correo de envÃ­os y cogÃ­an algunos de ellos para 
+construirlos. La coordinaciÃ³n para que ningÃºn paquete se construya dos 
+veces por personas distintas se hacÃ­a anunciÃ¡ndolo en una lista de correo.
 Es obvio que este procedimiento es propenso al error y consume mucho tiempo.
 Esta fue, sin embargo, la forma usual de mantener las distribuciones 
 Debian actualizadas durante mucho tiempo.
 </p>
 
 <p>
-El demonio de construcción del sistema automatiza la mayor parte de 
+El demonio de construcciÃ³n del sistema automatiza la mayor parte de 
 este proceso. Consiste en un conjunto de guiones (escritos en Perl
 y Python) que se han mejorado con el tiempo para ayudar a los que hacen
 adaptaciones
 con varias tareas. Finalmente han evolucionado en un sistema que puede 
 mantener las distribuciones no i386 de Debian actualizadas casi 
-automáticamente.
+automÃ¡ticamente.
 </p>
 
 
-<h2>¿Como funciona buildd?</h2>
+<h2>Â¿Como funciona buildd?</h2>
 
 <p><em>Buildd</em> es el nombre que se da normalmente al software que
 utiliza la red autocompiladora, pero en realidad se compone 
@@ -52,28 +52,28 @@ de diferentes partes:</p>
 
 <dt>wanna-build</dt>
 <dd>
-una herramienta que ayuda a coordinar la (re)construcción de paquetes a
-través de una base de datos que mantiene una lista de paquetes y su estado.
+una herramienta que ayuda a coordinar la (re)construcciÃ³n de paquetes a
+travÃ©s de una base de datos que mantiene una lista de paquetes y su estado.
 Hay una base de datos central por arquitectura que almacena los estados,
-versiones, y alguna otra información de los paquetes.
+versiones, y alguna otra informaciÃ³n de los paquetes.
 </dd>
 
 <dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">buildd</a></dt>
 <dd>
-un demonio que comprueba periódicamente la base de datos mantenida por 
+un demonio que comprueba periÃ³dicamente la base de datos mantenida por 
 <em>wanna-build</em> y llama a <em>sbuild</em> para construir los paquetes.
-Una vez se aprueba un registro de compilación por el administrador del
-buildd el demonio envía el paquete al archivo apropiado.
+Una vez se aprueba un registro de compilaciÃ³n por el administrador del
+buildd el demonio envÃ­a el paquete al archivo apropiado.
 </dd>
 
 <dt><a href="http://packages.debian.org/sbuild">sbuild</a></dt>
 <dd>
-es responsable de la compilación real de los paquetes en entornos 
-enjaulados aislados.  Se asegura que las dependencias fuente están instaladas
-en el chroot antes de compilar y después llama a las herramientas estándar de
-Debian para arrancar el proceso de compilación. Los registros de la compilación
-se envía a la <a href="http://buildd.debian.org">base de datos de registros de
-compilación</a>.
+es responsable de la compilaciÃ³n real de los paquetes en entornos 
+enjaulados aislados.  Se asegura que las dependencias fuente estÃ¡n instaladas
+en el chroot antes de compilar y despuÃ©s llama a las herramientas estÃ¡ndar de
+Debian para arrancar el proceso de compilaciÃ³n. Los registros de la compilaciÃ³n
+se envÃ­a a la <a href="http://buildd.debian.org">base de datos de registros de
+compilaciÃ³n</a>.
 </dd>
 
 <dt><a href="http://packages.debian.org/quinn-diff">quinn-diff</a></dt>
@@ -88,88 +88,88 @@ muestra las diferencias (comparando un archivo Sources y un archivo Packages).
 <p>Todas estas partes <a href="operation">operan</a>
 juntas para hacer que la red constructora funciona.</p>
 
-<h2>¿Qué tiene que hacer un desarrollador de Debian?</h2>
+<h2>Â¿QuÃ© tiene que hacer un desarrollador de Debian?</h2>
 
 <p>Realmente, un desarrollador medio de Debian no necesita usar 
-explícitamente la red buildd. Cuando envíe un paquete al repositorio
-(binario compilado para una determinada arquitectura) se añadirá a 
+explÃ­citamente la red buildd. Cuando envÃ­e un paquete al repositorio
+(binario compilado para una determinada arquitectura) se aÃ±adirÃ¡ a 
 la base de datos para todas las arquitecturas (en estado <em>Needs-Build</em>,
-necesita compilación).  Las máquinas de construcción pedirán a la base de datos
-de construcciones paquetes en este estado, y de forma rutinaria tomarán los
-paquetes de esa lista. Esta está priorizada por el estado previo de compilación
+necesita compilaciÃ³n).  Las mÃ¡quinas de construcciÃ³n pedirÃ¡n a la base de datos
+de construcciones paquetes en este estado, y de forma rutinaria tomarÃ¡n los
+paquetes de esa lista. Esta estÃ¡ priorizada por el estado previo de compilaciÃ³n
 (que puede ser <em>out-of-date</em>, des-actualizado, o <em>uncompiled</em>,
-sin compilar), prioridad, sección y finalmente nombre del paquete.
+sin compilar), prioridad, secciÃ³n y finalmente nombre del paquete.
 Adicionalmente, para impedir que algunos paquetes se queden sin recursos al
-final de la cola, se ajustan las prioridades de forma dinámica con un tiempo
+final de la cola, se ajustan las prioridades de forma dinÃ¡mica con un tiempo
 incremental de espera en la cola.</p>
 
-<p>Si la construcción del paquete es satisfactoria para todas las 
-arquitecturas, el responsable no tendrá que hacer nada. Todos esos 
-paquetes binarios se enviarán al archivo correspondiente.  Si la construcción
-no es satisfactoria el paquete entrará en unos estados especiales:
-<em>Build-Attempted</em> para fallos de compilación que no han sido revisados,
-<em>Failed</em> para revisión y fallos reportados en los paquetes o
-<em>Dep-Wait</em>, si las dependencias específicas que tiene para su
-construcción no están disponibles.
-Los administradores de la autocompilación revisarán los paquetes cuya 
-construcción falla e informarán al responsable, normalmente, abriendo un
+<p>Si la construcciÃ³n del paquete es satisfactoria para todas las 
+arquitecturas, el responsable no tendrÃ¡ que hacer nada. Todos esos 
+paquetes binarios se enviarÃ¡n al archivo correspondiente.  Si la construcciÃ³n
+no es satisfactoria el paquete entrarÃ¡ en unos estados especiales:
+<em>Build-Attempted</em> para fallos de compilaciÃ³n que no han sido revisados,
+<em>Failed</em> para revisiÃ³n y fallos reportados en los paquetes o
+<em>Dep-Wait</em>, si las dependencias especÃ­ficas que tiene para su
+construcciÃ³n no estÃ¡n disponibles.
+Los administradores de la autocompilaciÃ³n revisarÃ¡n los paquetes cuya 
+construcciÃ³n falla e informarÃ¡n al responsable, normalmente, abriendo un
 error en el sistema de seguimiento de fallos.</p>
 
-<p>A veces un paquete se toma un largo período de tiempo para 
+<p>A veces un paquete se toma un largo perÃ­odo de tiempo para 
 construirlo para una arquitectura dada y eso bloquea al paquete la 
 entrada en <a href="$(HOME)/devel/testing">testing</a>. 
-Si un paquete impide una transición las prioridades se ajustan
-habitualmente bajo petición del equipo responsable de la Publicación de Debian.
-No se aceptarán otras peticiones para acelerar la construcción de un paquete ya
-que el tiempo incremental en la cola de compilación dará lugar a un prioridad
-de compilación mayor de forma automática.</p>
+Si un paquete impide una transiciÃ³n las prioridades se ajustan
+habitualmente bajo peticiÃ³n del equipo responsable de la PublicaciÃ³n de Debian.
+No se aceptarÃ¡n otras peticiones para acelerar la construcciÃ³n de un paquete ya
+que el tiempo incremental en la cola de compilaciÃ³n darÃ¡ lugar a un prioridad
+de compilaciÃ³n mayor de forma automÃ¡tica.</p>
 
 <p>Puede comprobar el estado de los diferentes intentos de buildd 
 con los paquetes que pertenecen a un responsable dado revisando los
 <a href="https://buildd.debian.org/status/">registros de buildd</a>. 
-Estos registros también están enlazados desde la Panorámica de Responsables 
+Estos registros tambiÃ©n estÃ¡n enlazados desde la PanorÃ¡mica de Responsables 
 de Paquetes.</p>
 
-<p>Para más información sobre los diferentes estados en que puede 
+<p>Para mÃ¡s informaciÃ³n sobre los diferentes estados en que puede 
 estar un paquete, por favor lea los 
 <a href="wanna-build-states">estados de wanna-build</a>.</p>
 
-<h2>¿Dónde puedo encontrar información adicional?</h2>
+<h2>Â¿DÃ³nde puedo encontrar informaciÃ³n adicional?</h2>
 
-<p>Por supuesto, la documentación y el código fuente disponible para las 
+<p>Por supuesto, la documentaciÃ³n y el cÃ³digo fuente disponible para las 
 distintas herramientas son la mejor manera de averiguar como funciona la red buildd.
-Adicionalmente la sección
+Adicionalmente la secciÃ³n
 <a href="$(HOME)/doc/manuals/developers-reference/pkgs#porting">\
 Adaptar y ser adaptado</a> de la
 <a href="$(HOME)/doc/manuals/developers-reference/">Referencia de 
-desarrolladores de Debian</a> proporciona información complementaria 
-sobre como funciona y también algo de información sobre 
+desarrolladores de Debian</a> proporciona informaciÃ³n complementaria 
+sobre como funciona y tambiÃ©n algo de informaciÃ³n sobre 
 <a href="$(HOME)/doc/manuals/developers-reference/tools#tools-builders">\
 constructores de paquetes</a> y
 <a href="$(HOME)/doc/manuals/developers-reference/tools#tools-porting">\
-herramientas de adaptación</a> que están involucrados en el proceso de 
-configuración y mantenimiento de la red buildd.</p>
+herramientas de adaptaciÃ³n</a> que estÃ¡n involucrados en el proceso de 
+configuraciÃ³n y mantenimiento de la red buildd.</p>
 
-<p>Hay algunas estadísticas disponibles de la red autocompiladora en la
-<a href="http://buildd.debian.org/stats/">página de estadísticas de buildd</a>.</p>
+<p>Hay algunas estadÃ­sticas disponibles de la red autocompiladora en la
+<a href="http://buildd.debian.org/stats/">pÃ¡gina de estadÃ­sticas de buildd</a>.</p>
 
-<h2>¿Cómo puedo configurar mi propio nodo autocompilador?</h2>
+<h2>Â¿CÃ³mo puedo configurar mi propio nodo autocompilador?</h2>
 
 <p>Hay varias razones por las que un desarrollador (o usuario)
 puede querer configurar y ejecutar un autocompilador:</p>
 
 <ul>
-<li>Ayudar en el desarrollo de una adaptación para una arquitectura dada
+<li>Ayudar en el desarrollo de una adaptaciÃ³n para una arquitectura dada
 (cuando se necesitan los autocompiladores)</li>
-<li>Evaluar el impacto de una optimización del compilador o parche
+<li>Evaluar el impacto de una optimizaciÃ³n del compilador o parche
 recompilando un gran subconjunto de paquetes.</li>
 <li>Ejecutar herramientas que analicen los paquetes buscando errores 
 conocidos y necesitan ejecutarse sobre paquetes compilados. Esto incluso se
-necesita cuando se hagan análisis del código fuente, por ejemplo, como un
+necesita cuando se hagan anÃ¡lisis del cÃ³digo fuente, por ejemplo, como un
 arreglo temporal de los paquetes utilizando <tt>dpatch</tt>.</li>
 </ul>
 
-<p>Puede leer más información sobre cómo puede <a
+<p>Puede leer mÃ¡s informaciÃ³n sobre cÃ³mo puede <a
 href="http://buildd.debian.org/docs/buildd-setup.txt">configurar un
 autocompilador</a>.</p>
 
@@ -181,7 +181,7 @@ ejemplo <email i386@buildd.debian.org>.</p>
  
 
 <hrline />
-<p><small>Esta introducción a la red autocompiladora se escribió con 
+<p><small>Esta introducciÃ³n a la red autocompiladora se escribiÃ³ con 
 aportaciones y partes proporcionadas de Roman Hodek, 
 Christian T. Steigies, Wouter Verhelst, Andreas Barth, Francesco Paolo
 Lovergine y Javier Fern&aacute;ndez-Sanguino y Philipp Kern.</small></p>

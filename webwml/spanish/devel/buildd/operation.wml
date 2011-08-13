@@ -1,82 +1,82 @@
-#use wml::debian::template title="Boceto del funcionamiento de la red de autocompilación" BARETITLE="true"
+#use wml::debian::template title="Boceto del funcionamiento de la red de autocompilaciÃ³n" BARETITLE="true"
 #use wml::debian::translation-check translation="1.9" maintainer="Fernando Cerezal"
 
 <p>
-En el corazón del sistema está la base de datos de <TT>wanna-build</TT>,
+En el corazÃ³n del sistema estÃ¡ la base de datos de <TT>wanna-build</TT>,
 que mantiene un seguimiento de las versiones y estados de los paquetes.
 <TT>quinn-diff</TT> compara las listas de paquetes para la arquitectura
-requerida con la lista de paquetes fuente después de cada actualizar del
-archivo y añade los paquetes que necesitan recompilarse a la lista de la base
+requerida con la lista de paquetes fuente despuÃ©s de cada actualizar del
+archivo y aÃ±ade los paquetes que necesitan recompilarse a la lista de la base
 de datos donde entran en el estado <TT>Needs-Build</TT>.
 </p>
 
 <P>
-Todos los demonios de construcción (puede haber más de uno) solicitan
+Todos los demonios de construcciÃ³n (puede haber mÃ¡s de uno) solicitan
 regularmente a la base de datos esos paquetes y toman algunos de ellos
 de forma que entran en el estado <TT>Building</TT>. Por supuesto, los
 humanos pueden coger los paquetes, e.g. en casos especiales donde no es
-es posible la compilación automática. Aquí también vemos el segundo 
-propósito de <TT>wanna-build</TT>:
-Asegurarse que la misma versión del paquete no se construye dos veces.
+es posible la compilaciÃ³n automÃ¡tica. AquÃ­ tambiÃ©n vemos el segundo 
+propÃ³sito de <TT>wanna-build</TT>:
+Asegurarse que la misma versiÃ³n del paquete no se construye dos veces.
 
 <DIV class="center"><A name="autobuilder34"></A>
-<IMG SRC="scheme.png" alt="Esquema de autocompilación">
+<IMG SRC="scheme.png" alt="Esquema de autocompilaciÃ³n">
 <p><STRONG>Figura:</STRONG>
 Estados de los paquetes y transiciones</p>
 </DIV>
 
 <P>
-Si todo va bien, un paquete terminado se puede mandar más tarde, y se pondrá 
-en estado <TT>Uploaded</TT>. Tras esto finalmente se instalará en el
-repositorio de Debian y así aparecerá en la lista de paquetes actualizados de 
-esa arquitectura. Esta lista se fusionará en la base de datos, así el 
-paquete pasará al estado <TT>Installed</TT> y permanecerá ahí hasta 
-la próxima versión del paquete fuente.
+Si todo va bien, un paquete terminado se puede mandar mÃ¡s tarde, y se pondrÃ¡ 
+en estado <TT>Uploaded</TT>. Tras esto finalmente se instalarÃ¡ en el
+repositorio de Debian y asÃ­ aparecerÃ¡ en la lista de paquetes actualizados de 
+esa arquitectura. Esta lista se fusionarÃ¡ en la base de datos, asÃ­ el 
+paquete pasarÃ¡ al estado <TT>Installed</TT> y permanecerÃ¡ ahÃ­ hasta 
+la prÃ³xima versiÃ³n del paquete fuente.
 
 <P>
 Hay varios otros estados; incluyen: <TT>Failed</TT> es para los paquetes
-cuya compilación falló por errores en las fuentes, y se espera que los
-errores se arreglen en una versión posterior (tras informar del problema,
-por supuesto). Así una nueva versión entrará directamente en 
-<TT>Needs-Build</TT>, pero con un aviso de que algo fue mal en la versión
-anterior. Mientras esté en este estado se guardará una descripción del 
+cuya compilaciÃ³n fallÃ³ por errores en las fuentes, y se espera que los
+errores se arreglen en una versiÃ³n posterior (tras informar del problema,
+por supuesto). AsÃ­ una nueva versiÃ³n entrarÃ¡ directamente en 
+<TT>Needs-Build</TT>, pero con un aviso de que algo fue mal en la versiÃ³n
+anterior. Mientras estÃ© en este estado se guardarÃ¡ una descripciÃ³n del 
 error. El estado <TT>Dep-Wait</TT> se usa cuando un paquete necesita 
-algunos otros paquetes para compilarse pero estos no están disponibles
-aún y se deben compilar antes. Este estado almacena una lista de los 
+algunos otros paquetes para compilarse pero estos no estÃ¡n disponibles
+aÃºn y se deben compilar antes. Este estado almacena una lista de los 
 paquetes que se necesitan y puede que las versiones, y si se sabe que todos 
 ellos van a ser instalados y el estado vuelve a <TT>Needs-Build</TT>.
 
 <P>
-Como ya hemos visto, el demonio de compilación toma los paquetes de 
-la base de datos para compilarlos. Veámoslo un poco más de cerca: si
+Como ya hemos visto, el demonio de compilaciÃ³n toma los paquetes de 
+la base de datos para compilarlos. VeÃ¡moslo un poco mÃ¡s de cerca: si
 tiene algunos paquetes que compilar, usa <TT>sbuild</TT> para el 
-proceso de compilación real, y por cada compilación se envía un 
+proceso de compilaciÃ³n real, y por cada compilaciÃ³n se envÃ­a un 
 correo con el registro al responsable del demonio. Este revisa el 
-registro y decide qué hacer con el paquete:
+registro y decide quÃ© hacer con el paquete:
 enviarlo, ponerlo como <TT>Failed</TT> o <TT>Dep-Wait</TT> y reintentarlo,
 etc...
-Si se recibe una confirmación positiva (un archivo <TT>.changes</TT> firmado),
-el demonio lo mueve a un directorio de envíos, desde donde se envían todos los
+Si se recibe una confirmaciÃ³n positiva (un archivo <TT>.changes</TT> firmado),
+el demonio lo mueve a un directorio de envÃ­os, desde donde se envÃ­an todos los
 paquetes por una tarea del cron.
 
 <P>
-La única intervención humana en todo el proceso es mirar en el archivo
+La Ãºnica intervenciÃ³n humana en todo el proceso es mirar en el archivo
 de registro si no se han producido errores. Hay dos buenas razones para
-no automatizar más esto: Primero, a veces las construcciones acaban con 
-un resultado «OK» pero la construcción no obstante falló por 
-razones que son invisibles para la máquina. Y segundo, enviarlo 
-directamente requeriría firmar automáticamente con PGP los archivos 
-resultantes con una llave sin una frase de contraseña en la máquina de
-construcción. Considero que esto es una agujero de seguridad inaceptable.
+no automatizar mÃ¡s esto: Primero, a veces las construcciones acaban con 
+un resultado Â«OKÂ» pero la construcciÃ³n no obstante fallÃ³ por 
+razones que son invisibles para la mÃ¡quina. Y segundo, enviarlo 
+directamente requerirÃ­a firmar automÃ¡ticamente con PGP los archivos 
+resultantes con una llave sin una frase de contraseÃ±a en la mÃ¡quina de
+construcciÃ³n. Considero que esto es una agujero de seguridad inaceptable.
 
 <P>
-El script de compilación <TT>sbuild</TT> más o menos solo llama a
-algunas herramientas estándar de Debian para compilar las fuentes.
-También ayuda con algunas de las tareas comunes y la contabilidad, 
-así como con la instalación automática de dependencias de compilación
+El script de compilaciÃ³n <TT>sbuild</TT> mÃ¡s o menos solo llama a
+algunas herramientas estÃ¡ndar de Debian para compilar las fuentes.
+TambiÃ©n ayuda con algunas de las tareas comunes y la contabilidad, 
+asÃ­ como con la instalaciÃ³n automÃ¡tica de dependencias de compilaciÃ³n
 necesarias mientras se construye el paquete.
 
 <hrline />
 <P><small>Contenido desarrollado por Roman Hodek para el
-6º International Linux-Kongress 1999, fue actualizado ligeramente
+6Âº International Linux-Kongress 1999, fue actualizado ligeramente
 para reflejar el estado actual por Philipp Kern en 2009</small></p>

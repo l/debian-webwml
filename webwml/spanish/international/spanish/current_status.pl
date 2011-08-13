@@ -21,13 +21,13 @@ do 'documents-bd.pl';
 #		'unknown' - 8
 # In french:
 #		'non-disponible'
-#		'à traduire'
+#		'Ã  traduire'
 #		'en cours de traduction'
-#		'à relire'
-#		'traduction à jour',
-#		'à reviser'
-#		'en cours de révision'
-#		'obsolète'
+#		'Ã  relire'
+#		'traduction Ã  jour',
+#		'Ã  reviser'
+#		'en cours de rÃ©vision'
+#		'obsolÃ¨te'
 #
 #	'since'			=> '',
 #	'diff'			=> '',
@@ -80,7 +80,7 @@ do 'documents-bd.pl';
 	'user' => {
 	'status'	=> 2,
 	'since'			=> '24/01/2000',
-	'translation_name'	=> 'Guía para el usuario de Debian',
+	'translation_name'	=> 'GuÃ­a para el usuario de Debian',
 	'translation_maintainer'=> ['Enrique Zanardi <ezanardi@id-agora.com>']
 },
 
@@ -114,7 +114,7 @@ do 'documents-bd.pl';
 	'status'		=> 3,
 	'since'			=> '31/01/1999',
 	'translation_name'	=> 'Tutorial de Debian',
-	'translation_maintainer'=> ['Javier Fernández-Sanguino Peña <jfs@debian.org>'],
+	'translation_maintainer'=> ['Javier FernÃ¡ndez-Sanguino PeÃ±a <jfs@debian.org>'],
 	'translation_cvs_url' 	=>'http://cvs.debian.org/ddp/manuals.sgml/tutorial/debian-tutorial.es.sgml?cvsroot=debian-doc'
 },
 
@@ -122,7 +122,7 @@ do 'documents-bd.pl';
 
 	'install' => {
 	'status'		=> 4,
-	'translation_name'	=> 'Manual de instalación de Debian',
+	'translation_name'	=> 'Manual de instalaciÃ³n de Debian',
 	'translation_maintainer'=> ['Enrique Zanardi <ezanardi@debian.org>'],
 	'base_revision'		=> '2.1',
 	'translation_url'	=> 'http://www.debian.org/releases/stable/source/install.es.sgml',
@@ -134,7 +134,7 @@ do 'documents-bd.pl';
 	'dselect-beginner' => {
 	'status'		=> 4,
 #	'since'			=> '22/03/1999',
-	'translation_name'	=> 'Guía de dselect para principiantes',
+	'translation_name'	=> 'GuÃ­a de dselect para principiantes',
 	'translation_maintainer'=> ['Enrique Zanardi <ezanardi@debian.org>'],
 	'base_revision'		=> '2.1',
 	'translation_url'	=> 'http://www.debian.org/releases/stable/source/dselect-beginner.es.sgml',
@@ -146,7 +146,7 @@ do 'documents-bd.pl';
 	'release-notes' => {
 	'status'		=> 2,
 	'since'			=> '05/06/1999',
-	'translation_name'	=> 'Notas de la versión',
+	'translation_name'	=> 'Notas de la versiÃ³n',
 	'translation_maintainer'=> ['Enrique Zanardi <ezanardi@debian.org>'],
 #	'base_revision'		=> '',
 #	'translation_url'	=> '',
@@ -160,8 +160,8 @@ do 'documents-bd.pl';
 	'maint-guide' => {
 	'status'		=> 6,
 	'since'			=> '3/9/1999',
-	'translation_name'	=> 'Guía del Nuevo Desarrollador de Debian',
-	'translation_maintainer'=> ['Javier Fernández-Sanguino Peña <jfs@debian.org>'],
+	'translation_name'	=> 'GuÃ­a del Nuevo Desarrollador de Debian',
+	'translation_maintainer'=> ['Javier FernÃ¡ndez-Sanguino PeÃ±a <jfs@debian.org>'],
 	'translation_dev_url'	=> 'http://www.dat.etsit.upm.es/~jfs/debian/maint-guide-es/',
 	'translation_cvs_url'   => 'http://cvs.debian.org/ddp/manuals.sgml/maint-guide/maint-guide.es.sgml?cvsroot=debian-doc',
 	'translation_package'   => 'maint-guide-es',
@@ -171,15 +171,15 @@ do 'documents-bd.pl';
 	'programmer' => {
 	'status'		=> 4,
 	'since'			=> '13/04/1998',
-        'translation_name'      => 'Cómo hacer paquetes Debian (nuevos desarrolladores)',
-        'translation_maintainer'=> ['Javier Fernández-Sanguino Peña <jfs@debian.org>'],
+        'translation_name'      => 'CÃ³mo hacer paquetes Debian (nuevos desarrolladores)',
+        'translation_maintainer'=> ['Javier FernÃ¡ndez-Sanguino PeÃ±a <jfs@debian.org>'],
         'translation_dev_url'   => 'http://www.dat.etsit.upm.es/~jfs/debian/doc/'
 },
 	
 	'network-administrator' => {
         'status'                => 2,
 	'since'			=> '08/02/2000',
-	'translation_maintainer' => ['Josep Llauradó Selvas <darlock@teleline.es>'],
+	'translation_maintainer' => ['Josep LlauradÃ³ Selvas <darlock@teleline.es>'],
 'url'                   => 'http://www.debian.org/doc/network-administrator/',
 'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/network-administrator/?cvsroot=debian-doc'
 },
@@ -202,7 +202,7 @@ do 'documents-bd.pl';
         'name'                  => 'META Manual de Debian',
 	'status'		=> 2,
 	'base_revision'		=> '0.9',
-	'translation_maintainer' => ['Lluís Vilanova <xscript.geo@yahoo.com>'],
+	'translation_maintainer' => ['LluÃ­s Vilanova <xscript.geo@yahoo.com>'],
 	'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/meta/meta.es.sgml?cvsroot=debian-doc',
 	'since'			=> '08/02/2000'
 },
