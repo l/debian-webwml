@@ -283,8 +283,8 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|attacker|attaquant|gs;
 	$output =~ s|attack|attaque|gs;
 	$output =~ s|correctly|correctement|gs;
-	$output =~ s|specially.crafted|trafiqué pour l'occasion|gs;
-	$output =~ s|crafted|trafiqué|gs;
+	$output =~ s|specially.crafted|contrefait pour l'occasion|gs;
+	$output =~ s|crafted|contrefait|gs;
 	$output =~ s|can.lead.to|peut conduire à|gs;
 	$output =~ s|can.lead|peut conduire|gs;
 	$output =~ s|could.lead.to|pourrait conduire à|gs;
