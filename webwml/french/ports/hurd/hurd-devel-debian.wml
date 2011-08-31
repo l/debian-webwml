@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd&nbsp;&ndash;&nbsp;Développement" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.43" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.46" maintainer="David Prévot"
 
 # Translators:
 # Mohammed Adnène Trojette 2005-2007.
@@ -41,8 +41,8 @@ Vous créez le répertoire d'empaquetage Debian avec la commande
 <p>
 La construction du paquet se fait dans le nouveau répertoire
 d'empaquetage Debian <code>package-version</code> avec
-la commande <code>dpkg-buildpackage -B -rsudo "-mMonNom
-&lt;MonCourrierÉlectronique&gt;"</code>. Vous pouvez utiliser
+la commande <code>dpkg-buildpackage -B -rsudo "-mMonNom &lt;MonCourrierÉlectronique&gt;"</code>.
+Vous pouvez utiliser
 <code>-b</code> au lieu de <code>-B</code> si vous voulez aussi compiler
 les parties indépendantes de l'architecture du paquet. Vous pouvez
 utiliser <code>-rfakeroot</code> au lieu de <code>-rsudo</code> si vous
@@ -60,7 +60,9 @@ d'abord sur les paquets ayant beaucoup de dépendances inverses,
 qui sont visibles sur le graphique de dépendance des paquets
 <url "http://people.debian.org/~sthibault/graph-radial.pdf">
 mis à jour quotidiennement ou sur la liste des paquets les plus demandés
-<url "http://people.debian.org/~sthibault/graph-total-top.txt">,
+<url "http://people.debian.org/~sthibault/graph-total-top.txt"> (c'est
+la liste des demandes à long terme, la liste des demandes à court
+terme est <url "http://people.debian.org/~sthibault/graph-top.txt">),
 mais vous pouvez aussi en prendre un au hasard
 parmi les paquets manquants, surveiller les journaux
 des processus d'empaquetage automatique sur la liste de diffusion
@@ -141,7 +143,7 @@ demandent juste à être adaptés pour convenir aussi à hurd-i386.
 
 <ul>
   <li>
-    <code>Dépendance de libc6 cassée</code>
+    <code>Broken libc6 dependency</code>
     <p>
       Certains paquets dépendent par erreur de <code>libc6-dev</code>.
 
@@ -159,12 +161,31 @@ demandent juste à être adaptés pour convenir aussi à hurd-i386.
       et de mettre « en dur » (« hardcode ») le soname, ou mieux,
       utiliser un OU logique.
 
-      Par exemple : <code>libc6-dev | libc6.1-dev |
-      libc0.3-dev | libc0.1-dev | libc-dev</code>.
+      Par exemple : 
+<code>libc6-dev | libc6.1-dev | libc0.3-dev | libc0.1-dev | libc-dev</code>.
 
       <code>libc-dev</code> est un paquet virtuel qui
       fonctionne pour n'importe quel soname, mais il
       ne faut le placer qu'en dernière option.
     </p>
   </li>
+
+<li>
+<code>undefined reference to snd_*, SND_* undeclared</code>
+<p>
+Certains paquets utilisent ALSA même sur les architectures non Linux.
+
+Le paquet oss-libsalsa fournit quelques émulations sur OSS, mais
+il est limité au 1.0.5, et certaines fonctionnalités ne sont pas
+fournies, comme par exemple toutes les opérations de séquenceur.
+</p>
+<p>
+Si le paquet le permet, la prise en charge d'ALSA devrait être
+désactivée pour les architectures <code>!linux-any</code> (par exemple
+à l'aide d'une option de <code>configure</code>), un qualificatif
+<code>[linux-any]</code> ajouté au <code>Build-Depends</code> d'alsa,
+et l'inverse ajouté à <code>Build-Conflicts</code>, comme par exemple
+<code>Build-Conflicts: libasound2-dev [!linux-any]</code>.
+</p>
+</li>
 </ul>
