@@ -8,6 +8,3 @@
 <define-menu-item name="index">
   <gettext domain="ports">Debian GNU/FreeBSD</gettext>
 </define-menu-item>
-
-<menu-item name="ports"         basename="../index">
-<menu-item name="kfreebsd-gnu"       basename="index">
