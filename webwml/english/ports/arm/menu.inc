@@ -5,7 +5,3 @@
 <define-menu-item name="arm">
   <gettext domain="ports">Debian for ARM</gettext>
 </define-menu-item>
-
-<menu-item name="ports"         basename="../index">
-<menu-item name="arm"           basename="index">
-
