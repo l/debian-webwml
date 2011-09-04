@@ -7,7 +7,3 @@
 </define-menu-item>
 
 <define-tag email>&lt;<A href="mailto:%0">%0</A>&gt;</define-tag>
-
-<menu-item name="ports"         basename="../index">
-<menu-item name="mips"          basename="index">
-
