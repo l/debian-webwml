@@ -151,28 +151,26 @@
   </select>
 </define-tag>
 
-# this is pasted from debbugs/etc/config
-<perl>
-@gSeverityList = ( "critical", "grave", "serious", "important", "normal",
-                   "minor", "wishlist", "fixed"
-                 );
-</perl>
+# bug severities. See debbugs/etc/config
+<define-tag bts_severities>
+<code>critical</code>, <code>grave</code>, <code>serious</code>, 
+<code>important</code>, <code>normal</code>, <code>minor</code>, 
+<code>wishlist</code>, <code>fixed</code></define-tag>
 
-<define-tag bts_severities whitespace=delete>
-  <: print (join ", ", @gSeverityList); :>
-</define-tag>
+# bug tags. See debbugs/etc/config
+<define-tag bts_tags>
+<code>patch</code>, <code>wontfix</code>, <code>moreinfo</code>, 
+<code>unreproducible</code>, <code>help</code>, <code>pending</code>, 
+<code>security</code>, <code>upstream</code>, <code>confirmed</code>, 
+<code>fixed</code>, <code>fixed-upstream</code>, 
+<code>fixed-in-experimental</code>, <code>d-i</code>, <code>ipv6</code>, 
+<code>lfs</code>, <code>l10n</code>, 
+<code>potato</code>, <code>woody</code>, 
+<code>sarge</code>, <code>sarge-ignore</code>, 
+<code>etch</code>, <code>etch-ignore</code>, 
+<code>lenny</code>, <code>lenny-ignore</code>, 
+<code>squeeze</code>, <code>squeeze-ignore</code>, 
+<code>wheezy</code>, <code>wheezy-ignore</code>, 
+<code>sid</code>, 
+<code>experimental</code></define-tag>
 
-# this is pasted from debbugs/etc/config
-<perl>
-@gTags = ( "patch", "wontfix", "moreinfo", "unreproducible", "fixed",
-           "potato", "woody", "sid", "help", "security", "upstream",
-           "pending", "sarge", "sarge-ignore", "experimental", "d-i",
-           "confirmed", "ipv6", "lfs", "fixed-in-experimental",
-           "fixed-upstream", "l10n", "etch", "etch-ignore",
-           "lenny", "lenny-ignore",
-         );
-</perl>
-
-<define-tag bts_tags whitespace=delete>
-  <: print join(", ", @gTags); :>
-</define-tag>
