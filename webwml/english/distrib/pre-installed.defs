@@ -1,56 +1,88 @@
 #use wml::debian::common_tags
 #use wml::debian::url
-#use wml::debian::countries
 
 <bind-gettext-domain domain="vendors" />
+<bind-gettext-domain domain="others" />
 
-<define-tag vendorentry endtag=required>\
-  <table width="100%">
-  <colgroup span="2">
-  <col width="55%">
-  <col>
-  </colgroup>
-  <tr><td>
+<define-tag country endtag=required>
+<preserve code />
+<preserve name />
+<set-var %attributes />
+<set-var prevname="" />
+<set-var trclass="a" />
+<h3><a name="<get-var code />"><get-var name /></a></h3>
+  <table class="vendors">
+    <tr>
+      <th><gettext domain="vendors">Vendor</gettext></th>
+      <th><gettext domain="vendors">Email</gettext></th>
+      <th><gettext domain="others">Phone</gettext></th>
+      <th><gettext domain="others">Fax</gettext></th>
+      <th><gettext domain="vendors">Ship International</gettext></th>
+      <th><gettext domain="others">Address</gettext></th>
+  </tr>
 %body
-  </td></tr>
-  </table>
+</table>
+<restore code />
+<restore name />
 </define-tag>
-<define-tag vendor whitespace=delete>
-  <strong><gettext domain="vendors">Vendor:</gettext></strong> %attributes<br>
-</define-tag>
-<define-tag email whitespace=delete>
-  <strong><gettext domain="vendors">email:</gettext></strong> 
-  <a href="mailto:%attributes">%attributes</a><br>
-</define-tag>
-<define-tag ship whitespace=delete>
-  <strong><gettext domain="vendors">Ship International:</gettext></strong> 
+
+<define-tag vendor>\
+  <preserve name />
+  <preserve URL />
+  <preserve email />
+  <preserve phone />
+  <preserve fax />
+  <preserve ship />
+  <preserve smail />
+  <set-var %attributes />
+  <tr class="<get-var trclass />">
+  <ifeq <get-var trclass /> "a" <set-var trclass="b" /> <set-var trclass="a" /> />
+
+    ####################
+    # Vendor home page link
+    <td><a href="<get-var URL />"><get-var name /></a></td>
+    ####################
+    # Contact email 
+    <td><a title="<gettext domain="vendors">email</gettext>" href="mailto:<get-var email />"><get-var email /></a></td>
+    ####################
+    # Contact phone
+    <td><get-var phone /></td>
+    ####################
+    # Contact fax (optional)
+    <td><get-var fax /></td>
+    ####################
+    # Ship
+  <td><get-var ship />
   <ifeq "%0" "yes" <yes>>
   <ifeq "%0" "no"  <no>>
   <ifeq "%0" "europe" <europe_only>>
-  <ifeq "%0" "some" <some_areas>>
-  <br>
-</define-tag>
+  <ifeq "%0" "some" <some_areas>></td>
+
 <define-tag europe_only whitespace=delete>
   <gettext domain="vendors">within Europe</gettext>
 </define-tag>
 
-<bind-gettext-domain domain="others" />
+  ###################
+  # Address:
+  <td><get-var smail /></td>
 
-<define-tag phone whitespace=delete>
-  <strong><gettext domain="others">Phone:</gettext></strong> %attributes<br />
-</define-tag>
-<define-tag fax whitespace=delete>
-  <strong><gettext domain="others">Fax:</gettext></strong> %attributes<br />
-</define-tag>
-<define-tag smail whitespace=delete>
-  <table border="0">
-    <tr>
-      <th valign=top>
-        <strong><gettext domain="others">Address:</gettext></strong>
-      </th>
-      <td>%attributes</td>
-    </tr>
-  </table>
-  <br />
+  ####################
+  # Ensure that the list is sorted:
+#  <ifeq <string-compare "<get-var vendor />" "<get-var prevname />" caseless="true" />
+#        "less"
+#        <exit status="1" message="Preinstalled Vendor entries not sorted - '<get-var vendor />' should appear before '<get-var prevname />' in the list!" />
+#  />
+  ####################
+  # Ensure that the entry is in the right country section
+#  <ifneq <get-var country /> <get-var code />
+#    <exit status="1" message="Preinstalled Vendor '<get-var vendor />' should appear inside the country tag for country '<get-var country />', but it is inside that for '<get-var code />'!" />
+#  />\
+  <restore smail />
+  <restore ship />
+  <restore fax />
+  <restore phone />
+  <restore email />
+  <restore URL />
+  <restore name />
 </define-tag>
 
