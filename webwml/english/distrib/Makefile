@@ -16,7 +16,8 @@ packages.$(LANGUAGE).html: packages.wml $(TEMPLDIR)/release_info.wml \
   $(ENGLISHDIR)/distrib/search_packages-form.inc \
   $(ENGLISHDIR)/distrib/search_contents-form.inc
 pre-installed.$(LANGUAGE).html: pre-installed.wml $(TEMPLDIR)/countries.wml \
-  $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/CD/vendors/vendors.CD.def
+  $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/CD/vendors/vendors.CD.def \
+  $(ENGLISHDIR)/distrib/pre-installed.defs \
 
 index.$(LANGUAGE).html: index.wml \
   $(TEMPLDIR)/release_info.wml \
