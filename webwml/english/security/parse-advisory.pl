@@ -27,6 +27,10 @@ my %longmoy = (	en => [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December' ]
 );
+my %shortmoy = ( en => [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
+);
 
 my $curyear = (localtime())[5] + 1900;
 my $mlURL = "http://lists.debian.org/debian-security-announce/debian-security-announce-$curyear/";
@@ -57,6 +61,11 @@ foreach $l (<ADV>) {
     while ($i < 12) {
       if ($month eq $longmoy{en}[$i]) {
         $month = $i + 1;
+        $date = "$year-$month-$day";
+        $i = 12;
+      }
+      elsif ($month eq $shortmoy{en}[$i]) {
+        $month = $i + 1; 
         $date = "$year-$month-$day";
         $i = 12;
       }
