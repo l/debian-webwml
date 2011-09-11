@@ -329,6 +329,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 
 	$output =~ s|that in |que dans |gs;
 	$output =~ s| and | et |gs;
+	$output =~ s|Vulnerabilities et Exposures|Vulnerabilities and Exposures|gs;
 	$output =~ s| in order to | afin de |gs;
 	$output =~ s| in order | afin |gs;
 	$output =~ s| in | dans |gs;
