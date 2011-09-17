@@ -25,6 +25,7 @@ my %LanguageList = (
 #	NL    => 'dutch',
 	PT_BR => 'portuguese',
 	RO    => 'romanian',
+	SK    => 'slovak',
 	SV    => 'swedish',
 # Has not used pseudo-urls recently
 #	TR    => 'turkish',
