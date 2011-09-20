@@ -29,7 +29,7 @@
 sub init_translators {
         my $translators = {
                 'Eduardo Trápani' => {
-                        email       => 'mapache@debian.org',
+                        email       => 'etrapani@gmail.com',
                         summary     => 3,
                         logs        => 3,
                         diff        => 3,
@@ -51,14 +51,14 @@ sub init_translators {
                 unmaintained        => {
                         email       => 'debian-esperanto@lists.debian.org',
                         summary     => 2,
-                        mailsubject => 'Orfaj pagxoj gxisdatigendaj',
+                        mailsubject => 'Orfaj paĝoj ĝisdatigendaj',
                         mailbody    => 'esperanto/international/esperanto/mail_unmaintained.txt',
                 },
                 maxdelta            => {
                         email       => 'debian-esperanto@lists.debian.org',
                         summary     => 2,
                         maxdelta    => 5,
-                        mailsubject => '[Grava] Pages web obsoletes',
+                        mailsubject => '[Grava] Kadukaj retpaĝoj',
                         mailbody    => 'esperanto/international/esperanto/mail_obsolete.txt',
                 },
                 # this is a special name containing the default values
@@ -71,7 +71,7 @@ sub init_translators {
                         tdiff       => 0,
                         file        => 0,
                         frequency   => ['neniam', 'monate', 'semajne', 'cxiutage'],
-                        mailsubject => 'Pagxoj gxisdatigendaj',
+                        mailsubject => 'Paĝoj ĝisdatigendaj',
                         mailbody    => 'esperanto/international/esperanto/mail_user.txt',
                         compress    => 'none'
                 },
