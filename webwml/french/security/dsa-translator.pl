@@ -284,7 +284,10 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|attack|attaque|gs;
 	$output =~ s|correctly|correctement|gs;
 	$output =~ s|specially.crafted|contrefait pour l'occasion|gs;
+	$output =~ s|containing|contenant|gs;
+	$output =~ s| check| vérification|gs;
 	$output =~ s|crafted|contrefait|gs;
+	$output =~ s|crash|plantage|gs;
 	$output =~ s|can.lead.to|peut conduire à|gs;
 	$output =~ s|can.lead|peut conduire|gs;
 	$output =~ s|could.lead.to|pourrait conduire à|gs;
@@ -308,6 +311,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|memory.leak|fuite de mémoire|gs;
 	$output =~ s|package|paquet|gs;
 	$output =~ s|potentially|éventuellement|gs;
+	$output =~ s|possibly|éventuellement|gs;
 	$output =~ s|perform|réaliser|gs;
 	$output =~ s|privilege.escalation|augmentation de droits|gs;
 	$output =~ s|prone|prédisposé|gs;
@@ -316,6 +320,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|remote.vulnerabilities|vulnérabilités distantes|gs;
 	$output =~ s|root.privileges|droits du superutilisateur|gs;
 	$output =~ s|Several|Plusieurs|gs;
+	$output =~ s|string|chaîne|gs;
 	$output =~ s|This.allows|Cela permet|gs;
 	$output =~ s|this.allows|cela permet|gs;
 	$output =~ s|to.cause|de provoquer|gs;
@@ -327,6 +332,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|vulnerability|vulnérabilité|gs;
 	$output =~ s|vulnerabilities|vulnérabilités|gs;
 
+	$output =~ s|allows|permet|gs;
 	$output =~ s|that in |que dans |gs;
 	$output =~ s| and | et |gs;
 	$output =~ s|Vulnerabilities et Exposures|Vulnerabilities and Exposures|gs;
