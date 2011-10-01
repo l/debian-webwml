@@ -209,7 +209,7 @@ sub contractcatalan {
 sub frenchsuffix {
         my $mday = shift;
 
-        return '<sup>er</sup>' if $mday % 10 == 1 && $mday != 11 && $mday != 31;
+        return '<sup>er</sup>' if $mday == 1;
 }
 
 
@@ -285,6 +285,13 @@ sub spokendate_noyear {
 		my $date = sprintf("%d de %s", $mday, $mon_str);
 		return &contractcatalan($date);
 	}
+        elsif ($CUR_ISO_LANG eq "fr")
+        {
+                # Special handling of French: suffix for the first date of month
+                # with "^er"
+
+                return sprintf("%d%s %s", $mday, &frenchsuffix($mday), $mon_str);
+        }
 	# Add any other special cases here as elsif cases
 	else
 	{
@@ -341,6 +348,19 @@ sub daterange {
 
 		return &contractcatalan($str);
 	}
+        elsif ($CUR_ISO_LANG eq "fr")
+        {
+                # Special handling of French: suffix for the first date of month
+                # with "^er"
+
+                return sprintf("%d%s-%d %s", $sday, &frenchsuffix($sday),
+				$eday, $smon_str)
+			if $samemonth;
+                return sprintf("%d%s %s-%d%s %s",
+                               $sday, &frenchsuffix($sday), $smon_str,
+                               $eday, &frenchsuffix($eday), $emon_str)
+        }
+
 	# Add any other special cases here as elsif cases
 	else
 	{
