@@ -204,6 +204,15 @@ sub contractcatalan {
 	return $str;
 }
 
+# Utility function for spokendate and daterange: Return "^er""
+# suffix for the first date of month in French.
+sub frenchsuffix {
+        my $mday = shift;
+
+        return '<sup>er</sup>' if $mday % 10 == 1 && $mday != 11 && $mday != 31;
+}
+
+
 # This function creates a "spoken" date string for use in text, for example
 # the date of the previous release.
 # Input: A date in ISO format (YYYY-MM-DD). 
@@ -235,6 +244,13 @@ sub spokendate {
 		my $date = sprintf("%d de %s de %d", $mday, $mon_str, $year);
 		return &contractcatalan($date);
 	}
+        elsif ($CUR_ISO_LANG eq "fr")
+        {
+                # Special handling of French: suffix for the first date of month
+                # with "^er"
+
+                return sprintf("%d%s %s %d", $mday, &frenchsuffix($mday), $mon_str, $year);
+        }
 	# Add any other special cases here as elsif cases
 	else
 	{
