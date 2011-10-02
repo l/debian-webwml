@@ -44,10 +44,7 @@ do
             fi
         fi
         # Workaround for Languages not in UTF-8 yet
-        if [ $lang = 'es' ]
-        then
-            langname=`echo $langname | iconv -f utf8 -t latin1`
-	elif [ $lang = 'pl' ]
+	if [ $lang = 'pl' ]
         then
             langname=`echo $langname | iconv -f utf8 -t latin2`
         fi		
