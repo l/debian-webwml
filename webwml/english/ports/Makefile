@@ -3,7 +3,7 @@
 
 WMLBASE=..
 CUR_DIR=ports
-SUBS=alpha arm beowulf freebsd kfreebsd-gnu hppa hurd i386 ia64 m68k mips netbsd powerpc sparc sparc64 s390 amd64
+SUBS=alpha arm beowulf kfreebsd-gnu hppa hurd i386 ia64 m68k mips netbsd powerpc sparc s390 amd64
 # java parisc ultrasparc
 
 GETTEXTFILES = ports.mo
