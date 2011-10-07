@@ -81,7 +81,7 @@ foreach $l (<ADV>) {
   }
   if ($l =~ /^(Debian Bug\(?s?\)?)\s*: (.+)/i) {
       for $id (split (/,? /, $2)) {
-	  push @dbids, "Bug#".$id;
+	  push @dbids, "Bug#".$id if ($id ne "none");
       }
   }
   if ($l =~ /^(CVE (names?|id\(?s?\)?|references?)?|CERT advisor(y|ies))\s*: (.+)/i) {
