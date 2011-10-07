@@ -42,18 +42,19 @@ $translation = {
 		'insecure temp file generation'	=>	'Fichiers temporaires peu sûrs',
 		'insufficient input sanitising' =>	'Vérification d\'entrée manquante',
 		'insufficient input sanitization' =>	'Vérification d\'entrée manquante',
-		'missing input validation'		=>	'Validations des entrées insuffisantes',
+		'missing input validation'		=>	'Validation des entrées insuffisante',
 		'missing input sanitising'	=>		'Absence de vérification des entrées',
 		'missing input sanitizing'      =>              'Absence de vérification des entrées',
 		'missing input sanitization'    =>              'Absence de vérification des entrées',
 		'NULL pointer dereference'	=>		'Déréférencement de pointeur NULL',
 		'several vulnerabilities'		=>	'Plusieurs vulnérabilités',
+		'multiple vulnerabilities'		=>	'Plusieurs vulnérabilités',
 		'buffer overflow'				=>	'Débordement de mémoire tampon',
 		'buffer overflows'				=>	'Débordements de mémoire tampon',
 		'programming error'				=>	'Erreur de programmation',
 		'heap overflow'					=>	'Débordement de zone de mémoire du système',
 		'authorization bypass'			=>	'Contournement d\'autorisation',
-		'insufficient input validation'	=>	'Validations des entrées insuffisantes',
+		'insufficient input validation'	=>	'Validation des entrées insuffisante',
 		'insufficient checks'			=>	'Vérifications insuffisantes',
 		'cross-site scripting'			=>	'Script intersite',
 		'Cross-Site Request Forgery'		=>	'Contrefaçon de requête intersite',
@@ -132,6 +133,7 @@ close(FILE);
 if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	# Remove useless started whitespaces
 	$output =~ s|    ||g;
+	$output =~ s|	||g;
 	# Translation of fixed version messages
 	#$output =~ s|<p>For.the.\S+.distribution.\S+.this.problem.has.been.fixed.in.version.\S+\.</p>|$translation->{$opt_l}{'<p>For the <distrib_release> distribution (<distrib_name>) this problem has been fixed in version <version>.</p>'}|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.th(is\|e).problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1 ($2), ce problème a été corrigé dans la version $4.|gs;
@@ -140,6 +142,8 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).distribution,?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1 ($2), ces problèmes ont été corrigés dans la version $3.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution,?.th(is\|e).problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1, ce problème a été corrigé dans la version $3.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution,?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour la distribution $1, ces problèmes ont été corrigés dans la version $2.|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.th(is\|e).problem.has.a?l?s?o?.?been.fixed.in.(\S+).version.(\S+)\.|<p>Pour la distribution $1 ($2), ce problème a été corrigé dans la version $5 de $4.|gs;
+
 	$output =~ s|<p>[\n]?For.the.old.(\S+).distribution.\((\S+)\),?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour l'ancienne distribution $1 ($2), ce problème a été corrigé dans la version $3.|gs;
 	$output =~ s|<p>[\n]?For.the.old.(\S+).distribution.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.|<p>Pour l'ancienne distribution $1 ($2), ces problèmes ont été corrigés dans la version $3.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.these.problems.will.be.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2), ces problèmes seront corrigés dans la version $3.|gs;
@@ -210,7 +214,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|\(wheezy\)|\(Wheezy\)|g;
 
 	# Short recurrent part of text. Take care ! substitution order might be important
-	$output =~ s|Several.vulnerabilities.(have.been\|were).discovered in|Plusieurs vulnérabilités ont été découvertes dans|gs;
+	$output =~ s|(Several\|Multiple).vulnerabilities.(have.been\|were).discovered in|Plusieurs vulnérabilités ont été découvertes dans|gs;
 	$output =~ s|It.was.discovered.that|On a découvert que|gs;
 	$output =~ s|It.was.discovered|On a découvert|gs;
 	$output =~ s|A.buffer.overflow has been discovered in|Un débordement de tampon a été découvert dans|gs; 
@@ -229,6 +233,8 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|local.user|un utilisateur local|gs;
 	$output =~ s|Local.user|Un utilisateur local|gs;
 	$output =~ s|a.buffer.overflow|un débordement de mémoire tampon|gs;
+	$output =~ s|a.stack-based.buffer.overflow|un débordement de mémoire tampon basée sur la pile|gs;
+	$output =~ s|a.heap-based.buffer.overflow|un débordement de mémoire tampon basée sur le tas|gs;
 	$output =~ s|buffer.overflow|débordement de mémoire tampon|gs;
 	$output =~ s|cross.site.request.forgeries|contrefaçons de requête intersite|gs;
 	$output =~ s|cross.site.request.forgery|contrefaçon de requête intersite|gs;
@@ -248,6 +254,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|the.execution.of.arbitrary.code|l'exécution de code arbitraire|gs;
 	$output =~ s|arbitrary.code.execution|l'exécution de code arbitraire|gs;
 	$output =~ s|execution.of.arbitrary.code|exécution de code arbitraire|gs;
+	$output =~ s|to.execute.arbitrary.code|pour exécuter du code arbitraire|gs;
 	$output =~ s|execute.arbitrary.code|exécuter du code arbitraire|gs;
 	$output =~ s|NULL.pointer.dereference|déréférencement de pointeur NULL|gs;
 	$output =~ s|application.crash|plantage d'application|gs;
@@ -287,6 +294,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|containing|contenant|gs;
 	$output =~ s| check| vérification|gs;
 	$output =~ s|crafted|contrefait|gs;
+	$output =~ s|crashes|plante|gs;
 	$output =~ s|crash|plantage|gs;
 	$output =~ s|can.lead.to|peut conduire à|gs;
 	$output =~ s|can.lead|peut conduire|gs;
@@ -298,6 +306,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|frontend|interface|gs;
 	$output =~ s|format string|chaîne de formatage|gs;
 	$output =~ s|high-level|haut niveau|gs;
+	$output =~ s|implementation|implémentation|gs;
 	$output =~ s|information.disclosure|divulgation d'informations|gs;
 	$output =~ s|information.leak|fuite d'informations|gs;
 	$output =~ s|integer.overflow|débordement d'entier|gs;
@@ -319,7 +328,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|race.condition|situation de compétition|gs;
 	$output =~ s|remote.vulnerabilities|vulnérabilités distantes|gs;
 	$output =~ s|root.privileges|droits du superutilisateur|gs;
-	$output =~ s|Several|Plusieurs|gs;
+	$output =~ s|(Several\|Multiple)|Plusieurs|gs;
 	$output =~ s|string|chaîne|gs;
 	$output =~ s|This.allows|Cela permet|gs;
 	$output =~ s|this.allows|cela permet|gs;
