@@ -4,7 +4,7 @@
 <bind-gettext-domain domain="others" />
 
 <define-menu-item name="newmaint">
-  <gettext domain="others">New Maintainers' Corner</gettext>
+  <gettext domain="others">New Members Corner</gettext>
 </define-menu-item>
 
 <define-menu-item name="step1"><gettext domain="others">Step 1</gettext></define-menu-item>
