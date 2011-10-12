@@ -5,6 +5,15 @@
 # Written by Craig Small <csmall@debian.org> 
 # Copyright 2000 SPI Inc, released under the GPL if anyone would bother with it
 
+sub sanitize (@)
+{
+# Sanitize characters in the URL with their encoded entities
+    my ($url) = @_;
+    $url =~ s/'/%27/g;
+    $url =~ s/ /%20/g;
+    $url =~ s/!/%21/g;
+    return $url;
+}
 sub test_vendor(@)
 {
     ($name, $url, $deburl,$email) = @_;
@@ -20,7 +29,8 @@ sub test_vendor(@)
         print "E: Vendor \"$name\" <$email> doesn't have a webpage!\n";
     } else {
         print "N: Checking $url\n";
-        $vendpage = `wget -t 1 -O/dev/null $url 2>&1`;
+        my $turl = sanitize($url);
+        $vendpage = `wget -t 1 -O/dev/null '$turl' 2>&1`;
         if ($vendpage =~ /: Host not found./)
         {
             print "E: Vendor \"$name\" <$email> cannot look up web page $url\n";
@@ -33,7 +43,8 @@ sub test_vendor(@)
         print "W: Vendor \"$name\" <$email> doesn't have a Debian webpage.\n";
     } else {
         print "N: Checking $deburl\n";
-        $vendpage = `wget -t 1 -O- $deburl 2>&1`;
+        my $turl = sanitize($deburl);
+        $vendpage = `wget -t 1 -O- '$turl' 2>&1`;
         if ($vendpage =~ /: Host not found./)
         {
             print "E: Vendor \"$name\" <$email> cannot look up web page $deburl\n";
