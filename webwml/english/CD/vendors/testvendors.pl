@@ -9,6 +9,7 @@ sub sanitize (@)
 {
 # Sanitize characters in the URL with their encoded entities
     my ($url) = @_;
+    $url =~ s/&amp;/&/g;
     $url =~ s/'/%27/g;
     $url =~ s/ /%20/g;
     $url =~ s/!/%21/g;
