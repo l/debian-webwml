@@ -4,6 +4,12 @@
 # Is the script evil or the vendors? Let the script decide
 # Written by Craig Small <csmall@debian.org> 
 # Copyright 2000 SPI Inc, released under the GPL if anyone would bother with it
+#
+# TODO
+# - Vendors should be required to include a specific tag in the 'Debian'
+#   webpages so that the script can easily detect if the page 
+#   (deburl) points to the proper place. For the time being, the
+#   script just looks for 'Debian' (case-insensitive) in the page
 
 sub sanitize (@)
 {
