@@ -55,11 +55,12 @@ sub usage
 }
 
 our($opt_d, $opt_h);
+my $debug = 0;
 use Getopt::Std;
 getopts('dh');
 
 usage() if $opt_h;
-my $debug = 1 if defined($opt_d);
+$debug = 1 if defined($opt_d);
 print STDERR "DEBUG: Enabling debug mode ($debug)\n" if $debug;
 $|=1 if $debug;
 
