@@ -1,4 +1,31 @@
 #!/usr/bin/perl -w
+# 
+# Script to count the vulnerabilities fixed in DSAs and count the
+# different type of root security issues.
+#
+# Note: The 'type' of a security issue is extracted directly from the advisory
+# text using regular expressions and is not necessarily accurate.
+# 
+# Copyright (c) 2004 - Javier Fernandez-Sanguino <jfs@debian.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software Foundation:
+#    51 Franklin Street, Suite 500, Boston, MA 02110-1335
+#    (http://www.fsf.org/about/contact/)
+#
+# For more information please see
+#  http://www.gnu.org/licenses/licenses.html#GPL
+#
 
 use Getopt::Std;
 use Time::gmtime;
