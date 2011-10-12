@@ -83,6 +83,9 @@ while ($line = <IN>) {
         chomp $line;
         $numline++;
         print STDERR "DEBUG: Reading line $numline\n" if $debug > 1;
+
+        next if $line =~ /^\#/ ; # Skip comments
+
         if ($line =~ /^\s*<vendor name="([^>]+)"/) {
             $vendorname = $1;
             $invendor = 1;
