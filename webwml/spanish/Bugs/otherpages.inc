@@ -13,7 +13,7 @@ fallo.</a>
   <li><a href="Developer">Información para desarrolladores sobre
        cómo utilizar el sistema.</a>
   <li><a href="server-control">Información para desarrolladores sobre
-       cómo manipular fallos utilizando el interfaz de correo
+       cómo manipular fallos utilizando la interfaz de correo
        electrónico.</a>
   <li><a href="server-refcard">Tarjeta de referencia del servidor de 
 correo.</a>
