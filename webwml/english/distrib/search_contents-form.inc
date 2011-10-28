@@ -41,6 +41,7 @@
   <option value="sparc"><gettext domain="distrib">SPARC</gettext></option>
   <option value="powerpc"><gettext domain="distrib">PowerPC</gettext></option>
   <option value="arm"><gettext domain="distrib">ARM</gettext></option>
+  <option value="armel"><gettext domain="distrib">EABI ARM</gettext></option>
   <option value="hppa"><gettext domain="distrib">HP PA/RISC</gettext></option>
   <option value="ia64"><gettext domain="distrib">Intel IA-64</gettext></option>
   <option value="mips"><gettext domain="distrib">MIPS (big endian)</gettext></option>
