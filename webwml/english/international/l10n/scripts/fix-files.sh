@@ -17,13 +17,13 @@ do
         country=${langname#*_}
         langname=${langname%_*}
     fi
-    if [ "`isoquery -i 639 --name $langname`" != '' ]
+    if [ "`isoquery -i 639-3 --name $langname`" != '' ]
     then
 	if [ $lang = 'en' ]
 	then
-	    langname=`isoquery -i 639 -n $langname | sed 's/^.*\t//'`
+	    langname=`isoquery -i 639-3 -n $langname | sed 's/^.*\t//'`
 	else
-            langname=`isoquery -i 639 -l $lang -n $langname | sed 's/^.*\t//'`
+            langname=`isoquery -i 639-3 -l $lang -n $langname | sed 's/^.*\t//'`
 	fi
         # #624476 workaround: French typography expect languages to start with a lowercase
 	if [ $lang = 'fr' ]
