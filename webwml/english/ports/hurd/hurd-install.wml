@@ -358,6 +358,12 @@ Then the following steps will be needed for proper configuration.
 <h3> The Network </h3>
 
 <p>
+The debian way is not supported yet: <tt>/etc/network/interfaces</tt> is
+ignored, and <tt>ifdup/ifdown</tt> do not work. Only the hurdish way is
+supported for now.
+</p>
+
+<p>
 First, make sure that your network card is recognized by GNU Mach:
 </p>
 
@@ -434,6 +440,33 @@ invoking it from the command line with the same argument, e.g.:
 As there can be a lot of output, consider piping this through a pager such as
 <code>less</code>.
 </p>
+
+<p>
+To also configure IPv6 support, the same configuration has to be recorded on both <tt>/servers/socket/2</tt> and <tt>/servers/socket/26</tt>, referencing each other so that only one is actually started, bound to both nodes:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# settrans -fgap /servers/socket/2 /hurd/pfinet -6 /servers/socket/26 -i eth0 \
+   -a a.b.c.d -g e.f.g.h -m i.j.k.l
+ \# settrans -fgap /servers/socket/26 /hurd/pfinet -4 /servers/socket/2 -i eth0 \
+   -a a.b.c.d -g e.f.g.h -m i.j.k.l
+</pre></td></tr></table>
+
+<p>
+The pfinet server enables IPv6 autoconfiguration by default. The current status
+can be obtained from <tt>fsysopts /servers/socket/26</tt>.  Addresses can also
+be set by hand, by using e.g. <tt>-A 2001:123:123::42/64 -G 2001:123:123::1</tt>
+</p>
+
+<p>
+The configuration of pfinet can also be changed live (without record on disk) by using </tt>fsysopts</tt>:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# fsysopts /servers/socket/2
+ /hurd/pfinet --interface=eth0 --address=10.3.0.1 --netmask=255.255.0.0 --gateway=10.3.0.128
+ \# fsysopts /server/socket/2 -a 10.3.0.2 -m 255.255.0.0 -g 10.3.0.128
+</pre></td></tr></table>
 
 
 <h3> Other File Systems </h3>
