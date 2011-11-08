@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd&nbsp;&ndash;&nbsp;Installation" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.92" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.94" maintainer="David Prévot"
 
 # Translators:
 # Jérome Abela, 1999.
@@ -428,6 +428,13 @@ nécessaires pour une configuration correcte.
 <h3>Le réseau</h3>
 
 <p>
+La méthode Debian n'est pas encore gérée : <tt>/etc/network/interfaces</tt>
+est ignoré, <tt>ifdup</tt> et <tt>ifdown</tt> ne fonctionnent pas.
+
+Seule la méthode Hurd est gérée pour le moment.
+</p>
+
+<p>
 D'abord, assurez-vous que la carte réseau est reconnue par GNU Mach :
 </p>
 
@@ -513,6 +520,41 @@ exemple&nbsp;:
 Comme la sortie peut être importante, pensez à la traiter à travers un visionneur
 de texte tel que <code>less</code>.
 </p>
+
+
+<p>
+Pour configurer aussi la prise en charge d'IPv6, la même configuration
+doit être enregistrée à la fois sur <tt>/servers/socket/2</tt> et
+<tt>/servers/socket/26</tt>, se référençant l'un l'autre pour qu'il
+n'y en ait qu'un seul de vraiment démarré, lié aux deux nœuds :
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# settrans -fgap /servers/socket/2 /hurd/pfinet -6 /servers/socket/26 -i eth0 \
+   -a a.b.c.d -g e.f.g.h -m i.j.k.l
+ \# settrans -fgap /servers/socket/26 /hurd/pfinet -4 /servers/socket/2 -i eth0 \
+   -a a.b.c.d -g e.f.g.h -m i.j.k.l
+</pre></td></tr></table>
+
+<p>
+Le serveur pfinet active l'autoconfiguration IPv6 par défaut.
+
+L'état actuel peut être obtenu avec <tt>fsysopts /servers/socket/26</tt>.
+
+Vous pouvez aussi configurer les adresses vous-même, en utilisant
+par exemple <tt>-A 2001:123:123::42/64 -G 2001:123:123::1</tt>.
+</p>
+
+<p>
+La configuration de pfinet peut aussi être modifié à la volée (sans
+enregistrement sur le disque) en utilisant </tt>fsysopts</tt> :
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# fsysopts /servers/socket/2
+ /hurd/pfinet --interface=eth0 --address=10.3.0.1 --netmask=255.255.0.0 --gateway=10.3.0.128
+ \# fsysopts /server/socket/2 -a 10.3.0.2 -m 255.255.0.0 -g 10.3.0.128
+</pre></td></tr></table>
 
 
 <h3>Autres systèmes de fichiers</h3>
