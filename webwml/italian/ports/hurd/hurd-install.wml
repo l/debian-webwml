@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; Installazione" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.92" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.96" maintainer="Luca Monducci"
 
 <h1>Installazione manuale di Debian GNU/Hurd</h1>
 
@@ -315,6 +315,10 @@ eseguire un'installazione corretta.</p>
 
 <h3>La rete</h3>
 
+<p>Il modo-Debian non è ancora supportato: <tt>/etc/network/interfaces</tt>
+è ignorato, <tt>ifdup</tt> e <tt>ifdown</tt> non funzionano. Per ora è
+supportato solo il modo-Hurd.</p>
+
 <p>Come prima cosa assicurarsi che la propria scheda di rete sia
 riconosciuta da GNU Mach:</p>
 
@@ -381,6 +385,32 @@ invocandolo dalla riga di comando con lo stesso argomento, per esempio:</p>
 <p>Come in questo caso può essere generato molto output, si tenga
 in considerazione l'uso di una pipe con un impaginatore come
 <code>less</code>.</p>
+
+<p>Anche per configurare il supporto IPv6 è necessario fare la configurazione
+su <tt>/servers/socket/2</tt> e <tt>/servers/socket/26</tt> facendo
+riferimento l'uno all'altro in modo che ne sia avviato uno solo, collegare
+entrambi i nodi:</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# settrans -fgap /servers/socket/2 /hurd/pfinet -6 /servers/socket/26 -i eth0 \
+   -a a.b.c.d -g e.f.g.h -m i.j.k.l
+ \# settrans -fgap /servers/socket/26 /hurd/pfinet -4 /servers/socket/2 -i eth0 \
+   -a a.b.c.d -g e.f.g.h -m i.j.k.l
+</pre></td></tr></table>
+
+<p>Il server pfinet attiva la configurazione automatica di IPv6. È possibile
+ottenere lo stato attuale con <tt>fsysopts /servers/socket/26</tt>.  Gli indirizzi
+possono essere anche impostati a mani usando, per esempio,
+<tt>-A 2001:123:123::42/64 -G 2001:123:123::1</tt>.</p>
+
+<p>La configurazione di pfinet può essere cambiata anche in diretta (cioè
+senza scrivere sul disco) usando <tt>fsysopts</tt>:</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# fsysopts /servers/socket/2
+ /hurd/pfinet --interface=eth0 --address=10.3.0.1 --netmask=255.255.0.0 --gateway=10.3.0.128
+ \# fsysopts /server/socket/2 -a 10.3.0.2 -m 255.255.0.0 -g 10.3.0.128
+</pre></td></tr></table>
 
 
 <h3>Ulteriori filesystem</h3>
@@ -608,7 +638,8 @@ essere necessario usa il driver vesa.</p>
 <h3>Ultime parole</h3>
 
 <p>
-Ancora non viene usato il sistema SysV. Per spegnere il sistema, prima chiudere
-la console Hurd (usando ctrl-alt-backspace) in modo da poter ancora leggere i
-messaggi del kernel e poi usare <code>halt</code> o <code>reboot</code>.
+Ancora non viene usato il sistema SysV. Per spegnere il sistema, prima
+chiudere la console Hurd (usando <kbd>ALT+CTRL+BACKSPACE</kbd>) in modo
+da poter ancora leggere i messaggi del kernel e poi usare
+<code>halt</code> o <code>reboot</code>.
 </p>
