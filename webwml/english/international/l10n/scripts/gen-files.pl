@@ -71,11 +71,7 @@ usage(0) if $opt_h;
 
 my $data = Debian::L10n::Db->new();
 $data->read("$opt_l/data/$opt_d.gluck");
-my $date1 = $data->get_date();
-#$data->read("$opt_l/data/$opt_d.non-US");
-#my $date2 = $data->get_date();
-my $date = $date1; #   Ignore non-US for now
-# my $date = ($date1 lt $date2 ? $date1 : $date2);
+my $date = $data->get_date();
 my %popcon = ();
 if ($opt_s ne '' && -r $opt_s && open (POPCON, "< $opt_s")) {
         #  This file is in the same format as
@@ -99,10 +95,7 @@ sub pkgsort ($$) {
         }
 }
 
-#my $root = 'http://merkel.debian.org/~barbier/l10n/material/';
-#my $rootnonus = 'http://merkel.debian.org/~barbier/l10n/material/';
 my $root = 'http://i18n.debian.net/material/';
-my $rootnonus = $root;
 
 my $langfile = $opt_l.'/data/langs';
 #   These packages use a RFC1766 naming convention for language codes
@@ -143,9 +136,9 @@ foreach my $pkg ($data->list_packages()) {
                 warn "Package without section: $pkg\n";
                 next;
         }
-        if ($section =~ m#^(non-us/)?contrib/#) {
+        if ($section =~ m#^contrib/#) {
                 push (@contrib, $pkg);
-        } elsif ($section =~ m#^(non-us/)?non-free/#) {
+        } elsif ($section =~ m#^non-free/#) {
                 push (@nonfree, $pkg);
         } else {
                 push (@main, $pkg);
@@ -209,8 +202,7 @@ sub get_stats_po4a {
                                 if ($stat =~ m/(\d+)u/) {
                                         $total{$section} += $1;
                                 }
-                                $addorig .= " [<a href=\"".
-                                        ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root).
+                                $addorig .= " [<a href=\"".$root.
                                         "po/$opt_d/".$data->pooldir($pkg).
                                         "/$link.gz\">$po4afile</a>]";
                                 next;
@@ -228,7 +220,7 @@ sub get_stats_po4a {
 				$ref{"$lang:$pkg"} = 1;
 			}
 		       	$str .= "href=\"";
-                        $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/$opt_d/";
+                        $str .= $root . "po/$opt_d/";
                         $str .= $data->pooldir($pkg)."/$link.gz\">$po4afile</a></td>";
 		        $str .= "<td>$translator</td><td>$team</td>".
                               "</tr>\n";
@@ -804,8 +796,7 @@ sub get_stats_podebconf {
                         $pofile =~ s#^debian/(po/)?##;
                         $link =~ s/:/\%3a/g;
                         $link =~ s/#/\%23/g;
-                        $addorig .= " [<a href=\"".
-                                ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root).
+                        $addorig .= " [<a href=\"".$root.
                                 ($pofile eq 'templates.pot' ? 'po' : 'templates').
                                 "/$opt_d/".$data->pooldir($pkg).
                                 "/$link.gz\">$pofile</a>]";
@@ -852,7 +843,7 @@ sub get_stats_podebconf {
                                 $ref{"$lang:$pkg"} = 1;
                         }
                         $str .= "href=\"";
-                        $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/$opt_d/";
+                        $str .= $root . "po/$opt_d/";
                         $str .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>";
 		        $str .= "<td>$translator</td>";
 		    	if (percent_stat($stat) eq "100%") {
