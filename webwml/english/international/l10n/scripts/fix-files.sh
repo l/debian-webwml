@@ -17,14 +17,13 @@ do
         country=${langname#*_}
         langname=${langname%_*}
     fi
-    if [ "`isoquery -i 639-3 --name $langname`" != '' ]
+    if [ $lang = 'en' ]
     then
-	if [ $lang = 'en' ]
-	then
-	    langname=`isoquery -i 639-3 -n $langname | sed 's/^.*\t//'`
-	else
-            langname=`isoquery -i 639-3 -l $lang -n $langname | sed 's/^.*\t//'`
-	fi
+	    arg=''
+    else
+	    arg="-l $lang"
+    fi
+	langname=`isoquery -i 639-3 $arg --name $langname | sed 's/^.*\t//'`
         # #624476 workaround: French typography expect languages to start with a lowercase
 	if [ $lang = 'fr' ]
         then
@@ -32,25 +31,17 @@ do
         fi
 	if [ "$country" != '' ]
        	then
-            if [ "`isoquery --name $country`" != '' ]
-            then
-		if [ $lang = 'en' ]
-		then
-		    country=`isoquery -c -n $country | sed 's/^.*\t//'`
-	        else
-		    country=`isoquery -c -l $lang -n $country | sed 's/^.*\t//'`
-	        fi
+            country=`isoquery -c $arg -n $country | sed 's/^.*\t//'`
+	    if [ "$country" != '' ]
+	    then
 	        langname="$langname \&ndash; $country"
             fi
         fi
-        # Workaround for Languages not in UTF-8 yet
+        # Workaround for last language not in UTF-8 yet
 	if [ $lang = 'pl' ]
         then
             langname=`echo $langname | iconv -f utf8 -t latin2`
         fi		
-    else
-        langname=''
-    fi
 
     for dist in main contrib non-free
     do
