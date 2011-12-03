@@ -982,6 +982,9 @@ EOF
       } elsif (exists $mirror[$id]{'updates'} and $mirror[$id]{'updates'} =~ /^(?:twice)(.*)$/) {
         print "twice a day";
         print " $1" if $1;
+      } elsif (exists $mirror[$id]{'updates'} and $mirror[$id]{'updates'} =~ /^(?:four)(.*)$/) {
+        print "four times a day";
+        print " $1" if $1;
       } elsif (exists $mirror[$id]{'updates'} and $mirror[$id]{'updates'} ne '') {
         print $mirror[$id]{'updates'};
       } else {
