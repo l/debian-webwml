@@ -37,22 +37,23 @@ $translation = {
 	'french'	=> {
 		'interpretation conflict'		=>	'conflit d\'interprétation',
 		'incorrect API usage'			=>	'Mauvaise utilisation de l\'interface de programmation',
-		'integer overflow'				=>	'Débordement d\'entier',
-		'integer underflow'                             =>      'Débordement d\'entier par le bas',
+		'integer overflow'				=>	'Dépassement d\'entier',
+		'integer underflow'                             =>      'Dépassement d\'entier par le bas',
 		'insecure temp file generation'	=>	'Fichiers temporaires peu sûrs',
-		'insufficient input sanitising' =>	'Vérification d\'entrée manquante',
-		'insufficient input sanitization' =>	'Vérification d\'entrée manquante',
+		'insufficient input sanitising' =>	'Vérification d\'entrées manquante',
+		'insufficient input sanitization' =>	'Vérification d\'entrées manquante',
 		'missing input validation'		=>	'Validation des entrées insuffisante',
 		'missing input sanitising'	=>		'Absence de vérification des entrées',
 		'missing input sanitizing'      =>              'Absence de vérification des entrées',
 		'missing input sanitization'    =>              'Absence de vérification des entrées',
+		'missing input sanitation'	=>              'Absence de vérification des entrées',
 		'NULL pointer dereference'	=>		'Déréférencement de pointeur NULL',
 		'several vulnerabilities'		=>	'Plusieurs vulnérabilités',
 		'multiple vulnerabilities'		=>	'Plusieurs vulnérabilités',
-		'buffer overflow'				=>	'Débordement de mémoire tampon',
-		'buffer overflows'				=>	'Débordements de mémoire tampon',
+		'buffer overflow'				=>	'Dépassement de tampon',
+		'buffer overflows'				=>	'Dépassements de tampon',
 		'programming error'				=>	'Erreur de programmation',
-		'heap overflow'					=>	'Débordement de zone de mémoire du système',
+		'heap overflow'					=>	'Dépassement de zone de mémoire du système',
 		'authorization bypass'			=>	'Contournement d\'autorisation',
 		'insufficient input validation'	=>	'Validation des entrées insuffisante',
 		'insufficient checks'			=>	'Vérifications insuffisantes',
@@ -132,6 +133,7 @@ close(FILE);
 
 if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	# Remove useless started whitespaces
+	$output =~ s|  ||g;
 	$output =~ s|    ||g;
 	$output =~ s|	||g;
 	# Translation of fixed version messages
@@ -151,7 +153,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?For.the.other.distributions.\((.+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version..??(\S+)\.[\n]?|<p>Pour les autres distribution ($1), ces problèmes ont été corrigés dans la version $2.|gs;
 	$output =~ s|<p>[\n]?For.the.other.distributions.\((.+)\),?.this.problem.has.a?l?s?o?.?been.fixed.in.version..??(\S+)\.[\n]?|<p>Pour les autres distribution ($1), ce problème a été corrigé dans la version $2.|gs;
 
-	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.f?o?r?.??t?h?e?.??(\S+).distributions?.\((\S+)\),?.th(is\|e).problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème a été corrigé dans la version $6.|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.f?o?r?.??(the.)?(\S+).distributions?.\((\S+)\),?.th(is\|e).problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $4 ($5), ce problème a été corrigé dans la version $7.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.f?o?r?.??t?h?e?.??(\S+).distributions?.\((\S+)\),?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes ont été corrigés dans la version $5.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).\((\S+)\).distributions?,?.this.problem.has.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème a été corrigé dans la version $5.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).\((\S+)\).distributions?,?.these.problems.have.a?l?s?o?.?been.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes ont été corrigés dans la version $5.|gs;
@@ -165,7 +167,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).\((\S+)\).distributions?,?.these.problems.will.be.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes seront corrigés dans la version $5.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\),?.and.t?h?e?.??(\S+).distributions?.\((\S+)\),?.this.problem.will.be.fixed.in.version.(\S+)\.[\n]?|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème sera corrigé dans la version $5.|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.and.t?h?e?.??(\S+).distribution.\((\S+)\),?.this.problem.will.be.fixed.soon|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ce problème sera corrigé prochainement|gs;
-	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\).and.t?h?e?.??(\S+).distribution.\((\S+)\),?.these.problems.will.be.fixed.soon|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes seront corrigés prochainement|gs;
+	$output =~ s|<p>[\n]?For.the.(\S+).distribution.\((\S+)\),?.and.t?h?e?.??(\S+).distribution.\((\S+)\),?.these.problems.will.be.fixed.soon|<p>Pour la distribution $1 ($2) et la distribution $3 ($4), ces problèmes seront corrigés prochainement|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\).distributions?,?.these.problems.will.be.fixed.soon|<p>Pour les distributions $1 ($2) et $3 ($4), ces problèmes seront corrigés prochainement|gs;
 	$output =~ s|<p>[\n]?For.the.(\S+).\((\S+)\).and.(\S+).\((\S+)\).distributions?,?.this.problem.will.be.fixed.soon|<p>Pour les distributions $1 ($2) et $3 ($4), ce problème sera corrigé prochainement|gs;
 	$output =~ s|<p>[\n]?For the.(\S+).distribution.\((\S+)\),?.this problem.will.be.fixed.soon|<p>Pour la distribution $1 ($2), ce problème sera corrigé prochainement|gs;
@@ -173,9 +175,9 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\),?.and.t?h?e?.??(\S+).distribution.\((\S+)\).will.be.fixed.soon|<p>La distribution $1 ($2) et la distribution $3 ($4) seront corrigées prochainement|gs;
 	$output =~ s|<p>[\n]?For the.(\S+).distribution.\((\S+)\),?.no.update.is.available.at.this.time|<p>Pour la distribution $1 ($2), aucune mise à jour n'est disponible pour le moment|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).will.be.fixed.soon|<p>La distribution $1 ($2) sera corrigée prochainement|gs;
-	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).is.not.affected.by.this.problem|<p>La distribution $1 ($2) n'est pas concernée par ce problème|gs;
-	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).is.not.affected.by.these.problems|<p>La distribution $1 ($2) n'est pas concernée par ces problèmes|gs;
-	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).is.not.affected|<p>La distribution $1 ($2) n'est pas concernée|gs;
+	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).is.?n.t.affected.by.this.problem|<p>La distribution $1 ($2) n'est pas concernée par ce problème|gs;
+	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).is.?n.t.affected.by.these.problems|<p>La distribution $1 ($2) n'est pas concernée par ces problèmes|gs;
+	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).is.?n.t.affected|<p>La distribution $1 ($2) n'est pas concernée|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).are.not.affected.by.this.problem\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne sont pas concernées par ce problème.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).are.not.affected.by.these.problems\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne sont pas concernées par ces problèmes.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).(distribution.)?\((\S+)\),.(the.)?(\S+).(distribution.)?\((\S+)\),?.and.(the.)?(\S+).distributions?.\((\S+)\).are.not.affected.by.this.problem\.[\n]?</p>|<p>La distribution $1 ($3), la distribution $5 ($7) et la distribution $9 ($10) ne sont pas concernées par ce problème.</p>|gs;
@@ -217,8 +219,8 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|(Several\|Multiple).vulnerabilities.(have.been\|were).discovered in|Plusieurs vulnérabilités ont été découvertes dans|gs;
 	$output =~ s|It.was.discovered.that|On a découvert que|gs;
 	$output =~ s|It.was.discovered|On a découvert|gs;
-	$output =~ s|A.buffer.overflow has been discovered in|Un débordement de tampon a été découvert dans|gs; 
-	$output =~ s|The.Common.Vulnerabilities.and.Exposures.project.identifies.the.following.problems:|Le projet « Common Vulnerabilities and Exposures » (CVE) identifie les problèmes suivants :|s;
+	$output =~ s|A.buffer.overflow has been discovered in|Un dépassement de tampon a été découvert dans|gs; 
+	$output =~ s|The.Common.Vulnerabilities.and.Exposures.project.identifies.the.following.problems:|Le projet « Common Vulnerabilities and Exposures » (CVE) identifie les problèmes suivants.|s;
 	$output =~ s|,.which.may.lead.to.the.execution.of.arbitrary.code|. Cela peut permettre l'exécution de code arbitraire|gs;
 	$output =~ s|,.which.could.lead.to.the.execution.of.arbitrary.code|. Cela pourrait permettre l'exécution de code arbitraire|gs;
 	$output =~ s|,.which.may.result.in.the.execution.of.arbitrary.code|. Cela peut avoir pour conséquence l'exécution de code arbitraire|gs;
@@ -232,10 +234,10 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|Local.users|Des utilisateurs locaux|gs;
 	$output =~ s|local.user|un utilisateur local|gs;
 	$output =~ s|Local.user|Un utilisateur local|gs;
-	$output =~ s|a.buffer.overflow|un débordement de mémoire tampon|gs;
-	$output =~ s|a.stack-based.buffer.overflow|un débordement de mémoire tampon basée sur la pile|gs;
-	$output =~ s|a.heap-based.buffer.overflow|un débordement de mémoire tampon basée sur le tas|gs;
-	$output =~ s|buffer.overflow|débordement de mémoire tampon|gs;
+	$output =~ s|a.buffer.overflow|un dépassement de tampon|gs;
+	$output =~ s|a.stack-based.buffer.overflow|un dépassement de pile|gs;
+	$output =~ s|a.heap-based.buffer.overflow|un dépassement de tas|gs;
+	$output =~ s|buffer.overflow|dépassement de tampon|gs;
 	$output =~ s|cross.site.request.forgeries|contrefaçons de requête intersite|gs;
 	$output =~ s|cross.site.request.forgery|contrefaçon de requête intersite|gs;
 	$output =~ s|Cross.Site.Request.Forgery|contrefaçon de requête intersite|gs;
@@ -259,7 +261,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|NULL.pointer.dereference|déréférencement de pointeur NULL|gs;
 	$output =~ s|application.crash|plantage d'application|gs;
 	$output =~ s|deamon.crash|plantage du démon|gs;
-	$output =~ s|insufficient.input.saniti(s\|z)(ing\|ation)|vérification d'entrée manquante|gs;
+	$output =~ s|insufficient.input.saniti(s\|z)(ing\|ation)|vérification d'entrées manquante|gs;
 	$output =~ s|missing.input.saniti(s\|z)(ing\|ation)|absence de vérification des entrées|gs;
 	$output =~ s|input.saniti(s\|z)(ing\|ation)|vérification des entrées|gs;
 	$output =~ s|missing.input.validation|validations des entrées insuffisantes|gs;
@@ -294,7 +296,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|containing|contenant|gs;
 	$output =~ s| check| vérification|gs;
 	$output =~ s|crafted|contrefait|gs;
-	$output =~ s|crashes|plante|gs;
+	$output =~ s|crashes|plantages|gs;
 	$output =~ s|crash|plantage|gs;
 	$output =~ s|can.lead.to|peut conduire à|gs;
 	$output =~ s|can.lead|peut conduire|gs;
@@ -303,14 +305,15 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|could|pourrait|gs;
 	$output =~ s|design.flaws|défauts de conception|gs;
 	$output =~ s|design.flaw|défaut de conception|gs;
+	$output =~ s|engine.layout|moteur de rendu|gs;
 	$output =~ s|frontend|interface|gs;
 	$output =~ s|format string|chaîne de formatage|gs;
 	$output =~ s|high-level|haut niveau|gs;
 	$output =~ s|implementation|implémentation|gs;
 	$output =~ s|information.disclosure|divulgation d'informations|gs;
 	$output =~ s|information.leak|fuite d'informations|gs;
-	$output =~ s|integer.overflow|débordement d'entier|gs;
-	$output =~ s|integer.underflow|débordement d'entier par le bas|gs;
+	$output =~ s|integer.overflow|dépassement d'entier|gs;
+	$output =~ s|integer.underflow|dépassement d'entier par le bas|gs;
 	$output =~ s|library|bibliothèque|gs;
 	$output =~ s|libraries|bibliothèques|gs;
 	$output =~ s|low-level|bas niveau|gs;
@@ -342,6 +345,9 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|vulnerabilities|vulnérabilités|gs;
 
 	$output =~ s|allows|permet|gs;
+	$output =~ s|bypass|contournement|gs;
+	$output =~ s|permet des utilisateurs|permet aux utilisateurs|gs;
+	$output =~ s|permet des attaquants|permet aux attaquants|gs;
 	$output =~ s|that in |que dans |gs;
 	$output =~ s| and | et |gs;
 	$output =~ s|Vulnerabilities et Exposures|Vulnerabilities and Exposures|gs;
@@ -356,6 +362,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s| if | si |gs;
 	$output =~ s| for | pour |gs;
 	$output =~ s| or | ou |gs;
+	$output =~ s| of | de |gs;
 	$output =~ s| with | avec |gs;
 
 }
