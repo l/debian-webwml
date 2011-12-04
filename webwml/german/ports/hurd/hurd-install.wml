@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; Installation" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.92"
+#use wml::debian::translation-check translation="1.97"
 # $Id$
 # Translator: Helge Kreutzmann <debian@helgefjell.de>  2005-07-17
 # Updated: Holger Wansing <linux@wansing-online.de>, 2011
@@ -20,7 +20,7 @@ Debian GNU/Hurd zum Laufen bekommt.
 
 <p>
 GNU ist von der Art ähnlich zu jedem Unix-artigen System: nach dem Einloggen
-werden dem Benutzer eine Shell und das vertraute Unix VFS (virtuelle Dateisystem)
+werden dem Benutzer eine Shell und das vertraute Unix VFS (virtuelles Dateisystem)
 präsentiert. Obwohl GNU versucht, POSIX zu befolgen, ist es <q>Nicht Unix</q>.
 GNU/Hurd baut auf vielen der Unix-Konzepte auf und erweitert diese, um entweder
 neue Funktionalität zu ergänzen oder um zu korrigieren, was als Schwachstelle im
@@ -382,6 +382,13 @@ Dann sind die folgenden Schritte nötig für eine korrekte Konfiguration.
 <h3>Das Netzwerk</h3>
 
 <p>
+Der Debian-typische Weg wird derzeit nicht unterstützt:
+<tt>/etc/network/interfaces</tt> wird ignoriert, <tt>ifup</tt> und
+<tt>ifdown</tt> funktionieren nicht. Bis auf Weiteres wird lediglich der
+<q>Hurdische</q> Weg unterstützt.
+</p>
+
+<p>
   Stellen Sie zuerst sicher, dass Ihre Netzwerkkarte von GNU Mach erkannt wird:
 </p>
 
@@ -423,10 +430,10 @@ nächsten zwei, <q><var>ap</var></q>, erzeugen sowohl aktive als auch passive
 Übersetzer. Indem wir aktive Übersetzer erzeugen, sehen wir sofort jede 
 Fehlermeldung auf <tt><q>stderr</q></tt>. Der Letztere speichert den Übersetzer und
 die Befehle im Knoten, so dass er später transparent neu gestartet werden kann (d.h.
-die Einstellungen bleiben persistent über Neustarts hinweg erhalten). Die
-Optionen werden vom Knoten, an den der Übersetzer angebunden werden soll, dann
-dem zu startenden Programm (d.h. dem Übersetzer) und jedem Argument, das Sie
-ihm übergeben, gefolgt. Die <q><var>-i</var></q>-Option ist die Schnittstelle, auf
+die Einstellungen bleiben persistent über Neustarts hinweg erhalten). Hinter den
+Optionen folgen der Knoten, an den der Übersetzer angebunden werden soll, dann
+das zu startende Programm (d.h. der Übersetzer) und schließlich jedes Argument,
+das Sie ihm übergeben. Die <q><var>-i</var></q>-Option ist die Schnittstelle, auf
 der <code>pfinet</code> auf Verbindungen warten wird, <q><var>-a</var></q> ist
 die IP-Adresse,
 <q><var>-g</var></q> ist das Gateway und <q><var>-m</var></q> ist die Netzmaske.
@@ -459,9 +466,41 @@ Argument aufgerufen wird, z.B.:
 </pre></td></tr></table>
 
 <p>
-Da dies viel an Ausgabe erzeugen kann, sollten Sie überlegen, diese durch ein
-seitenbasiertes Anzeige-Programm wie <code>less</code> zu leiten.
+Da dies viel Ausgabe erzeugen kann, sollten Sie überlegen, diese durch ein
+seitenbasiertes Anzeigeprogramm wie <code>less</code> zu leiten.
 </p>
+
+<p>
+Um auch IPv6-Unterstützung zu konfigurieren, muss die gleiche Konfiguration
+für <tt>/servers/socket/2</tt> und <tt>/servers/socket/26</tt> derart
+durchgeführt werden, dass sie sich gegenseitig referenzieren (damit nur
+einer wirklich gestartet wird) und an beide Knoten gebunden sind:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# settrans -fgap /servers/socket/2 /hurd/pfinet -6 /servers/socket/26 -i eth0 \
+   -a a.b.c.d -g e.f.g.h -m i.j.k.l
+ \# settrans -fgap /servers/socket/26 /hurd/pfinet -4 /servers/socket/2 -i eth0 \
+   -a a.b.c.d -g e.f.g.h -m i.j.k.l
+</pre></td></tr></table>
+
+<p>
+Der pfinet-Server aktiviert IPv6-Autokonfiguration als Standardeinstellung. Der
+aktuelle Status kann mit <tt>fsysopts /servers/socket/26</tt> abgefragt werden.
+Adressen können auch von Hand festgelegt werden, indem z.B.
+<tt>-A 2001:123:123::42/64 -G 2001:123:123::1</tt> verwendet wird.
+</p>
+
+<p>
+Die Konfiguration von pfinet kann auch live verändert werden (ohne Abspeicherung
+auf Festplatte), indem <tt>fsysopts</tt> verwendet wird:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# fsysopts /servers/socket/2
+ /hurd/pfinet --interface=eth0 --address=10.3.0.1 --netmask=255.255.0.0 --gateway=10.3.0.128
+ \# fsysopts /server/socket/2 -a 10.3.0.2 -m 255.255.0.0 -g 10.3.0.128
+</pre></td></tr></table>
 
 <h3>Andere Dateisysteme</h3>
 
@@ -730,8 +769,9 @@ weiß.
 
 <p>
 Sie werden mehrere X-Pakete benötigen. <code>xorg</code>, 
-<code>rxvt</code> und <code>twm</code>, <code>fvwm</code> oder
-<code>wmaker</code> sind ein guter Anfang.
+<code>rxvt</code> und ein Window-Manager wie 
+<code>twm</code>, <code>fvwm</code>, <code>wmaker</code>, <code>icewm</code>,
+<code>openbox</code>, ... sind ein guter Anfang.
 </p>
 
 <p>
