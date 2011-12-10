@@ -37,11 +37,6 @@ do
 	        langname="$langname \&ndash; $country"
             fi
         fi
-        # Workaround for last language not in UTF-8 yet
-	if [ $lang = 'pl' ]
-        then
-            langname=`echo $langname | iconv -f utf8 -t latin2`
-        fi		
 
     for dist in main contrib non-free
     do
