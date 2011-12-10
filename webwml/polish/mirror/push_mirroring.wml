@@ -1,115 +1,115 @@
-#use wml::debian::template title="Tworzenie serwerów lustrzanych metod± push"
+#use wml::debian::template title="Tworzenie serwerÃ³w lustrzanych metodÄ… push"
 #use wml::debian::translation-check translation="1.18"
 
-<p>Metoda push tworzenia serwerów lustrzanych minimalizuje czas potrzebny,
-aby zmiany w g³ównym archiwum pojawi³y siê na serwerach lustrzanych.
-Serwer lustrzany u¿ywa mechanizmu <q>spustowego</q> (trigerów), aby 
-natychmiast poinformowaæ klienta mirrora, ¿e musi on dokonaæ aktualizacji.
+<p>Metoda push tworzenia serwerÃ³w lustrzanych minimalizuje czas potrzebny,
+aby zmiany w gÅ‚Ã³wnym archiwum pojawiÅ‚y siÄ™ na serwerach lustrzanych.
+Serwer lustrzany uÅ¼ywa mechanizmu <q>spustowego</q> (trigerÃ³w), aby 
+natychmiast poinformowaÄ‡ klienta mirrora, Å¼e musi on dokonaÄ‡ aktualizacji.
 </p>
 
-<p>Tworzenie serwerów lustrzancyh metod± push wymaga nieco wysi³ku przy
-konfiguracji, gdy¿ administratorzy nadrzêdnego i podrzêdnego serwera
-lustrzanego musz± wymieniaæ miêdzy sob± informacje. Zyskiem jest to, ¿e
-serwer nadrzêdny inicjuje proces tworzenia kopii lustrzanej natychmiast
-po aktualizacji swojej zawarto¶ci. Pozwala to na niezwykle szybk±
-propagacjê zmian.</p>
+<p>Tworzenie serwerÃ³w lustrzancyh metodÄ… push wymaga nieco wysiÅ‚ku przy
+konfiguracji, gdyÅ¼ administratorzy nadrzÄ™dnego i podrzÄ™dnego serwera
+lustrzanego muszÄ… wymieniaÄ‡ miÄ™dzy sobÄ… informacje. Zyskiem jest to, Å¼e
+serwer nadrzÄ™dny inicjuje proces tworzenia kopii lustrzanej natychmiast
+po aktualizacji swojej zawartoÅ›ci. Pozwala to na niezwykle szybkÄ…
+propagacjÄ™ zmian.</p>
 
-<h2>Wyja¶nienie metody</h2>
+<h2>WyjaÅ›nienie metody</h2>
 
-<p>Zacznijmy od pewnego wprowadzenia do ssh. Ssh pozwala na ³±czenie siê
-z kontami na ró¿nych komputerach w bezpieczny sposób. Nie tylko has³a
-nie s± nigdy przesy³ane w jawnej formie, ale te¿ kiedy ju¿ raz
-po³±czysz siê z jakim¶ komputerem, to praktycznie masz gwarancjê, ¿e
-przysz³e po³±czenia bêd± nawi±zywane z tym samym komputerem. Zapobiega to 
+<p>Zacznijmy od pewnego wprowadzenia do ssh. Ssh pozwala na Å‚Ä…czenie siÄ™
+z kontami na rÃ³Å¼nych komputerach w bezpieczny sposÃ³b. Nie tylko hasÅ‚a
+nie sÄ… nigdy przesyÅ‚ane w jawnej formie, ale teÅ¼ kiedy juÅ¼ raz
+poÅ‚Ä…czysz siÄ™ z jakimÅ› komputerem, to praktycznie masz gwarancjÄ™, Å¼e
+przyszÅ‚e poÅ‚Ä…czenia bÄ™dÄ… nawiÄ…zywane z tym samym komputerem. Zapobiega to 
 wielu atakom typu <q>man-in-the-middle</q>.</p>
 
-<p>Jedn± ze zalet ssh jest mo¿liwo¶æ przeniesienia przez u¿ytkownika
-publicznego klucza okre¶laj±cego jego to¿samo¶æ z innego komputera i
-dodanie go do pliku zawieraj±cego zaufane klucze na Twoim
-komputerze. Domy¶lnie u¿ytkownik na innym komputerze (który ma prywatny
-klucz okre¶laj±cy jego to¿samo¶æ powi±zany z kluczem publicznym, który
-otrzyma³e¶) ma mo¿liwo¶æ zalogowania siê na konto na Twoim serwerze.
-Jednak¿e jest mo¿liwe dodanie do klucza tekstu ograniczaj±cego
-typ dostêpu osoby korzystaj±cej z konta i bêd±cej w
+<p>JednÄ… ze zalet ssh jest moÅ¼liwoÅ›Ä‡ przeniesienia przez uÅ¼ytkownika
+publicznego klucza okreÅ›lajÄ…cego jego toÅ¼samoÅ›Ä‡ z innego komputera i
+dodanie go do pliku zawierajÄ…cego zaufane klucze na Twoim
+komputerze. DomyÅ›lnie uÅ¼ytkownik na innym komputerze (ktÃ³ry ma prywatny
+klucz okreÅ›lajÄ…cy jego toÅ¼samoÅ›Ä‡ powiÄ…zany z kluczem publicznym, ktÃ³ry
+otrzymaÅ‚eÅ›) ma moÅ¼liwoÅ›Ä‡ zalogowania siÄ™ na konto na Twoim serwerze.
+JednakÅ¼e jest moÅ¼liwe dodanie do klucza tekstu ograniczajÄ…cego
+typ dostÄ™pu osoby korzystajÄ…cej z konta i bÄ™dÄ…cej w
 posiadaniu tego klucza.</p>
 
-<p>Zatem, aby chroniæ podrzêdny serwer lustrzany, klucz dostarczony
-przez serwer nadrzêdny jest opatrzony tekstem, który ogranicza
-uprawnienia osoby korzystaj±cej z konta do jednej tylko rzeczy &mdash;
-uruchomienia programu, który uaktualni zawarto¶æ
-serwera lustrzanego. Nawet je¶li komu¶ (osobie postronnej)
-uda siê z³amaæ klucz, jedyne co bêdzie móg³ zrobiæ, to uruchomiæ
-program uaktualniaj±cy. Nie trzeba nawet martwiæ siê
-o uruchomienie wielu kopii tego programu, gdy¿ u¿ywany jest plik
-blokuj±cy (ang. lock file).</p>
+<p>Zatem, aby chroniÄ‡ podrzÄ™dny serwer lustrzany, klucz dostarczony
+przez serwer nadrzÄ™dny jest opatrzony tekstem, ktÃ³ry ogranicza
+uprawnienia osoby korzystajÄ…cej z konta do jednej tylko rzeczy &mdash;
+uruchomienia programu, ktÃ³ry uaktualni zawartoÅ›Ä‡
+serwera lustrzanego. Nawet jeÅ›li komuÅ› (osobie postronnej)
+uda siÄ™ zÅ‚amaÄ‡ klucz, jedyne co bÄ™dzie mÃ³gÅ‚ zrobiÄ‡, to uruchomiÄ‡
+program uaktualniajÄ…cy. Nie trzeba nawet martwiÄ‡ siÄ™
+o uruchomienie wielu kopii tego programu, gdyÅ¼ uÅ¼ywany jest plik
+blokujÄ…cy (ang. lock file).</p>
 
-<p>Po stronie serwera nadrzêdnego rsync mo¿e byæ tak skonfigurowany,
-aby ograniczaæ mo¿liwo¶æ tworzenia obrazów lustrzanych okre¶lonych
-obszarów poprzez podanie nazwy u¿ytkownika i has³a. S± one ca³kowicie niezale¿ne
-od <kbd>/etc/passwd</kbd>, wiêc serwer korzystaj±cy z techniki push
-nie musi siê martwiæ o zapewnienie dostêpu dla innych osób.
-Zgodnie z konfiguracj± nazwa u¿ytkownika i has³o s± przesy³ane w formie
-jawnej. Jednak¿e nie powinno to byæ problemem, poniewa¿ w najgorszym
-wypadku osoba postronna mo¿e uzyskaæ mo¿liwo¶æ stworzenia obrazu
+<p>Po stronie serwera nadrzÄ™dnego rsync moÅ¼e byÄ‡ tak skonfigurowany,
+aby ograniczaÄ‡ moÅ¼liwoÅ›Ä‡ tworzenia obrazÃ³w lustrzanych okreÅ›lonych
+obszarÃ³w poprzez podanie nazwy uÅ¼ytkownika i hasÅ‚a. SÄ… one caÅ‚kowicie niezaleÅ¼ne
+od <kbd>/etc/passwd</kbd>, wiÄ™c serwer korzystajÄ…cy z techniki push
+nie musi siÄ™ martwiÄ‡ o zapewnienie dostÄ™pu dla innych osÃ³b.
+Zgodnie z konfiguracjÄ… nazwa uÅ¼ytkownika i hasÅ‚o sÄ… przesyÅ‚ane w formie
+jawnej. JednakÅ¼e nie powinno to byÄ‡ problemem, poniewaÅ¼ w najgorszym
+wypadku osoba postronna moÅ¼e uzyskaÄ‡ moÅ¼liwoÅ›Ä‡ stworzenia obrazu
 lustrzanego stron Debiana z tej witryny.</p>
 
 <h2>Konfiguracja klienta dla metody push</h2>
 
-<p>Zaleca siê dokonanie poni¿szej konfiguracji jako zwyk³y u¿ytkownik,
-a nie jako administrator (root). Zawarto¶æ publicznego klucza ssh, który
-otrzyma³e¶ od serwera nadrzêdnego powinna zostaæ umieszczona w pliku
+<p>Zaleca siÄ™ dokonanie poniÅ¼szej konfiguracji jako zwykÅ‚y uÅ¼ytkownik,
+a nie jako administrator (root). ZawartoÅ›Ä‡ publicznego klucza ssh, ktÃ³ry
+otrzymaÅ‚eÅ› od serwera nadrzÄ™dnego powinna zostaÄ‡ umieszczona w pliku
 <kbd>~&lt;user&gt;/.ssh/authorized_keys</kbd>.</p>
 
-<p>Aby zostaæ klientem w metodzie push dla archiwum FTP trzeba skonfigurowaæ
-serwer za pomoc± naszego standardowego zestawu skryptów <a href="ftpmirror#how">ftpsync</a>
-z niewielkimi modyfikacjami. Wyedytuj sekcjê skryptu oznaczon± jako
-konfiguracja z ochron± has³em, tak aby zosta³ w³±czony plik
+<p>Aby zostaÄ‡ klientem w metodzie push dla archiwum FTP trzeba skonfigurowaÄ‡
+serwer za pomocÄ… naszego standardowego zestawu skryptÃ³w <a href="ftpmirror#how">ftpsync</a>
+z niewielkimi modyfikacjami. Wyedytuj sekcjÄ™ skryptu oznaczonÄ… jako
+konfiguracja z ochronÄ… hasÅ‚em, tak aby zostaÅ‚ wÅ‚Ä…czony plik
 <a href="ftpsync.conf">ftpsync.conf</a>. Wyedytuj ftpsync.conf i
-postêpuj zgodnie ze wskazówkami przekazywanymi przez serwer nadrzêdny.
+postÄ™puj zgodnie ze wskazÃ³wkami przekazywanymi przez serwer nadrzÄ™dny.
 </p>
 
 
 
 <h2>Podstawowi klienci metody push</h2>
 
-<p>Podstawowi klienci techniki push (ang. Push-Primary), nazywani równie¿ 
-serwerami lustrzanymi typu Tier-1, to klienci, którym wolno 
-pobieraæ dane bezpo¶rednio z naszego g³ównego archiwum.</p>
+<p>Podstawowi klienci techniki push (ang. Push-Primary), nazywani rÃ³wnieÅ¼ 
+serwerami lustrzanymi typu Tier-1, to klienci, ktÃ³rym wolno 
+pobieraÄ‡ dane bezpoÅ›rednio z naszego gÅ‚Ã³wnego archiwum.</p>
 
-<p>Je¶li Twój serwer posiada <strong>bardzo</strong> dobre ³±cze
-(zarówno bardzo dobr± przepustowo¶æ, jak i bardzo dobre po³±czenie z
-najwa¿niejszymi sieciami szkieletowymi) i chcesz pozwoliæ innym serwerom
-na tworzenie obrazów lustrzanych z Twojego serwera, mo¿esz daæ nam znaæ,
-aby¶my mogli rozwa¿yæ Twoj± kandydaturê na podstawowego klienta metody push.
-Jednak¿e nie spodziewaj siê, ¿e stanie siê to szybko, jako ¿e mamy
-ju¿ dostateczn± liczbê serwerów lustrzanych typu Tier-1.</p>
+<p>JeÅ›li TwÃ³j serwer posiada <strong>bardzo</strong> dobre Å‚Ä…cze
+(zarÃ³wno bardzo dobrÄ… przepustowoÅ›Ä‡, jak i bardzo dobre poÅ‚Ä…czenie z
+najwaÅ¼niejszymi sieciami szkieletowymi) i chcesz pozwoliÄ‡ innym serwerom
+na tworzenie obrazÃ³w lustrzanych z Twojego serwera, moÅ¼esz daÄ‡ nam znaÄ‡,
+abyÅ›my mogli rozwaÅ¼yÄ‡ TwojÄ… kandydaturÄ™ na podstawowego klienta metody push.
+JednakÅ¼e nie spodziewaj siÄ™, Å¼e stanie siÄ™ to szybko, jako Å¼e mamy
+juÅ¼ dostatecznÄ… liczbÄ™ serwerÃ³w lustrzanych typu Tier-1.</p>
 
-<p>Je¶li Twój serwer zostanie serwerem Push-Primary dla archwum FTP,
-musisz mieæ jeden z plików:</p>
+<p>JeÅ›li TwÃ³j serwer zostanie serwerem Push-Primary dla archwum FTP,
+musisz mieÄ‡ jeden z plikÃ³w:</p>
 <ul>
-  <li><a href="id_rsa.pub.ftp-master">klucz publiczny SSH2 u¿ywany przez
+  <li><a href="id_rsa.pub.ftp-master">klucz publiczny SSH2 uÅ¼ywany przez
       ftp-master.debian.org</a></li>
-  <li><a href="id_rsa.pub.syncproxy.eu">klucz publiczny SSH2 u¿ywany przez
+  <li><a href="id_rsa.pub.syncproxy.eu">klucz publiczny SSH2 uÅ¼ywany przez
       syncproxy.eu.debian.org</a></li>
-  <li><a href="id_rsa.pub.syncproxy.wna">klucz publiczny SSH2 u¿ywany przez
+  <li><a href="id_rsa.pub.syncproxy.wna">klucz publiczny SSH2 uÅ¼ywany przez
       syncproxy.wna.debian.org</a></li>
 </ul>
 
-<p>Je¶li Twój serwer zostanie serwerem Push-Primary dla stron www,
-musisz mieæ <a href="id_rsa.pub.www-master">klucz publiczny SSH2 u¿ywany przez
+<p>JeÅ›li TwÃ³j serwer zostanie serwerem Push-Primary dla stron www,
+musisz mieÄ‡ <a href="id_rsa.pub.www-master">klucz publiczny SSH2 uÅ¼ywany przez
 www-master.debian.org</a>.</p>
 
 <h2>Konfiguracja serwera w technice push</h2>
 
-<p>Ze wzglêdu na du¿± ilo¶æ serwerów lustrzanych oraz wielko¶æ archiwum
-Debiana, nie jest mo¿liwe, aby wszystkie serwery lustrzane u¿ywa³y
-g³ównego archiwum jako ¼ród³a plików (tzn. jako ich serwera
-push). Wiêksz± efektywno¶æ mo¿na uzyskaæ, je¶li obci±¿enie zostanie 
-rozdzielone miêdzy wiele serwerów metody push rozmieszczonych na
-ca³ym ¶wiecie.</p>
+<p>Ze wzglÄ™du na duÅ¼Ä… iloÅ›Ä‡ serwerÃ³w lustrzanych oraz wielkoÅ›Ä‡ archiwum
+Debiana, nie jest moÅ¼liwe, aby wszystkie serwery lustrzane uÅ¼ywaÅ‚y
+gÅ‚Ã³wnego archiwum jako ÅºrÃ³dÅ‚a plikÃ³w (tzn. jako ich serwera
+push). WiÄ™kszÄ… efektywnoÅ›Ä‡ moÅ¼na uzyskaÄ‡, jeÅ›li obciÄ…Å¼enie zostanie 
+rozdzielone miÄ™dzy wiele serwerÃ³w metody push rozmieszczonych na
+caÅ‚ym Å›wiecie.</p>
 
-<p>Mirrory push powinny byæ klientami g³ównego archiwum (albo innego serwera
-push) i powinny zawieraæ obraz lustrzany ca³ego archiwum Debiana.</p>
+<p>Mirrory push powinny byÄ‡ klientami gÅ‚Ã³wnego archiwum (albo innego serwera
+push) i powinny zawieraÄ‡ obraz lustrzany caÅ‚ego archiwum Debiana.</p>
 
-<p>Przeczytaj <a href="push_server">szczegó³owy opis konfiguracji
-serwera metod± push</a>.</p>
+<p>Przeczytaj <a href="push_server">szczegÃ³Å‚owy opis konfiguracji
+serwera metodÄ… push</a>.</p>

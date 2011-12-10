@@ -1,14 +1,14 @@
-<p>Inne strony WWW systemu ¶ledzenia b³êdów:
+<p>Inne strony WWW systemu Å›ledzenia bÅ‚Ä™dÃ³w:
 
 <ul>
-  <li><a href="./">G³ówna strona systemu ¶ledzenia b³êdów.</a>
-  <li><a href="Reporting">Jak zg³osiæ b³±d.</a>
-  <li><a href="Access">Dostêp do zg³oszonych b³êdów.</a>
-  <li><a href="Developer">Instrukcje u¿ycia systemu dla rozwijaj±cych.</a>
-  <li><a href="server-control">Instrukcje dla rozwijaj±cych dotycz±ce
-      manipulacji na zg³oszeniach przy pomocy poczty elektronicznej.</a>
+  <li><a href="./">GÅ‚Ã³wna strona systemu Å›ledzenia bÅ‚Ä™dÃ³w.</a>
+  <li><a href="Reporting">Jak zgÅ‚osiÄ‡ bÅ‚Ä…d.</a>
+  <li><a href="Access">DostÄ™p do zgÅ‚oszonych bÅ‚Ä™dÃ³w.</a>
+  <li><a href="Developer">Instrukcje uÅ¼ycia systemu dla rozwijajÄ…cych.</a>
+  <li><a href="server-control">Instrukcje dla rozwijajÄ…cych dotyczÄ…ce
+      manipulacji na zgÅ‚oszeniach przy pomocy poczty elektronicznej.</a>
   <li><a href="server-refcard">Polecenia serwera pocztowego.</a>
-  <li><a href="server-request">Otrzymywanie zg³oszeñ poczt± elektroniczn±.</a>
+  <li><a href="server-request">Otrzymywanie zgÅ‚oszeÅ„ pocztÄ… elektronicznÄ….</a>
 #  <li><a href="db/ix/full.html">Full list of outstanding and recent bug
 #      reports.</a>
 #  <li><a href="db/ix/packages.html">Packages with bug reports.</a>
