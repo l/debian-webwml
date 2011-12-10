@@ -53,7 +53,8 @@ wnpp_FILES      = $(TEMPLDIR)/wnpp.wml
 others_FILES    = $(ENGLISHDIR)/banners/index.tags \
   $(ENGLISHDIR)/devel/debian-installer/ports-status.defs \
   $(ENGLISHDIR)/devel/website/tc.data \
-  $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/logos/index.data \
+  $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/distrib/pre-installed.defs \
+  $(ENGLISHDIR)/logos/index.data \
   $(ENGLISHDIR)/misc/merchandise.def $(ENGLISHDIR)/y2k/l10n.data \
   $(ENGLISHDIR)/devel/join/nm-steps.inc \
   $(ENGLISHDIR)/misc/hardware.def \
