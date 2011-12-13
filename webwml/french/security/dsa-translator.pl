@@ -306,6 +306,8 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|design.flaws|défauts de conception|gs;
 	$output =~ s|design.flaw|défaut de conception|gs;
 	$output =~ s|engine.layout|moteur de rendu|gs;
+	$output =~ s|a.flaw|un défaut|gs;
+	$output =~ s|flaw|défaut|gs;
 	$output =~ s|frontend|interface|gs;
 	$output =~ s|format string|chaîne de formatage|gs;
 	$output =~ s|high-level|haut niveau|gs;
