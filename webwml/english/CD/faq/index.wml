@@ -19,7 +19,7 @@ normal computer file, that can e.g. be transmitted over the
 Internet. CD burning programs can use the image files to make real
 CDs.</p>
 
-<p>For a correctly recorded CD, the <tt>.iso</tt> file must not appear
+<p>For a correctly written CD, the <tt>.iso</tt> file must not appear
 on the CD when you access it! Instead, you should see a number of
 files and directories - in the case of a Debian CD, this includes a
 <q>dists</q> directory and a <q>README.html</q> file.</p>
@@ -31,7 +31,7 @@ appear on the final CD. Some archive programs allow you to <q>unpack</q>
 unpacked files! The resulting CD will fail to boot because the
 <tt>.iso</tt> format includes special information related to booting
 from the CD, which is lost when you unpack the file. See below on how
-to correctly record a CD image under <a href="#record-unix">Linux</a>,
+to correctly write a CD image under <a href="#record-unix">Linux</a>,
 <a href="#record-windows">Windows</a> or <a
 href="#record-mac">MacOS</a>.</p>
 
@@ -473,24 +473,34 @@ restriction or use the <tt>curl</tt> command line download tool:
 
 # ============================================================
 
-<toc-add-entry name="record-unix">How do I record a CD-R under
+<toc-add-entry name="record-unix">How do I write an ISO image under
 Linux/Unix?</toc-add-entry>
 
-<p>Use the
-<a href="http://cdrecord.berlios.de/old/private/cdrecord.html">cdrecord</a>
-program, with a command line like this (as root):
-<br /><tt>nice&nbsp;--18&nbsp;cdrecord&nbsp;-eject&nbsp;-v&nbsp;speed=2&nbsp;dev=0,6,0&nbsp;-data&nbsp;-pad&nbsp;binary-i386-1.iso</tt></p>
+<p>Note that Debian ISO images for i386 and amd64 are also bootable
+from a USB key; see <a href="#write-usb">below</a>.</p>
 
-<p>
-Debian forked cdrecord in etch. Please try wodim on Debian based systems
-instead of cdrecord. 
+<p><a href="http://www.gnu.org/software/xorriso/xorriso.html">xorriso</a>
+for all optical media types (also doable as non-root user):
+<br/><tt>xorriso -as cdrecord -v dev=/dev/sr0 -eject debian-x.y.z-arch-MEDIUM-NN.iso</tt>
+<br/>Add option <tt>stream_recording=on</tt> to get on BD-RE full nominal speed without checkreading.
+</p>
+
+<p><a href="http://fy.chalmers.se/~appro/linux/DVD+RW/">growisofs</a>
+for DVD and BD optical media types:
+<br/><tt>growisofs -dvd-compat -Z /dev/sr0=debian-x.y.z-arch-MEDIUM-NN.iso</tt>
+</p>
+
+<p><a href="http://www.cdrkit.org/">wodim</a>
+for CD optical media type:
+<br/><tt>wodim -v dev=/dev/sr0 -eject -sao debian-x.y.z-arch-CD-NN.iso</tt>
 </p>
 
 <p>For Linux, there are also the X programs
 <a href="http://www.gnome.org/projects/brasero/">Brasero</a>,
 <a href="http://k3b.plainblack.com/">K3B</a> and
 <a href="http://www.xcdroast.org/">X-CD-Roast</a>,
-to name a few. Note that they're all frontends to cdrecord.</p>
+to name a few. Note that they're all frontends to the previously
+mentioned low-level burning applications.</p>
 
 <dl>
   <dt><strong><a id="brasero"
@@ -527,7 +537,7 @@ displaying the image filename and click on <i>Add</i>, then click on
 
 # ============================================================
 
-<toc-add-entry name="record-windows">How do I record a CD-R under
+<toc-add-entry name="record-windows">How do I write an ISO image under
 Windows?</toc-add-entry>
 
 <p>This might be a little problem, as many Windows programs use
@@ -537,7 +547,7 @@ options like <q>ISO9660 file</q>, <q>Raw ISO image</q> or <q>2048
 bytes/sector</q>. (Note: other bytes/sector values are fatal!) Some
 programs do not offer these choices; use another burning program
 instead (ask a friend or colleague). Here is some information about
-how to record CD images with specific products:</p>
+how to write CD images with specific products:</p>
 
 <dl>
 
@@ -559,7 +569,7 @@ how to record CD images with specific products:</p>
   href="http://isorecorder.alexfeinman.com/isorecorder.htm">ISO
   Recorder</a></strong> (Freeware)</dt>
 
-  <dd>This program can record <tt>.iso</tt> images on Windows 2003, XP
+  <dd>This program can write <tt>.iso</tt> images on Windows 2003, XP
   and Vista.</dd>
 
   <dt><strong><a NAME="adaptec" href="http://www.adaptec.com/">Adaptec</a>\
@@ -623,12 +633,6 @@ how to record CD images with specific products:</p>
   command to be executed is something like
   <tt>cdburn&nbsp;drive:&nbsp;iso-file.iso&nbsp;/speed&nbsp;max</tt></dd>
 
-  <dt><strong><a NAME="cdrecord-win" href="http://www.fokus.gmd.de/research/cc/glone/employees/joerg.schilling/private/cdrecord.html">cdrecord</a></strong></dt>
-
-  <dd>This program is also available
-  <a href="ftp://ftp.fokus.gmd.de/pub/unix/cdrecord/alpha/win32/">for
-  Windows 9x/NT systems</a>. See the README for more details.</dd>
-
 </dl>
 
 <p>If you can provide updated information or details for other
@@ -638,7 +642,7 @@ href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;debian-cd&#64;lists.debian.org"
 
 # ============================================================
 
-<toc-add-entry name="record-mac">How do I record a CD-R under
+<toc-add-entry name="record-mac">How do I write an ISO image under
 Mac OS?</toc-add-entry>
 
 <p>The <strong>Toast</strong> program for Mac OS is reported to work fine with
@@ -655,11 +659,38 @@ the <tt>/Applications/Utilities</tt> folder), select
 image to burn. Ensure that the settings are correct, then click on
 <i>Burn</i>.</p>
 
-<p>Additionally, the
-<a href="http://www.fokus.gmd.de/research/cc/glone/employees/joerg.schilling/private/cdrecord.html">cdrecord</a>
-program is available
-<a href="ftp://ftp.fokus.gmd.de/pub/unix/cdrecord/alpha/macos-x/">for
-Mac OS X</a> as well.
+
+# ============================================================
+
+<toc-add-entry name="write-usb">How do I write a CD image to a USB flash drive?</toc-add-entry>
+
+<p>Several of the Debian CD and Debian Live images are created using
+<i>isohybrid</i> technology, which means that they may be used in two
+different ways:</p>
+
+<ul>
+  <li>They may be written to CD/DVD and used as normal for CD/DVD booting.</li>
+  <li>They may be written to USB flash drives, bootable directly from the BIOS of most PCs.</li>
+</ul>
+
+<p>The most common way to copy an image to a USB flash drive is to use
+the <q>dd</q> command on a Linux machine:</p>
+
+<p><code>dd if=&lt;file&gt; of=&lt;device&gt; bs=4M; sync</code></p>
+
+<p>where:</p>
+<ul>
+  <li>&lt;file&gt; is the name of the input image, e.g. <q>netinst.iso</q>
+  <li>&lt;device&gt; is the device matching the USB flash drive,
+  e.g. /dev/sda, /dev/sdb. Be careful to make sure you have the right
+  device name, as this command is capable of writing over your hard
+  disk just as easily if you get the wrong one!</li>
+  <li><q>bs=4M</q> tells dd to read/write in 4 megabyte chunks for
+  better performance; the default is 512 bytes, which will be much
+  slower
+  <li>The <q>sync</q> is to make sure that all the writes are flushed out
+  before the command returns.
+</ul>
 
 # ============================================================
 
