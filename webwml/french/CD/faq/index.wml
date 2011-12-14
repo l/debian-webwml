@@ -1,6 +1,6 @@
 #use wml::debian::cdimage title="Foire Aux Questions concernant les CD Debian" NOHEADER=true BARETITLE=true
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.99" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.101" maintainer="David Prévot"
 #include "$(ENGLISHDIR)/releases/info"
 
 # translatiors: 
@@ -30,7 +30,8 @@ classique qui peut, par exemple, être transmis par Internet.
 Les programmes de gravure de CD peuvent utiliser
 les fichiers d'images pour fabriquer de vrais CD.</p>
 
-<p>Pour un CD correctement enregistré, le fichier <tt>.iso</tt> ne
+<p>
+Pour un CD correctement gravé, le fichier <tt>.iso</tt> ne
 doit pas apparaître lorsque vous y accédez&nbsp;! À la place, vous
 devriez voir un certain nombre de fichiers et de répertoires
 &ndash;&nbsp;dans le cas d'un CD Debian, cela inclut un répertoire
@@ -47,7 +48,8 @@ liées à l'amorçage à partir du CD, qui seront perdues lors du
 dépaquetage du fichier. Voyez ci-dessous pour savoir comment
 graver correctement une image de CD sous
 <a href="#record-unix">Linux</a>, <a href="#record-windows">Windows</a> ou
-<a href="#record-mac">MacOS</a>.</p>
+<a href="#record-mac">Mac OS</a>.
+</p>
 
 # ============================================================
 
@@ -554,7 +556,7 @@ binaires indépendants compilés pour
 <a href="http://www.mingw.org/">MinGW</a>.</p>
 
 <p>Si vous souhaitez vérifier plusieurs fichiers d'image ou
-des CD déjà gravés sur les systèmes Unix ou Linux, le script
+des CD déjà gravés sur les systèmes UNIX ou Linux, le script
 #<a href="ftp://fly.cnuce.cnr.it/pub/software/unix/checkiso">checkiso</a>
 <a href="http://fly.cnuce.cnr.it/software/#checkiso">checkiso</a>
 peut être d'un grand secours.</p>
@@ -582,17 +584,36 @@ de téléchargement en ligne de commande <tt>curl</tt>&nbsp;:
 
 # ============================================================
 
-<toc-add-entry name="record-unix">Comment puis-je graver
-un CD-R sous Linux ou Unix&nbsp;?</toc-add-entry>
-
-<p>Utilisez le programme
-<a href="http://cdrecord.berlios.de/old/private/cdrecord.html">\
-cdrecord</a>, en tapant à l'invite (en tant que root)&nbsp;:
-<br /><tt>nice&nbsp;--18&nbsp;cdrecord&nbsp;-eject&nbsp;-v&nbsp;speed=2&nbsp;dev=0,6,0&nbsp;-data&nbsp;-pad&nbsp;binary-i386-1.iso</tt></p>
+<toc-add-entry name="record-unix">Comment puis-graver
+une image ISO sous Linux ou UNIX&nbsp;?</toc-add-entry>
 
 <p>
-Debian a créé une branche de cdrecord dans <em>Etch</em>. Veuillez
-essayer wodim sur les systèmes basés sur Debian au lieu de cdrecord.
+Remarquez que les images ISO de Debian pour i386 et amd64 sont
+aussi <a href="#write-usb">amorçables à partir d'une clef USB</a>.
+</p>
+
+<p>
+<a href="http://www.gnu.org/software/xorriso/xorriso.html">xorriso</a>
+pour tous les types de support optiques (faisable
+aussi en tant qu'utilisateur non superutilisateur) :
+<br/>
+<tt>xorriso -as cdrecord -v dev=/dev/sr0 -eject debian-x.y.z-arch-TYPE-NN.iso</tt>
+<br/>
+Ajouter l'option <tt>stream_recording=on</tt> pour obtenir la vitesse nominale
+complète sans vérification de lecture sur Blu-ray réinscriptible (BD-RE).
+</p>
+
+<p>
+<a href="http://fy.chalmers.se/~appro/linux/DVD+RW/">growisofs</a>
+pour les supports optiques de type DVD ou Blu-ray :
+<br/>
+<tt>growisofs -dvd-compat -Z /dev/sr0=debian-x.y.z-arch-TYPE-NN.iso</tt>
+</p>
+
+<p><a href="http://www.cdrkit.org/">wodim</a>
+pour les supports optiques de type CD :
+<br/>
+<tt>wodim -v dev=/dev/sr0 -eject -sao debian-x.y.z-arch-CD-NN.iso</tt>
 </p>
 
 <p>Pour Linux, il y a également des programmes sous X tels que
@@ -601,7 +622,9 @@ essayer wodim sur les systèmes basés sur Debian au lieu de cdrecord.
 et
 <a href="http://www.xcdroast.org/">X-CD-Roast</a>
 pour n'en nommer que quelques-uns. Notez que tous sont des
-interfaces graphiques utilisant cdrecord.</p>
+interfaces graphiques utilisant les applications
+bas niveau de gravure mentionnées précédemment.
+</p>
 
 <dl>
 
@@ -644,7 +667,7 @@ layout</i>. Finalement, cliquez sur <i>Write tracks</i>.</dd>
 # ============================================================
 
 <toc-add-entry name="record-windows">Comment puis-je graver
-un CD-R sous Windows&nbsp;?</toc-add-entry>
+une image ISO sous Windows&nbsp;?</toc-add-entry>
 
 <p>Cela peut être quelque peu problématique, étant donné
 que plusieurs programmes pour Windows utilisent pour les images
@@ -751,15 +774,6 @@ de CD avec certains programmes&nbsp;:</p>
   <tt>cdburn&nbsp;lecteur:&nbsp;fichier-iso.iso&nbsp;/speed&nbsp;max</tt>
   </dd>
 
-  <dt><strong><a NAME="cdrecord-win" 
-  href="http://www.fokus.gmd.de/research/cc/glone/employees/joerg.schilling/private/cdrecord.html">cdrecord</a>
-  </strong></dt>
-
-  <dd>Ce programme est également disponible
-  <a href="ftp://ftp.fokus.gmd.de/pub/unix/cdrecord/alpha/win32/">pour
-  les systèmes Windows 9x/NT</a>. Consultez le fichier README pour plus
-  de détails.</dd>
-
 </dl>
 
 <p>Si vous pouvez fournir des informations plus à jour ou
@@ -770,7 +784,7 @@ nous en faire part</a>.
 # ============================================================
 
 <toc-add-entry name="record-mac">Comment puis-je graver
-un CD-R sous Mac&nbsp;OS&nbsp;?</toc-add-entry>
+une image ISO sous Mac&nbsp;OS&nbsp;?</toc-add-entry>
 
 <p>Le programme <strong>Toast</strong> pour Mac&nbsp;OS
 fonctionne bien avec les fichiers
@@ -789,11 +803,59 @@ et choisissez l'image de CD qui doit être gravée.
 Veuillez vous assurer que la configuration est correcte, puis
 cliquez sur <i>Burn</i>.</p>
 
-<p>En outre, le programme
-<a href="http://www.fokus.gmd.de/research/cc/glone/employees/joerg.schilling/private/cdrecord.html">\
-cdrecord</a> est disponible
-<a href="ftp://ftp.fokus.gmd.de/pub/unix/cdrecord/alpha/macos-x/">pour
-Mac&nbsp;OS&nbsp;X</a> également.
+  
+# ============================================================
+  
+<toc-add-entry name="write-usb">Comment puis-je écrire
+une image de CD sur une clef USB ?</toc-add-entry>
+
+<p>
+Plusieurs images de CD et CD autonomes (<q>live</q>) Debian sont
+créés avec la technologie <i>isohybrid</i>, ce qui signifie
+qu'elle peuvent être utilisées de deux façons différentes :
+</p>
+
+<ul>
+<li>
+elle peuvent être gravées sur des CD ou DVD et
+utilisées comme CD ou DVD amorçables normaux ;
+</li>
+<li>
+elle peuvent être écrites sur des clefs USB, amorçables
+directement depuis le BIOS de la plupart des PC.
+</li>
+</ul>
+
+<p>
+La façon le plus pratique de copier une image sur une clef USB
+est d'utiliser la commande <q>dd</q> sur une machine Linux :
+</p>
+
+<p>
+<code>dd if=&lt;fichier&gt; of=&lt;périphérique&gt; bs=4M; sync</code>
+</p>
+
+<p>Avec :</p>
+<ul>
+<li>
+&lt;fichier&gt; le nom de l'image à écrire, par exemple <q>netinst.iso</q> ;
+</li>
+<li>
+&lt;périphérique&gt; est le périphérique correspondant
+à la clef USB, par exemple /dev/sda ou /dev/sdb.
+Faites attention à vérifier qu'il s'agit du nom de
+périphérique adéquat, car la commande pourrait écrire sur
+le disque dur aussi facilement si ce n'est pas le bon !
+</li>
+<li>
+<q>bs=4M</q> indique à dd de lire et écrire des blocs
+de 4 mégaoctets pour améliorer les performances.
+La valeur par défaut est de 512 octets, ce
+qui rend l'opération beaucoup plus lente ;
+<q>sync</q> à la fin permet de s'assurer que toutes les
+écritures sont réalisées avant la fin de la commande.
+</li>
+</ul>
 
 # ============================================================
 
