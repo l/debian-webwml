@@ -1,6 +1,6 @@
 #use wml::debian::cdimage title="Ofte stillede spørgsmål om Debians cd'er" NOHEADER=true BARETITLE=true
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.99"
+#use wml::debian::translation-check translation="1.101"
 #include "$(ENGLISHDIR)/releases/info"
 
 <define-tag toc-title-formatting endtag="required" whitespace="delete">
@@ -30,7 +30,7 @@ ikke kunne starte fra cd'en, fordi <tt>.iso</tt>-formatet indeholder særlige
 oplysninger vedrørende start fra cd'en, og disse går tabt når filen udpakkes.
 Se nedenfor for oplysninger om hvordan man på korrekt vis brænder et cd-aftryk
 under <a href="#record-unix">Linux</a>,	<a href="#record-windows">Windows</a> 
-og <a href="#record-mac">MacOS</a>.</p>
+og <a href="#record-mac">Mac OS</a>.</p>
 
 # ============================================================
 
@@ -214,7 +214,7 @@ grund til det.</p>
 
 <p>Debian ser ganske strikst på programlicenser: kun programmer som er frie
 i betydningen i <a href="$(HOME)/social_contract#guidelines">Debians
-retningslinier for fri software</a> tillades i den egentlige distribution.
+retningslinjer for fri software</a> tillades i den egentlige distribution.
 Alle andre <q>non-free</q> (ikke-frie) programmer (for eksempel programmer hvor
 kildekoden ikke er tilgængelig) understøttes ikke officielt.</p>
 
@@ -424,23 +424,35 @@ kommandolinjeværktøjet <tt>curl</tt> til hentning af filer:
 
 # ============================================================
 
-<toc-add-entry name="record-unix">Hvordan brænder jeg en CD-R under
+<toc-add-entry name="record-unix">Hvordan brænder jeg et ISO-aftryk under
 Linux/Unix?</toc-add-entry>
 
-<p>Brug programmet
-<a href="http://cdrecord.berlios.de/old/private/cdrecord.html">cdrecord</a>
-program, med en kommandolinie som denne (som root):
-<br /><tt>nice&nbsp;--18&nbsp;cdrecord&nbsp;-eject&nbsp;-v&nbsp;speed=2&nbsp;dev=0,6,0&nbsp;-data&nbsp;-pad&nbsp;binary-i386-1.iso</tt></p>
+<p>Bemærk at med Debians ISO-aftryk til i386 og amd64 også kan boote fra en 
+USB-nøgle; se <a href="#write-usb">neden for</a>.</p>
 
-<p>Den har lavet en afledt version af cdrecord i etch.  Prøv wodim på 
-Debian-baserede systemer i systemer i stedet for cdrecord.</p>
+<p><a href="http://www.gnu.org/software/xorriso/xorriso.html">xorriso</a> til 
+alle former for optiske medier (også hvis man ikke har root-adgang):
+<br/>
+<tt>xorriso -as cdrecord -v dev=/dev/sr0 -eject debian-x.y.z-arch-MEDIUM-NN.iso</tt>
+<br/>
+Tilføj valgmuligheden <tt>stream_recording=on</tt> for at få den komplette 
+nominelle BD-RE-hastighed uden kontrollæsning.</p>
+
+<p><a href="http://fy.chalmers.se/~appro/linux/DVD+RW/">growisofs</a> til de 
+optiske medier dvd og bd:
+<br/>
+<tt>growisofs -dvd-compat -Z /dev/sr0=debian-x.y.z-arch-MEDIUM-NN.iso</tt></p>
+
+<p><a href="http://www.cdrkit.org/">wodim</a> til optiske cd-medier:
+<br/>
+<tt>wodim -v dev=/dev/sr0 -eject -sao debian-x.y.z-arch-CD-NN.iso</tt></p>
 
 <p>Til Linux er der også X-programmerne
 <a href="http://www.gnome.org/projects/brasero/">Brasero</a>,
 <a href="http://k3b.plainblack.com/">K3B</a> og
 <a href="http://www.xcdroast.org">X-CD-Roast</a>
-for at nævne et par stykker. Bemærk, at de alle er overbygninger til
-cdrecord.</p>
+for at nævne et par stykker.  Bemærk, at de alle er overbygninger til de 
+før omtalte lavniveaubrænderprogrammer.</p>
 
 <dl>
   <dt><strong><a id="brasero"
@@ -468,14 +480,14 @@ cdrecord.</p>
   oversigten. (Hvis oversigten er tom, skriv stien til mappen, som du ønsker at 
   anvende til midlertidig opbevaring, og vælg <i>Add</i>.)  Vælg <i>OK</i> for 
   at afsluttet opsætningen. Vælg dernæst <i>Create CD</i> og <i>Write 
-  Tracks</i>. Vælg fanen <i>Layout tracks</i>, vælg linien som viser 
+  Tracks</i>. Vælg fanen <i>Layout tracks</i>, vælg linjen som viser 
   cd-aftrykkets filnavn og vælg <i>Add</i>, vælg dernæst <i>Accept track 
   layout</i>. Til sidst vælges <i>Write tracks</i>.</dd>
 </dl>
 
 # ============================================================
 
-<toc-add-entry name="record-windows">Hvordan brænder jeg en CD-R under
+<toc-add-entry name="record-windows">Hvordan brænder jeg et ISO-aftryk under
 Windows?</toc-add-entry>
 
 <p>Det kan være et lille problem, da mange Windows-programmer bruger deres
@@ -559,13 +571,6 @@ oplysninger om hvordan man brænder cd-aftryk med specifikke produkter:</p>
   nogenlunde ud som den følgende 
   <tt>cdburn&nbsp;drev:&nbsp;iso-fil.iso&nbsp;/speed&nbsp;maks</tt></dd>
 
-  <dt><strong><a NAME="cdrecord-win" href="http://www.fokus.gmd.de/research/cc/glone/employees/joerg.schilling/private/cdrecord.html">\
-  cdrecord</a></strong></dt>
-
-  <dd>Dette program er også tilgængeligt
-  <a href="ftp://ftp.fokus.gmd.de/pub/unix/cdrecord/alpha/win32/">til systemer
-  med Windows 9x/NT</a>. Se README-filen for flere oplysninger.</dd>
-
 </dl>
 
 <p>Hvis du har ajourførte oplysninger eller oplysninger om andre programmer, så
@@ -573,8 +578,8 @@ oplysninger om hvordan man brænder cd-aftryk med specifikke produkter:</p>
 
 # ============================================================
 
-<toc-add-entry name="record-mac">Hvordan brænder jeg en CD-R under
-Mac OS?</toc-add-entry>
+<toc-add-entry name="record-mac">Hvordan brænder jeg et ISO-aftryk under Mac 
+OS?</toc-add-entry>
 
 <p>Programmet <q>Toast</q> til Mac OS skulle fungere fint med <tt>.iso</tt>-filer.
 Du kan sikre dig yderligere ved angive <q>creator code</q> <i>CDr3</i> (eller
@@ -588,19 +593,48 @@ X&nbsp;10.1 og højere): Efter at have åbnet Disk Copy-programmet (i mappen
 menuen <i>Image</i> og vælg det cd-aftryk som skal brændes. Forvis dig om at
 indstillingerne er korrekte, klik dernæst på <i>Burn</i>.</p>
 
-<p>Desuden er programmet
-<a href="http://www.fokus.gmd.de/research/cc/glone/employees/joerg.schilling/private/cdrecord.html">cdrecord</a>
-også tilgængeligt
-<a href="ftp://ftp.fokus.gmd.de/pub/unix/cdrecord/alpha/macos-x/">til
-MacOS X</a>.
+# ============================================================
+
+<toc-add-entry name="write-usb">Hvordan brænder jeg et cd-aftryk til et 
+USB-flashdrev?</toc-add-entry>
+
+<p>Flere af Debians cd- og live-aftryk er fremstillet ved hjælp af teknologien
+<em>isohybrid</em>, hvilket betyder at de kan anvendes på to forskellige 
+måder:</p>
+
+<ul>
+    <li>De kan brændes til cd/dvd og anvendes som normalt til at boote fra 
+	cd/dvd.</li>
+    <li>De kan skrives til USB-flashdrev, som der kan bootes fra via de fleste 
+	pc'ers BIOS.</li>
+</ul>
+
+<p>Den meste almindelige måde at kopiere et aftryk til et USB-flashdrev, er at
+anvende kommandoen <q>dd</q> på en Linux-maskine:</p>
+
+<p><code>dd if=&lt;fil&gt; of=&lt;enhed&gt; bs=4M; sync</code></p>
+
+<p>Hvor:</p>
+<ul>
+    <li>&lt;fil&gt; er navnet på det aftryk, fx <q>netinst.iso</q>, der skal 
+	kopieres.</li>
+    <li>&lt;enhed&gt; er navnet på den enhed, som USB-flashdrevet er tildelt, fx
+	/dev/sda, /dev/sdb.  Vær omhyggelig med at sikre dig, at du har fundet 
+	det rette navn på enheden, da kommandoen snildt kan overskrive din 
+	harddisk, hvis du har angivet en forkert enhed!</li>
+    <li><q>bs=4M</q> fortæller dd at læse/skrive i 4-megabytechunks for bedre 
+	ydeevne; standarden er 512 bytes, som er meget langsommere.</li>
+    <li><q>sync</q> sikrer at alle skrivninger flushes før kommandoen 
+	afslutter.</li>
+</ul>
 
 # ============================================================
 
 <toc-add-entry name="whatlabel">Hvordan skal jeg navngive
 cd'erne?</toc-add-entry>
 
-<p>Der er ingen bestemt måde man skal navngive på. Men vi foreslåre at du
-bruger dette princip for at sikre ensartethed:</p>
+<p>Der er ingen bestemt måde man skal navngive på.  Men vi foreslår, at du
+bruger følgende princip, for at sikre ensartethed:</p>
 
 <div class="cdflash">
       <p>Debian GNU/{Linux|Hurd}
@@ -626,7 +660,7 @@ bruger dette princip for at sikre ensartethed:</p>
 </div>
 
 <p>Hvis du har plads til det kan du også tilføje kodenavnet til den første
-linie, dvs.: <i>Debian GNU/Linux 3.1 <q>sarge</q></i>.</p>
+linje, dvs.: <i>Debian GNU/Linux 3.1 <q>sarge</q></i>.</p>
 
 <p>Bemærk at det <strong>kun</strong> er tilladt at bruge udtrykket
 <i>Official</i> på cd'er hvis kontrolsum passer med den fra stedet med
@@ -703,10 +737,10 @@ dette formål opsætte et lokalt mellemlager, som der er tre mulighed for:</p>
   individuelle maskiner kan anvende dette filspejl som var det en almindelig
   Debian-server. Hvis indholdet af en cd for eksempel er tilgængelig fra URL'en
   <tt>http://10.0.0.1/cd1/</tt>, kan maskiner i det lokale netværk anvende
-  pakker fra cd'en med følgende linie føjet til deres
+  pakker fra cd'en med følgende linje føjet til deres
   <tt>/etc/apt/sources.list</tt>:<br />
   <tt>deb http://10.0.0.1/cd1/ stable main contrib</tt><br />
-  En anden URL og en separat linie i <tt>sources.list</tt> er nødvendigt for
+  En anden URL og en separat linje i <tt>sources.list</tt> er nødvendigt for
   hver cd.</li>
 
   <li><em>Få din HTTP-proxy til at mellemlagre (cache) .deb-filer</em>
@@ -719,7 +753,7 @@ dette formål opsætte et lokalt mellemlager, som der er tre mulighed for:</p>
   proxy'ens pladsforbrug vil det også fungere på steder med begrænset
   hardddiskplads, og det har den fordel i forhold til filspejling at kun de
   filer der installeres, bliver hentet, dermed spares der båndbredde.
-  Squid kan sættes op til at gemme filerne ved at tilføje en linie til
+  Squid kan sættes op til at gemme filerne ved at tilføje en linje til
   <tt>/etc/squid/squid.conf</tt>:<br /><tt>refresh_pattern&nbsp;&nbsp;&nbsp;debian.org/.*.deb$&nbsp;&nbsp;&nbsp;129600&nbsp;100%&nbsp;129600</tt></li>
 
   <li><em>Opsæt et privat Debian-pakkespejl:</em> Vær opmærksom på at Debians
@@ -791,4 +825,3 @@ typisk mere up-to-date, men er til gengæld ikke blevet testet nær så meget.
 Nogle har ny funktionalitet (f.eks. installationsunderstøttelse af ny
 hardware), eller visse ekstra software-pakker som ikke er en del af 
 Debian-arkivet.</p>
-
