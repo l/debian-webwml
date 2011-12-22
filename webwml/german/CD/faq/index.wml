@@ -1,7 +1,7 @@
 #use wml::debian::cdimage title="Häufig gestellte Fragen über Debian-CDs" NOHEADER=true BARETITLE=true
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/info"
-#use wml::debian::translation-check translation="1.99"
+#use wml::debian::translation-check translation="1.101"
 # $Id$
 # Translator: Gerfried Fuchs <alfie@debian.org> 2002-01-29
 # Updated: Holger Wansing <linux@wansing-online.de>, 2011
@@ -32,9 +32,9 @@ CD-Brenner-Programme können die Image-Datei verwenden, um echte CDs zu erstelle
    CDs aus den ausgepackten Dateien zu erstellen! Die entstandene CD wird nicht
    booten, da das <tt>.iso</tt>-Format spezielle Informationen in Bezug auf das
    Booten von CD enthält, die verloren gehen, wenn Sie die Datei auspacken.
-   Sehen Sie weiter unten, wie Sie ein CD-Image korrekt unter <a
-   href="#record-unix">Linux</a>, <a href="#record-windows">Windows</a> oder <a
-   href="#record-mac">MacOS</a> brennen.
+   Sehen Sie weiter unten, wie Sie ein CD-Image korrekt auf einem <a
+   href="#record-unix">Linux</a>-, <a href="#record-windows">Windows</a>- oder <a
+   href="#record-mac">Mac OS</a>-System brennen.
 </p>
 
 # ============================================================
@@ -492,23 +492,34 @@ Beschränkung nicht hat, oder Sie verwenden das Befehlszeilenwerkzeug
 <toc-add-entry name="record-unix">Wie brenne ich eine CD-R unter
 Linux/Unix?</toc-add-entry>
 
-<p>Verwenden Sie das Programm
-<a href="http://cdrecord.berlios.de/old/private/cdrecord.html">\
-cdrecord</a> mit einer Kommandozeile wie dieser (als root):
-<br /><tt>nice&nbsp;--18&nbsp;cdrecord&nbsp;-eject&nbsp;-v&nbsp;speed=2&nbsp;dev=0,6,0&nbsp;-data&nbsp;-pad&nbsp;binary-i386-1.iso</tt></p>
+<p>Beachten Sie, dass Debian-ISO-Images für i386 und amd64 auch von
+einem USB-Speicher gebootet werden können; näheres siehe
+<a href="#write-usb">unten</a>.</p>
 
-<p>
-  Debian hat Cdrecord mit der Veröffentlichung von Etch in ein separates
-  Projekt aufgespalten. Bitte versuchen Sie auf Debian-basierten
-  Systemen Wodim anstatt Cdrecord.
+<p><a href="http://www.gnu.org/software/xorriso/xorriso.html">xorriso</a>
+für alle Arten von optischen Medien (auch möglich als nicht-root-Benutzer):
+<br/><tt>xorriso -as cdrecord -v dev=/dev/sr0 -eject debian-x.y.z-arch-MEDIUM-NN.iso</tt>
+<br/>Fügen Sie die Option <tt>stream_recording=on</tt> hinzu, um mit einer
+BD-RE die volle theorethisch mögliche Geschwindigkeit ohne die Notwendigkeit
+einer anschließenden Überprüfung zu erreichen.
 </p>
 
+<p><a href="http://fy.chalmers.se/~appro/linux/DVD+RW/">growisofs</a>
+für optische Medien vom Typ DVD und BD:
+<br/><tt>growisofs -dvd-compat -Z /dev/sr0=debian-x.y.z-arch-MEDIUM-NN.iso</tt>
+</p>
 
-<p>Für Linux gibt es auch die X-Programme
+<p><a href="http://www.cdrkit.org/">wodim</a>
+für optische Medien vom Typ CD:
+<br/><tt>wodim -v dev=/dev/sr0 -eject -sao debian-x.y.z-arch-CD-NN.iso</tt>
+</p>
+
+<p>Für Linux gibt es unter anderen auch die X-Programme
 <a href="http://www.gnome.org/projects/brasero/">Brasero</a>,
 <a href="http://k3b.plainblack.com/">K3B</a> und
 <a href="http://www.xcdroast.org/">X-CD-Roast</a>
-um ein paar zu nennen. Beachten Sie, dass alle auf cdrecord aufsetzen.</p>
+um ein paar zu nennen. Beachten Sie, dass alle auf den oben genannten
+Kommandozeilen-Brennprogrammen aufsetzen.</p>
 
 <dl>
   <dt><strong><a id="brasero"
@@ -580,7 +591,7 @@ speziellen Produkten gebrannt werden können:</p>
   Recorder</a></strong> (Freeware)</dt>
  
   <dd>Dieses Programm kann unter Windows 2003, XP und Vista 
-  <tt>.iso</tt>-Images aufnehmen.</dd>
+  <tt>.iso</tt>-Images schreiben.</dd>
 
   <dt><strong><a name="adaptec" href="http://www.adaptec.com/">Adaptec</a>\
   /<a href="http://www.roxio.com/">Roxio</a> Easy-CD Creator</strong></dt>
@@ -640,13 +651,6 @@ speziellen Produkten gebrannt werden können:</p>
       Prinzip lautet der auszuführende Befehl so etwa
       <tt>cdburn&nbsp;drive:&nbsp;iso-file.iso&nbsp;/speed&nbsp;max</tt></dd>
 
-  <dt><strong><a name="cdrecord-win" href="http://www.fokus.gmd.de/research/cc/glone/employees/joerg.schilling/private/cdrecord.html">\
-  cdrecord</a></strong></dt>
-
-  <dd>Dieses Programm ist ebenso
-  <a href="ftp://ftp.fokus.gmd.de/pub/unix/cdrecord/alpha/win32/">für Windows
-  9x/NT Systeme</a> verfügbar. Lesen Sie die README für weitere Details.</dd>
-
 </dl>
 
 <p>Falls Sie aktualisierte Informationen über Einzelheiten weiterer Programme
@@ -674,11 +678,42 @@ Verzeichnis <tt>/Applications/Utilities</tt>) wählen Sie
 das Sie brennen wollen. Vergewissern Sie sich, dass die Einstellungen richtig
 sind, und klicken Sie dann auf <i>Burn</i>.</p>
 
-<p>Zusätzlich gibt es das
-<a href="http://www.fokus.gmd.de/research/cc/glone/employees/joerg.schilling/private/cdrecord.html">\
-cdrecord</a>-Programm ebenfalls
-<a href="ftp://ftp.fokus.gmd.de/pub/unix/cdrecord/alpha/macos-x/">für Mac OS
-X</a>.</p>
+# ============================================================
+
+<toc-add-entry name="write-usb">Wie schreibe ich ein CD-Image auf einen
+USB-Flash-Speicher?</toc-add-entry>
+
+<p>Etliche der Debian-CD- und Debian-Live-Images sind mittels der
+<i>isohybrid</i>-Technologie erstellt worden, was bedeutet, dass sie auf zwei
+verschiedene Arten verwendet werden können:</p>
+
+<ul>
+  <li>Sie können auf CD/DVD geschrieben und genutzt werden, um ganz normal
+      von CD/DVD zu booten.</li>
+  <li>Sie können auf USB-Massenspeicher (USB-Sticks) geschrieben und so auf
+      den meisten PCs direkt vom BIOS gebootet werden können.</li>
+</ul>
+
+<p>Der gängige Weg, um solch ein Image auf einen USB-Speicher zu kopieren,
+ist auf einem Linux-Rechner die Verwendung des <q>dd</q>-Befehls:</p>
+
+<p><code>dd if=&lt;datei&gt; of=&lt;gerät&gt; bs=4M; sync</code></p>
+
+<p>wobei</p>
+<ul>
+  <li>&lt;datei&gt; der Name der Image-Datei ist, z.B. <q>netinst.iso</q></li>
+  <li>&lt;gerät&gt; die zum USB-Speicher gehörige Gerätebezeichnung ist,
+  z.B. /dev/sda, /dev/sdb. Geben Sie acht, dass Sie die korrekte
+  Gerätebezeichnung verwenden, da dieser Befehl auch imstande ist, ganz
+  einfach Ihre komplette Festplatte zu überschreiben, wenn Sie die falsche
+  Gerätebezeichnung angeben!</li>
+  <li><q>bs=4M</q> dd veranlasst, in Blöcken von 4 Megabyte zu lesen bzw.
+  schreiben, um eine bessere Performance zu erreichen; der Standardwert
+  ist 512 Byte, was eine deutlich langsamere Geschwindigkeit zur Folge
+  hätte.</li>
+  <li><q>sync</q> sicherstellt, dass alle geschriebenen Daten
+  vollständig auf dem Stick angekommen sind, wenn der Befehl zurückkehrt.</li>
+</ul>
 
 # ============================================================
 
