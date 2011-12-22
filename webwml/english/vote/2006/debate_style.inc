@@ -2,7 +2,7 @@
       <style type="text/css">
       <!--
       body { background: #fff; color: #000; }
-      a:link,a:visited,a:active { background: #0ff; color: #006; }
+      #content a:link,a:visited,a:active { background: #0ff; color: #006; }
       #foot { font-size: x-small; }
       .n0 { background: #eee }
       .n1 { background: #cee }
