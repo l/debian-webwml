@@ -386,7 +386,7 @@ foreach $lang (@search_in) {
                     $o_body .= sprintf "<td>%s</td>", $transversion{"$lang/$file"};
                     $o_body .= sprintf "<td>%s</td>", $version{"$orig/$file"};
                     $o_body .= sprintf "<td>%s</td>", $msg;
-                    $o_body .= sprintf "<td style='font-family: monospace' title='<gettext domain=\"stats\">Click to fetch diffstat data.</gettext>' onClick=\"setDiffstat('%s', '%s', '%s', this)\">+/-</td>", $file, $transversion{"$lang/$file"}, $version{"$orig/$file"};
+                    $o_body .= sprintf '<td style=\'font-family: monospace\' title=\'<gettext domain="stats">Click to fetch diffstat data</gettext>\' onClick="setDiffstat(\'%s\', \'%s\', \'%s\', this)">+/-</td>', $file, $transversion{"$lang/$file"}, $version{"$orig/$file"};
 		    if ($msg eq '<gettext domain="stats">Wrong translation version</gettext>' || $msg eq '<gettext domain="stats">The original no longer exists</gettext>') {
 		        $o_body .= "<td></td><td></td>";
 		    } else {
