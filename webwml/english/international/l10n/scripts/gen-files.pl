@@ -166,16 +166,16 @@ sub transform_team {
 }
 
 sub linklist {
-	my ($pkg, $lang, %status_db) = @_;
+	my ($typo, $pkg, $lang, %status_db) = @_;
 	my $add = "";
 	if (    $status_db{$lang}->has_package($pkg)
 	    and $status_db{$lang}->has_status($pkg)) {
 		foreach my $statusline (@{$status_db{$lang}->status($pkg)}) {
 			my ($type, $file, $date, $status, $translator, $list, $url, $bug_nb) = @{$statusline};
 			my $bug_link = (defined $bug_nb) ? "<a href=\"http://bugs.debian.org/$bug_nb\">$bug_nb</a>" : "";
-			if ($type eq "podebconf") {
+			if ($type eq $typo) {
 				# Only keep the last status (most recent)
-				# Assume there is only one podebconf file
+				# Assume there is only one $typo file
 				$date =~ s/\s*\+0000$//;
 				$list =~ /^(\d\d\d\d)-(\d\d)-(\d\d\d\d\d)$/;
 				$add = "<a href=\"http://lists.debian.org/debian-l10n-$LanguageList{$lang}/$1/debian-l10n-$LanguageList{$lang}-$1$2/msg$3.html\">$status</a>";
@@ -189,10 +189,11 @@ sub linklist {
 sub get_stats {
         my ($type, $section, $packages) = @_;
         my ($pkg, $line, $lang, %list);
-	my $typo = ($type eq 'po-debconf' ? 'podebconf' : $type);
+	my $typo = ($type eq 'po-debconf') ? 'podebconf' : $type;
 
         my %done  = ();
         my %todo  = ();
+	my %todol = ();
         my %excl  = ();
 	my %ref   = ();
         my $none  = '';
@@ -204,9 +205,9 @@ sub get_stats {
 	my %excl_pending  = ();
 	my $podebconf_errors = {};
 	my $podebconf_errors_by_language = {};
+
 	# Load the coordination status databases
 	my %status_db    = ();
-      if ($type eq 'po-debconf'){
 	opendir (DATADIR, "$opt_l/data")
 		or die "Cannot open directory $opt_l/data: $!\n";
 	foreach (readdir (DATADIR)) {
@@ -223,7 +224,6 @@ sub get_stats {
 		}
 	}
 	closedir (DATADIR);
-      }
 
 	my @langs;
 	@langs = @p4_langs if ($type eq 'po4a');
@@ -321,10 +321,10 @@ sub get_stats {
                               get_color(percent_stat($stat)).
                               "\"><td>";
 
-		      if ($type eq 'po-debconf'){
-			if ($stat =~ m/^(\d+)t(\d+)f(\d+)u$/) {
+			if ($stat =~ m/(\d+)t/) {
 				$score{$lang} += $1;
 			}
+		      if ($type eq 'po-debconf'){
 			if (defined $podebconf_errors_by_language->{$pkg}->{global}) {
 				$str .= "<a href=\"errors-by-pkg#P$pkg\">!</a>&nbsp;";
 			} elsif (defined $podebconf_errors_by_language->{$pkg}->{$lang}) {
@@ -344,13 +344,8 @@ sub get_stats {
                         $str .= $root . "po/$opt_d/";
                         $str .= $data->pooldir($pkg)."/$link.gz\">$file</a></td>";
 		        $str .= "<td>$translator</td>";
-			if ($type ne 'po-debconf'){
-				$str .= "<td>$team</td>";
-				if ($stat =~ m/(\d+)t/) {
-					$score{$lang} += $1;
-				}
-			}
 			if (percent_stat($stat) eq "100%") {
+				$str .= "<td>$team</td>" if ($type ne 'po-debconf');
 				$str .= "</tr>\n";
 				if ($type eq 'po-debconf'
 				    and (defined $podebconf_errors_by_language->{$pkg}->{global}
@@ -360,15 +355,20 @@ sub get_stats {
 					$done{$lang} = ($done{$lang} || '') . $str;
 				}
 			} else {
-				if ($type eq 'po-debconf' and defined $status_db{$lang}) {
-					my $add = linklist($pkg, $lang, %status_db);
+				my $add = "";
+				if (defined $status_db{$lang} and (($type eq 'po-debconf') or ($team eq "debian-l10n-$LanguageList{$lang} at lists dot debian dot org"))) {
+					$add = linklist($typo, $pkg, $lang, %status_db);
 					unless (length $add) {
 						$add .= "<td></td><td></td><td></td><td></td>";
 					}
 					$str .= $add;
+					$todol{$lang} = ($todol{$lang} || '') . $str . "</tr>\n" if ($type ne 'po-debconf') ;
+
 				}
-				$str .= "</tr>\n";
-				$todo{$lang} = ($todo{$lang} || '') . $str;
+				else {
+					$str .= "<td>$team</td>" if ($type ne 'po-debconf');
+				}
+				$todo{$lang} = ($todo{$lang} || '') . $str . "</tr>\n" if ($type eq 'po-debconf' or !length $add);
 			}
                 }
                 $orig .= "<li><a name=\"$pkgid\" href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>$addorig</li>\n"
@@ -377,27 +377,28 @@ sub get_stats {
                         my $l = uc($lang) || 'UNKNOWN';
                         next if $list{$l};
 			my $str;
-			my $add = "";
 		      if ($type eq 'po-debconf'){
 			if (defined $podebconf_errors_by_language->{$pkg}->{global}) {
 				$str .= " (<a href=\"errors-by-pkg#P$pkg\">!</a>)";
 			} elsif (defined $podebconf_errors_by_language->{$pkg}->{$lang}) {
 				$str .= " (<a href=\"errors-by-pkg#P$pkg\">!</a>)";
 			}
-			$str .= "<a href=\"pot#$pkgid\">$pkg</a>";
+		      }
+			$str .= ($curtotal eq '0') ? $pkg : "<a href=\"pot#$pkgid\">$pkg</a>";
+			my $add = "";
 			if (defined $status_db{$l}) {
-				$add = linklist($pkg, $l, %status_db);
+				$add = linklist($typo, $pkg, $l, %status_db);
 				if (length $add) {
-					$str = "<td>$str</td><td>0\% (0t;0f;".$curtotal."u)</td><td></td><td></td>".$add;
+					$str  = "<td>$str</td><td>";
+					$str .= "0\% (0t;0f;".$curtotal."u)" if ($curtotal ne '0');
+					$str .= "</td><td></td><td></td>".$add;
 				}
 			}
-		      }
 			if (length $add) {
-				$excl_pending{$l}  = '' unless defined($excl_pending{$l});
-				$excl_pending{$l} .= "<tr>$str</tr>\n";
+				$excl_pending{$l} = ($excl_pending{$l} || '') . "<tr>$str</tr>\n";
 			} else {
-				$excl{$l}  = '' unless defined($excl{$l});
-				$excl{$l} .= ($type eq 'po-debconf' ? $str."&nbsp;($curtotal)" : $pkg);
+				$excl{$l}  = ($excl{$l} || '') . $str;
+				$excl{$l} .= "&nbsp;($curtotal)" if ($curtotal ne '0');
 				$excl{$l} .= ", ";
 			}
                 }
@@ -419,13 +420,21 @@ sub get_stats {
                 close (GEN);
         }
         foreach $lang (@langs) {
-                next unless defined $todo{uc $lang} or defined $excl_pending{uc $lang};
+                next unless defined $todo{uc $lang} or ($type eq 'po-debconf' and defined $excl_pending{uc $lang});
                 open (GEN, "> $opt_l/$type/gen/$section-$lang.todo")
                         || die "Unable to write into $opt_l/$type/gen/$section-$lang.todo";
                 print GEN $todo{uc $lang} if defined $todo{uc $lang};
-		print GEN $excl_pending{uc $lang} if defined $excl_pending{uc $lang};
+		print GEN $excl_pending{uc $lang} if $type eq 'po-debconf' and defined $excl_pending{uc $lang};
                 close (GEN);
         }
+	foreach $lang (@langs) {
+		next unless defined $todol{uc $lang} or ($type ne 'po-debconf' and defined $excl_pending{uc $lang});
+		open (GEN, "> $opt_l/$type/gen/$section-$lang.todol")
+			|| die "Unable to write into $opt_l/$type/gen/$section-$lang.todol";
+		print GEN $todol{uc $lang} if defined $todol{uc $lang};
+		print GEN $excl_pending{uc $lang} if $type ne 'po-debconf' and defined $excl_pending{uc $lang};
+		close (GEN);
+	}
         foreach $lang (@langs) {
                 next unless defined $excl{uc $lang};
                 $excl{uc $lang} =~ s/, $//s;
