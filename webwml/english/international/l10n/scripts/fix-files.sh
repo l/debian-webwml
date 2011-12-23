@@ -43,7 +43,7 @@ do
         echo 'DELETE-ME' > $dir/${dist}-$code.todo-nostatus
         echo 'DELETE-ME' > $dir/${dist}-$code.todo-status
         echo 'DELETE-ME' > $dir/${dist}-$code.todo-both
-        if [ -f $dir/${dist}-$code.todo ]
+        if [ -f $dir/${dist}-$code.todo ] || [ -f $dir/${dist}-$code.todol ]
         then
             rm -f $dir/${dist}-$code.todo-both
             if [ -f $dir/../../data/status.$code ]
@@ -54,7 +54,7 @@ do
             fi
         fi
 
-        for type in todo ok exc
+        for type in todol todo ok exc
         do
             file=$dir/${dist}-$code.$type
             test -f $file || echo 'DELETE-ME' > $file
@@ -66,14 +66,17 @@ do
         -e "s/@tmpl_lang_stats@/$stat/" \
         -e "s/href=\"tmpl\\./href=\"$code./" \
         -e "/LINE: todo-main /r     $dir/main-$code.todo" \
+	-e "/LINE: todol-main /r     $dir/main-$code.todol" \
         -e "/LINE: todo-main-nostatus/r $dir/main-$code.todo-nostatus" \
         -e "/LINE: todo-main-status/r   $dir/main-$code.todo-status" \
         -e "/LINE: todo-main-both/r     $dir/main-$code.todo-both" \
         -e "/LINE: todo-contrib /r  $dir/contrib-$code.todo" \
+	-e "/LINE: todol-contrib /r  $dir/contrib-$code.todol" \
         -e "/LINE: todo-contrib-nostatus/r  $dir/contrib-$code.todo-nostatus" \
         -e "/LINE: todo-contrib-status/r    $dir/contrib-$code.todo-status" \
         -e "/LINE: todo-contrib-both/r      $dir/contrib-$code.todo-both" \
         -e "/LINE: todo-non-free /r $dir/non-free-$code.todo" \
+	-e "/LINE: todol-non-free /r $dir/non-free-$code.todol" \
         -e "/LINE: todo-non-free-nostatus/r $dir/non-free-$code.todo-nostatus" \
         -e "/LINE: todo-non-free-status/r   $dir/non-free-$code.todo-status" \
         -e "/LINE: todo-non-free-both/r     $dir/non-free-$code.todo-both" \
