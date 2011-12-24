@@ -33,7 +33,6 @@ my %shortmoy = ( en => [
 );
 
 my $curyear = (localtime())[5] + 1900;
-my $mlURL = "http://lists.debian.org/debian-security-announce/debian-security-announce-$curyear/";
 
 my %arch = (
 	    'alpha'   => 'Alpha',
@@ -181,21 +180,6 @@ die "directory $curyear does not exist!\n" if (!(-d $curyear));
 die "$wml already exists!\n" if (-f $wml);
 die "$data already exists!\n" if (-f $data);
 
-
-my $mech = WWW::Mechanize->new();
-$mech->get( $mlURL );
-
-my $link_object = ($mech->find_link( text_regex => qr/$dsa_number-$dsa_revision/ )) ;
-
-if (defined $link_object) {
-    $dsaLink = $link_object->url_abs() ;
-}
-else {
-    $dsaLink = $mlURL ;
-    print "DSA $dsa_number-$dsa_revision has not reached $mlURL yet.\n";
-    print "Please edit the link yourself or try again later.\n" ;
-}
-
 $files =~ s,^</dl>\n\n,,;
 open DATA, ">$data";
 print DATA "<define-tag pagetitle>$pagetitle</define-tag>\n";
@@ -207,7 +191,6 @@ print DATA "<define-tag fixed>yes</define-tag>\n";
 print DATA "<define-tag fixed-section>no</define-tag>\n"; # Kaare, 2011-01-24: Line added because the "fixed in" section is no longer available
 print DATA "\n#use wml::debian::security\n\n";
 print DATA "$files\n\n</dl>\n";
-# print DATA "\n<p><md5sums $dsaLink /></p>\n"; # Kaare, 2011-01-24: Commented out because md5sums are no longer available. Should perhaps be replaced by a link to the original advisory, not mentioning md5sums.
 close DATA;
 
 open WML, ">$wml";
