@@ -26,6 +26,7 @@ use Local::Cvsinfo;
 use Webwml::Langs;
 use Webwml::TransCheck;
 use Webwml::TransIgnore;
+use Debian::L10n::Db ('%LanguageList');
 
 BEGIN {
     $udd_available = 0;
@@ -102,6 +103,41 @@ my %transversion;
 my %version;
 my %files;
 my %sizes;
+
+print "Loading the coordination status databases\n" if ($config{verbose});
+my %status_db = ();
+opendir (DATADIR, "$opt_w/english/international/l10n/data")
+	or die "Cannot open directory $opt_w/english/international/l10n/data: $!\n";
+foreach (readdir (DATADIR)) {
+	# Only check the status files
+	next unless ($_ =~ m/^status\.(.*)$/);
+	my $l = $1;
+	next if (!defined $LanguageList{uc $l});
+	if (-r "$opt_w/english/international/l10n/data/status.$l") {
+		$status_db{$LanguageList{uc $l}} = Debian::L10n::Db->new();
+		$status_db{$LanguageList{uc $l}}->read("$opt_w/english/international/l10n/data/status.$l", 0);
+	}
+}
+closedir (DATADIR);
+
+sub linklist {
+	my ($file, $lang) = @_;
+	my $add = "";
+	if ($status_db{$lang}->has_package('www.debian.org')
+	and $status_db{$lang}->has_status('www.debian.org')) {
+		foreach my $statusline (@{$status_db{$lang}->status('www.debian.org')}) {
+			my ($type, $statfile, $date, $status, $translator, $list, $url, $bug_nb) = @{$statusline};
+			if ($file eq $statfile) {
+				$date =~ s/\s*\+0000$//;
+				$list =~ /^(\d\d\d\d)-(\d\d)-(\d\d\d\d\d)$/;
+				$add = "<a href=\"http://lists.debian.org/debian-l10n-$lang/$1/debian-l10n-$lang-$1$2/msg$3.html\">$status</a>";
+				$add = "<td>$add</td><td>$translator</td><td>$date</td>";
+			}
+		}
+	}
+	$add = '<td></td><td></td><td></td>' if (!length $add);
+	return $add;
+}
 
 # Count wml files in given directory
 #
@@ -368,35 +404,58 @@ foreach $lang (@search_in) {
             next if ($file eq "");
             (my $base = $file) =~ s/\.wml$//;
             my $hits = exists $hits{$base} ? $hits{$base}.' <gettext domain="stats">hits</gettext>' : '<gettext domain="stats">hit count N/A</gettext>';
-            # Translated pages
-            if (index ($wmlfiles{$lang}, " $file ") >= 0) {
+	    my $todo = '<td></td><td></td><td></td>';
+	    $todo = linklist($file, $lang) if defined $status_db{$lang};
+	    # Translated pages or already WIP in translation list
+            if ((index ($wmlfiles{$lang}, " $file ") >= 0) or (($todo ne '<td></td><td></td><td></td>') and ($transversion{"$lang/$file"} ne $version{"$orig/$file"}))) {
                 $translated{$lang}++;
 		$translated_s{$lang} += $sizes{$file};
                 $orig = $original{"$lang/$file"} || "english";
                 # Outdated translations
                 $msg = check_translation ($transversion{"$lang/$file"}, $version{"$orig/$file"}, "$lang/$file");
-                if (length ($msg)) {
+                if (length ($msg) or (($todo ne '<td></td><td></td><td></td>') and ($transversion{"$lang/$file"} ne $version{"$orig/$file"}))) {
                     $o_body .= "<tr>";
                     if (($file !~ /\.wml$/)
                         || ($file eq "devel/wnpp/wnpp.wml")) {
                         $o_body .= sprintf "<td>%s</td>", $file;
                     } else {
-                        $o_body .= sprintf "<td><a title=\"%s\" href=\"$opt_b/%s.%s.html\">%s</a></td>", $hits, $base, $l, $base;
+                        $o_body .= sprintf "<td><a title=\"%s\" href=\"$opt_b/%s\">%s</a></td>", $hits, $base, $base;
                     }
+		    my $stattd = sprintf '<td style=\'font-family: monospace\' title=\'<gettext domain="stats">Click to fetch diffstat data</gettext>\' onClick="setDiffstat(\'%s\', \'%s\', \'%s\', this)">+/-</td>', $file, $transversion{"$lang/$file"}, $version{"$orig/$file"};
+		    my $statspan = sprintf '(<span style=\'font-family: monospace\' title=\'<gettext domain="stats">Click to fetch diffstat data</gettext>\' onClick="setDiffstat(\'%s\', \'%s\', \'%s\', this)">+/-</span>)', $file, $transversion{"$lang/$file"}, $version{"$orig/$file"};
+		  if (!defined $status_db{$lang}) {
                     $o_body .= sprintf "<td>%s</td>", $msg;
-                    $o_body .= sprintf '<td style=\'font-family: monospace\' title=\'<gettext domain="stats">Click to fetch diffstat data</gettext>\' onClick="setDiffstat(\'%s\', \'%s\', \'%s\', this)">+/-</td>', $file, $transversion{"$lang/$file"}, $version{"$orig/$file"};
+                    $o_body .= $stattd;
+	          }
 		    if ($msg eq '<gettext domain="stats">Wrong translation version</gettext>' || $msg eq '<gettext domain="stats">The original no longer exists</gettext>') {
+		      if (defined $status_db{$lang}) {
+			$o_body .= sprintf "<td>%d (%.2f&nbsp;&permil;)</td>", $sizes{$file}, $sizes{$file}/$nsize * 1000;
+		      } else {
 		        $o_body .= "<td></td><td></td>";
+		      }
 		    } else {
+		      if (defined $status_db{$lang}) {
+                       if ($transversion{"$lang/$file"} ne ''){
+			$o_body .= sprintf '<td><a title=\'<gettext domain="stats">Unified diff</gettext>\' href="http://alioth.debian.org/scm/viewvc.php/webwml/%s?root=webwml&amp;view=diff&amp;r1=%s&amp;r2=%s&amp;diff_format=u">%s&nbsp;→&nbsp;%s</a> ',
+				"$orig/$file", $transversion{"$lang/$file"}, $version{"$orig/$file"}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
+			$o_body .= sprintf '<a title=\'<gettext domain="stats">Colored diff</gettext>\' href="http://alioth.debian.org/scm/viewvc.php/webwml/%s?root=webwml&amp;view=diff&amp;r1=%s&amp;r2=%s&amp;diff_format=h">%s&nbsp;→&nbsp;%s</a> ',
+				"$orig/$file", $transversion{"$lang/$file"}, $version{"$orig/$file"}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
+			$o_body .= "$statspan</td>";
+		       } else {
+			$o_body .= sprintf "<td>%d (%.2f&nbsp;&permil;)</td>", $sizes{$file}, $sizes{$file}/$nsize * 1000;
+		       }
+		      } else {
 		        $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/$orig/%s?root=webwml\&amp;view=diff\&amp;r1=%s\&amp;r2=%s\&amp;diff_format=%s\">%s\&nbsp;->\&nbsp;%s</a></td>",
                                            $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $firstdifftype, $transversion{"$lang/$file"}, $version{"$orig/$file"};
 		        $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/$orig/%s?root=webwml\&amp;view=diff\&amp;r1=%s\&amp;r2=%s\&amp;diff_format=%s\">%s\&nbsp;->\&nbsp;%s</a></td>",
                                            $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $seconddifftype, $transversion{"$lang/$file"}, $version{"$orig/$file"};
+		      }
 		    }
-                    $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/$orig/%s?root=webwml#rev%s\">[L]</a></td>", $file, $version{"$orig/$file"};
+		    $o_body .= sprintf "<td><a title=\"%s\" href=\"http://alioth.debian.org/scm/viewvc.php/webwml/$orig/%s?root=webwml#rev%s\">[L]</a></td>", $msg, $file, $version{"$orig/$file"};
                     $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/%s/%s?root=webwml\&amp;view=markup\">[V]</a>\&nbsp;", $lang, $file;
                     $o_body .= sprintf "<a href=\"http://alioth.debian.org/scm/viewvc.php/*checkout*/webwml/%s/%s?root=webwml\">[F]</a></td>", $lang, $file;
                     $o_body .= sprintf "<td align=center>%s</td>", $maintainer{"$lang/$file"} || "";
+		    $o_body .= $todo if (defined $status_db{$lang});
                     $o_body .= "</tr>\n";
                     $outdated{$lang}++;
 		    $outdated_s{$lang} += $sizes{$file};
@@ -506,14 +565,23 @@ foreach $lang (@search_in) {
                 print HTML '<toc-add-entry name="outdated"><gettext domain="stats">Outdated translations</gettext></toc-add-entry>'."\n";
                 print HTML "<table summary=\"Outdated translations\" border=0 cellpadding=1 cellspacing=1>\n";
                 print HTML '<tr><th><gettext domain="stats">File</gettext></th>'."\n";
+	      if (defined $status_db{$lang}) {
+		print HTML '<th><gettext domain="stats">Diff</gettext></th>';
+	      } else {
 		print HTML '<th><gettext domain="stats">Comment</gettext></th>'."\n";
 		print HTML '<th><gettext domain="stats">Diffstat</gettext></th>'."\n";
                 if ($opt_d eq "u") { print HTML '<th><gettext domain="stats">Unified diff</gettext></th><th><gettext domain="stats">Colored diff</gettext></th>'; }
                 elsif ($opt_d eq "h") { print HTML '<th><gettext domain="stats">Colored diff</gettext></th><th><gettext domain="stats">Unified diff</gettext></th>'; }
                 else { print HTML '<th><gettext domain="stats">Diff</gettext></th>'; }
+	      }
                 print HTML '<th><gettext domain="stats">Log</gettext></th>';
                 print HTML '<th><gettext domain="stats">Translation</gettext></th>';
                 print HTML '<th><gettext domain="stats">Maintainer</gettext></th>';
+	      if (defined $status_db{$lang}) {
+		print HTML '<th><gettext domain="stats">Status</gettext></th>';
+		print HTML '<th><gettext domain="stats">Translator</gettext></th>';
+		print HTML '<th><gettext domain="stats">Date</gettext></th>';
+	      }
                 print HTML "</tr>\n";
                 print HTML $o_body;
                 print HTML "</table>\n";
