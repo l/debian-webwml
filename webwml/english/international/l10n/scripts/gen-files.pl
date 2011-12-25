@@ -6,42 +6,9 @@ use Getopt::Long;
 
 use lib ($0 =~ m|(.*)/|, $1 or ".") ."/../../../../Perl";
 
-use Debian::L10n::Db;
+use Debian::L10n::Db ('%LanguageList');
 
 use vars qw($opt_h $opt_d $opt_l $opt_s $opt_D $opt_P $opt_T $opt_L $opt_M);
-
-my %LanguageList = (
-	AR    => 'arabic',
-	CA    => 'catalan',
-	CS    => 'czech',
-	DE    => 'german',
-	RU    => 'russian',
-# Used by the Smith project, not for translations
-#	EN    => 'english',
-	ES    => 'spanish',
-	FR    => 'french',
-	GL    => 'galician',
-# Not supported yet by the robot. Not all messages are sent ot the list
-#	NL    => 'dutch',
-	PT_BR => 'portuguese',
-	RO    => 'romanian',
-	SK    => 'slovak',
-	SV    => 'swedish',
-# Has not used pseudo-urls recently
-#	TR    => 'turkish',
-);
-my %Status = (
-	todo => 0,
-	maj  => 1,
-	itt  => 2,
-	rfr  => 3,
-	itr  => 4,
-	lcfc => 5,
-	bts  => 6,
-	fix  => 7,
-	done => 8,
-	hold => 9,
-	);
 
 sub usage {
         print "Usage:  gen-files.pl [--dist=DIST] [--l10ndir=DIR] [--sort=FILE] [--po] [--podebconf] [--langs] [--po4a]\n";

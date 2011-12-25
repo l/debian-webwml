@@ -42,6 +42,34 @@ use Data::Dumper;
 #   Do not use ``our'' to be compatible with Perl 5.005
 use vars (qw($AUTOLOAD));
 
+# Define data that are used in various places:
+# stattrans.pl, english/international/l10n/scripts/gen-files.pl
+
+use Exporter;
+our @ISA=('Exporter');
+our @EXPORT_OK=('%LanguageList');
+
+our %LanguageList = (
+	AR    => 'arabic',
+	CA    => 'catalan',
+	CS    => 'czech',
+	DE    => 'german',
+	RU    => 'russian',
+# Used by the Smith project, not for translations
+#       EN    => 'english',
+	ES    => 'spanish',
+	FR    => 'french',
+	GL    => 'galician',
+# Not supported yet by the robot. Not all messages are sent ot the list
+#	NL    => 'dutch',
+	PT_BR => 'portuguese',
+	RO    => 'romanian',
+	SK    => 'slovak',
+	SV    => 'swedish',
+# Has not used pseudo-urls recently
+#	TR    => 'turkish',
+);
+
 =item new
 
 This is the constructor, it only performs some initialization.
