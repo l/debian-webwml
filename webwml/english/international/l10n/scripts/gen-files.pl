@@ -356,13 +356,14 @@ sub get_stats {
 			if (defined $status_db{$l}) {
 				$add = linklist($typo, $pkg, $l, %status_db);
 				if (length $add) {
+					$str  = "&nbsp;&nbsp;$str" if $type eq 'po-debconf';
 					$str  = "<td>$str</td><td>";
 					$str .= "0\% (0t;0f;".$curtotal."u)" if ($curtotal ne '0');
 					$str .= "</td><td></td><td></td>".$add;
 				}
 			}
 			if (length $add) {
-				$excl_pending{$l} = ($excl_pending{$l} || '') . "<tr>$str</tr>\n";
+				$excl_pending{$l} = ($excl_pending{$l} || '') . "<tr style=\"background-color: #ccc\">$str</tr>\n";
 			} else {
 				$excl{$l}  = ($excl{$l} || '') . $str;
 				$excl{$l} .= "&nbsp;($curtotal)" if ($curtotal ne '0');
