@@ -181,8 +181,8 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).are.not.affected.by.this.problem\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne sont pas concernées par ce problème.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).are.not.affected.by.these.problems\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne sont pas concernées par ces problèmes.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).(distribution.)?\((\S+)\),.(the.)?(\S+).(distribution.)?\((\S+)\),?.and.(the.)?(\S+).distributions?.\((\S+)\).are.not.affected.by.this.problem\.[\n]?</p>|<p>La distribution $1 ($3), la distribution $5 ($7) et la distribution $9 ($10) ne sont pas concernées par ce problème.</p>|gs;
-	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.?n.t.contain.a.(\S+).package\.|<p>La distribution $1 ($2) ne contient pas de paquet $3.|gs;
-	$output =~ s|<p>[\n]?The.old.(\S+).distribution.\((\S+)\).does.?n.t.contain.a.(\S+).package\.|<p>L'ancienne distribution $1 ($2) ne contient pas de paquet $3.|gs;
+	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.?n.t.contain.an?.(\S+).package\.|<p>La distribution $1 ($2) ne contient pas de paquet $3.|gs;
+	$output =~ s|<p>[\n]?The.old.(\S+).distribution.\((\S+)\).does.?n.t.contain.an?.(\S+).package\.|<p>L'ancienne distribution $1 ($2) ne contient pas de paquet $3.|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).do.?n.t.contain.any.(\S+).packages\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne contiennent pas de paquet $5.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.?n.t.contain.(\S+).packages\.[\n]?</p>|<p>La distribution $1 ($2) ne contient pas de paquets $3.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\),?.does.?n.t.contain.(\S+)\.[\n]?</p>|<p>La distribution $1 ($2) ne contient pas $3.</p>|gs;
@@ -220,7 +220,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|It.was.discovered.that|On a découvert que|gs;
 	$output =~ s|It.was.discovered|On a découvert|gs;
 	$output =~ s|A.buffer.overflow has been discovered in|Un dépassement de tampon a été découvert dans|gs; 
-	$output =~ s|The.Common.Vulnerabilities.and.Exposures.project.identifies.the.following.problems:|Le projet « Common Vulnerabilities and Exposures » (CVE) identifie les problèmes suivants.|s;
+	$output =~ s|The.Common.Vulnerabilities.and.Exposures.project.identifies.the.following.problems:|\n\nLe projet « Common Vulnerabilities and Exposures » (CVE) identifie les problèmes suivants.|s;
 	$output =~ s|,.which.may.lead.to.the.execution.of.arbitrary.code|. Cela peut permettre l'exécution de code arbitraire|gs;
 	$output =~ s|,.which.could.lead.to.the.execution.of.arbitrary.code|. Cela pourrait permettre l'exécution de code arbitraire|gs;
 	$output =~ s|,.which.may.result.in.the.execution.of.arbitrary.code|. Cela peut avoir pour conséquence l'exécution de code arbitraire|gs;
@@ -289,6 +289,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|is.already.fixed|est déjà corrigé|gs;
 
 	# usual words, ease copy and paste...
+	$output =~ s|arbitrary|arbitraire|gs;
 	$output =~ s|attacker|attaquant|gs;
 	$output =~ s|attack|attaque|gs;
 	$output =~ s|correctly|correctement|gs;
@@ -314,6 +315,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|implementation|implémentation|gs;
 	$output =~ s|information.disclosure|divulgation d'informations|gs;
 	$output =~ s|information.leak|fuite d'informations|gs;
+	$output =~ s|input|entrée|gs;
 	$output =~ s|integer.overflow|dépassement d'entier|gs;
 	$output =~ s|integer.underflow|dépassement d'entier par le bas|gs;
 	$output =~ s|library|bibliothèque|gs;
@@ -328,6 +330,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|possibly|éventuellement|gs;
 	$output =~ s|perform|réaliser|gs;
 	$output =~ s|privilege.escalation|augmentation de droits|gs;
+	$output =~ s|properly|correctement|gs;
 	$output =~ s|prone|prédisposé|gs;
 	$output =~ s|race.conditions|situations de compétition|gs;
 	$output =~ s|race.condition|situation de compétition|gs;
