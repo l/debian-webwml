@@ -1,10 +1,11 @@
 #! /bin/sh
 
-#  Usage: fix-file.sh englishdir lang code1 code2 ...
+#  Usage: fix-file.sh englishdir lang tmpl code1 code2 ...
 
 dir=$1
 lang=$2
-shift; shift
+tmpl=$3
+shift; shift; shift
 
 for code
 do
@@ -64,7 +65,7 @@ do
     stat=`grep "^$code:" $dir/stats|sed 's/^.*://'`
     sed -e "s/@tmpl_lang@/$code \&mdash; $langname /" \
         -e "s/@tmpl_lang_stats@/$stat/" \
-        -e "s/href=\"tmpl\\./href=\"$code./" \
+        -e "s/href=\"$tmpl\\./href=\"$code./" \
         -e "/LINE: todo-main /r     $dir/main-$code.todo" \
 	-e "/LINE: todol-main /r     $dir/main-$code.todol" \
         -e "/LINE: todo-main-nostatus/r $dir/main-$code.todo-nostatus" \
@@ -86,37 +87,9 @@ do
         -e "/LINE: exc-main/r     $dir/main-$code.exc" \
         -e "/LINE: exc-contrib/r  $dir/contrib-$code.exc" \
         -e "/LINE: exc-non-free/r $dir/non-free-$code.exc" \
-            tmpl.$lang.tmpl |\
+            $tmpl.$lang.tmpl |\
         sed -e '/<!-- DO NOT REMOVE THIS LINE/d' |\
-        perl -e '
-my @print = ();
-my @block = ();
-my $print = 1;
-my $block = "";
-while (<>) {
-	if (m/BEGIN SECTION/){
-		$block .= $_;
-		push @print, $print;
-		push @block, $block;
-		$block = "";
-		$print = 1;
-	} elsif (m/END SECTION/) {
-		my $tmp = "";
-		$tmp = $block if $print;
-		$print = pop @print;
-		$block = pop @block;
-		$block .= $tmp;
-		$block .= $_;
-	} elsif (m/DELETE-ME/) {
-		$print = 0;
-	} else {
-		$block .= $_;
-	}
-}
-print $block;' \
+	sed -e ':t /BEGIN SECTION/,/END SECTION/{/END SECTION/!{$!{N;bt};};/DELETE-ME/d;}' |\
+	sed -e ':begin;$!N;s,<h3>.*</h3>\n<h,<h,;tbegin;P;D'\
                 > $code.$lang.html
 done
-
-#  Perl code has replaced the following line, which is awfully slow
-#  on Potato
-#     sed -e ':t /BEGIN SECTION/,/END SECTION/{/END SECTION/!{$!{N;bt};};/DELETE-ME/d;}'

@@ -17,8 +17,17 @@ LANGS_PODEBCONF  := $(shell grep 'podebconf:' $(L10N_DIR)/data/langs | sed -e 's
 
 HTML_PODEBCONF   := $(foreach lang,$(LANGS_PODEBCONF),$(lang).$(LANGUAGE).html)
 
+# Ugly hard-coded list of almost complete languages
+LANGS_PODECB90	:= cs de es fr pt ru sv
+HTML_PODEBC90	:= $(foreach lang,$(LANGS_PODECB90),$(lang).$(LANGUAGE).html)
+
+LANGS_PODEBCNOT	:= $(filter-out $(LANGS_PODECB90),$(LANGS_PODEBCONF))
+HTML_PODEBCNOT	:= $(foreach lang,$(LANGS_PODEBCNOT),$(lang).$(LANGUAGE).html)
+
 all:: $(HTML_PODEBCONF)
 
+tmpl90.$(LANGUAGE).tmpl: tmpl90.src $(L10N_DIR)/dtc.def $(ENGLISHDIR)/$(CUR_DIR)/menu.inc $(L10N_DIR)/date.gen $(GETTEXTDEP)
+	$(WML) tmpl90.src
 tmpl.$(LANGUAGE).tmpl: tmpl.src $(L10N_DIR)/dtc.def $(ENGLISHDIR)/$(CUR_DIR)/menu.inc $(L10N_DIR)/date.gen $(GETTEXTDEP)
 	$(WML) tmpl.src
 
@@ -31,8 +40,11 @@ rank.$(LANGUAGE).html: $(ENGLISHDIR)/$(CUR_DIR)/gen/rank.inc
 #   than once
 $(HTMLFILES): $(ENGLISHDIR)/$(CUR_DIR)/menu.inc $(L10N_DIR)/dtc.def $(L10N_DIR)/date.gen $(ENGLISHDIR)/$(CUR_DIR)/gen/main.orig $(GETTEXTDEP)
 
-$(HTML_PODEBCONF): tmpl.$(LANGUAGE).tmpl $(ENGLISHDIR)/$(CUR_DIR)/gen/main.orig
-	$(L10N_DIR)/scripts/fix-files.sh $(ENGLISHDIR)/$(CUR_DIR)/gen $(LANGUAGE) $(LANGS_PODEBCONF)
+$(HTML_PODEBC90): tmpl90.$(LANGUAGE).tmpl $(ENGLISHDIR)/$(CUR_DIR)/gen/main.orig
+	$(L10N_DIR)/scripts/fix-files.sh $(ENGLISHDIR)/$(CUR_DIR)/gen $(LANGUAGE) tmpl90 $(LANGS_PODECB90)
+
+$(HTML_PODEBCNOT): tmpl.$(LANGUAGE).tmpl $(ENGLISHDIR)/$(CUR_DIR)/gen/main.orig
+	$(L10N_DIR)/scripts/fix-files.sh $(ENGLISHDIR)/$(CUR_DIR)/gen $(LANGUAGE) tmpl $(LANGS_PODEBCNOT)
 
 $(ENGLISHDIR)/$(CUR_DIR)/gen/main.orig $(ENGLISHDIR)/$(CUR_DIR)/gen/rank.inc $(L10N_DIR)/date.gen $(L10N_DIR)/data/langs: $(L10N_DIR)/scripts/gen-files.pl $(L10N_DIR)/data/$(DIST).gluck
 	-rm -rf $(ENGLISHDIR)/$(CUR_DIR)/../*/gen
@@ -40,6 +52,7 @@ $(ENGLISHDIR)/$(CUR_DIR)/gen/main.orig $(ENGLISHDIR)/$(CUR_DIR)/gen/rank.inc $(L
 
 clean::
 	-rm -rf gen
+	-rm -f tmpl90.$(LANGUAGE).tmpl
 	-rm -f tmpl.$(LANGUAGE).tmpl
 
 install:: $(patsubst %,$(HTMLDIR)/%,$(HTML_PODEBCONF))
