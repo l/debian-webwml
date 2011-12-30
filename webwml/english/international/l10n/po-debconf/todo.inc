@@ -1,6 +1,5 @@
 #   Translators, do not translate nor copy this file
 
-<!-- BEGIN SECTION -->
 <h3><pkg-section main></h3>
 <!-- BEGIN SECTION -->
 <!-- DO NOT REMOVE THIS LINE: todo-main-nostatus -->
@@ -15,9 +14,7 @@
 <!-- DO NOT REMOVE THIS LINE: todo-main -->
 </podebconf-table-status>
 <!-- END SECTION -->
-<!-- END SECTION -->
 
-<!-- BEGIN SECTION -->
 <h3><pkg-section contrib></h3>
 <!-- BEGIN SECTION -->
 <!-- DO NOT REMOVE THIS LINE: todo-contrib-nostatus -->
@@ -32,9 +29,7 @@
 <!-- DO NOT REMOVE THIS LINE: todo-contrib -->
 </podebconf-table-status>
 <!-- END SECTION -->
-<!-- END SECTION -->
 
-<!-- BEGIN SECTION -->
 <h3><pkg-section non-free></h3>
 <!-- BEGIN SECTION -->
 <!-- DO NOT REMOVE THIS LINE: todo-non-free-nostatus -->
@@ -48,5 +43,4 @@
 <podebconf-table-status>
 <!-- DO NOT REMOVE THIS LINE: todo-non-free -->
 </podebconf-table-status>
-<!-- END SECTION -->
 <!-- END SECTION -->
