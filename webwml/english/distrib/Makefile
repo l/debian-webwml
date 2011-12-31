@@ -17,7 +17,7 @@ packages.$(LANGUAGE).html: packages.wml $(TEMPLDIR)/release_info.wml \
   $(ENGLISHDIR)/distrib/search_contents-form.inc
 pre-installed.$(LANGUAGE).html: pre-installed.wml $(TEMPLDIR)/countries.wml \
   $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/CD/vendors/vendors.CD.def \
-  $(ENGLISHDIR)/distrib/pre-installed.defs \
+  $(ENGLISHDIR)/distrib/pre-installed.defs $(ENGLISHSRCDIR)/distrib/pre-installed.inc
 
 index.$(LANGUAGE).html: index.wml \
   $(TEMPLDIR)/release_info.wml \
@@ -29,6 +29,9 @@ netinst.$(LANGUAGE).html: netinst.wml \
   $(TEMPLDIR)/release_images.wml \
 
 ifeq "$(LANGUAGE)" "en"
+$(ENGLISHSRCDIR)/distrib/pre-installed.inc: pre-installed.data count
+	$(ENGLISHSRCDIR)/distrib/count
+
 clean::
 	rm -f archive.mirrors archive-nonus.mirrors
 
