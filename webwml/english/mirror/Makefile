@@ -9,7 +9,8 @@ include $(WMLBASE)/Make.lang
 
 
 submit.$(LANGUAGE).html: submit.wml $(ENGLISHDIR)/mirror/submit.inc \
-  $(ENGLISHSRCDIR)/releases/sid/archive.data  $(GETTEXTDEP)
+  $(ENGLISHSRCDIR)/releases/sid/archive.data  $(GETTEXTDEP) \
+  $(TEMPLDIR)/countries_all.wml
 
 official_sponsors.$(LANGUAGE).html: official_sponsors.wml \
   $(TEMPLDIR)/template.wml $(ENGLISHDIR)/mirror/official_sponsors.list \
@@ -74,9 +75,6 @@ $(ENGLISHDIR)/mirror/sponsors.list: \
 
 $(ENGLISHDIR)/mirror/official.data: $(TEMPLDIR)/countries.wml \
   $(ENGLISHDIR)/mirror/Mirrors.masterlist
-
-$(ENGLISHDIR)/mirror/submit.inc: $(TEMPLDIR)/countries_all.wml \
-  $(TEMPLDIR)/countries.wml $(ENGLISHDIR)/releases/sid/archive.data
 
 $(ENGLISHDIR)/mirror/list-primary.inc: \
   $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
