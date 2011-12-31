@@ -5,17 +5,17 @@ WMLBASE=..
 CUR_DIR=consultants
 SUBS=
 
-NOGENERICDEP := true
 GETTEXTFILES += consultants.mo
 
 include $(WMLBASE)/Make.lang
 
 ifeq "$(LANGUAGE)" "en"
-$(ENGLISHSRCDIR)/consultants/consultant.inc: consultant.data
+$(ENGLISHSRCDIR)/consultants/consultant.inc: consultant.data count
 	$(ENGLISHSRCDIR)/consultants/count
 endif
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
+                        $(TEMPLDIR)/countries.wml \
                         $(ENGLISHSRCDIR)/consultants/consultant.data \
                         $(ENGLISHSRCDIR)/consultants/consultant.inc \
                         $(ENGLISHSRCDIR)/consultants/consultant.defs \

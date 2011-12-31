@@ -1,5 +1,62 @@
 #use wml::debian::common_tags
 
+# <country-name XX> should now be used instead of <XXc>
+
+<:
+my %countries,%codes;
+
+my $arg = '';
+$arg = "-l $CUR_ISO_LANG" if $CUR_ISO_LANG ne 'en';
+
+foreach (`isoquery $arg`) {
+        chomp ;
+        my $code = substr($_,0,2);
+        $_ =~ s/.*\t//;
+        $countries{$code} = $_;
+}
+
+sub country_name {
+        my $code=shift;
+	return $countries{uc $code};
+}
+
+sub country_list {
+	my @list = split ' ', shift;
+	my $type = shift @list;
+	my ($list,$pre,$post) = ('','','');
+
+	my %count;
+	if ($type eq 'consultants') {
+		my @temp;
+		foreach (@list) {
+			my $code = substr($_,0,2);
+			push @temp,$code;
+			$_ =~ s/\w*-//;
+			$count{$code} = $_;
+		}
+		@list = @temp;
+	}
+
+	($pre,$post) = ('<li><a href="#',")</li>\n") if $type eq 'consultants';
+	foreach (sort { $countries{uc $a} cmp $countries{uc $b} } @list) {
+		$list .= $pre;
+		$list .= uc $_.'">' if $type eq 'consultants';
+		$list .= $countries{uc $_};
+		$list .= '</a> ('.$count{$_} if $type eq 'consultants';
+		$list .= $post;
+	}
+	return $list;
+}
+:>
+
+<define-tag country-name whitespace=delete>
+<:=country_name('%0'):>
+</define-tag>
+
+<define-tag country-list whitespace=delete>
+<:=country_list('%attributes'):>
+</define-tag>
+
 <bind-gettext-domain domain="countries" />
 
 #   The define-country tag defines 2 different thing;
