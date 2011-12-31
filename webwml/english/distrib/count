@@ -1,0 +1,50 @@
+#!/usr/bin/perl
+#
+# Adapted from CD/vendors/count
+#
+# Written by: Behan Webster <behanw@pobox.com>
+# Hacked By: David Prévot <david@tilapin.org>
+
+$filename	= 'pre-installed.data';
+$comment	= '^\s*country="(\w\w)".*$';
+
+# Read in file
+open( FILE, "<$filename" ) || die "$filename: $!\n";
+
+my $buffer = "";
+my $outfile = "pre-installed.inc";
+my $count = 0;
+my %country;
+my $list ='';
+
+# Count vendors/countries
+while ( <FILE> ) {
+	chomp;
+	if( /$comment/ ) {
+		$count++;
+		$country{$1}++;
+	}
+}
+@_ = keys %country;
+
+my $number = $#_ + 1;
+
+close( FILE );
+
+# Print results
+
+foreach ( sort keys %country ) {
+	printf "%-4d  %s\n", $country{$_}, $_;
+	$list .= "$_-$country{$_} ";
+}
+
+# Report numbers and update file in buffer
+print "Number of vendors:   $count\n";
+print "Number of countries: $number\n";
+$buffer .= sprintf ("<define-tag total_vendor>%d</define-tag>\n", $count);
+$buffer .= sprintf ("<define-tag total_country>%d</define-tag>\n", $number);
+$buffer .= sprintf ("<define-tag list_country>%s</define-tag>\n", $list);
+
+open (FILE, ">$outfile") || die "$outfile: $!\n";
+print FILE $buffer;
+close (FILE);
