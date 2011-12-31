@@ -9,9 +9,14 @@ GETTEXTFILES += vendors.mo
 
 include $(WMLBASE)/Make.lang
 
+ifeq "$(LANGUAGE)" "en" 
+$(ENGLISHSRCDIR)/CD/vendors/vendors.inc: vendors.CD count
+	$(ENGLISHSRCDIR)/CD/vendors/count
+endif
+
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml $(TEMPLDIR)/countries.wml \
   $(ENGLISHDIR)/CD/vendors/vendors.CD $(ENGLISHDIR)/CD/vendors/vendors.CD.def \
-  $(GETTEXTDEP)
+  $(ENGLISHSRCDIR)/CD/vendors/vendors.inc $(GETTEXTDEP)
 
 # sadly we can't do this nicely inside the file, by referencing the value
 # after #use'ing release_info, because we need it to construct the #include

@@ -30,7 +30,7 @@ sub country_list {
 	my ($list,$pre,$post) = ('','','');
 
 	my %count;
-	if ($type eq 'consultants') {
+	if ($type eq 'consultants' or $type eq 'vendors') {
 		my @temp;
 		foreach (@list) {
 			my $code = substr($_,0,2);
@@ -42,11 +42,12 @@ sub country_list {
 	}
 
 	($pre,$post) = ('<li><a href="#',")</li>\n") if $type eq 'consultants';
+	($pre,$post) = ('<a href="#',")&nbsp;&nbsp;\n") if $type eq 'vendors';
 	foreach (sort { $countries{uc $a} cmp $countries{uc $b} } @list) {
 		$list .= $pre;
-		$list .= uc $_.'">' if $type eq 'consultants';
+		$list .= $_.'">' if $type eq 'consultants' or $type eq 'vendors';
 		$list .= $countries{uc $_};
-		$list .= '</a> ('.$count{$_} if $type eq 'consultants';
+		$list .= '</a>&nbsp;('.$count{$_} if $type eq 'consultants' or $type eq 'vendors';
 		$list .= $post;
 	}
 	return $list;
