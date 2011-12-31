@@ -529,6 +529,7 @@ END
 END
   } elsif ($wml) {
     print <<END;
+#use wml::debian::countries
 <perl>
 END
   }
@@ -598,6 +599,7 @@ EOF
 # and processed by WML
 sub primary_mirror_sponsors {
   print <<END;
+#use wml::debian::countries
 <tr><td colspan="3"><hr></td></tr>
 END
   foreach my $country (sort keys %countries) {
@@ -678,6 +680,7 @@ END
 # and processed by WML
 sub mirror_sponsors {
   print <<END;
+#use wml::debian::countries
 <tr><td colspan="3"><hr></td></tr>
 END
   foreach my $country (sort keys %countries) {
@@ -880,6 +883,7 @@ sub full_listing {
     # in our WML templates there is a langcmp comparison method,
     # which sorts alphabetically depending on the language
     print <<EOF;
+#use wml::debian::countries
 <:
 my \%countrylist;
 EOF
@@ -1133,6 +1137,7 @@ sub nonus_mirrors {
   my $html = 1 if ($format eq 'html');
   my $text = 1 if ($format eq 'text');
   my $wml = 1 if ($format eq 'wml');
+  print "#use wml::debian::countries\n" if $wml;
 
   foreach my $country (sort keys %countries) {
     my %our_mirrors;
