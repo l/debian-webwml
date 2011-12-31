@@ -15,6 +15,7 @@ my $buffer = "";
 my $outfile = "consultant.inc";
 my $count = 0;
 my %country;
+my $list ='';
 
 # Count consultants/countries
 while ( <FILE> ) {
@@ -26,10 +27,7 @@ while ( <FILE> ) {
 }
 @_ = keys %country;
 
-# $number should be +1, but since we have one non-country in the list
-# (i.e. "Willing to relocate") we don't add 1.
-#my $number = $#_ + 1;
-my $number = $#_;
+my $number = $#_ + 1;
 
 close( FILE );
 
@@ -38,6 +36,7 @@ close( FILE );
 foreach ( sort keys %country ) {
 	printf "%-4d  %s\n", $country{$_}, $_;
 	$buffer .= sprintf ("<define-tag %s_count>%d</define-tag>\n", $_, $country{$_});
+	$list .= "$_-$country{$_} ";
 }
 
 # Report numbers and update file in buffer
@@ -45,6 +44,7 @@ print "Number of consultants: $count\n";
 print "Number of countries:   $number\n";
 $buffer .= sprintf ("<define-tag total_consultant>%d</define-tag>\n", $count);
 $buffer .= sprintf ("<define-tag total_country>%d</define-tag>\n", $number);
+$buffer .= sprintf ("<define-tag list_country>%s</define-tag>\n", $list);
 
 open (FILE, ">$outfile") || die "$outfile: $!\n";
 print FILE $buffer;
