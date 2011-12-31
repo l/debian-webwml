@@ -17,4 +17,4 @@ index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*/*.wml) \
      $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml
 
 talks.$(LANGUAGE).html: index.wml $(ENGLISHSRCDIR)/events/talks.data \
-	$(ENGLISHSRCDIR)/events/talks.defs
+	$(ENGLISHSRCDIR)/events/talks.defs $(TEMPLDIR)/countries.wml
