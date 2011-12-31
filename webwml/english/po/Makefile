@@ -63,7 +63,7 @@ templates_FILES = $(addprefix $(TEMPLDIR)/, \
   basic.wml \
   common_tags.wml common_translation.wml \
   ddp.wml fixes_link.wml footer.wml languages.wml \
-  links.tags.wml mirrors.wml navbar.wml recent_list.wml release.wml \
+  links.tags.wml navbar.wml recent_list.wml release.wml \
   todoitem.wml translation-check.wml url.wml users.wml)
 
 
