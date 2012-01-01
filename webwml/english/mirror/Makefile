@@ -10,7 +10,7 @@ include $(WMLBASE)/Make.lang
 
 submit.$(LANGUAGE).html: submit.wml $(ENGLISHDIR)/mirror/submit.inc \
   $(ENGLISHSRCDIR)/releases/sid/archive.data  $(GETTEXTDEP) \
-  $(TEMPLDIR)/countries_all.wml
+  $(TEMPLDIR)/countries.wml
 
 official_sponsors.$(LANGUAGE).html: official_sponsors.wml \
   $(TEMPLDIR)/template.wml $(ENGLISHDIR)/mirror/official_sponsors.list \

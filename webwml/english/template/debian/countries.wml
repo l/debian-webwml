@@ -3,16 +3,23 @@
 # <country-name XX> should now be used instead of <XXc>
 
 <:
-my %countries,%codes;
+my %countries,%countries_in_english;
 
 my $arg = '';
 $arg = "-l $CUR_ISO_LANG" if $CUR_ISO_LANG ne 'en';
 
-foreach (`isoquery $arg`) {
+foreach (`isoquery -c $arg`) {
         chomp ;
         my $code = substr($_,0,2);
         $_ =~ s/.*\t//;
         $countries{$code} = $_;
+}
+
+foreach (`isoquery -c`) {
+        chomp ;
+        my $code = substr($_,0,2);
+        $_ =~ s/.*\t//;
+        $countries_in_english{$code} = $_;
 }
 
 sub country_name {
@@ -25,7 +32,21 @@ sub country_name {
 }
 
 sub country_list {
-	my @list = split ' ', shift;
+    my $ccodepos = shift;
+    $ccodepos = 'ccafter' unless (defined($ccodepos));
+    if ($ccodepos eq 'ccafter' or $ccodepos eq 'ccbefore') {
+	foreach $c (sort { $countries{$a} cmp $countries{$b} } keys %countries) {
+	   my $localname = $countries{$c};
+	   my $label;
+	   if ($ccodepos eq 'ccafter') {
+		$label = "$localname [$c]";
+	   } elsif ($ccodepos eq 'ccbefore') {
+		$label = "[$c] $localname";
+	   }
+	   print "<option value=\"$c $countries_in_english{$c}\">$label</option>\n";
+	}
+     } else {
+	my @list = split ' ', $ccodepos;
 	my $type = shift @list;
 	my ($list,$pre,$post) = ('','','');
 
@@ -51,6 +72,7 @@ sub country_list {
 		$list .= $post;
 	}
 	return $list;
+     }
 }
 :>
 

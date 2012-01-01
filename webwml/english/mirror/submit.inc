@@ -108,7 +108,7 @@ function allarches() {
 }
 </script>
 
-#use wml::debian::countries_all
+#use wml::debian::countries
 
 <define-tag countrylist>
 <: country_list() :>
