@@ -46,7 +46,7 @@ while ( @row = $sth->fetchrow_array ) {
 
     $country = $row[0];
     $cc = uc($country);
-    print "<hr>\n<h3><a name=\"$country\"><",$cc,"c></a></h3>\n";
+    print "<hr>\n<h3><a name=\"$country\"><country-name ",$cc,"></a></h3>\n";
 
     $sql = "SELECT name,email,url,deburl,contribute,ship, ";
     $sql .= "officialcd,ocd_nonfree,ocd_nonus,ocd_vendor,ocd_contrib, ";
@@ -78,7 +78,7 @@ while ( @row = $sth->fetchrow_array ) {
           print "    <contribution no>\n";
         }
         print "    <td>\n";
-        print "    <country <", $cc, "c>>\n";
+        print "    <country <country-name ", $cc, ">>\n";
         print "    <ship ";
         if ($ship eq "y") {
             print "yes";
