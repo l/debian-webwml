@@ -24,7 +24,7 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml $(TEMPLDIR)/countries.
 # besides, it's good to have a makefile dependency as well
 tes := $(shell grep "define-tag current_testing_name" $(TEMPLDIR)/release_info.wml | grep -v ^\# | cut -d\< -f2 | cut -d\> -f2)
 
-adding-form.$(LANGUAGE).html: adding-form.wml $(TEMPLDIR)/countries_all.wml \
+adding-form.$(LANGUAGE).html: adding-form.wml \
   $(TEMPLDIR)/countries.wml $(GETTEXTDEP) \
   $(ENGLISHDIR)/releases/$(tes)/release.data
 	$(WML) $(<F) -D TESTING=$(tes)
