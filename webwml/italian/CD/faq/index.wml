@@ -1,7 +1,7 @@
 #use wml::debian::cdimage title="Domande ricorrenti sui CD Debian" NOHEADER=true BARETITLE=true
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/info"
-#use wml::debian::translation-check translation="1.99" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.101" maintainer="Luca Monducci"
 
 <define-tag toc-title-formatting endtag="required" whitespace="delete">
 <p><strong>%body</strong></p>
@@ -39,7 +39,7 @@ così facendo si ottiene un CD con cui non si può fare l'avvio, infatti il
 file <tt>.iso</tt> contiene delle informazioni speciali per l'avvio che
 si perdono quando si spacchetta il file. Si veda come masterizzare
 correttamente un CD sotto <a href="#record-unix">Linux</a>,
-<a href="#record-windows">Windows</a> o <a href="#record-mac">MacOS</a>.
+<a href="#record-windows">Windows</a> o <a href="#record-mac">Mac OS</a>.
 </p>
 
 # ============================================================
@@ -575,27 +575,33 @@ usare <tt>curl</tt> con questa riga di comando:
 
 # ============================================================
 
-<toc-add-entry name="record-unix">Come masterizzare un CD-R sotto
+<toc-add-entry name="record-unix">Come masterizzare un'immagine ISO sotto
 Linux/Unix?</toc-add-entry>
 
-<p>
-Si può usare il programma 
-<a href="http://cdrecord.berlios.de/old/private/cdrecord.html">\
-cdrecord</a>, con una riga di comando come questa (come utente <q>root</q>):<br />
-<tt>nice&nbsp;--18&nbsp;cdrecord&nbsp;-eject&nbsp;-v&nbsp;speed=2&nbsp;dev=0,6,0&nbsp;-data&nbsp;-pad&nbsp;binary-i386-1.iso</tt>.
+<p>Nota: le immagini ISO Debian per i386 e amd64 sono avviabili da una
+chiavetta USB, si veda <a href="#write-usb">più sotto</a>.</p>
+
+<p><a href="http://www.gnu.org/software/xorriso/xorriso.html">xorriso</a>
+per tutti i supporti ottici (utilizzabile anche da utente non-root):
+<br/><tt>xorriso -as cdrecord -v dev=/dev/sr0 -eject debian-x.y.z-arch-MEDIUM-NN.iso</tt>
+<br/>Su BD-RE aggiungere l'opzione <tt>stream_recording=on</tt> per
+avere la velocità nominale massima senza il controllo in lettura.
 </p>
 
-<p>
-In Debian etch è stato inserito un fork di cdrecord, si raccomanda di usare
-wodim al posto di cdrecord.
+<p><a href="http://fy.chalmers.se/~appro/linux/DVD+RW/">growisofs</a>
+per i supporti ottici DVD e BD:
+<br/><tt>growisofs -dvd-compat -Z /dev/sr0=debian-x.y.z-arch-MEDIUM-NN.iso</tt>
 </p>
 
-<p>
-Per Linux ci sono anche dei programmi sotto X
+<p><a href="http://www.cdrkit.org/">wodim</a> per i supporti ottici CD:
+<br/><tt>wodim -v dev=/dev/sr0 -eject -sao debian-x.y.z-arch-CD-NN.iso</tt>
+
+<p>Per Linux ci sono anche dei programmi sotto X
 <a href="http://www.gnome.org/projects/brasero/">Brasero</a>,
 <a href="http://k3b.plainblack.com/">K3B</a> e
 <a href="http://www.xcdroast.org/">X-CD-Roast</a>
-per citarne alcuni. Si noti che sono tutti delle interfacce per <q>cdrecord</q>.
+per citarne alcuni. Si noti che sono tutti delle interfacce per le
+applicazioni di masterizzazione citate in precedenza.
 </p>
 
 <dl>
@@ -635,7 +641,7 @@ il nome del file immagine e fare clic su <i>Add</i>, poi fare clic su
 
 # ============================================================
 
-<toc-add-entry name="record-windows">Come si registra un CD-R sotto
+<toc-add-entry name="record-windows">Come masterizzare un'immagine ISO sotto
 Windows?</toc-add-entry>
 
 <p>
@@ -764,14 +770,6 @@ file d'aiuto distribuito assieme ai programmi, in breve: si deve eseguire
 un comando simile a
 <tt>cdburn&nbsp;drive:&nbsp;iso-file.iso&nbsp;/speed&nbsp;max</tt></dd>
 
-  <dt>
-<strong><a name="cdrecord-win" href="http://www.fokus.gmd.de/research/cc/glone/employees/joerg.schilling/private/cdrecord.html">cdrecord</a></strong></dt>
-
-  <dd>
-Il programma è disponibile anche per
-<a href="ftp://ftp.fokus.gmd.de/pub/unix/cdrecord/alpha/win32/">Windows
-9x/NT</a>. Leggere il LEGGIMI (README) per ulteriori dettagli.</dd>
-
 </dl>
 
 <p>
@@ -781,7 +779,7 @@ farcelo sapere</a>.
 
 # ============================================================
 
-<toc-add-entry name="record-mac">Come si incide un CD-R sotto
+<toc-add-entry name="record-mac">Come masterizzare un'immagine ISO sotto
 Mac OS?</toc-add-entry>
 
 <p>
@@ -802,13 +800,42 @@ da registrare. Assicurarsi che siano corretti i parametri e fare click su
 <i>Burn</i>.
 </p>
 
-<p>
-In più, il programma
-<a href="http://www.fokus.gmd.de/research/cc/glone/employees/joerg.schilling/private/cdrecord.html">\
-cdrecord</a> è anche disponibile
-<a href="ftp://ftp.fokus.gmd.de/pub/unix/cdrecord/alpha/macos-x/">per Mac
-OS X</a>.
-</p>
+# ============================================================
+
+<toc-add-entry name="write-usb">Come masterizzare un'immagine ISO su
+una chiavetta USB?</toc-add-entry>
+
+<p>Molte immagini dei CD Debian e Debian Live sono create usando la
+tecnologia <i>isohybrid</i>, ciò vuol dire che possono essere usate
+in due modi diversi:</p>
+
+<ul>
+<li>possono essere masterizzate su CD/DVD e poi usare per l'avvio del
+sistema i normali CD/DVD;</li>
+<li>possono essere copiate su chiavette USB dalle quali la maggior
+parte dei BIOS dei PC sono in grado di avviare il sistema.</li>
+</ul>
+
+<p>Il metodo più comune per copiare un'immagine su una chiavetta USB da
+una macchina Linux è usare il comando <q>dd</q>:</p>
+
+<p><code>dd if=&lt;file&gt; of=&lt;device&gt; bs=4M; sync</code></p>
+
+<p>dove:</p>
+<ul>
+<li>&lt;file&gt; è il nome dell'immagine di input, per esempio
+<q>netinst.iso</q>;</li>
+<li>&lt;device&gt; è il device che corrisponde alla chiavetta USB,
+per esempio /dev/sda, /dev/sdb. Fare molta attenzione a utilizzare
+il nome del device corretto poiché questo comando è in grado di
+sovrascrivere il proprio disco fisso se viene indicato il device
+sbagliato!</li>
+<li><q>bs=4M</q> indica a <tt>dd</tt> di leggere/scrivere a blocchi
+di 4 Megabyte per migliorare le prestazioni; con il valore predefinito
+è 512 byte la copia sarebbe molto più lenta;</li>
+<li><q>sync</q> garantisce che tutte le operazioni di scrittura siano
+completate prima che il comando esca.</li>
+</ul>
 
 # ============================================================
 
