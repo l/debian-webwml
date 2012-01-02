@@ -1,14 +1,14 @@
-<p>±× ¿ÜÀÇ ÆäÀÌÁö:
+<p>ê·¸ ì™¸ì˜ íŽ˜ì´ì§€:
 
 <ul>
-  <li><a href="./">¹ö±× ÃßÀû ½Ã½ºÅÛ ¸ÞÀÎ Â÷·Ê ÆäÀÌÁö.</a>
-  <li><a href="Reporting">¹ö±×¸¦ º¸°íÇÏ´Â ¹æ¹ý.</a>
-  <li><a href="Access">À¥ ÀÌ¿Ü¿¡ ¹ö±× ÃßÀû ±â·ÏÀ» Á¢±ÙÇÏ´Â ¹æ¹ý.</a>
-  <li><a href="Developer">¹ö±× Ã³¸® ½Ã½ºÅÛ¿¡ °üÇÑ °³¹ßÀÚ Á¤º¸.</a>
-  <li><a href="server-control">°³¹ßÀÚ Á¤º¸ - ÀÌ¸ÞÀÏ·Î ÄÁÆ®·ÑÇÏ´Â ¹ö±× Ã³¸®.</a>
-  <li><a href="server-refcard">¸ÞÀÏ¼­¹öÀÇ Âü°í Ä«µå.</a>
-  <li><a href="server-request">¿äÃ» ¸ÞÀÏ¼­¹öÀÇ ¹®¼­.</a>
-#  <li><a href="db/ix/full.html">¹ÌÇØ°á »óÅÂ È¤Àº ÃÖ±Ù¿¡ ÇØ°áµÈ ¹ö±× º¸°íÀÇ ÀüÃ¼ ¸®½ºÆ®.</a>
-#  <li><a href="db/ix/packages.html">¹ö±× º¸°í°¡ ÀÖ´Â ÆÐÅ°Áö.</a>
-#  <li><a href="db/ix/maintainers.html">¹ö±× º¸°í°¡ ÀÖ´Â ÆÐÅ°ÁöÀÇ °ü¸®ÀÚ.</a>
+  <li><a href="./">ë²„ê·¸ ì¶”ì  ì‹œìŠ¤í…œ ë©”ì¸ ì°¨ë¡€ íŽ˜ì´ì§€.</a>
+  <li><a href="Reporting">ë²„ê·¸ë¥¼ ë³´ê³ í•˜ëŠ” ë°©ë²•.</a>
+  <li><a href="Access">ì›¹ ì´ì™¸ì— ë²„ê·¸ ì¶”ì  ê¸°ë¡ì„ ì ‘ê·¼í•˜ëŠ” ë°©ë²•.</a>
+  <li><a href="Developer">ë²„ê·¸ ì²˜ë¦¬ ì‹œìŠ¤í…œì— ê´€í•œ ê°œë°œìž ì •ë³´.</a>
+  <li><a href="server-control">ê°œë°œìž ì •ë³´ - ì´ë©”ì¼ë¡œ ì»¨íŠ¸ë¡¤í•˜ëŠ” ë²„ê·¸ ì²˜ë¦¬.</a>
+  <li><a href="server-refcard">ë©”ì¼ì„œë²„ì˜ ì°¸ê³  ì¹´ë“œ.</a>
+  <li><a href="server-request">ìš”ì²­ ë©”ì¼ì„œë²„ì˜ ë¬¸ì„œ.</a>
+#  <li><a href="db/ix/full.html">ë¯¸í•´ê²° ìƒíƒœ í˜¹ì€ ìµœê·¼ì— í•´ê²°ëœ ë²„ê·¸ ë³´ê³ ì˜ ì „ì²´ ë¦¬ìŠ¤íŠ¸.</a>
+#  <li><a href="db/ix/packages.html">ë²„ê·¸ ë³´ê³ ê°€ ìžˆëŠ” íŒ¨í‚¤ì§€.</a>
+#  <li><a href="db/ix/maintainers.html">ë²„ê·¸ ë³´ê³ ê°€ ìžˆëŠ” íŒ¨í‚¤ì§€ì˜ ê´€ë¦¬ìž.</a>
 </ul>
