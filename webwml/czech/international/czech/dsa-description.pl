@@ -18,103 +18,103 @@ s/  */ /g;
 #
 
 s{<define-tag description>([^<]*)several vulnerabilities([^<]*)</define-tag>}
-{<define-tag description>${1}nìkolik zranitelností${2}</define-tag>}g;
+{<define-tag description>${1}nÄ›kolik zranitelnostÃ­${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)integer overflows([^<]*)</define-tag>}
-{<define-tag description>${1}celoèíselná pøeteèení${2}</define-tag>}g;
+{<define-tag description>${1}celoÄÃ­selnÃ¡ pÅ™eteÄenÃ­${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)integer overflow([^<]*)</define-tag>}
-{<define-tag description>${1}celoèíselné pøeteèení${2}</define-tag>}g;
+{<define-tag description>${1}celoÄÃ­selnÃ© pÅ™eteÄenÃ­${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)unsanitised input([^<]*)</define-tag>}
-{<define-tag description>${1}neo¹etøenı vstup${2}</define-tag>}g;
+{<define-tag description>${1}neoÅ¡etÅ™enÃ½ vstup${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)missing input sanitising([^<]*)</define-tag>}
-{<define-tag description>${1}chybí o¹etøení vstupu${2}</define-tag>}g;
+{<define-tag description>${1}chybÃ­ oÅ¡etÅ™enÃ­ vstupu${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)buffer overflows([^<]*)</define-tag>}
-{<define-tag description>${1}pøeteèení bufferu${2}</define-tag>}g;
+{<define-tag description>${1}pÅ™eteÄenÃ­ bufferu${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)buffer overflow([^<]*)</define-tag>}
-{<define-tag description>${1}pøeteèení bufferu${2}</define-tag>}g;
+{<define-tag description>${1}pÅ™eteÄenÃ­ bufferu${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)insecure temporary files([^<]*)</define-tag>}
-{<define-tag description>${1}nespolehlivé doèasné soubory${2}</define-tag>}g;
+{<define-tag description>${1}nespolehlivÃ© doÄasnÃ© soubory${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)insecure temporary file([^<]*)</define-tag>}
-{<define-tag description>${1}nespolehlivı doèasnı soubor${2}</define-tag>}g;
+{<define-tag description>${1}nespolehlivÃ½ doÄasnÃ½ soubor${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)insecure temporary directory([^<]*)</define-tag>}
-{<define-tag description>${1}nespolehlivı doèasnı adresáø${2}</define-tag>}g;
+{<define-tag description>${1}nespolehlivÃ½ doÄasnÃ½ adresÃ¡Å™${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)insecure file access([^<]*)</define-tag>}
-{<define-tag description>${1}nespolehlivı pøístup k&nbsp;souboru${2}</define-tag>}g;
+{<define-tag description>${1}nespolehlivÃ½ pÅ™Ã­stup k&nbsp;souboru${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)unsanitised input([^<]*)</define-tag>}
-{<define-tag description>${1}neo¹etøenı vstup${2}</define-tag>}g;
+{<define-tag description>${1}neoÅ¡etÅ™enÃ½ vstup${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)infinite loop([^<]*)</define-tag>}
-{<define-tag description>${1}nekoneèná smyèka${2}</define-tag>}g;
+{<define-tag description>${1}nekoneÄnÃ¡ smyÄka${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)format string([^<]*)</define-tag>}
-{<define-tag description>${1}formátování øetìzce${2}</define-tag>}g;
+{<define-tag description>${1}formÃ¡tovÃ¡nÃ­ Å™etÄ›zce${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)insufficient input validation([^<]*)</define-tag>}
-{<define-tag description>${1}nedostateèná kontrola vstupu${2}</define-tag>}g;
+{<define-tag description>${1}nedostateÄnÃ¡ kontrola vstupu${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)weak hostname and username validation([^<]*)</define-tag>}
-{<define-tag description>${1}slabá kontrola jména poèítaèe a jména u¾ivatele${2}</define-tag>}g;
+{<define-tag description>${1}slabÃ¡ kontrola jmÃ©na poÄÃ­taÄe a jmÃ©na uÅ¾ivatele${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)missing privilege release([^<]*)</define-tag>}
-{<define-tag description>${1}chybìjící kontrola práv${2}</define-tag>}g;
+{<define-tag description>${1}chybÄ›jÃ­cÃ­ kontrola prÃ¡v${2}</define-tag>}g;
 
 #
 # More info
 #
 
 # exploit
-# vyu¾ít
+# vyuÅ¾Ã­t
 
 s{An attacker could create a carefully crafted image file in such a way that it could cause an application linked with imlib or imlib2 to execute arbitrary code when the file was opened by a victim\.}
-{Útoèník mù¾e vytvoøit peèlivì zhotovenı soubor obrázku, kterı pak
-zpùsobí u aplikace slinkované s imlib nebo imlib2 spu¹tìní libovolného
-kódu, kdy¾ obì» tento soubor otevøe.}g;
+{ÃštoÄnÃ­k mÅ¯Å¾e vytvoÅ™it peÄlivÄ› zhotovenÃ½ soubor obrÃ¡zku, kterÃ½ pak
+zpÅ¯sobÃ­ u aplikace slinkovanÃ© s imlib nebo imlib2 spuÅ¡tÄ›nÃ­ libovolnÃ©ho
+kÃ³du, kdyÅ¾ obÄ›Å¥ tento soubor otevÅ™e.}g;
 
 s{An attacker could prepare specially crafted input that would not be sanitised by namazu2 and hence displayed verbatim for the victim\.}
-{Útoèník mù¾e pøipravit speciálnì upravenı vstup, kterı není programem vyèi¹tìn a proto je doslovnì zobrazen obìti.}g;
+{ÃštoÄnÃ­k mÅ¯Å¾e pÅ™ipravit speciÃ¡lnÄ› upravenÃ½ vstup, kterÃ½ nenÃ­ programem vyÄiÅ¡tÄ›n a proto je doslovnÄ› zobrazen obÄ›ti.}g;
 
 # s{A cross-site scripting vulnerability}
 # {}g;
 
 s{Several vulnerabilities have been discovered in}
-{Bylo objeveno nìkolik zranitelností v}g;
+{Bylo objeveno nÄ›kolik zranitelnostÃ­ v}g;
 
 s{A vulnerability has been discovered in}
 {Objevena zranitelnost v}g;
 
 s{discoverd multiple vulnerabilities in}
-{objevil mnohonásobné zranitelnosti v}g;
+{objevil mnohonÃ¡sobnÃ© zranitelnosti v}g;
 
 s{An ([\w-]+) security researcher}
-{Bezpeènostní vızkumnı pracovník ${1}}g;
+{BezpeÄnostnÃ­ vÃ½zkumnÃ½ pracovnÃ­k ${1}}g;
 
 s{The Common Vulnerabilities and Exposures project}
 {Projekt Common Vulnerabilities and Exposures}g;
 
 s{identifies the following problems}
-{zjistil následující problémy}g;
+{zjistil nÃ¡sledujÃ­cÃ­ problÃ©my}g;
 
 s{Multiple heap-based buffer overflows\.}
-{Mnohonásobná pøeteèení bufferu typu halda (heap).}g;
+{MnohonÃ¡sobnÃ¡ pÅ™eteÄenÃ­ bufferu typu halda (heap).}g;
 
 s{No such code is present in ([\w-]+)\.}
-{Tento kód není obsa¾en v ${1}.}g;
+{Tento kÃ³d nenÃ­ obsaÅ¾en v ${1}.}g;
 
 s{([Mm])ultiple integer overflows}
-{${1}nohonásobná celoèíselná pøeteèení}g;
+{${1}nohonÃ¡sobnÃ¡ celoÄÃ­selnÃ¡ pÅ™eteÄenÃ­}g;
 
 s{in ([\w-]+) library}
-{v knihovnì ${1}}g;
+{v knihovnÄ› ${1}}g;
 
 #
 # info about packages
@@ -122,38 +122,38 @@ s{in ([\w-]+) library}
 
 # libTIFF
 s{the Tag Image File Format library for processing TIFF graphics files}
-{knihovnì Tag Image File Format pro zpracování grafickıch souborù TIFF}g;
+{knihovnÄ› Tag Image File Format pro zpracovÃ¡nÃ­ grafickÃ½ch souborÅ¯ TIFF}g;
 
 s{a picture viewer for X11 with a thumbnail-based selector}
-{programu pro prohlí¾ení obrázkù pro X11 s vıbìrem z miniatur}g;
+{programu pro prohlÃ­Å¾enÃ­ obrÃ¡zkÅ¯ pro X11 s vÃ½bÄ›rem z miniatur}g;
 
 s{the ([pP])ortable ([dD])ocument ([fF])ormat \(PDF\) suite}
-{sestavì ${1}ortable ${2}ocument ${3}ormat (PDF)}g;
+{sestavÄ› ${1}ortable ${2}ocument ${3}ormat (PDF)}g;
 
 # perl
 s{the popular scripting language}
-{populárním skriptovacím jazyce}g;
+{populÃ¡rnÃ­m skriptovacÃ­m jazyce}g;
 
 s{the general-purpose x86 assembler}
-{univerzálním x86 assembleru}g;
+{univerzÃ¡lnÃ­m x86 assembleru}g;
 
 # zip
 s{the archiver for .zip files}
-{správce .zip archívù}g;
+{sprÃ¡vce .zip archÃ­vÅ¯}g;
 
 # pcal
 s{a program to generate Post([sS])cript calendars}
-{programu generujícího Post${1}cript kalendáøe}g;
+{programu generujÃ­cÃ­ho Post${1}cript kalendÃ¡Å™e}g;
 
 s{a full text search engine}
-{fulltextovém vyhledávacím stroji}g;
+{fulltextovÃ©m vyhledÃ¡vacÃ­m stroji}g;
 
 # imlib
 s{imaging libraries for X11}
-{obrazovıch knihovnách pro X11}g;
+{obrazovÃ½ch knihovnÃ¡ch pro X11}g;
 
 s{an imaging library for X and X11}
-{obrazové knihovnì pro X a X11}g;
+{obrazovÃ© knihovnÄ› pro X a X11}g;
 
 
 
@@ -162,66 +162,66 @@ s{an imaging library for X and X11}
 #
 
 s{Remote exploitation of an integer overflow vulnerability could allow the execution of arbitrary code.}
-{Vzdálené vyu¾ití zranitelnosti celoèíselného pøeteèení dovoluje vykonání libovolného kódu.}g;
+{VzdÃ¡lenÃ© vyuÅ¾itÃ­ zranitelnosti celoÄÃ­selnÃ©ho pÅ™eteÄenÃ­ dovoluje vykonÃ¡nÃ­ libovolnÃ©ho kÃ³du.}g;
 
 s{A maliciously crafted ([\w-]+) file could exploit this problem, leading to the execution of arbitrary code.}
-{Zlomyslnì vytvoøenı ${1} soubor mù¾e vyu¾ít tento problém a&nbsp;spustit libovolnı kód.}g;
+{ZlomyslnÄ› vytvoÅ™enÃ½ ${1} soubor mÅ¯Å¾e vyuÅ¾Ã­t tento problÃ©m a&nbsp;spustit libovolnÃ½ kÃ³d.}g;
 
 #
 # Fixed in packages
 #
 
 s{For the unstable distribution \(sid\) these problems should already be fixed since they were backported from current versions.}
-{V&nbsp;unstable distribuci (sid) by ji¾ mìly bıt tyto problémy\nopraveny, proto¾e byly vzaty z&nbsp;aktuálních verzí.}g;
+{V&nbsp;unstable distribuci (sid) by jiÅ¾ mÄ›ly bÃ½t tyto problÃ©my\nopraveny, protoÅ¾e byly vzaty z&nbsp;aktuÃ¡lnÃ­ch verzÃ­.}g;
 
 s{<p>For the (stable|unstable) distribution}
 {<p>Pro $1 distribuci}g;
 
 s{this problem has been fixed in version}
-{byl tento problém opraven\nve verzi}g;
+{byl tento problÃ©m opraven\nve verzi}g;
 
 s{these problems have been fixed in version}
-{byly tyto problémy opraveny\nve verzi}g;
+{byly tyto problÃ©my opraveny\nve verzi}g;
 
 s{this problem will be fixed soon.</p>}
-{bude tento problém brzy\nodstranìn.</p>}g;
+{bude tento problÃ©m brzy\nodstranÄ›n.</p>}g;
 
 s{these problems will be fixed soon.</p>}
-{budou tyto problémy brzy\nodstranìny.</p>}g;
+{budou tyto problÃ©my brzy\nodstranÄ›ny.</p>}g;
 
 s{<p>This package is not present in the testing and unstable distributions.</p>}
-{<p>Tento balíèek není obsa¾en v testing a unstable distribuci.</p>}g;
+{<p>Tento balÃ­Äek nenÃ­ obsaÅ¾en v testing a unstable distribuci.</p>}g;
 
 s{<p>The unstable distribution \(sid\) does not contain this package.</p>}
-{<p>Unstable distribuce (sid) neobsahuje tento balíèek.</p>}g;
+{<p>Unstable distribuce (sid) neobsahuje tento balÃ­Äek.</p>}g;
 
 s{<p>The unstable distribution \(sid\) does not contain a ([\w-]+) package\.}
-{<p>Unstable distribuce (sid) neobsahuje balíèek ${1}.}g;
+{<p>Unstable distribuce (sid) neobsahuje balÃ­Äek ${1}.}g;
 
 s{In the unstable distribution \(sid\) this package does not exist anymore\.}
-{V&nbsp;unstable distribuci (sid) ji¾ tento balíèek neexistuje.}g;
+{V&nbsp;unstable distribuci (sid) jiÅ¾ tento balÃ­Äek neexistuje.}g;
 
 s{<p>In the unstable distribution \(sid\) CUPSYS does not use its own xpdf variant anymore but uses xpdf-utils.</p>}
-{<p>V&nbsp;unstable distribuci (sid) CUPSYS ji¾ nepou¾ívá svoji vlastní xpdf variantu, ale pou¾ívá xpdf-utils.</p>}g;
+{<p>V&nbsp;unstable distribuci (sid) CUPSYS jiÅ¾ nepouÅ¾Ã­vÃ¡ svoji vlastnÃ­ xpdf variantu, ale pouÅ¾Ã­vÃ¡ xpdf-utils.</p>}g;
 
 s{It has been replaced by ([\w-]+)\.}
-{Byl nahrazen balíèkem ${1}.}g;
+{Byl nahrazen balÃ­Äkem ${1}.}g;
 
 #
 # Upgrade it
 #
 
 s{<p>We recommend that you upgrade your ([\w-]+) package immediately.</p>}
-{<p>Doporuèujeme vám ihned aktualizovat vá¹ balíèek ${1}.</p>}g;
+{<p>DoporuÄujeme vÃ¡m ihned aktualizovat vÃ¡Å¡ balÃ­Äek ${1}.</p>}g;
 
 s{<p>We recommend that you upgrade your ([\w-]+) package.</p>}
-{<p>Doporuèujeme vám aktualizovat vá¹ balíèek ${1}.</p>}g;
+{<p>DoporuÄujeme vÃ¡m aktualizovat vÃ¡Å¡ balÃ­Äek ${1}.</p>}g;
 
 s{<p>We recommend that you upgrade your ([\w-]+) packages.</p>}
-{<p>Doporuèujeme vám aktualizovat va¹e ${1} balíèky.</p>}g;
+{<p>DoporuÄujeme vÃ¡m aktualizovat vaÅ¡e ${1} balÃ­Äky.</p>}g;
 
 s{<p>We recommend that you upgrade your ([\w-]+) and ([\w-]+) packages.</p>}
-{<p>Doporuèujeme vám aktualizovat va¹e balíèky ${1} a ${2}.</p>}g;
+{<p>DoporuÄujeme vÃ¡m aktualizovat vaÅ¡e balÃ­Äky ${1} a ${2}.</p>}g;
 
 
 #
