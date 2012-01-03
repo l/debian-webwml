@@ -80,8 +80,6 @@ Debian over the competition.
 Could you please provide us the name of your organization in the form
 of “division, organization, city/town (optional), country”?
 
-I.e., can we add the city/town if accurate?
-
 
 EOT
 
@@ -94,22 +92,14 @@ an updated one, or confirm that the last link [3] is correct?
 <<<<<<<<
 
 EOT
-	$mail .= "   2: $url\n\n";
-
-	$mail .= <<'EOT';
-Could you please provide a link from your website mentioning you're
-using Debian?
-EOT
+	$mail .= "   2: $url";
 }
 else{
-	$mail .= <<'EOT';
-You may also wish to provide a home page link if you have one, and if
-so, please provide a link from your website mentioning you're using
-Debian.
-EOT
+	$mail .= "You may also wish to provide a home page link if you have one."
 }
 
 $mail .= <<'EOT';
+
 
 
 Thanks in advance for you answer.
