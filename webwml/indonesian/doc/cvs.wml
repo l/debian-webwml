@@ -1,0 +1,119 @@
+#use wml::debian::ddp title="SVN Proyek Dokumentasi Debian"
+#use wml::debian::toc
+#use wml::debian::translation-check translation="1.34" maintainer="Samsul Ma'arif"
+# Translator: Samsul Ma'arif <samsul@samsul.web.id>
+
+<p>Proyek Dokumentasi Debian tersimpan pada halaman web dan banyak teks 
+manual di server Subversion Debian pada <strong>svn.debian.org</strong>.
+svn.debian.org adalah bagian dari instalasi pada alioth.debian.org.
+Silahkan baca <a href="http://wiki.debian.org/Alioth">Dokumentasi Alioth</a> untuk informasi selengkapnya tentang bagaimana layanan ini bekerja.
+</p>
+
+<p>Setiap orang dapat mendownload sumber dari server SVN. Hanya anggota
+Proyek Dokumentasi Debian yang dapat memperbarui file.</p>
+
+<toc-display />
+
+<toc-add-entry name="access">Mengakses sumber di SVN</toc-add-entry>
+  
+<p>Anda dapat menggunakan antarmuka web untuk mengakses berkas secara individual dan melihat perubahannya pada <url "http://anonscm.debian.org/viewvc/ddp/manuals/trunk/" /></p>
+
+<p>Untuk mendownload seluruh manual, akses langsung ke server SVN seringkali menjadi pilihan terbaik. Anda membutuhkan paket
+<tt><a href="http://packages.debian.org/subversion">subversion</a></tt> di mesin Anda sendiri.</p>
+
+<h3>Menghubungkan secara anonim (baca-saja) ke server SVN</h3>
+
+<p>Gunakan perintah berikut untuk mendownload semua berkas:</p>
+
+<p style="margin-left: 2em">
+  <code>svn co svn://svn.debian.org/ddp/manuals/trunk manuals</code>
+</p>
+
+<p>Ini akan secara rekursif membuat folder dan mengumpulkannya.</p>
+
+<p>Untuk memperbarui salinan lokal dengan perubahan yang telah dibuat orang lain, masuk ke folder <strong>manuals</strong> dan jalankan perintah berikut:</p>
+
+<p style="margin-left: 2em">
+  <code>svn export --force svn://svn.debian.org/svn/ddp/manuals</code>
+</p>
+
+<h3>Menghubungkan ke server SVN, dengan hak mengupdate (svn)</h3>
+
+<p>Sebelum mengakses server SVN menggunakan cara ini Anda harus mendapat hak akses menulisnya terlebih dahulu. Silahkan baca bagaimana cara <a
+href="#obtaining">meminta</a> izin update terlebih dahulu.</p>
+
+<p> Gunakan perintah berikut untuk mendownload semua berkas:</p>
+
+<p style="margin-left: 2em">
+  <code>svn co svn+ssh://svn.debian.org/svn/ddp/manuals/trunk manuals</code>
+</p>
+
+<p>Perintah ini akan secara rekursif membuat folder dan mengumpulkannya.</p>
+
+<p>Untuk memperbarui salinan lokal Anda dengan perubahan yang telah dilakukan oleh orang lain, masuk ke folder <strong>manuals</strong> dan jalankan perintah berikut:</p>
+
+<p style="margin-left: 2em">
+  <code>svn update</code>
+</p>
+
+<h3>Menghubungkan ke server SVN, dengan hak mengupdate (git-svn)</h3>
+
+<p>Sebelum mengakses server SVN menggunakan cara ini Anda harus mendapat hak akses menulisnya terlebih dahulu. Silahkan baca bagaimana cara <a
+href="#obtaining">meminta</a> izin update terlebih dahulu.</p>
+
+<p>Gunakan perintah berikut untuk mendownload semua berkas:</p>
+
+<p style="margin-left: 2em">
+  <code>git svn clone -s -rHEAD svn+ssh://svn.debian.org/svn/ddp/manuals manuals</code>
+</p>
+
+<p>Perintah ini akan secara rekursif membuat folder dan mengumpulkannya dan juga membuat repositori lokal git tanpa sejarah yang lama dapat melacak server SVN Alioth.</p>
+
+<p>Untuk mengupdate salinan lokal dengan perubahan yang telah dibuat oleh orang lain, masuk ke folder <strong>manuals</strong> dan jalankan perintah berikut:</p>
+
+<p style="margin-left: 2em">
+  <code>git svn rebase</code>
+</p>
+
+<toc-add-entry name="obtaining">Mendapatkan hak istimewa pembaruan</toc-add-entry>
+
+<p>Hak istimewa update tersedia kepada siapa saja yang ingin berpartisipasi dalam penulisan manual. Kami umumnya meminta Anda telah mengirimkan beberapa patch yang berguna terlebih dahulu.</p>
+
+<p>Untuk mendapatkan hak istimewa, Anda perlu mengirimkan permintaan ke 
+<a href="mailto:debian-doc@lists.debian.org">Milis Dokumentasi Debian </a>. Harap jelaskan mengapa Anda memerlukan akses. Harap indikasikan nama login <a href="http://alioth.debian.org">Alioth</a> Anda.
+Setelah permintaan Anda disetujui, Anda akan menjadi bagian dari proyek <a
+href="http://alioth.debian.org/projects/ddp"><q>ddp</q> </a> (dan grup Unix) di Alioth.</p>
+
+<hr />
+
+# Disabled (obsolete)
+# <toc-add-entry name="organization">Organization of files</toc-add-entry>
+# 
+# <p>This figure shows the structure of the CVS directory tree:
+# </p>
+# <div class="center">
+# <img src="dirtree.jpg" alt="DDP CVS directory tree" />
+# </div>
+# 
+# <p>Please note that the DDP web site is located in the webwml module of the
+# Debian CVS repository, to be integrated with the rest of the Debian web
+# pages.</p>
+# 
+# <hr />
+
+<toc-add-entry name="updates">Mekanisme pembaruan otomatis</toc-add-entry>
+
+<p>Halaman web yang diterbitkan dari teks manual dihasilkan pada www-master.debian.org sebagai bagian dari proses pembangunan kembali situs web biasa, yang terjadi setiap empat jam sekali.</p>
+
+<p>Script menjalankan perintah <kbd>svn export --force svn://svn.debian.org/svn/ddp/manuals</kbd>, kemudian
+<kbd>make -C trunk publish</kbd>.</p>
+
+<p>Makefile ini dibentuk untuk membangun kembali setiap subdirektori (yang berisi dokumentasi yang dimaintain), dan menginstall file dari setiap sub direktori pada <code>doc/manuals/</code> subdirektori situs web. Subdirektori makefile berasal dari <code>manuals/standard.makefile</code>.</p>
+
+<p>File dokumentasi yang dihasilkan oleh script update dapat ditemukan di
+<a href="manuals/">http://www.debian.org/doc/manuals/</a>.</p>
+
+<p>File log yang dihasilkan oleh script update dapat ditemukan di
+<url "http://www-master.debian.org/build-logs/ddp/" /></p>
+
+<p>Perhatikan bahwa proses ini meregenerasi folder <code>/doc/manuals/</code>. Isi dari folder <code>/doc/</code> dihasilkan baik dari  <a href="/devel/website/desc">webwml</a> atau dari script lain, seperti manual tertentu yang diekstrak dari paket mereka.</p>
