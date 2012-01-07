@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian BTS &mdash; informazioni per lo sviluppatore" NOHEADER=yes NOCOPYRIGHT=true
 #include "$(ENGLISHDIR)/Bugs/pkgreport-opts.inc"
-#use wml::debian::translation-check translation="1.82" maintainer="Giuseppe Sacco"
+#use wml::debian::translation-check translation="1.87" maintainer="Francesca Ciceri"
 
 <h1>Informazioni sul sistema per la gestione dei bug a uso dei manutentori
 di pacchetto e di chi si occupa del triage</h1>
@@ -29,7 +29,7 @@ segnala il problema, sia il gestore, sia
   <li><a href="#maintincorrect">Manutentori di pacchetto elencati erroneamente</a></li>
   <li><a href="#requestserv">Riaprire, riassegnare e manipolare segnalazioni</a></li>
   <li><a href="#subscribe">Iscrizione ad un bug</a></li>
-  <li><a href="#subjectscan">Feature pi&ugrave; o meno vecchie riguardo all'analisi dell'oggetto</a></li>
+  <li><a href="#subjectscan">Feature più o meno vecchie riguardo all'analisi dell'oggetto</a></li>
   <li><a href="#x-debian-pr">Caratteristica vecchia: <code>X-Debian-PR: quiet</code></a></li>
 </ul>
 
@@ -78,36 +78,45 @@ segnalatore e quello del bug (<var>nnn</var><code>@bugs.debian.org</code>) nel
 campo <code>Reply-To</code> dopo aver rigirato la segnalazione. Nota che
 questi sono due indirizzi diversi.</p>
 
-<p>Se uno sviluppatore vuole rispondere ad una segnalazione egli può
+<p>Qualunque sviluppatore che voglia rispondere ad una segnalazione può
 semplicemente rispondere al messaggio, senza cambiare il campo
 <code>Reply-To</code>. Questo <strong>non</strong> chiuderà la
 segnalazione.</p>
-
-<p>Il sistema di tracciamento riceverà il messaggio a
-<var>nnn</var><code>@bugs.debian.org</code>, lo passerà a chi mantiene il 
-pacchetto, lo memorizzerà con tutti gli altri log per quel bug e lo invierà a
-<code>debian-bugs-dist</code>.</p>
-
-<p>Inviare un email a <var>nnn</var><code>-submitter@bugs.debian.org</code>
-invierà esplicitamente l'email al segnalatore e memorizzerà
-una copia del messaggio nel sistema. Il messaggio non verrà
-inviato al manutentore del pacchetto.</p>
-
-<p>Se vuoi spedire un messaggio followup che non consideri appropriato
-per <code>debian-bugs-dist</code> puoi spedirlo a
-<var>nnn</var><code>-quiet@bugs.debian.org</code> o
-<var>nnn</var><code>-maintonly@bugs.debian.org</code>.
-I messaggi inviati a <var>nnn</var><code>-quiet@bugs</code> sono registrati
-nel sistema di tracciamento dei bug ma non sono inviati ad alcuna
-persona o lista di messaggi. I messaggi inviati a
-<var>nnn</var><code>-maintonly@bugs.debian.org</code> sono registrati e inviati anche al
-gestore del pacchetto in questione.</p>
 
 <p><em>Non</em> usare mai la possibilità <q>rispondi a tutti</q> o <q>followup</q>
 offerta dal programma di posta a meno che tu non intenda
 cambiare poi a mano la lista dei destinatari.
 In particolare vedi di non spedire messaggi a
 <code>submit@bugs.debian.org</code>.</p>
+
+<p>
+Perché i messaggi siano aggiunti nel sistema di tracciamento dei bug,
+possono essere inviati ai seguenti indirizzi:
+</p>
+
+<ul>
+<li>
+<var>nnn</var><code>@bugs.debian.org</code> — questi messaggi sono
+inviati anche al manutentore del pacchetto e inoltrati a 
+<code>debian-bugs-dist</code>, ma <strong>non</strong> a chi ha segnalato
+il bug;
+</li>
+<li>
+<var>nnn</var><code>-submitter@bugs.debian.org</code> — questi messaggi
+sono inviati anche a chi ha segnalato il bug e inoltrati a <code>debian-bugs-dist</code>,
+ma <strong>non</strong> al manutentore del pacchetto;
+</li>
+<li>
+<var>nnn</var><code>-maintonly@bugs.debian.org</code> — questi messaggi
+sono inviati solamente al manutentore del pacchetto, <strong>non</strong>
+a chi ha segnalato il bug né a <code>debian-bugs-dist</code>;
+</li>
+<li>
+<var>nnn</var><code>-quiet@bugs.debian.org</code> —  questi messaggi sono
+solamente inseriti nel sistema di tracciamento dei bug (come tutti quelli
+precedenti), ma <strong>non</strong> vengono mandati a nessun altro.
+</li>
+</ul>
 
 <p>Per maggiori informazioni su intestazioni e sulle risposte soppresse
 e su come inviare copie conoscenza usando il sistema di tracciamento dei
@@ -167,7 +176,7 @@ nella versione stabile di Debian. Attualmente questi livelli sono
 <strong>serious</strong>. Per le regole complete che definiscono quali
 problemi meritino questo tag si faccia riferimento 
 all'<a href="http://release.debian.org/testing/rc_policy.txt">elenco dei
-problemi release-critical di Lenny</a>.</p>
+problemi release-critical per il prossimo rilascio</a>.</p>
 
 <h2><a name="tags">Tag per le segnalazioni</a></h2>
  
@@ -182,7 +191,8 @@ o usando il codice comando <code>tags</code> con il
 <a href="#requestserv">control request server</a>.
 I tag vanno separati con una virgola e/o degli spazi.</p>
 
-<p>I tag attuali sono: <bts_tags>.</p>
+<p>I tag attuali sono: <bts_tags>. Di seguito alcune informazioni
+dettagliate sui tag:</p>
 
 <dl>
 
@@ -326,6 +336,20 @@ I tag vanno separati con una virgola e/o degli spazi.</p>
 <dt><code>squeeze-ignore</code>
   <dd>Questo bug è release-critical ma sarà ignorato con lo scopo di
   arrivare al rilascio di squeeze.
+  <strong>Questo tag deve essere utilizzato solo dal manager dei rilasci;
+  non usate questo tag senza il suo permesso esplicito.</strong></dd>
+
+<dt><code>wheezy</code></dt>
+  <dd>Questo è un tag relativo ad una distribuzione, ed ha due effetti.
+   Quando è posto su una segnalazione, il bug può solo essere relativo a
+   wheezy (anche se può avere a che fare anche con altre distribuzioni se
+   ci sono i relativi tag) e altrimenti le normali regole
+   buggy/fixed/absent vengono utilizzate. Inoltre la segnalazione non può
+   essere archiviata finché non viene risolta in wheezy.</dd>
+
+<dt><code>wheezy-ignore</code></dt>
+  <dd>Questo è un bug release-critical ma può essere ignorato con lo
+  scopo di arrivare al rilascio di wheezy. 
   <strong>Questo tag deve essere utilizzato solo dal manager dei rilasci;
   non usate questo tag senza il suo permesso esplicito.</strong></dd>
 
