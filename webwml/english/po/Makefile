@@ -10,7 +10,7 @@ LOCALEROOT = $(WMLBASE)/../locale
 
 DOMAINS = templates bugs cdimage consultants countries date distrib \
 	  doc l10n langs legal mailinglists newsevents organization \
-	  ports search security stats vendors vote wnpp others
+	  ports security stats vendors vote wnpp others
 
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
 cdimage_FILES   = $(TEMPLDIR)/cdimage.wml $(ENGLISHDIR)/CD/CD-keys.data
@@ -39,7 +39,6 @@ organization_FILES = $(ENGLISHDIR)/intro/organization.data
 ports_FILES     = $(ENGLISHDIR)/ports/menu.defs \
   $(shell export LC_COLLATE=C; echo $(ENGLISHDIR)/ports/*/menu.inc) \
   $(ENGLISHDIR)/misc/laptops/menu.inc
-search_FILES    = $(ENGLISHDIR)/searchtmpl/search.def
 security_FILES  = $(TEMPLDIR)/security.wml \
   $(TEMPLDIR)/securityreferences.wml \
   $(ENGLISHDIR)/security/faq.inc \
@@ -84,7 +83,6 @@ SOURCEFILES = \
   $(newsevents_FILES)           \
   $(organization_FILES)         \
   $(ports_FILES)                \
-  $(search_FILES)               \
   $(security_FILES)             \
   $(stats_FILES)		\
   $(vendors_FILES)              \
@@ -139,9 +137,6 @@ $(ENGLISHDIR)/po/organization.pot: # $(organization_FILES)
 
 $(ENGLISHDIR)/po/ports.pot: # $(ports_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl ports $(ports_FILES) > $@
-
-$(ENGLISHDIR)/po/search.pot: # $(search_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl search $(search_FILES) > $@
 
 $(ENGLISHDIR)/po/security.pot: # $(security_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl security $(security_FILES) > $@
