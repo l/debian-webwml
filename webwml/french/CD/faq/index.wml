@@ -1,6 +1,6 @@
 #use wml::debian::cdimage title="Foire Aux Questions concernant les CD Debian" NOHEADER=true BARETITLE=true
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.102" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.106" maintainer="David Prévot"
 #include "$(ENGLISHDIR)/releases/info"
 
 # translatiors: 
@@ -9,7 +9,7 @@
 # Frédéric Bothamy, 2007.
 # David Kremer, 2008.
 # Guillaume Delacour, 2009.
-# David Prévot, 2010, 2011.
+# David Prévot, 2010-2012.
 
 <define-tag toc-title-formatting endtag="required" whitespace="delete">
 <p><strong>%body</strong></p>
@@ -499,8 +499,9 @@ une nouvelle version&nbsp;?</toc-add-entry>
 <p>Nous ne diffusons une version officielle de la distribution
 «&nbsp;stable&nbsp;» que lorsque nous pensons que celle-ci
 a réellement mérité ce nom. Malheureusement, cela signifie que
-les versions stables sont créées seulement tous les 18&nbsp;mois
-environ…</p>
+les versions stables ne sont créées que tous les 18&nbsp;mois
+ou deux ans environ…
+</p>
 
 <p>Si vous avez besoin de versions plus récentes de certains
 programmes de Debian, vous pouvez installer «&nbsp;stable&nbsp;»
@@ -521,6 +522,16 @@ de la sécurité pour la distribution «&nbsp;testing&nbsp;»</a> sont
 disponibles dans la FAQ sur la sécurité.
 </p>
 
+<p>
+Si vous ne voulez des versions récentes que pour certains
+paquets, vous pouvez aussi essayer le service de rétroportages
+(<q>backports</q>), qui s'occupe de modifier des paquets de
+<q>testing</q> pour les faire fonctionner sous <q>stable</q>.
+
+Cette option pourrait être plus sûre que d'installer
+le même paquet directement depuis <q>testing</q>.
+</p>
+
 # ============================================================
 
 <toc-add-entry name="newest">Comment puis-je savoir si les images
@@ -530,36 +541,107 @@ de CD que je télécharge sont les plus récentes&nbsp;?
 <p>La note au bas de la page <a href="../">Debian sur CD</a>
 indique toujours le numéro de la dernière version.</p>
 
-<p>En ce qui concerne les miroirs qui offrent la possibilité
-d'un téléchargement direct par HTTP ou FTP, la plupart utilisent
-le système «&nbsp;standard&nbsp;»
-<tt>/&lt;version&gt;/&lt;architecture&gt;/&lt;nom_de_l'image&gt;.iso</tt>,
-par exemple <tt>/3.0_rev1/i386/binary-i386-1.iso</tt> ou
-<tt>/3.0_rev1/source/source-1.iso</tt>.</p>
-
 # ============================================================
 
-<toc-add-entry name="verify">Comment puis-je vérifier que les
-images de CD que j'ai téléchargées sont
-correctes&nbsp;?</toc-add-entry>
+<toc-add-entry name="verify">Comment puis-je vérifier les images
+ISO téléchargées et les supports optiques gravés ?</toc-add-entry>
 
 <p>
-Des renseignements détaillés sont disponibles sur la <a
+Des renseignements détaillés sur la façon de vérifier les
+fichiers de somme de contrôle signés contenant les sommes
+de contrôle des images ISO sont disponibles sur la <a
 href="../verify">page de vérification d'authenticité</a>.
+
+Après avoir vérifié d'un point de vue cryptographique les
+fichiers de somme de contrôle, il est possible de vérifier que :
 </p>
 
-<p>Le programme <tt>md5sum</tt> pour les systèmes sous Windows 
-est disponible dans la 
-<a href="http://www.cygwin.com">suite Cygwin</a> (installez le 
-paquet « coreutils »), autrement vous pouvez trouver des
-binaires indépendants compilés pour 
-<a href="http://www.mingw.org/">MinGW</a>.</p>
+<ul>
+<li>
+les sommes de contrôle des <em>fichiers d'image ISO téléchargés</em>
+correspondent à celles des fichiers de somme de contrôle.
 
-<p>Si vous souhaitez vérifier plusieurs fichiers d'image ou
-des CD déjà gravés sur les systèmes UNIX ou Linux, le script
-#<a href="ftp://fly.cnuce.cnr.it/pub/software/unix/checkiso">checkiso</a>
-<a href="http://fly.cnuce.cnr.it/software/#checkiso">checkiso</a>
-peut être d'un grand secours.</p>
+Le calcul des sommes de contrôle des fichiers d'image ISO est réalisé avec
+des outils comme <q>md5sum</q>, <q>sha1sums</q> ou <q>sha512sums</q> ;
+</li>
+<li>
+les sommes de contrôle des <em>supports optiques déjà gravés</em>
+correspondent à celles des fichiers de somme de contrôle.
+
+Cette opération est un peu plus délicate à décrire.
+</li>
+</ul>
+
+<p>
+Le problème avec la vérification de supports optiques
+gravés est que certains types de supports risquent de
+renvoyer plus de données qu'il en existe dans l'image ISO.
+
+Ces données incorrectes à la fin sont impossibles à éviter avec les CD écrits
+en mode piste par piste (TAO), les DVD-R[W] gravés de façon incrémentielle,
+les DVD-RW, DVD+RW et BD-RE formatés ainsi qu'avec les clefs USB.
+
+Par conséquent, il faut lire exactement autant de secteurs de
+données sur le support qu'il y en a dans l'image ISO elle-même.
+
+La lecture d'octets supplémentaires sur le support
+modifierait le résultat de la somme de contrôle.
+</p>
+
+<ul>
+<li>
+Le programme <q>isosize</q> permet de trouver le
+nombre d'octets à lire sur le support optique.
+
+Il montre le <q>nombre de secteurs</q> et la <q>taille de
+secteur</q> du support optique, avec <q>&lt;périphérique&gt;</q>
+le fichier de périphérique du support optique chargé.
+<br/><tt>$ /sbin/isosize -x &lt;périphérique&gt;</tt>
+<br/><tt>nombre de secteurs : 25600, taille de secteur : 2048</tt>
+</li>
+<li>
+Les <q>nombre de secteurs</q> et <q>taille de secteur</q> sont
+ensuite passés à <q>dd</q> pour lire le nombre d'octets nécessaires
+du support optique et envoyer le flux de données dans un tube vers
+l'outil de somme de contrôle approprié (md5sum, sha1sum, etc.)
+<br/><tt>$ dd if=&lt;périphérique&gt; count=&lt;nombre de secteurs&gt; bs=&lt;taille de secteur&gt; | sha1sum</tt>
+</li>
+<li>
+La somme de contrôle calculée est à comparer avec
+la somme de contrôle correspondante du fichier de
+somme de contrôle adéquat (MD5SUMS, SHA1SUMS, etc.)
+</li>
+</ul>
+
+<p>
+Sinon, un script pratique appelé <a
+href="http://people.debian.org/~danchev/debian-iso/check_debian_iso">\
+check_debian_iso</a> permet de vérifier les <em>fichiers d'image ISO
+téléchargés</em> et les <em>supports optiques gravés</em> en lisant la
+quantité de données nécessaire sur le support lors du calcul de la somme
+de contrôle et en la comparant avec le fichier de somme de contrôle.
+</p>
+
+<ul>
+<li>
+<em>Vérification de fichier d'image ISO.</em>
+Ceci comparera la somme de contrôle du fichier image
+debian-6.0.3-amd64-netinst.iso avec la somme de contrôle
+correspondante du fichier de somme de contrôle MD5SUMS :
+<br/><tt>$ ./check_debian_iso  MD5SUMS  debian-6.0.3-amd64-netinst.iso</tt>
+</li>
+<li>
+<em>Vérification de support optique.</em>
+Ceci comparera la somme de contrôle du support accessible en /dev/dvd
+avec la somme de contrôle du fichier debian-6.0.3-amd64-DVD-1.iso
+fournie dans le fichier de somme de contrôle MD5SUMS.
+
+Remarquez que le fichier d'image ISO n'est pas nécessaire,
+son nom n'est utilisé que pour déterminer la somme de
+contrôle correspondante dans le fichier de somme de contrôle.
+<br/><tt>$ ./check_debian_iso  MD5SUMS  debian-6.0.3-amd64-DVD-1.iso  /dev/dvd</tt>
+</li>
+</ul>
 
 # ============================================================
 
@@ -599,8 +681,10 @@ aussi en tant qu'utilisateur non superutilisateur) :
 <br/>
 <tt>xorriso -as cdrecord -v dev=/dev/sr0 -eject debian-x.y.z-arch-TYPE-NN.iso</tt>
 <br/>
-Ajouter l'option <tt>stream_recording=on</tt> pour obtenir la vitesse nominale
-complète sans vérification de lecture sur Blu-ray réinscriptible (BD-RE).
+Afin d'obtenir la vitesse nominale maximale lors de l'écriture
+d'un Blu-ray réinscriptible (BD-RE) (c'est-à-dire sans
+ralentissement provoqué par la gestion de défaut interne du
+lecteur), ajouter l'option <tt>stream_recording=on</tt>.
 </p>
 
 <p>
@@ -695,7 +779,7 @@ de CD avec certains programmes&nbsp;:</p>
   CDBurnerXP Pro</a></strong> (gratuiciel)</dt>
 
   <dd>La procédure à suivre pour graver une image <tt>.iso</tt> est décrite
-  dans <a href="http://cdburnerxp.se/help/burniso">le manuel du
+  dans <a href="http://www.cdburnerxp.se/help">le manuel du
   programme</a>.</dd>
 
   <dt><strong><a name="isorecorder"
@@ -947,14 +1031,11 @@ des anciennes images si vous avez besoin de la gestion de certaines
 
 <p>
 Veuillez noter que lorsque vous faites une installation à partir d'un
-ancien CD ou DVD, le contenu de votre fichier
+très ancien CD ou DVD (avant 4.0, Etch), le contenu du fichier
 <tt>/etc/apt/sources.list</tt> fera référence par défaut à
 la publication stable de Debian <em>actuelle</em>. Cela signifie que
 toute mise à niveau sur Internet se fera vers la publication stable
-actuelle. Pour éviter cela tout en continuant à recevoir les mises à
-niveau de sécurité pour une ancienne publication qui est toujours
-maintenue, vous devez changer le contenu de ce fichier en remplaçant
-«&nbsp;stable&nbsp;» par «&nbsp;oldstable&nbsp;».
+actuelle.
 </p>
 
 # ============================================================
