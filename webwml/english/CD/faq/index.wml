@@ -438,24 +438,77 @@ for example <tt>/3.0_r1/i386/binary-i386-1.iso</tt> or
 
 # ============================================================
 
-<toc-add-entry name="verify">How can I verify that the downloaded
-CD images are correct?</toc-add-entry>
+<toc-add-entry name="verify">How can I verify the downloaded ISO
+images and written optical media?</toc-add-entry>
 
-<p>
-Detailed information is available on the <a
-href="../verify">authenticity verification page</a>.
+<p>Detailed information on how to authenticate the signed checksum
+files containing the checksums of the ISO image files is available on
+the <a href="../verify">authenticity verification page</a>. After
+cryptographically verifying the checksum files, we can check that:
 </p>
 
-<p>An <tt>md5sum</tt> program for Windows systems is available
-as part of the <a href="http://www.cygwin.com">Cygwin suite</a>
-(install the <q>coreutils</q> package), or you may be able to find standalone
-binaries compiled for <a href="http://www.mingw.org/">MinGW</a>.</p>
+<ul>
+ <li>Checksums of the <em>downloaded ISO image files</em> match those
+ found in the checksum files. Computing the checksum of the ISO image
+ files is performed by tools such as <q>md5sum</q>, <q>sha1sums</q>,
+ <q>sha512sums</q>. </li>
+ <li>Checksums of already <em>written optical media</em> match those
+ found in the checksum files. This is a slightly more difficult
+ operation to describe. </li>
+</ul>
 
-<p>If you want to check many CD image files or burned CDs easily
-on Unix/Linux systems, the
-<a href="http://fly.cnuce.cnr.it/software/#checkiso">checkiso</a>
-#<a href="ftp://fly.cnuce.cnr.it/pub/software/unix/checkiso">checkiso</a>
-script can be a great help.</p>
+<p>The problem with the verification of written optical media is that
+some media types will possibly return more bytes than those found in
+the ISO image. This trailing garbage is impossible to avoid with CD
+written in TAO mode, incrementally recorded DVD-R[W], formatted
+DVD-RW, DVD+RW, BD-RE, and also with USB keys. Therefore, we need to
+read exactly the same number of sectors of data from the media as are
+found in the ISO image itself; reading any more bytes from the media
+will alter the checksum result.</p>
+
+<ul>
+ <li>The <q>isosize</q> program can be used to find out the appropriate
+  amount of bytes to be read from the optical media. It shows the
+  <q>sector count</q> and the <q>sector size</q> from the optical media,
+  where <q>&lt;device&gt;</q> is the device file of the loaded optical media.
+  <br/><tt>$ /sbin/isosize -x &lt;device&gt;</tt>
+  <br/><tt>sector count: 25600, sector size: 2048
+  </tt>
+ </li>
+ <li>Then <q>sector count</q> and <q>sector size</q> are passed to <q>dd</q>
+  to read the appropriate amount of bytes from the optical media and the byte
+  stream is then piped to the appropriate checksum tool (md5sum, sha1sum, etc).
+  <br/><tt>$ dd if=&lt;device&gt; count=&lt;sector count&gt; bs=&lt;sector size&gt; | sha1sum
+  </tt>
+ </li>
+ <li>The computed checksum is to be compared against the corresponding checksum found
+ in the appropriate checksum file (MD5SUMS, SHA1SUMS, etc).
+ </li>
+</ul>
+
+<p>Alternatively, there is a useful helper script called <a
+href="http://people.debian.org/~danchev/debian-iso/check_debian_iso">
+check_debian_iso</a> which can verify <em>ISO image files</em> and
+<em>optical media</em>, reading the appropriate amount of bytes from
+media then computing the checksum and comparing it against the
+checksum file.</p>
+
+<ul>
+ <li><em>ISO image file verification.</em>
+  This will compare the checksum of the debian-6.0.3-amd64-netinst.iso
+  image file against the corresponding checksum found in the MD5SUMS
+  checksum file. 
+  <br/><tt>$ ./check_debian_iso  MD5SUMS  debian-6.0.3-amd64-netinst.iso</tt>
+ </li>
+ <li><em>Optical media verification.</em>
+  This will compare the checksum of the media accessible as /dev/dvd against the
+  checksum of debian-6.0.3-amd64-DVD-1.iso as found in the  MD5SUMS
+  checksum file. Note that the ISO image file itself is not needed,
+  its name is merely used to locate the corresponding checksum in
+  the checksum file.
+  <br/><tt>$ ./check_debian_iso  MD5SUMS  debian-6.0.3-amd64-DVD-1.iso  /dev/dvd</tt>
+ </li>
+</ul>
 
 # ============================================================
 
