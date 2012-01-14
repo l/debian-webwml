@@ -1,7 +1,7 @@
 #use wml::debian::cdimage title="Domande ricorrenti sui CD Debian" NOHEADER=true BARETITLE=true
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/info"
-#use wml::debian::translation-check translation="1.102" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.106" maintainer="Luca Monducci"
 
 <define-tag toc-title-formatting endtag="required" whitespace="delete">
 <p><strong>%body</strong></p>
@@ -195,15 +195,15 @@ via rete</q>?</toc-add-entry>
 
 <p>
 Citando la <a href="../netinst/">pagina di installazione via rete</a>:
-un CD per l'<q>installazione via rete</q> o <q>netinst</q> È un singolo
+un CD per l'<q>installazione via rete</q> o <q>netinst</q> è un singolo
 CD che permette di installare l'intero sistema operativo. Questo CD
 contiene la minima quantità di software che permette di scaricare i
 pacchetti rimanenti da Internet.
 </p>
 
 <p>
-Se si vuole installare Debian su una sola macchina che ha una connessione
-a Internet economica l'installazione via rete potrebbe essere l'alternativa
+Per installare Debian su una sola macchina con una connessione
+a Internet veloce l'installazione via rete potrebbe essere la soluzione
 migliore: si scaricano solo i pacchetti che si vuole di installare sulla
 propria macchina, risparmiando quindi tempo e banda.
 </p>
@@ -482,13 +482,13 @@ pacchetto desiderato.
 # ============================================================
 
 <toc-add-entry name="outdated">Il software disponibile sui CD ufficiali è
-sorpassato; perché non viene rilasciata una nuova versione?</toc-add-entry>
+troppo vecchio; perché non viene rilasciata una nuova versione?</toc-add-entry>
 
 <p>
 Si rilasciano ufficialmente le distribuzioni stabili, <q>stable</q>,
 al momento in cui tale nome è pienamente giustificato. Questo purtroppo
 comporta che la pubblicazione delle versioni stabili avvenga ogni anno e
-mezzo circa...
+mezzo o due circa...
 </p>
 
 <p>
@@ -499,13 +499,21 @@ infatti è possibile mischiare software di versioni differenti.
 </p>
 
 <p>
-Come alternativa, si possono provare le immagini CD della versione <q>testing</q>
-che vengono prodotte settimanalmente. In particolare per chi usa <q>testing</q>
-su un server è possibile ricevere gli
-<a href="http://secure-testing-master.debian.net/">aggiornamenti di sicurezza
-per <q>testing</q></a>. Per ulteriori informazioni sul
-<a href="../../security/faq#testing">supporto di sicurezza per <q>testing</q></a>
-si consulti la FAQ sulla sicurezza.
+Come alternativa, si possono provare le immagini CD della versione
+<q>testing</q> che vengono prodotte settimanalmente. In particolare
+per chi usa <q>testing</q> su un server è possibile ricevere gli
+<a href="http://secure-testing-master.debian.net/">aggiornamenti
+di sicurezza per <q>testing</q></a>. Per ulteriori informazioni sul
+<a href="../../security/faq#testing">supporto di sicurezza per
+<q>testing</q></a> si consulti la FAQ sulla sicurezza.
+</p>
+
+<p>
+Qualora si abbia bisogno delle versioni più recenti di specifici
+pacchetti è possibile provare il servizio <q>backports</q>, che
+prende i pacchetti da testing e li modifica in modo da farli
+funzionare su stable. Questa possibilità può essere più sicura
+che installare lo stesso pacchetto direttamente da testing.
 </p>
 
 # ============================================================
@@ -518,38 +526,83 @@ La nota in calce alla pagina <a href="../">Debian su CD</a> riporta
 sempre il numero dell'ultima versione ufficiale.
 </p>
 
-<p>
-Riguardo ai siti mirror che offrono trasferimenti diretti HTTP/FTP,
-la maggior parte di essi usa lo schema canonico
-<tt>/&lt;versione&gt;/&lt;architettura&gt;/&lt;nome dell'immagine&gt;.iso</tt>,
-come in <tt>/3.0_r1/i386/binary-i386-1.iso</tt> o
-<tt>/3.0_r1/source/source-1.iso</tt>.
-</p>
-
 # ============================================================
 
-<toc-add-entry name="verify">Come è possibile verificare se le immagini
-scaricate sono corrette?</toc-add-entry>
+<toc-add-entry name="verify">Come si verifica che le immagini ISO
+scaricate e la scrittura sul supporto ottico sono corrette?</toc-add-entry>
 
 <p>
-Informazioni dettagliate sono disponibili nella <a
-href="../verify">pagina per la verifica d'autenticità</a>.
+I file che contengono le checksum dei file delle immagini ISO sono
+firmati con una checksum, la <a href="../verify">pagina per la verifica
+della autenticità</a> contiene informazioni dettagliate su come autenticare
+tali file. Dopo la verifica crittografica dei file con le checksum, è
+possibile controllare che:
 </p>
 
-<p>
-Un programma <tt>md5sum</tt> per i sistemi Windows è disponibile come
-parte della <a href="http://www.cygwin.com">suite Cygwin</a> (nel
-pacchetto <q>coreutils</q>) oppure si potrebbero trovare dei binari
-già compilati per <a href="http://www.mingw.org/">MinGW</a>.
-</p>
+<ul>
+<li>le checksum dei <em>file scaricati delle immagini ISO</em> corrispondano
+con quelle presenti nei file con le checksum. È possibile calcolare la
+checksum dei file delle immagini ISO usando strumenti quali <q>md5sum</q>,
+<q>sha1sums</q>, <q>sha512sums</q>;</li>
+
+<li>le checksum dei <em>supporti ottici dopo la scrittura</em> corrispondano
+con quelle presenti nei file con le checksum. Questa operazione è leggermente
+più complessa da descrivere.</li>
+</ul>
 
 <p>
-Se si vogliono verificare molte immagini CD o i CD stessi, lo si può fare
-facilmente su un sistema Unix/Linux. Il programma
-<a href="http://fly.cnuce.cnr.it/software/#checkiso">checkiso</a>
-#<a href="ftp://fly.cnuce.cnr.it/pub/software/unix/checkiso">checkiso</a>
-può essere di grande aiuto.
+Il problema delle verifica della scrittura sul supporto ottico è che
+su alcun tipi di suppoto potrebbe restituire più byte di quelli presenti
+nell'immagine ISO. Non è possibile escludere la spazzatura di chiusura
+sui CD scritti in modalità TAO, sui DVD-R[W] registrati in modo
+incrementale, sui DVD-RW, DVD+RW, BD-RE formattati e anche sulle chiavette
+USB. Di conseguenza è necessario leggere esattamente lo stesso numero di
+settori di dati dal supporto di quelli presenti nell'immagine ISO; la
+lettura dal supporto di un numero maggiore di byte altera il risultato
+della checksum.
 </p>
+
+<ul>
+<li>È possibile usare il programma <q>isosize</q> per scoprire il numero
+corretto di byte da leggere dal supporto ottico. Mostra <q>sector
+count</q> e <q>sector size</q> del supporto ottico, dove <q>&lt;device&gt;</q>
+è il file di device del supporto ottico.
+<br/><tt>$ /sbin/isosize -x &lt;device&gt;</tt>
+<br/><tt>sector count: 25600, sector size: 2048</tt></li>
+
+<li>I valori di <q>sector count</q> e <q>sector size</q> sono passati a <q>dd</q>
+per leggere il numero corretto di byte dal supporto ottico e lo stream di byte è
+poi inviato tramite una pipe al programma di calcolo della checksum (md5sum,
+sha1sum, ecc).
+<br/><tt>$ dd if=&lt;device&gt; count=&lt;sector count&gt; bs=&lt;sector
+size&gt; | sha1sum</tt></li>
+
+<li>La checksum così calcolata deve essere confrontata con la checksum
+corrispondente presente nel relativo file delle checksum (MD5SUMS, SHA1SUMS,
+ecc).</li>
+</ul>
+
+<p>In alternativa esiste uno script chiamato <a
+href="http://people.debian.org/~danchev/debian-iso/check_debian_iso">\
+check_debian_iso</a> capace di verificare i <em>file delle immagini
+ISO</em> e i <em>supporti ottici</em>, legge il numero corretto di byte
+dal supporto e poi calcola la checksum e la confronta con il file delle
+checksum.
+</p>
+
+<ul>
+<li><em>Verifica del file dell'immagine ISO.</em>
+Confronta la checksum del file dell'immagine ISO the debian-6.0.3-amd64-netinst.iso
+con la corrispondente checksum contenuta nel file MD5SUMS. 
+<br/><tt>$ ./check_debian_iso  MD5SUMS  debian-6.0.3-amd64-netinst.iso</tt></li>
+
+<li><em>Verifica del supporto ottico.</em>
+Confronta la checksum del supporto accessibile come /dev/dvd con la checksum
+di debian-6.0.3-amd64-DVD-1.iso contenuta nel file  MD5SUMS. Notare che non è
+necessario il file con l'immagine ISO, il suo nome è usato solamente per
+trovare la checksum corrispondente all'interno del file con le checksum.
+<br/><tt>$ ./check_debian_iso  MD5SUMS  debian-6.0.3-amd64-DVD-1.iso  /dev/dvd</tt></li>
+</ul>
 
 # ============================================================
 
@@ -584,8 +637,9 @@ chiavetta USB, si veda <a href="#write-usb">più sotto</a>.</p>
 <p><a href="http://www.gnu.org/software/xorriso/xorriso.html">xorriso</a>
 per tutti i supporti ottici (utilizzabile anche da utente non-root):
 <br/><tt>xorriso -as cdrecord -v dev=/dev/sr0 -eject debian-x.y.z-arch-MEDIUM-NN.iso</tt>
-<br/>Su BD-RE aggiungere l'opzione <tt>stream_recording=on</tt> per
-avere la velocità nominale massima senza il controllo in lettura.
+<br/>Per scrivere su BD-RE alla velocità massima (cioè senza rallentamenti
+causati dalla gestione dei difetti del lettore) aggiungere l'opzione
+<tt>stream_recording=on</tt>.
 </p>
 
 <p><a href="http://fy.chalmers.se/~appro/linux/DVD+RW/">growisofs</a>
@@ -931,13 +985,11 @@ recenti.
 </p>
 
 <p>
-Notare che quando si fa l'installazione con un vecchio CD/DVD il contenuto
-di <tt>/etc/apt/sources.list</tt> fa riferimento all'<em>attuale</em>
-release stabile di Debian. Questo comporta chwe qualsiasi aggiornamento
-dalla rete porterà l'installazione alla corrente versione stabile. Per
-evitare l'aggiornamento e per ricevere comunque gli aggiornamenti di
-sicurezza su una vecchia versione stabile supportata si deve modificare
-il contenuto di questo file sostituendo <q>stable</q> con <q>oldstable</q>.
+Notare che quando si fa l'installazione con un vecchio CD/DVD  (pre
+4.0, Etch), il contenuto di <tt>/etc/apt/sources.list</tt> fa riferimento
+all'<em>attuale</em> release stabile di Debian. Questo comporta che
+qualsiasi aggiornamento dalla rete porterà l'installazione alla corrente
+versione stabile.
 </p>
 
 # ============================================================
