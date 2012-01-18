@@ -1,0 +1,132 @@
+#use wml::debian::translation-check translation="1.1"
+<define-tag description>特権の昇格/サービス拒否攻撃/情報の漏洩</define-tag>
+<define-tag moreinfo>
+
+<p>
+Linux カーネルに、サービス拒否攻撃や特権の昇格に繋がる複数の問題が発見
+されました。 The Common Vulnerabilities and Exposures project は以下の
+問題を認識しています。
+</p>
+
+<ul>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-2183">CVE-2011-2183</a>
+
+<p>
+Andrea Righi さんにより、メモリを節約した重複排除機能 KSM に欠陥が
+報告されました。タスク終了の競合を攻撃することにより、ローカルユー
+ザから Kernel oops を引き起こすサービス拒否攻撃を実行可能です。
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-2213">CVE-2011-2213</a>
+
+<p>
+Dan Rosenberg さんにより、INET ソケットモニタリングインターフェー
+スに欠陥が発見されました。ローカルユーザは、コードを挿入してカーネ
+ルを無限ループに落とすことによるサービス拒否攻撃を実行可能です。
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-2898">CVE-2011-2898</a>
+
+<p>
+Eric Dumazet さんにより、raw パケットソケット実装に情報漏洩の欠陥
+が報告されました。
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-3353">CVE-2011-3353</a>
+
+<p>
+Han-Wen Nienhuys さんにより、Linux カーネルの FUSE (ユーザ空間ファ
+イルシステム) にローカルからのサービス拒否攻撃を許す欠陥が報告され
+ました。ローカルユーザからバッファオーバフローを発生させ Kernel
+oops を引き起こすサービス拒否攻撃を実行可能です。
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-4077">CVE-2011-4077</a>
+
+<p>
+Carlos Maiolino さんにより、XFS ファイルシステムに欠陥が報告されま
+した。ファイルシステムをマウントする権限を持つローカルユーザからメ
+モリ破壊によるサービス拒否攻撃が実行可能で、更に特権の昇格が行える
+可能性があります。
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-4110">CVE-2011-4110</a>
+
+<p>
+David Howells さんにより、カーネルのアクセスキー保存システムに、ロ
+ーカルユーザからの kernel oops によるサービス拒否攻撃を許す欠陥が報
+告されました。
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-4127">CVE-2011-4127</a>
+
+<p>
+Red Hat の Paolo Bonzini さんにより、SCSI デバイスの ioctl パスス
+ルーサポートに欠陥が報告されました。デバイス (例えば論理ボリューム
+のパーティション) のアクセスが制限された領域に対する権限をもつユー
+ザは SG_IO ioctl 経由でデバイス全体のアクセス権限を取得可能です。
+この欠陥は、ローカルユーザまたは特権を持つ VM ゲストの特権の昇格に
+悪用可能です。
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-4611">CVE-2011-4611</a>
+
+<p>
+Maynard Johnson さんにより、POWER7 システムの perf サポートにロー
+カルユーザにサービス拒否攻撃を許す欠陥が報告されました。
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-4622">CVE-2011-4622</a>
+
+<p>
+Jan Kiszka さんにより、KVM PIT タイマサポートに欠陥が報告されまし
+た。KVM の利用権限を持ったローカルユーザは、irqchip をまず設定せず
+に PIT タイマを起動することによりサービス拒否攻撃が可能です。
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-4914">CVE-2011-4914</a>
+
+<p>
+Ben Hutchings さんにより、カーネル内の ROSE プロトコルサポートに複
+数の境界チェック漏れがが報告されました。リモートの攻撃者はこの欠陥
+を悪用して、機密情報を格納したメモリへのアクセスやサービス拒否攻撃
+が行える可能性があります。
+</p></li>
+
+</ul>
+
+<p>
+安定版 (stable) ディストリビューション (squeeze) では、この問題はバー
+ジョン 2.6.32-39squeeze1 で修正されています。旧安定版 (lenny) に影響す
+る問題の修正は近く提供予定です。
+</p>
+
+<p>
+以下は今回の更新の効果を得るため、または今回の更新との互換性を維持する
+ために再ビルドした追加ソースパッケージの一覧表です。
+</p>
+
+<div class="centerdiv">
+    <table cellspacing="0" cellpadding="2">
+	<tr>
+	    <th>&nbsp;</th>
+	    <th>Debian 6.0 (squeeze)</th>
+	</tr>
+	<tr>
+	    <td>user-mode-linux</td>
+	    <td>2.6.32-1um-4+39squeeze1</td>
+	</tr>
+    </table>
+</div>
+
+<p>
+直ぐに linux-2.6 と user-mode-linux パッケージをアップグレードするこ
+とを勧めます。
+</p>
+
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2012/dsa-2389.data"
+# $Id$
