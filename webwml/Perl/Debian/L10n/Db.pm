@@ -53,7 +53,9 @@ our %LanguageList = (
 	AR    => 'arabic',
 	CA    => 'catalan',
 	CS    => 'czech',
+	DA    => 'danish',
 	DE    => 'german',
+	IT    => 'italian',
 	RU    => 'russian',
 # Used by the Smith project, not for translations
 #       EN    => 'english',
