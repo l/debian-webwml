@@ -1,6 +1,6 @@
 #use wml::debian::cdimage title="FAQ - Întrebări frecvente despre CD-uri Debian" NOHEADER=true BARETITLE=true
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.102" maintainer="Andrei Popescu"
+#use wml::debian::translation-check translation="1.110" maintainer="Andrei Popescu"
 #include "$(ENGLISHDIR)/releases/info"
 
 <define-tag toc-title-formatting endtag="required" whitespace="delete">
@@ -171,7 +171,7 @@ Acest CD conține doar cantitatea minimă de programe necesare să
 pornească instalarea și să descarce restul pachetelor direct de pe internet.</p>
 
 <p>Dacă doriți să instalați Debian pe un singur calculator, care are o
-conexiune internet adecvată, instalarea prin rețea ar putea fi cea mai
+conexiune internet rapidă, instalarea prin rețea ar putea fi cea mai
 rapidă și mai simplă pentru dumneavoastră. În acest fel descărcați doar
 pachetele care le-ați selectat pentru instalare pe calculatorul
 dumneavoastră, economisind timp și lățime de bandă.</p>
@@ -399,7 +399,8 @@ versiuni vechi. De ce nu lansați o versiune nouă?</toc-add-entry>
 
 <p>Lansări oficiale ale distribuției <q>stabile</q> se fac doar când
 considerăm că merită cu adevărat acest nume. Din păcate acest lucru
-înseamnă ca lansări stabile au loc la aproximativ fiecare 1.5 ani...</p>
+înseamnă ca lansări stabile au loc la aproximativ fiecare 1.5 până la 2 
+ani...</p>
 
 <p>Dacă aveți nevoie de versiuni mai recente a anumitor programe din
 Debian, puteți instala <q>stabil</q> după care să actualizați
@@ -415,6 +416,11 @@ multe informații despre <a href="../../security/faq#testing">suportul de
 securitate din <q>testare</q></a> sunt disponibile în FAQ despre
 securitate.</p>
 
+<p>Dacă aveți nevoie doar de versiuni mai noi pentru anumite pachete
+puteți încerca serviciul <q>backports</q>, care modifică pachete din
+testare pentru a funcționa în stabil. Această opțiune ar putea fi mai
+sigură decât instalarea aceluiași pachet din testare.
+
 # ============================================================
 
 <toc-add-entry name="newest">De unde știu dacă descarc cea mai recentă
@@ -423,33 +429,82 @@ imagine CD/DVD.?</toc-add-entry>
 <p>Nota din josul paginii <a href="../">"Debian pe CD"</a> arată
 întotdeauna numărul versiunii ultimei ediții.</p>
 
-<p>Majoritatea siturilor-oglindă care oferă descărcări directe HTTP/FTP,
-folosesc schema <q>standard</q>
-<tt>/&lt;versiune&gt;/&lt;architectură&gt;/&lt;nume-imagine&gt;.iso</tt>,
-de exemplu <tt>/3.0_r1/i386/binary-i386-1.iso</tt> sau
-<tt>/3.0_r1/source/source-1.iso</tt>.
-</p>
-
 # ============================================================
 
 <toc-add-entry name="verify">Cum pot verifica dacă imaginile CD/DVD
-descărcate sunt corecte?</toc-add-entry>
+descărcate și mediile optice scrise sunt corecte?</toc-add-entry>
 
 <p>
-Informații detaliate se găsesc pe pagina despre <a
-href="../verify">verificarea autenticității</a>.
+Informații detaliate despre autentificarea fișierelor ce conțin sume de
+control pentru imaginile ISO se găsesc pe pagina despre <a
+href="../verify">verificarea autenticității</a>. După ce fișierele cu sume
+de control au fost verificate criptografic putem verifica dacă:
 </p>
 
-<p>
-Un program <tt>md5sum</tt> pentru sisteme Windows este disponibil ca parte
-a <a href="http://www.cygwin.com">suitei Cygwin</a> (instalați pachetul
-<q>coreutils</q>) sau ați putea găsi binare de sine stătătoare compilate
-pentru <a href="http://www.mingw.org/">MinGW</a>.</p>
+<ul>
+ <li>Sumele de control ale <em>imaginilor ISO descărcate</em> corespund
+ cu cele din fișierele cu sume de control. Calcularea sumei de control a
+ fișierelor imagini ISO se face cu utilitare cum ar fi <q>md5sum</q>,
+ <q>sha1sum</q>, <q>sha512sum</q>.</li>
+ <li>Sumele de control ale <em>mediilor optice scrise</em> corespund celor
+ din fișierele cu sume de control. Descrierea acestei operațiuni este mai
+ complicată.</li>
+</ul>
 
-<p>Dacă doriți să verificați cu ușurință pe un sistem Unix/Linux multe
-fișiere-imagini CD sau CD-uri scrise, atunci scriptul
-<a href="http://fly.cnuce.cnr.it/software/#checkiso">checkiso</a>
-poate fi de mare ajutor.</p>
+<p>Problema cu verficarea mediilor optice scrise este că anumite tipuri de
+medii vor raspunde cu mai mulți octeți decât cei găsiți în imaginea ISO.
+Aceste adaosuri inutile sunt imposibil de evitat cu CD-uri scrise în mod
+TAO, DVD-R[W] înregistrate incremental, DVD-RW, DVD+RW, BD-RE formatate,
+precum și dispozitive USB. De aceea este necesar să citim exact același
+număr de sectoare de date de pe mediu câte sunt în imaginea ISO. Citirea
+mai multor octeți de pe mediu va altera rezultatul sumei de control.</p>
+
+<ul>
+ <li>Programul <q>isosize</q> poate fi folosit pentru a determina numărul
+  corect de octeți ce trebuie citiți de pe mediul optic. Programul arată
+  <q>sector count</q> (numărul de sectoare) și <q>sector size</q> 
+  (dimensiunea sectorului) de pe mediul optic, unde
+  <q>&lt;dispozitiv&gt;</q> este fișierul de dispozitiv al mediului optic
+  încărcat.
+  <br/><tt>$ /sbin/isosize -x &lt;dispozitiv&gt;</tt>
+  <br/><tt>sector count: 25600, sector size: 2048
+  </tt>
+ </li>
+ <li>Valorile de la <q>sector count</q> și <q>sector size</q> sunt
+  folosite pentru a indica programului <q>dd</q> să citească numărul corect
+  de octeți de pe mediul optic și fluxul de octeți este redirecționat către
+  utilitarul care calculează suma de control (md5sum, sha1sum, etc).
+  <br/><tt>$ dd if=&lt;dispozitiv&gt; count=&lt;sector count&gt; bs=&lt;sector size&gt; | sha1sum
+  </tt>
+ </li>
+ <li>Suma de control calculată trebuie comparată cu suma de control
+ corespunzătoare găsită în fișierul respectiv (MD5SUMS, SHA1SUMS, etc).
+ </li>
+</ul>
+
+<p>Alternativ există un script ajutător denumit <a
+href="http://people.debian.org/~danchev/debian-iso/check_debian_iso">
+check_debian_iso</a> care poate verifica <em>fișiere cu imagini ISO</em> și
+<em>medii optice</em>, citind numărul corect de octeți de pe mediu și
+comparând suma de control calculată cu valoarea din fișierul cu sume de
+control.</p>
+
+<ul>
+ <li><em>Verificarea unui fișier imagine ISO.</em>
+  În acest fel se compară suma de control a fișierului imagine
+  debian-6.0.3-amd64-netinst.iso cu suma de control găsită în fișierul
+  MD5SUMS.
+  <br/><tt>$ ./check_debian_iso  MD5SUMS  debian-6.0.3-amd54-netinst.iso</tt>
+ </li>
+ <li><em>Verificarea unui mediu optic.</em>
+  În acest fel se compară suma de control a mediului accesibil ca /dev/dvd
+  cu suma de control corespunzătoare fișierului
+  debian-6.0.3-amd64-DVD-1.iso găsit în fișierul MD5SUMS. De remarcat că
+  fișierul imagine ISO nu este necesar, doar numele lui este folosit pentru
+  a identifica suma corespunzătoare în fișierul cu sume de control.
+  </br><tt>$ ./check_debian_iso  MD5SUMS  debian-6.0.3-amd64-DVD-1.iso  /dev/dvd</tt>
+ </li>
+</ul>
 
 # ============================================================
 
@@ -481,8 +536,9 @@ de pe un dispozitiv USB. Vedeți <a href="#write-usb">mai jos</a>.</p>
 <p><a href="http://www.gnu.org/software/xorriso/xorriso.html">xorriso</a>
 pentru toate mediile optice (funcționează și ca utilizator non-root): 
 <br/><tt>xorriso -as cdrecord -v dev=/dev/sr0 -eject debian-x.y.z-arch-MEDIUM-NN.iso</tt>
-<br/>Adăugați opțiunea <tt>stream_recording=on</tt> pentru a obține viteza
-nominală cu un BD-RE, dar fără verificare.
+<br/>Pentru a obține viteza nominală când scrieți un BD-RE (adică fără
+încetinirea cauzată de managementul de defecte intern al unității),
+adăugați opțiunea <tt>stream_recording=on</tt>.
 </p>
 
 <p><a href="http://fy.chalmers.se/~appro/linux/DVD+RW/">growisofs</a>
@@ -733,7 +789,7 @@ linie, ca aici: <i>Debian GNU/Linux 6.0.3 <q>Squeeze</q></i>.</p>
 <p>Țineți cont că puteți folosi desemnarea <em>Oficial</em>
 <strong>doar</strong> pe CD-uri la care suma de control a imaginii se
 potrivește cu cea din 
-<a href="http://www.debian.org/CD/jigdo-cd/#which">fișierele jigdo
+<a href="../jigdo-cd/#which">fișierele jigdo
 oficiale</a>.
 Orice CD care nu se potrivește (de ex. propriile dumneavoastră creații)
 trebuie inscripționate clar ca și <em>Neoficial</em>, de exemplu:</p>
@@ -751,7 +807,7 @@ ar fi <q>etch</q> sau un nume de distribuție, cum ar fi
 instantaneului:</p>
 
 <div class="cdflash">
-      <p>Debian GNU/Linux "etch"<br />
+      <p>Debian GNU/Linux <q>etch</q><br />
       Instantaneu Oficial alpha Binary-2<br />
       2005-06-17</p>
 </div>
@@ -776,13 +832,10 @@ arhivă de pe cdimage.debian.org</a>. Poate doriți să încercați imagini
 mai vechi dacă aveți nevoie de suport pentru o anumită (sub)arhitectură
 care a fost abandonată în versiuni mai noi.</p>
 
-<p>Țineți cont că dacă instalați folosind un CD/DVD vechi, conținutul 
-<tt>/etc/apt/sources.list</tt> va face referire la versiunea stabilă
-<em>curentă</em>. Aceasta înseamnă că orice actualizare prin rețea va
-actualiza la versiunea stabilă curentă. Pentru a evita acest lucru, dar
-totuși să primiți actualizările de securitate pentru o versiune veche, care
-este încă suportată, ar trebui să schimbați conținutul fișierului,
-înlocuind <q>stable</q> cu <q>oldstable</q>.</p>
+<p>Țineți cont că dacă instalați folosind un CD/DVD foarte vechi, (pre 4.0
+Etch) conținutul <tt>/etc/apt/sources.list</tt> va face referire la
+versiunea stabilă <em>curentă</em>. Aceasta înseamnă că orice actualizare
+prin rețea va actualiza la versiunea stabilă curentă.</p>
 
 # ============================================================
 
