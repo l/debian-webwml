@@ -1,10 +1,10 @@
 #use wml::debian::cdimage title="Häufig gestellte Fragen über Debian-CDs" NOHEADER=true BARETITLE=true
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/info"
-#use wml::debian::translation-check translation="1.102"
+#use wml::debian::translation-check translation="1.110"
 # $Id$
 # Translator: Gerfried Fuchs <alfie@debian.org> 2002-01-29
-# Updated: Holger Wansing <linux@wansing-online.de>, 2011
+# Updated: Holger Wansing <linux@wansing-online.de>, 2011, 2012
 
 <define-tag toc-title-formatting endtag="required" whitespace="delete">
 <p><strong>%body</strong></p>
@@ -173,7 +173,7 @@ Diese einzelne CD enthält gerade die minimale Menge an Software, um
 die Installation zu beginnen und die übrigen Pakete über das Internet
 zu beziehen.</p>
 
-<p>Falls Sie Debian nur auf einem einzelnen Rechner mit einer billigen
+<p>Falls Sie Debian nur auf einem einzelnen Rechner mit einer schnellen
 Internet-Anbindung installieren wollen, mag die Netzwerkinstallation
 für Sie die schnellste und einfachste Option sein: Sie laden nur
 diejenigen Pakete herunter, welche Sie zur Installation auf Ihrem
@@ -417,7 +417,7 @@ veraltet &ndash; wieso veröffentlicht ihr nicht eine neue Version?</toc-add-ent
 
 <p>Wir veröffentlichen nur dann offizielle Releases der <q>Stable</q>-Distribution, wenn wir
 denken, dass sie diesen Namen wirklich verdienen. Unglücklicherweise bedeutet
-das, dass ein stabiler Release nur ungefähr alle 1,5 Jahre passiert ...</p>
+das, dass eine Stable-Veröffentlichung nur ungefähr alle 1,5 bis 2 Jahre erfolgt ...</p>
 
 <p>Falls Sie aktuellere Versionen von Teilen der Software in Debian benötigen,
 können Sie <q>Stable</q> installieren und dann (über das Netz) diejenigen Teile aus
@@ -432,6 +432,12 @@ einrichten, so dass er die <a href="http://secure-testing-master.debian.net/">\
 href="../../security/faq#testing">Sicherheitsunterstützung in <q>Testing</q></a> ist
 in der Sicherheits-FAQ erhältlich.</p>
 
+<p>Wenn Sie lediglich neuere Versionen von speziellen Paketen benötigen,
+können Sie auch den <q>backports</q>-Dienst ausprobieren, der Pakete
+aus Testing nimmt und Sie so modifiziert, dass sie in Stable funktionieren.
+Diese Möglichkeit könnte sicherer sein als das gleiche Paket direkt aus
+Testing zu installieren.</p>
+
 # ============================================================
 
 <toc-add-entry name="newest">Wie weiß ich, ob ich die aktuellen CD-Images
@@ -440,32 +446,88 @@ herunterlade?</toc-add-entry>
 <p>Die Notiz am Ende der Seite <a href="../"><q>Debian auf CDs</q></a> zeigt
 immer die Versionsnummer des letzten Releases.</p>
 
-<p>Von den Spiegeln, die das direkte Herunterladen über HTTP/FTP anbieten,
-verwenden die meisten das <q>Standard</q>-Schema
-<tt>/&lt;Version&gt;/&lt;Architektur&gt;/&lt;Image-Name&gt;.iso</tt>,
-zum Beispiel <tt>/3.0_rev1/i386/binary-i386-1.iso</tt> oder
-<tt>/3.0_rev1/source/source-1.iso</tt>.</p>
-
 # ============================================================
 
-<toc-add-entry name="verify">Wie kann ich prüfen, ob die heruntergeladenen
-CD/DVD-Images in Ordnung sind?</toc-add-entry>
+<toc-add-entry name="verify">Wie kann ich die heruntergeladenen
+CD/DVD-Images und die damit erstellen optischen Medien verifizieren
+(auf Korrektheit überprüfen)?</toc-add-entry>
 
 <p>
-Detaillierte Informationen finden Sie auf der <a
-href="../verify">Authentizität überprüfen</a>-Webseite.
+Detaillierte Informationen, wie Sie die signierten Prüfsummendateien,
+welche die Prüfsummen der ISO-Image-Dateien enthalten,
+authentifizieren, finden Sie auf der <a
+href="../verify">Authentizität überprüfen</a>-Webseite. Nachdem die
+Prüfsummendateien kryptografisch verifiziert wurden, können Sie
+überprüfen, ob:
 </p>
 
-<p>Ein <tt>md5sum</tt>-Programm für Windows-Systeme ist Teil der <a 
-   href="http://www.cygwin.com">Cygwin suite</a> (installieren Sie das Paket
-   <q>coreutils</q>). Sie können auch separat kompilierte Programme für <a 
-   href="http://www.mingw.org/">MinGW</a> finden.</p>
+<ul>
+ <li>die Prüfsummen der <em>heruntergeladenen ISO-Image-Dateien</em>
+ mit denen in der Prüfsummendatei übereinstimmen. Das Berechnen der
+ Prüfsumme dieser ISO-Image-Dateien wird mit Werkzeugen wie
+ <q>md5sum</q>, <q>sha1sums</q> oder <q>sha512sums</q>
+ durchgeführt.</li>
+ <li>die Prüfsummen der bereits <em>geschriebenen (gebrannten)
+ optischen Medien</em> mit denen in der Prüfsummendatei übereinstimmen.
+ Dieser Vorgang ist ein wenig schwieriger zu beschreiben.</li>
+</ul>
 
-<p>Falls Sie viele CD-Image-Dateien prüfen wollen oder CDs problemlos unter
-Unix/Linux-Systemen brennen wollen, kann das Skript
-<a href="http://fly.cnuce.cnr.it/software/#checkiso">checkiso</a>
-#<a href="ftp://fly.cnuce.cnr.it/pub/software/unix/checkiso">checkiso</a>
-eine große Hilfe sein.</p>
+<p>Das Problem mit der Überprüfung von geschriebenen optischen Medien
+ist, dass einige Medientypen möglicherweise mehr Bytes zurückgeben
+werden, als in dem ISO-Image gefunden wurden. Dieser Datenmüll am
+Ende kann nicht vermieden werden, wenn CDs im TAO-Modus geschrieben
+werden, bei inkrementell geschriebenen DVD-R[W]s, formatierten
+DVD-RWs, DVD+RWs, BD-REs sowie bei USB-Speichern. Daher muss die exakt
+gleiche Anzahl von Daten-Sektoren von dem Medium gelesen werden, wie
+auch im ISO-Image vorhanden sind; mehr Bytes von dem Medium auszulesen,
+würde das Prüfsummenergebnis verändern.</p>
+
+<ul>
+ <li>Das Programm <q>isosize</q> kann genutzt werden, um die passende
+ Anzahl von Bytes herauszufinden, die von dem optischen Medium gelesen
+ werden müssen. Es zeigt die <q>Sektoranzahl</q> (sector count) und die
+ <q>Sektorgröße</q> (sector size) des optischen Mediums an, wobei
+ <q>&lt;device&gt;</q> die Gerätedatei des eingelegten optischen Mediums
+ ist:
+  <br/><tt>$ /sbin/isosize -x &lt;device&gt;</tt>
+  <br/><tt>sector count: 25600, sector size: 2048
+  </tt>
+ </li>
+ <li>Dann werden <q>sector count</q> und <q>sector size</q> dem Befehl
+ <q>dd</q> übergeben, um die passende Anzahl von Bytes von dem Medium zu
+ lesen und der Datenstrom wird an das entsprechende Prüfsummenprogram
+ weitergeleitet (md5sum, sha1sum, usw.):
+  <br/><tt>$ dd if=&lt;device&gt; count=&lt;sector count&gt; bs=&lt;sector size&gt; | sha1sum
+  </tt>
+ </li>
+ <li>Die berechnete Prüfsumme wird dann mit der zugehörigen Prüfsumme aus der
+ entsprechenden Prüfsummendatei (MD5SUMS, SHA1SUMS, o.ä.) verglichen.
+ </li>
+</ul>
+
+<p>Alternativ gibt es nützliches Hilfsskript namens <a
+href="http://people.debian.org/~danchev/debian-iso/check_debian_iso">
+check_debian_iso</a>, das <em>ISO-Image-Dateien</em> und <em>optische
+Medien</em> verifizieren kann, indem die korrekte Anzahl von Bytes von
+dem Medium gelesen wird, die Prüfsumme berechnet und dann mit dem zugehörigen
+Wert aus der Prüfsummendatei verglichen wird.</p>
+
+<ul>
+ <li><em>Verifizierung der ISO-Image-Datei</em>
+  Dies wird die Prüfsumme der Image-Datei
+  debian-6.0.3-amd64-netinst.iso mit der zugehörigen Prüfsumme aus der
+  Prüfsummendatei MD5SUMS vergleichen:
+  <br/><tt>$ ./check_debian_iso  MD5SUMS  debian-6.0.3-amd64-netinst.iso</tt>
+ </li>
+ <li><em>Verifizierung des optischen Mediums</em>
+  Dies wird die Prüfsumme des Mediums, das über /dev/dvd erreichbar ist,
+  mit der Prüfsumme von debian-6.0.3-amd64-DVD-1.iso aus der Prüfsummendatei
+  MD5SUMS vergleichen. Beachten Sie, dass die ISO-Image-Datei selbst hierfür
+  nicht erforderlich ist, der Name wird lediglich verwendet, um die
+  passende Prüfsumme in der Prüfsummendatei zu finden:
+  <br/><tt>$ ./check_debian_iso  MD5SUMS  debian-6.0.3-amd64-DVD-1.iso  /dev/dvd</tt>
+ </li>
+</ul>
 
 # ============================================================
 
@@ -499,9 +561,9 @@ einem USB-Speicher gebootet werden können; näheres siehe
 <p><a href="http://www.gnu.org/software/xorriso/xorriso.html">xorriso</a>
 für alle Arten von optischen Medien (auch möglich als nicht-root-Benutzer):
 <br/><tt>xorriso -as cdrecord -v dev=/dev/sr0 -eject debian-x.y.z-arch-MEDIUM-NN.iso</tt>
-<br/>Fügen Sie die Option <tt>stream_recording=on</tt> hinzu, um mit einer
-BD-RE die volle theorethisch mögliche Geschwindigkeit ohne die Notwendigkeit
-einer anschließenden Überprüfung zu erreichen.
+<br/>Um bei einer BD-RE die volle theorethisch mögliche Geschwindigkeit
+(d.h. ohne die Drosselung aufgrund der laufwerks-internen Fehlerkorrektur)
+zu erreichen, fügen Sie die Option <tt>stream_recording=on</tt> hinzu.
 </p>
 
 <p><a href="http://fy.chalmers.se/~appro/linux/DVD+RW/">growisofs</a>
@@ -749,7 +811,7 @@ Zeile hinzufügen, wie in: <i>Debian GNU/Linux 6.0.3 <q>Squeeze</q></i>.</p>
 <p>Beachten Sie, dass es Ihnen <strong>nur dann</strong> erlaubt ist, die
 Bezeichnung <i>Official</i> auf den CDs zu verwenden, wenn sie eine Prüfsumme
 haben, die mit der in den
-<a href="http://www.debian.org/CD/jigdo-cd/#which">jigdo-Dateien
+<a href="../jigdo-cd/#which">jigdo-Dateien
 des offiziellen Releases</a> übereinstimmt. Jede CD, die eine nicht passende
 Prüfsumme hat
 (z.B. Ihre selbst zusammengestellte), muss deutlich als <i>Unofficial</i>
@@ -795,13 +857,12 @@ eventuell ein älteres Image ausprobieren, falls Sie die Unterstützung für
 eine bestimmte (Unter-)Architektur benötigen, die in einer neueren
 Veröffentlichung entfallen ist.</p>
 
-<p>Beachten Sie, dass bei der Installation von einer alten CD/DVD der Inhalt
+<p>Beachten Sie, dass bei der Installation von einer richtig alten CD/DVD
+(z.B. vor 4.0, Etch) der Inhalt 
 von <tt>/etc/apt/sources.list</tt> standardmäßig die <em>aktuelle</em>
 stabile Veröffentlichung referenzieren wird. Das bedeutet, dass jedes Upgrade
 über das Netz ein Upgrade auf die aktuelle stabile Veröffentlichung durchführen
-wird. Um dies zu vermeiden, aber noch Sicherheitsupgrades für eine alte
-Veröffentlichung, die noch unterstützt ist, zu bekommen, sollten Sie den Inhalt
-dieser Datei ändern und <q>stable</q> durch <q>oldstable</q> ersetzen.</p>
+wird.</p>
 
 # ============================================================
 
