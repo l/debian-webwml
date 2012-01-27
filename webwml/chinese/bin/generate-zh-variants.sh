@@ -4,13 +4,12 @@ base=$1
 ext=$2
 
 MYPATH=`/usr/bin/dirname $0`
-ICONV=/usr/bin/iconv
 OPENCC=/usr/bin/opencc
 if [ -x $OPENCC ]; then
 HANT_TO_HANS="$OPENCC -c mix2zhs.ini"
 HANS_TO_HANT="$OPENCC -c mix2zht.ini"
 else
-HANT_TO_HANS="$ICONV -f UTF-8 -t big5 | $ICONV -f big5 -t gb2312 | $ICONV -f gb2312 -t UTF-8"
+HANT_TO_HANS="cat"
 HANS_TO_HANT="cat"
 fi
 TOCN=$MYPATH/tocn.pl
