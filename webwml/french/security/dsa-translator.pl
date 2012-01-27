@@ -41,6 +41,7 @@ $translation = {
 		'integer underflow'                             =>      'Dépassement d\'entier par le bas',
 		'insecure temp file generation'	=>	'Fichiers temporaires peu sûrs',
 		'insufficient input sanitising' =>	'Vérification d\'entrées manquante',
+		'insufficient input sanitation' =>	'Vérification d\'entrées manquante',
 		'insufficient input sanitization' =>	'Vérification d\'entrées manquante',
 		'missing input validation'		=>	'Validation des entrées insuffisante',
 		'missing input sanitising'	=>		'Absence de vérification des entrées',
@@ -175,8 +176,9 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\),?.and.t?h?e?.??(\S+).distribution.\((\S+)\).will.be.fixed.soon|<p>La distribution $1 ($2) et la distribution $3 ($4) seront corrigées prochainement|gs;
 	$output =~ s|<p>[\n]?For the.(\S+).distribution.\((\S+)\),?.no.update.is.available.at.this.time|<p>Pour la distribution $1 ($2), aucune mise à jour n'est disponible pour le moment|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).will.be.fixed.soon|<p>La distribution $1 ($2) sera corrigée prochainement|gs;
-	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).is.?n.t.affected.by.this.problem|<p>La distribution $1 ($2) n'est pas concernée par ce problème|gs;
-	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).is.?n.t.affected.by.these.problems|<p>La distribution $1 ($2) n'est pas concernée par ces problèmes|gs;
+	$output =~ s|The.(\S+).distribution.\((\S+)\).is.?n.t.affected.by.this.(problem\|issue)|La distribution $1 ($2) n'est pas concernée par ce problème|gs;
+	$output =~ s|The.old.stable.distribution.\((\S+)\).is.?n.t.affected.by.this.(problem\|issue)|L'ancienne distribution stable ($1) n'est pas concernée par ce problème|gs;
+	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).is.?n.t.affected.by.these.(problem\|issue)s|<p>La distribution $1 ($2) n'est pas concernée par ces problèmes|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).is.?n.t.affected|<p>La distribution $1 ($2) n'est pas concernée|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).are.not.affected.by.this.problem\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne sont pas concernées par ce problème.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).are.not.affected.by.these.problems\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne sont pas concernées par ces problèmes.</p>|gs;
@@ -186,6 +188,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\).do.?n.t.contain.any.(\S+).packages\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne contiennent pas de paquet $5.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.?n.t.contain.(\S+).packages\.[\n]?</p>|<p>La distribution $1 ($2) ne contient pas de paquets $3.</p>|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\),?.does.?n.t.contain.(\S+)\.[\n]?</p>|<p>La distribution $1 ($2) ne contient pas $3.</p>|gs;
+	$output =~ s|<p>[\n]?The.old.(\S+).distribution.\((\S+)\).does.?n.t.contain.(\S+)\.|<p>L'ancienne distribution $1 ($2) ne contient pas $3.|gs;
 	$output =~ s|<p>[\n]?The.(\S+).d?i?s?t?r?i?b?u?t?i?o?n?.?\((\S+)\).and.t?h?e?.??(\S+).distributions?.\((\S+)\),?.do.?n.t.contain.(\S+)\.[\n]?</p>|<p>La distribution $1 ($2) et la distribution $3 ($4) ne contiennent pas $5.</p>|gs;
 	$output =~ s|The.(\S+).package.is.not.affected.by.this.issue\.|Le paquet $1 n'est pas concerné par ce problème.|gs;
 	$output =~ s|<p>[\n]?We.recommend.that.you.upgrade.your.(\S+).packages\.|<p>Nous vous recommandons de mettre à jour vos paquets $1.|gs;
@@ -196,7 +199,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\),?.no.longer.contains.(\S+)|<p>La distribution $1 ($2) ne contient plus $3|gs;
 	$output =~ s|<p>[\n]?The.upcoming.(\S+).distribution.\((\S+)\),?.no.longer.contains.(\S+)|<p>La distribution $1 à venir ($2) ne contient plus $3|gs;
 	$output =~ s|<p>[\n]?The.(\S+).distribution.\((\S+)\).does.?n.t.include.(\S+)\.|<p>La distribution $1 ($2) ne contient pas $3.|gs;
-	$output =~ s|<p>[\n]?The.following.matrix.lists.additional.source.packages.that.were.rebuilt.for.compatibility.with.or.to.take.advantage.of.this.update:</p>|<p>Le tableau suivant liste les paquets supplémentaires qui ont été reconstruits à des fins de compatibilité ou pour tirer parti de cette mise à jour :</p>|gs;
+	$output =~ s|<p>[\n]?The.following.matrix.lists.additional.source.packages.that.were.rebuilt.for.compatibility.with.or.to.take.advantage.of.this.update:</p>|<p>Le tableau suivant indique la liste des paquets supplémentaires qui ont été reconstruits à des fins de compatibilité ou pour tirer parti de cette mise à jour :</p>|gs;
 	$output =~ s|which.was.already.included.in.the.(\S+).release|qui a déjà été incluse dans la publication de $1|gs;
 	$output =~ s|as.it.does.not.include|car elle ne contient pas|gs;
 	$output =~ s|it.does.not.include|elle ne contient pas|gs;
@@ -220,7 +223,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|It.was.discovered.that|On a découvert que|gs;
 	$output =~ s|It.was.discovered|On a découvert|gs;
 	$output =~ s|A.buffer.overflow has been discovered in|Un dépassement de tampon a été découvert dans|gs; 
-	$output =~ s|The.Common.Vulnerabilities.and.Exposures.project.identifies.the.following.problems:|\n\nLe projet « Common Vulnerabilities and Exposures » (CVE) identifie les problèmes suivants.|s;
+	$output =~ s|The.Common.Vulnerabilities.and.Exposures.project.identifies.the.following.(problem\|vulnerabilitie)s:|\n\nLe projet « Common Vulnerabilities and Exposures » (CVE) identifie les problèmes suivants.|s;
 	$output =~ s|,.which.may.lead.to.the.execution.of.arbitrary.code|. Cela peut permettre l'exécution de code arbitraire|gs;
 	$output =~ s|,.which.could.lead.to.the.execution.of.arbitrary.code|. Cela pourrait permettre l'exécution de code arbitraire|gs;
 	$output =~ s|,.which.may.result.in.the.execution.of.arbitrary.code|. Cela peut avoir pour conséquence l'exécution de code arbitraire|gs;
@@ -266,6 +269,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|input.saniti(s\|z)(ing\|ation)|vérification des entrées|gs;
 	$output =~ s|missing.input.validation|validations des entrées insuffisantes|gs;
 	$output =~ s|the (\S+) parser|l'analyseur $1|gs;
+	$output =~ s|programming error|erreur de programmation|gs;
 
 	# This need some check to be done in translated file
 	$output =~ s|have.been.(discovered\|found).in|ont été découvertes dans|gs;
@@ -311,7 +315,9 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|flaw|défaut|gs;
 	$output =~ s|frontend|interface|gs;
 	$output =~ s|format string|chaîne de formatage|gs;
+	$output =~ s|function|fonction|gs;
 	$output =~ s|high-level|haut niveau|gs;
+	$output =~ s|handling|traitement|gs;
 	$output =~ s|implementation|implémentation|gs;
 	$output =~ s|information.disclosure|divulgation d'informations|gs;
 	$output =~ s|information.leak|fuite d'informations|gs;
@@ -325,6 +331,11 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|may.lead|pourrait conduire|gs;
 	$output =~ s|memory.consumption|consommation de mémoire|gs;
 	$output =~ s|memory.leak|fuite de mémoire|gs;
+	$output =~ s|off.by.one.errors|erreurs dues à un décalage d'entier|gis;
+	$output =~ s|off.by.one.error|erreur due à un décalage d'entier|gis;
+	$output =~ s|out.of.bounds.read|lecture hors limites|gis;
+	$output =~ s|out.of.bounds|hors limites|gis;
+	$output =~ s|out.of.bound|hors limite|gis;
 	$output =~ s|package|paquet|gs;
 	$output =~ s|potentially|éventuellement|gs;
 	$output =~ s|possibly|éventuellement|gs;
