@@ -350,6 +350,9 @@ sub process_name {
 		elsif ($maintainer =~ /Elrond <(.+)>/o) {
 			$lastname = 'Elrond'; $firstname = ''; $email = $1;
 		}
+		elsif ($maintainer =~ /Chow Loong Jin <(.+)>/o) {
+			$lastname = 'Chow'; $firstname = 'Loong Jin'; $email = $1;
+		}
 
 #
 # The following should handle almost everyone
