@@ -55,6 +55,7 @@ our %LanguageList = (
 	CS    => 'czech',
 	DA    => 'danish',
 	DE    => 'german',
+	ID    => 'indonesian',
 	IT    => 'italian',
 	RU    => 'russian',
 # Used by the Smith project, not for translations
