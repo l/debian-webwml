@@ -30,9 +30,9 @@ sub init_translators {
         my $translators = {
                 'Andrei Popescu' => {
                        email           => 'andreimpopescu@gmail.com',
-                       summary         => 3,
+                       summary         => 2,
                        logs            => 0,
-                       diff            => 3,
+                       diff            => 2,
                        tdiff           => 0,
                        file            => 0,
                        compress        => 'none'
@@ -51,7 +51,7 @@ sub init_translators {
                 },
                 unmaintained        => {
                         email       => 'andreimpopescu@gmail.com',
-                        summary     => 3,
+                        summary     => 2,
                         mailsubject => 'Pagini web orfane',
                         mailbody    => 'romanian/international/romanian/mail_unmaintained.txt',
                 },
