@@ -1,26 +1,26 @@
 #use wml::debian::template title="Traducción de las páginas web de Debian" BARETITLE=true
 #use wml::fmt::verbatim
-#use wml::debian::translation-check translation="1.44" maintainer="David Moreno Garza"
+#use wml::debian::translation-check translation="1.51" maintainer="Gildardo A. Maravilla Jácome"
 
-<P>Para hacer el trabajo de los traductores tan fácil como sea posible, las
+<p>Para hacer el trabajo de los traductores tan fácil como sea posible, las
 páginas se generan de forma algo diferente a como muchos de ustedes
 están acostumbrados. Las páginas web se actualizan realmente usando
 fuentes que están escritas con <a
 href="http://www.engelschall.com/sw/wml/"><tt>wml</tt></a>.
-Hay diferentes directorios para cada idioma.
+Hay diferentes directorios para cada idioma.</p>
 
 <p>Si piensa comenzar una traducción completamente nueva del servidor
 web de Debian, por favor, vea la <a href="#completenew">sección del
 comienzo de una nueva traducción</a>.</p>
 
-<h3><a name="singlepages">Traducción de páginas individuales</a></h3>
+<h2><a name="singlepages">Traducción de páginas individuales</a></h2>
 
 <p>Usamos WML para separar el contenido específico de una página de los
 elementos comunes a múltiples páginas. Esto significa que uno debe
 editar ciertos ficheros fuente WML en lugar de ficheros HTML. Por favor,
 <a href="using_cvs">utilice CVS</a> para obtener los fuentes actuales.
 Necesitará descargar al menos dos directorios: <tt>webwml/english/</tt> y
-<tt><var>webwml/&lt;idioma&gt;</var>/</tt>.</p>
+<tt>webwml/<var>&lt;idioma&gt;</var>/</tt>.</p>
 
 <p>Para traducir una única página del inglés a su idioma, deberá traducir
 el fichero .wml y colocarlo dentro del directorio del otro idioma. El
@@ -34,17 +34,19 @@ tras la última sentencia <code>#use</code> para registrar la revisión
 exacta del fichero original que se tradujo, de manera que
 <a href="uptodate">sea más sencillo actualizar</a>
 La línea sería algo como:
-<kbd>#use wml::debian::translation-check translation="<var>x.y</var>"</kbd>
+<kbd>#use wml::debian::translation-check translation="<var>x.y</var>"</kbd>.
 </p>
 
 <p>Algunos equipos de traducción usan también esta línea para marcar el
 traductor oficial de cada página web. Haciéndolo, le llegarán mensajes
 automáticamente cada vez que las páginas que mantiene sean actualizadas en
 inglés, y necesitan su atención para actualizar la traducción. Para ello,
-simplemente añada su njombre como mantenedor al final de la línea
+simplemente añada su nombre como mantenedor al final de la línea
 <code>#use</code> de manera que quede así:
 <kbd>#use wml::debian::translation-check translation="<var>x.y</var>"
-maintainer="<var>su nombre</var>"</kbd>
+maintainer="<var>su nombre</var>"</kbd>. El script <tt>copypage.pl</tt> 
+hará esto automaticamente si esta presente la variable <tt>DWWW_MAINT</tt>
+en el ambiente o usa la opción -m en la linea de órdenes.
 </p>
 
 <p>También hace falta explicarle al robot quién es usted, con qué
@@ -88,7 +90,22 @@ disponibles son:
 <p>La cabecera de la página web puede producirla fácilmente usando el
 script <tt>copypage.pl</tt> del directorio raíz de webwml. El script
 copiará la página en el lugar correcto, creará directorios y makefiles si
-fuera necesario, y añadirá la cabecera adecuada de forma automática.</p>
+fuera necesario, y añadirá la cabecera adecuada de forma automática.
+Seras adevrtido si una pagina a copiar existe en el repositorio, ya sea
+porque la pagina fue removida por del repositorio (debido a estar muy
+desactualizada) o porque alguien ya envio una traducción y tu repositorio
+local no esta actualizado
+</p>
+ 
+<p>Para empezar a usar <tt>copypage.pl</tt> primero debes configurar 
+el fichero <tt>language.conf</tt> que sera usado para determinar en que
+idioma estas traduciendo. Ese fichero solo necesita tener una linea con el
+nombre del idioma, eso es todo. También puedes definir el idioma usando la variable
+del ambiente <tt>DWWW_LANG</tt> y usar la variable del ambiente <tt>DWWW_MAINT</tt>
+para poner tu nombre que sera añadido a la cabecera de los ficheros wml
+generados como el encargado de la traducción. Existen otras caracteristicas
+disponibles en el script, solo ejecutalo sin argumentos para obtener la ayuda.
+</p>
 
 <p>Después de haber ejecutado, digamos, <kbd>./copypage.pl
 <var>fichero</var>.wml</kbd>, traduzca el texto original que hay dentro
@@ -106,14 +123,15 @@ contenido</a>, los ficheros HTML no se llaman
 <var>&lt;idioma&gt;</var> el código de dos letras del idioma, de acuerdo
 con el <a
 href="http://ftp.ics.uci.edu/pub/ietf/http/related/iso639.txt">ISO 639</a>
-(ej: <tt>es</tt> para España).</p>
+(ej: <tt>es</tt> para Español).</p>
 
 <p>Puede generar HTML del WML ejecutando <kbd>make
 <var>fichero</var>.<var>&lt;idioma&gt;</var>.html</kbd>. Si funciona,
-compruebe que la sintaxis es completamente válida con <kbd>weblint</kbd>.</p>
+compruebe que la sintaxis es completamente válida con <kbd>weblint
+<var>fichero</var>.<var>&lt;lang&gt;</var>.html</kbd>.</p>
 
 <p>Las páginas web se reconstruirán en el servidor www-master partiendo
-del CVS, y este proceso es impermeable a errores. Sin embargo, si envía un
+del CVS, y este proceso es el mas suceptible a errores. Sin embargo, si envía un
 fichero estropeado en el nivel superior de la traducción (ej: el fichero
 index.wml de nivel superior), interrumpirá el proceso de compilación y
 detendrá todo el resto de actualizaciones del sitio web. Preste atención
@@ -124,7 +142,7 @@ para hacerlo por sí mismo, ejecute <kbd>cvs commit</kbd>; y si no, envíelo
 a <a href="translation_coordinators">alguien que tenga derechos de
 escritura en el respositorio</a>.</p>
 
-<h2><a name="completenew">Introducción - Comienzo de una nueva traducción</a></h2>
+<h2><a name="completenew">Comienzo de una nueva traducción</a></h2>
 
 <p>Si desea comenzar la traducción de las páginas web de Debian a un
 nuevo idioma, envíenos un mensaje (en inglés) a
@@ -134,7 +152,7 @@ nuevo idioma, envíenos un mensaje (en inglés) a
 nuestro árbol fuente, tal como se describe en <a href="using_cvs">nuestra
 página de introducción al CVS</a>.</p>
 
-<p>Tras haber descargado los directorios webwml y (por lo menos)
+<p>Tras haber descargado los directorios webwml/ y (por lo menos)
 webwml/english/, empiece creando un directorio nuevo para la traducción,
 junto a english y los otros. El nombre del directorio de la traducción
 debe estar en inglés y todo en minúsculas (ej: «german», no
@@ -161,7 +179,7 @@ cambiar estas cosas:</p>
   <li>Debe cambiar la variable LANGUAGES en el fichero de nivel superior
       <tt>webwml/Makefile</tt> de manera que su idioma se compile junto
       con los otros, en www.debian.org. Preferiríamos que dejase este
-      cambio en particular a los webmaster, porque puede que los ficheros
+      cambio en particular a los webmasters, porque puede que los ficheros
       de la traducción contengan errores al ser descargados desde cero del
       CVS, y esto podría interrumpir el proceso de compilación del resto
       de nuestro sitio web.
@@ -181,8 +199,7 @@ idioma, por supuesto).</p>
 el mismo Makefile dentro de ese subdirectorio (<kbd>cp ../Makefile .</kbd>).
 </p>
 
-# insert missing stuff about how to generate initial po files
-<p>Ejecute  <kbd>make init-po</kbd> en el fichero po/ para generar el
+<p>Ejecute  <kbd>make init-po</kbd> en el directorio po/ para generar el
 conjunto inicial de ficheros *.po.</p>
 
 <p>Ahora que ya tiene el esqueleto preparado, puede empezar a
@@ -209,6 +226,15 @@ mejor tradúzcalo. Si no, puede posponerlo para más adelante, cuando
 traduzca realmente la sección relevante de las páginas web que lo
 precisan.</p>
 
+<p>El punto de los ficheros po/ es hacer las cosas mas fáciles para los traductores,
+asi ellos (casi) nunca tendran que editar nada en el directorio
+<tt>english/template/debian</tt>.
+Si encuentra algo incorrecto en la forma en que esta configurado
+el directorio de plantillas, por favor asegurese de que el problema sea arreglado
+en una manera general (puede pedirle a alguien mas que lo haga por usted),
+en lugar de enviar las traducciones a las plantillas, lo que seria
+(generalmente) un problema grave.</p>
+
 <p>Si no está seguro de si lo hizo correctamente, pregunte en la lista
 debian-www antes de enviar los cambios.</p>
 
@@ -222,6 +248,34 @@ de lo que debería ser traducido antes que nada, consulte
 <a href="translation_hints">la página de consejos</a>. Traduzca páginas
 *.wml tal como está descrito <a href="#singlepages">al principio de esta
 página</a>.</p>
+
+<h3>Reviviendo traducciones desactualizadas</h3>
+
+<p> Como se describió en <a href="uptodate">mantener las traducciones actualizadas</a>,
+traducciones desactualizadas del sitio pueden ser removidas automaticamente cuando
+un largo periodo de tiempo ha pasado sin tener una actualización.</p>
+
+<p>Si usa el script <tt>copypage.pl</tt> con un fichero que ha sido
+removido del CVS se negara a copiar la pagina y le pedira que la reviva.
+Puede checar los motivos por los que el fichero fue removido del
+cvs usando <tt>cvs log</tt> en el archivo removido (o usar la interfaz
+web, los ficheros borrados se pueden encontrar en el subdirectorio "Attic").
+</p>
+
+<p>Para revivir las traducciones desactualizadas use <tt>cvs status</tt>
+(o <tt>cvs log</tt>) para ver el número de versión de la versión eliminada
+y entonces hacer una <q>unión con una versión anterior</q>.</p>
+
+<p>Por ejemplo, si el fichero eliminado es "eliminado.wml", y
+la version eliminada es 1.7, la versión anterior a la eliminación es 1.6 (la
+versión eliminada menos uno). Puedes restaurar el archivo ejecuntado:</p>
+ 
+ <verbatim>
+    cvs update -j 1.7 -j 1.6 eliminado.wml
+ </verbatim>
+
+<p>Una vez que haga esto tendra que, por supuesto, actualizar el documentos antes
+de añadirlo otra vez. O podria ser removido.</p>
 
 <h3>El resto de la historia</h3>
 
@@ -237,11 +291,11 @@ proporcionan explicaciones más detalladas e información útil adicional.</p>
     traducción</a>.
 <li>Tenemos mecanismos para ayudar a <a href="uptodate">mantener las
     traducciones actualizadas</a>.
-<li>Para comparar su traducción con otras en cantidad de ficheros
-    traducidos, compruebe las <a href="stats/">estadísticas</a>.
+<li>Para ver el estado de su traducción y compararlo con otros,
+    compruebe las <a href="stats/">estadísticas</a>.
 </ul>
 
-<P>Esperamos que encuentre que el trabajo que hemos hecho haga que la
+<p>Esperamos que encuentre que el trabajo que hemos hecho haga que la
 traducción de las páginas sea tan sencilla como sea posible. Como ya hemos
 mencionado, si tiene alguna pregunta, puede hacerla en la lista de correo
-<a href="mailto:debian-www@lists.debian.org">debian-www</a>.
+<a href="mailto:debian-www@lists.debian.org">debian-www</a>.</p>
