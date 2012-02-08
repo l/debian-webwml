@@ -1,0 +1,109 @@
+#use wml::debian::translation-check translation="1.1"
+<define-tag description>複数の脆弱性</define-tag>
+<define-tag moreinfo>
+
+<p>
+複数の欠陥が Apache HTTPD サーバに発見されました。
+</p>
+
+<ul>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-3607">CVE-2011-3607</a>:
+
+<p>
+ap_pregsub() に整数オーバフローがあり、ローカルの攻撃者が .htaccess フ
+ァイルに細工することにより、昇格した特権での任意のコードの実行が可能で
+す。
+</p>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-3368">CVE-2011-3368</a> <a href="http://security-tracker.debian.org/tracker/CVE-2011-3639">CVE-2011-3639</a> <a href="http://security-tracker.debian.org/tracker/CVE-2011-4317">CVE-2011-4317</a>:
+
+<p>
+Apache HTTP サーバは、プロキシされたリクエストのリクエスト URI を適切
+に検証していません。一部の ProxyPassMatch ディレクティブを用いた、また
+は [P] フラグを用いた RewriteRule ディレクティブを用いたリバースプロキ
+シ設定では、リモートの攻撃者から任意のサーバへの接続が可能です。この欠
+陥により、攻撃者はその他の方法では外部からアクセスできないはずの内部サ
+ーバに対するアクセスを行うことができます
+</p>
+
+<p>
+3つの CVE ID は同じ問題の、微妙に異なった変形に対して取られたものです。
+</p>
+
+<p>
+この問題の修正が行われた場合でも、対象 URI に対して正規表現により置き
+換えられたパターンが、クライアントに対してホストやポート部に任意の文字
+列を付加できるようになっていないことを保証してください。これは管理者の
+役割です。例えば、以下の設定は、依然として安全でないものであり、
+</p>
+
+<pre>
+ProxyPassMatch ^/mail(.*)  http://internal-host$1
+</pre>
+
+<p>
+以下の設定に置き換えるべきです。
+</p>
+
+<pre>
+ProxyPassMatch ^/mail(/.*)  http://internal-host$1
+ProxyPassMatch ^/mail/(.*)  http://internal-host/$1
+</pre>
+</li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-0031">CVE-2012-0031</a>:
+
+<p>
+シャットダウン時に apache2 の子プロセスから親プロセスをクラッシュ可能
+です。これは apache2 のプロセス間での特権分離に反した処理で、他の欠陥
+の影響を悪化させる可能性があります。
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-0053">CVE-2012-0053</a>:
+
+<p>
+error code 400 (bad request) の応答メッセージを httpOnly クッキーの漏
+洩に利用可能です。この欠陥により、リモートの攻撃者がクロスサイトスク
+リプティング攻撃を行って認証クッキーを盗むことができます。
+</p></li>
+
+</ul>
+
+<p>
+旧安定版 (oldstable) ディストリビューション (lenny) では、これらの問題
+はバージョン apache2 2.2.9-10+lenny12 で修正されています。
+</p>
+
+<p>
+安定版 (stable) ディストリビューション (squeeze) では、これらの問題はバ
+ージョン apache2 2.2.16-6+squeeze6 で修正されています。
+</p>
+
+<p>
+テスト版 (testing) ディストリビューション (wheezy) では、これらの問題は
+バージョン 2.2.22-1 で修正予定です。
+</p>
+
+<p>
+不安定版 (unstable) ディストリビューション (sid) では、これらの問題はバ
+ージョン 2.2.22-1 で修正されています。
+</p>
+
+<p>
+直ぐに apache2 パッケージをアップグレードすることを勧めます。
+</p>
+
+<p>
+この更新では、更新された Apache2 パッケージに対して再コンパイルされた
+apache2-mpm-itk パッケージも収録しています。旧安定版ディストリビューシ
+ョンでの新しいバージョン番号は、2.2.6-02-1+lenny7 です。安定版ディスト
+リビューションでは、apache2-mpm-itk は apache2 と同じバージョン番号に
+なります。
+</p>
+
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2012/dsa-2405.data"
+# $Id$
