@@ -21,7 +21,8 @@ date_FILES      = $(TEMPLDIR)/ctime.wml
 distrib_FILES	= $(ENGLISHDIR)/distrib/search_packages-form.inc \
   $(ENGLISHDIR)/distrib/search_contents-form.inc \
   $(ENGLISHDIR)/releases/arches.data
-doc_FILES       = $(ENGLISHDIR)/doc/books.def $(ENGLISHDIR)/doc/manuals.defs
+doc_FILES       = $(ENGLISHDIR)/doc/books.def $(ENGLISHDIR)/doc/manuals.defs \
+		  $(ENGLISHDIR)/doc/books.data
 l10n_FILES      = $(ENGLISHDIR)/international/l10n/dtc.def \
   $(ENGLISHDIR)/international/l10n/menu.def
 langs_FILES     = $(TEMPLDIR)/language_names.wml
