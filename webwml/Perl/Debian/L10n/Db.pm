@@ -69,8 +69,7 @@ our %LanguageList = (
 	RO    => 'romanian',
 	SK    => 'slovak',
 	SV    => 'swedish',
-# Has not used pseudo-urls recently
-#	TR    => 'turkish',
+	TR    => 'turkish',
 );
 
 =item new
