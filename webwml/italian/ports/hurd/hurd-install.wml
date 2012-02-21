@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; Installazione" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.99" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.101" maintainer="Luca Monducci"
 
 <h1>Installazione manuale di Debian GNU/Hurd</h1>
 
@@ -332,6 +332,26 @@ kernel non ha rilevato la scheda di rete ed è necessario provare con
 un'altra scheda. Per esempio, la scheda e1000 di qemu non è supportata,
 invece la rtl8139 dovrebbe funzionare con: <code>-net nic,model=rtl8139
 -net user</code>.</p>
+
+<p>Dalla versione 20120219-1 in poi, il pacchetto hurd include i driver
+DDE che possono essere usati per gestire i device più recenti (i driver
+sono stati presi da Linux 2.6.39). Per esempio, per usare il driver
+rtl8139 si devono impostare i seguenti traduttori:</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+\# settrans -c /dev/rtl8139 /hurd/dde_rtl8139
+</pre></td></tr><tr><td>&nbsp;</td><td class=example><pre>
+\# settrans -c /dev/eth0 /hurd/devnode -M /dev/rtl8139 eth0
+</pre></td></tr></table>
+
+<p>Nel resto di questo documento è possibile sostituire <code>eth0</code>
+(il nome del driver mach) con <code>/dev/eth0</code> (il percorso del
+driver DDE).</p>
+
+<p><b>Attenzione:</b> non usare un driver DDE se GNU Mach riconosce la
+scheda, infatti i driver potrebbero interferire tra loro con risultati
+catastrofici. Per disabilitare tutti i driver di rete di GNU Mach,
+passare <code>nonetdev</code> sulla riga di comando di gnumach.</p>
 
 <p>Per configurare la rete è necessario configurare prima il traduttore
 pfinet. Questo lo si fa usando <code>dhclient</code> dal pacchetto
