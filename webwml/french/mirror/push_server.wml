@@ -1,7 +1,7 @@
 #use wml::debian::template title="Mettre en place un serveur de repoussage"
 #use wml::debian::toc
 
-#use wml::debian::translation-check translation="1.20" maintainer="Nicolas Bertolissio"
+#use wml::debian::translation-check translation="1.21" maintainer="Nicolas Bertolissio"
 
 # Traducteur précédant : Christian Couder
 # Premier traducteur   : Christophe Lebars
@@ -10,7 +10,7 @@
 Mettre en place un serveur de repoussage se résume à effectuer deux tâches
 relativement simples&nbsp;: mettre en place un accès rsync (comme pour faire un
 miroir par aspiration standard) et mettre en place un mécanisme déclencheur
-utilisant ssh (pour déclencher la mise à jour du miroir par repoussage).
+utilisant SSH (pour déclencher la mise à jour du miroir par repoussage).
 </p>
 
 <p>
@@ -44,7 +44,7 @@ socket options = SO_KEEPALIVE
 
 [debian]
   path = /srv/debian/mirror
-  comment = The Debian Archive (~250 GB)
+  comment = L'archive Debian (~250 Go)
   auth users = compte_autorisé1,compte_autorisé2,compte_autoriséN
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
@@ -94,8 +94,8 @@ fichier de configuration après que vous l'avez modifié.
 <toc-add-entry name="sshtrigger">Mettre en place un mécanisme déclencheur ssh</toc-add-entry>
 
 <p>
-Créez une nouvelle clé ssh pour le compte que vous utilisez pour faire un
-miroir de Debian. Faites attention à ne pas écraser votre clé ssh originale et
+Créez une nouvelle clé SSH pour le compte que vous utilisez pour faire un
+miroir de Debian. Faites attention à ne pas écraser votre clé SSH originale et
 pour cela utilisez l'option -f, par exemple&nbsp;:
 </p>
 
@@ -110,67 +110,35 @@ ceci au début du fichier, avec ADRESSEIP l'IP de votre miroir amont :
 
 <pre>
 no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="ADRESSEIP"
-&amp;"
 </pre>
 
 <p>
 Vous devez aussi mettre en place le script qui contactera les miroirs clients.
-Créez un fichier nommé <code>signal</code>, contenant ceci&nbsp;:
-</p>
 
-<protect>
-<pre>
-#!/bin/sh
+L'archive de ftpsync contient le script <code>runmirrors</code>
+qui s'occupe de toute les tâches nécessaires à votre place.
 
-# Ce script est appelé pour signaler à l'hôte distant qu'il est temps de
-# mettre à jour le miroir à partir de l'archive.
+Modifiez simplement ftpsync.conf pour intégrer le réglage
+<code>HUB=true</code>, copiez <code>runmirrors.conf.sample</code>
+vers <code>runmirrors.conf</code> et <code>runmirrors.mirror.sample</code>
+vers <code>runmirrors.mirror</code>, et adaptez
+le fichier de configuration au système.
 
-echo Signalling $1
-ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identite.monsite sleep 1
-</pre>
-</protect>
-
-<p>
-Ce script va se connecter sur un hôte distant en utilisant la clé ssh spéciale
-que vous avez créée ci-dessus, à condition que chaque opérateur de miroir
-client ajoute cette clef à son propre fichier ~/.ssh/authorized_keys (en
-remplaçant également <q>ftpsync</q> selon le nom de sa commande de lancement
-de la recopie). Ce script ne fait rien d'utile à distance en lui-même, la
-commande unique sera lancée comme spécifié par le paramétragede la clef.
+Ajoutez alors la liste de tous les miroirs clients dans runmirrors.mirror,
+ainsi ftpsync et runmirror et se chargeront de tout à votre place.
 </p>
 
 <p>
-Pour déclencher effectivement les miroirs, vous devez lancer la commande
-<code>./signal &lt;site&gt; &lt;username&gt;</code> après avoir réalisé votre
-propre synchronisation. De cette façon, dès que votre site a terminé de mettre
-à jour son miroir à partir de son serveur, vous allez déclencher la mise à jour
-des sites clients de votre serveur.
+Par conséquent, une fois le miroir mis à jour, le système
+essayera de se connecter par SSH aux miroirs clients,
+pour qu'ils puissent commencer à se mettre à jour.
+
+Cela suppose que vous avez donné aux responsables des miroirs clients
+la clef SSH configurée pour runmirrors et qu'ils l'ont ajoutée
+à leur propre ~/.ssh/authorized_keys comme décrit précédemment.
 </p>
 
 <p>
-Ce nouveau script, <code>runmirrors</code>, devrait contenir quelque chose
-comme ceci&nbsp;:
-</p>
-<p>
-Vous pouvez placer ces commandes soit à la fin de votre
-<code>ftpsync.conf</code>, ou si vous préférez, dans un autre script et lancer
-ce script à partir de <code>anonftpsync</code>, par exemple de la façon
-suivante&nbsp;:
-</p>
-
-<protect>
-<pre>
-#!/bin/sh
-
-# Ce script est appelé par websync pour déclencher les miroirs clients.
-
-./signal un.autre.site archvsync
-./signal et.un.autre.site autrecompte
-</pre>
-</protect>
-
-
-<p>
-Si vous avez le moindre problème avec ceci, <a
+Si vous avez le moindre problème avec ce qui précède, <a
 href="mailto:mirrors@debian.org">contactez-nous</a>.
 </p>
