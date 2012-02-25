@@ -1,11 +1,11 @@
-#use wml::debian::template title="Configurare un server push"
+#use wml::debian::template title="Configurazione di un server push"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.20" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.21" maintainer="Luca Monducci"
 
-<p>La configurazione di un server push consiste in due compiti di base: la
-configurazione dell'accesso rsync (per un normale mirroring di tipo
-<q>pull</q>) e la configurazionre del un meccanismo di attivazione
-via ssh (per avviare il mirroring push).</p>
+<p>La configurazione di un server <q>push</q> consiste essenzialmente di
+due attività: la configurazione dell'accesso rsync (come per un normale
+mirror di tipo <q>pull</q>) e la configurazione del meccanismo di
+attivazione via ssh (per avviare il mirroring push).</p>
 
 <p><small>(Per maggiori informazioni su cosa è un server push si veda
 <a href="push_mirroring">la spiegazione sul push mirroring</a>.)</small></p>
@@ -63,13 +63,13 @@ rsync           873/tcp
 rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daemon
 </pre>
 
-<p>(Ricordasi di inviare a inetd un segnale HUP per fargli rileggere il file
-di configurazione dopo la modifica).</p>
+<p>(Ricordasi di inviare a inetd un segnale HUP per forzare la rilettura
+del file di configurazione dopo la modifica).</p>
 
 <toc-add-entry name="sshtrigger">Configurazione del meccanismo di attivazione con ssh</toc-add-entry>
 
-<p>Creare una nuova chiave ssh per l'account che usa per il mirror di
-Debian. Assicurarsi di non sovrascrivere la chiave ssh originale usando
+<p>Creare una nuova chiave ssh per l'account usato dal mirror Debian.
+Assicurarsi di non sovrascrivere la chiave ssh originale usando
 l'opzione -f, per esempio:</p>
 
 <pre>
@@ -81,51 +81,25 @@ contenga all'inizio questo, dove IPADDRESS è l'indirizzo IP del proprio
 mirror di origine:</p>
 
 <pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADDRESS" &amp;"
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADDRESS"
 </pre>
 
 <p>Occorre configurare uno script che contatterà i mirror destinazione.
-Creare un file chiamato <code>signal</code>, con il seguente contenuto:</p>
+Il tarball ftpsync contiene lo script <code>runmirrors</code> che si
+occupa di tutte le operazioni. Semplicemente cambiando il proprio
+ftpsync.conf in modo da includere l'impostazione <code>HUB=true</code>,
+copiare <code>runmirrors.conf.sample</code> in <code>runmirrors.conf</code>
+e <code>runmirrors.mirror.sample</code> in <code>runmirrors.mirror</code>
+e modificare il file di configurazione in modo da adattarlo al proprio
+sistema. Poi in runmirrors.mirror elencare tutti i mirror di downstream
+e la coppia ftpsync/runmirror farà tutto il lavoro.</p>
 
-<protect>
-<pre>
-#!/bin/sh
-
-# This script is called to signal the remote host that it is time to
-# mirror the archive.
-
-echo Signalling $1
-ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
-</pre>
-</protect>
-
-<p>Questo script si allocherà sulla macchina remota usando la speciale
-chiave ssh creata prima, fornita a ciascun mirror destinatario e aggiunta
-nei rispettivi ~/.ssh/authorized_keys (sostituendo <q>ftpsync</q> con
-con un qualsiasi altro comando per avviare il
-mirroring). Lo script stesso non farà nulla di utile in remoto, l'unico
-comando sarà lanciato in base alle impostazioni dalla chiave.</p>
-
-<p>Per inviare un segnale ai mirror effettivamente, è necessario aggiungere
-le righe <code>./signal &lt;site&gt; &lt;username&gt;</code> al termine di
-del proprio rsync. Quindi, appena completato il proprio mirroring con il
-sito di origine, inizia il push verso i propri destinatari.</p>
-
-<p>È possibile mettere questi comandi sia all'inizio che al termine del
-proprio script <code>ftpsync.conf</code> oppure, se più conveniente, in
-un nuovo script che viene avviato da <code>anonftpsync</code>, per
-esempio:</p>
-
-<protect>
-<pre>
-#!/bin/sh
-
-# This script is called by websync to signal the downstream mirrors.
-
-./signal some.other.site archvsync
-./signal and.another.site othersiteaccount
-</pre>
-</protect>
+<p>L'effetto sarà che il proprio sistema tenterà di collegarsi con ssh
+ai mirror di downstram dopo aver completato l'aggiornato del proprio
+mirror. Per effettuare questa operazione si assume di aver dato a chi
+gestisce i mirror di downstream la chiave ssh che è stata configurata
+in runmirrors e che loro abbiano aggiunto la chiave nei propri
+~/.ssh/authorized_keys come descritto in precedenza.</p>
 
 <p>In caso di problemi, <a href="mailto:mirrors@debian.org">\
 contatteci</a>.</p>
