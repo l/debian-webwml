@@ -1,7 +1,8 @@
 #use wml::debian::template title="Einrichten eines Push-Spiegels"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.20"
+#use wml::debian::translation-check translation="1.21"
 # $Id$
+# Translation update: Holger Wansing <linux@wansing-online.de>, 2012.
 
 <p>Einen Push-Spiegel aufzusetzen, besteht aus zwei Aufgaben:
 Einrichten des rsync-Zugangs (für normales, <q>Pull</q>-Spiegeln) und
@@ -86,59 +87,31 @@ ssh-keygen -f ~/.ssh/identity.meinRechner
    IPADDRESS die IP-Adresse Ihres Quellspiegels ist:</p>
 
 <pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADDRESS" &amp;"
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADDRESS"
 </pre>
 
-<p>Sie müssen ein Skript einrichten, das die tiefergelegenen Spiegel
-kontaktiert. Erzeugen Sie eine Datei mit dem Namen
-<code>signal</code>, die Folgendes enthält:</p>
-
-<protect>
-<pre>
-#!/bin/sh
-
-# Dieses Skript wird gestartet, um dem entfernten Rechner zu signalisieren,
-# dass es Zeit zum Spiegeln des Archivs ist.
-
-echo Signalisiere $1
-ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.meinRechner sleep 1
-</pre>
-</protect>
-
-<p>Dieses Skript wird sich mit dem speziellen SSH-Schlüssel, den Sie
-oben erstellt haben, auf einem entfernten Rechner einloggen, vorausgesetzt,
-jeder Spiegel unterhalb von Ihnen fügt diesen Schlüssel zu seiner eigenen 
-~/.ssh/authorized_keys hinzu (ebenfalls mit der Ersetzung von <q>ftpsync</q> durch
-wie auch immer sein Befehl zum Starten des Spiegelns
-genannt ist). Das
-Skript selbst wird nichts sinnvolles auf dem entfernten Rechner
-machen, der einzelne Befehl wie er in der Schlüsseleinstellung angegeben ist
-wird ausgeführt.</p>
-
-<p>Um den Spiegeln tatsächlich ein Signal zu senden, müssen Sie <code>./signal
-   &lt;Site&gt; &lt;Benutzername&gt;</code> ausführen, sobald Ihr eigener 
-   Rsync-Lauf beendet ist. Daher werden Sie an alle tieferliegenden von Ihnen 
-   die Daten weiterschieben, sobald Sie mit dem Spiegeln von Ihrer 
-   Ursprungs-Site fertig sind.
+<p>
+Sie müssen ein Skript einrichten, das die tiefergelegenen Spiegel kontaktiert.
+Das ftpsync-Tarball-Archiv enthält das Skript <code>runmirrors</code>, welches alle
+nötigen Aktionen für Sie erledigt. Ändern Sie einfach Ihre ftpsync.conf, so dass Sie
+die Einstellung <code>HUB=true</code> enthält, kopieren Sie
+<code>runmirrors.conf.sample</code> nach <code>runmirrors.conf</code> und
+<code>runmirrors.mirror.sample</code> nach <code>runmirrors.mirror</code>;
+konfigurieren Sie die config-Datei Ihren Bedürfnissen entsprechend. Listen Sie
+dann alle Ihre tiefergelegenen Spiegel innerhalb von runmirrors.mirror auf
+und das Duo ftpsync/runmirror wird all die heftigen Transferoperationen für Sie
+durchführen.
 </p>
 
-<p>Sie könen diese Befehle entweder an das Ende Ihrer 
-   <code>ftpsync.conf</code> anfügen, oder, falls dies bequemer für Sie ist,
-   in ein neues Skripte einfügen, und dann das Skript von 
-   <code>anonftpsync</code> ausführen lassen, beispielsweise:
+<p>
+Der Effekt ist, dass, nachdem Ihr eigener Spiegel aktualisiert wurde, Ihr
+System versuchen wird, sich per SSH auf Ihren tiefergelegenen Spiegeln
+einzuloggen, so dass diese ihre Aktualisierungen starten können. Dabei wird
+davon ausgegangen, dass Sie den Betreibern Ihrer tiefergelegenen Spiegeln den
+SSH-Schlüssel gegeben haben, den runmirrors laut Ihrer Konfiguration verwendet,
+und dass die Betreiber ihn wie oben beschrieben zu ihrer ~/.ssh/authorized_keys
+hinzugefügt haben.
 </p>
-
-<protect>
-<pre>
-#!/bin/sh
-
-# Dieses Skript wird von websync gestartet, um Signale an die
-# tiefergelegenen Spiegel zu senden.
-
-./signal ein.anderer.Rechner archvsync
-./signal ein.weiterer.Rechner Benutzername2
-</pre>
-</protect>
 
 <p>Falls Sie irgendwelche Probleme damit haben,
 <a href="mailto:mirrors@debian.org">kontaktieren</a>
