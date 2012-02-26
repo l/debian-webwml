@@ -1,9 +1,9 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; Installation" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.99"
+#use wml::debian::translation-check translation="1.101"
 # $Id$
 # Translator: Helge Kreutzmann <debian@helgefjell.de>  2005-07-17
-# Updated: Holger Wansing <linux@wansing-online.de>, 2011
+# Updated: Holger Wansing <linux@wansing-online.de>, 2011, 2012.
 
 <h1>Debian GNU/Hurd-Installation von Hand</h1>
 <p>
@@ -403,6 +403,31 @@ Der Debian-typische Weg wird derzeit nicht unterstützt:
   ausprobieren. Beispielsweise wird die Karte e1000 von Qemu nicht
   unterstützt, die rtl8139 sollte aber funktionieren:
   <code>-net nic,model=rtl8139 -net user</code>
+</p>
+
+<p>
+Beginnend mit Version 20120219-1 enthält das hurd-Paket DDE-Treiber, die
+verwendet werden können, um aktuellere Geräte zu unterstützen (die Treiber
+stammen von Linux 2.6.39). Um zum Beispiel den rtl8139-Treiber zu nutzen,
+sollten die folgenden Übersetzer gesetzt werden:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# settrans -c /dev/rtl8139 /hurd/dde_rtl8139
+</pre></td></tr><tr><td>&nbsp;</td><td class=example><pre>
+ \# settrans -c /dev/eth0 /hurd/devnode -M /dev/rtl8139 eth0
+</pre></td></tr></table>
+
+<p>
+Als letzte Änderung können Sie dann <code>eth0</code> (den Mach-Treibernamen)
+mit <code>/dev/eth0</code> (dem DDE-Treiberpfad) ersetzen.
+</p>
+
+<p>
+<b>Warnung:</b> verwenden Sie keinen DDE-Treiber, wenn GNU Mach Ihre Karte
+erkennt, die beiden würden sich behindern und das würde zu katastrophalen
+Ergebnissen führen. Um alle GNU Mach-Netzwerktreiber zu deaktivieren,
+fügen Sie <code>nonetdev</code> zur gnumach-Kommandozeile hinzu.
 </p>
 
 <p>
