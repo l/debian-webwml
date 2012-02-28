@@ -84,9 +84,9 @@ foreach my $bug (sort { $rfa{$a} cmp $rfa{$b} } keys %rfa) {
     push @rfa_bypackage_html, "\n<li><btsurl bugnr=\"$bug\">$rfa{$bug}</btsurl>";
     (my $pkg = $rfa{$bug}) =~ s/^(.+?):\s+.*$/$1/;
     push @rfa_bypackage_html, " <pdolink \"$pkg\" />, ";
-    if ( $age{$bug} == 0 ) { push @rfa_bypackage_html, '<adoption-today />' }
-    elsif ( $age{$bug} == 1 ) { push @rfa_bypackage_html, '<adoption-yesterday />' }
-    else { push @rfa_bypackage_html, "<adoption-days \"$age{$bug}\" />" }
+    if ( $age{$bug} == 0 ) { push @rfa_bypackage_html, '<requested-adoption-today />' }
+    elsif ( $age{$bug} == 1 ) { push @rfa_bypackage_html, '<requested-adoption-yesterday />' }
+    else { push @rfa_bypackage_html, "<requested-adoption-days \"$age{$bug}\" />" }
     push @rfa_bypackage_html, "</li>\n";
 }
 if ($#rfa_bypackage_html == -1) { @rfa_bypackage_html = ('<li><norfa /></li>') }
@@ -99,9 +99,9 @@ foreach my $maint (sort keys %rfabymaint) {
         push @rfa_bymaint_html, "<li><btsurl bugnr=\"$bug\">$rfa{$bug}</btsurl>";
         (my $pkg = $rfa{$bug}) =~ s/^(.+?):\s+.*$/$1/;
         push @rfa_bymaint_html, " <pdolink \"$pkg\" />, ";
-	if ( $age{$bug} == 0 ) { push @rfa_bymaint_html, '<adoption-today />' }
-        elsif ( $age{$bug} == 1 ) { push @rfa_bymaint_html, '<adoption-yesterday />' }
-        else { push @rfa_bymaint_html, "<adoption-days \"$age{$bug}\" />" }
+	if ( $age{$bug} == 0 ) { push @rfa_bymaint_html, '<requested-adoption-today />' }
+        elsif ( $age{$bug} == 1 ) { push @rfa_bymaint_html, '<requested-adoption-yesterday />' }
+        else { push @rfa_bymaint_html, "<requested-adoption-days \"$age{$bug}\" />" }
 	push @rfa_bymaint_html, "</li>\n";
     }
     push @rfa_bymaint_html, "</ul>";
@@ -113,9 +113,9 @@ foreach (sort {$a <=> $b} keys %rfa) {
     push @rfa_byage_html, "\n<li><btsurl bugnr=\"$_\">$rfa{$_}</btsurl>";
     (my $pkg = $rfa{$_}) =~ s/^(.+?):\s+.*$/$1/;
     push @rfa_byage_html, " <pdolink \"$pkg\" />, ";
-    if ( $age{$_} == 0 ) { push @rfa_byage_html, '<adoption-today />' }
-    elsif ( $age{$_} == 1 ) { push @rfa_byage_html, '<adoption-yesterday />' }
-    else { push @rfa_byage_html, "<adoption-days \"$age{$_}\" />" }
+    if ( $age{$_} == 0 ) { push @rfa_byage_html, '<requested-adoption-today />' }
+    elsif ( $age{$_} == 1 ) { push @rfa_byage_html, '<requested-adoption-yesterday />' }
+    else { push @rfa_byage_html, "<requested-adoption-days \"$age{$_}\" />" }
     push @rfa_byage_html, "</li>\n";
 }
 if ($#rfa_byage_html == -1) { @rfa_byage_html = ('<li><norfa /></li>') }
@@ -125,9 +125,9 @@ foreach my $bug (sort { $orphaned{$a} cmp $orphaned{$b} } keys %orphaned) {
     push @orphaned_html, "<li><btsurl bugnr=\"$bug\">$orphaned{$bug}</btsurl>";
     (my $pkg = $orphaned{$bug}) =~ s/^(.+?):\s+.*$/$1/;
     push @orphaned_html, " <pdolink \"$pkg\" />, ";
-    if ( $age{$bug} == 0 ) { push @orphaned_html, '<adoption-today />' }
-    elsif ( $age{$bug} == 1 ) { push @orphaned_html, '<adoption-yesterday />' }
-    else { push @orphaned_html, "<adoption-days \"$age{$bug}\" />" }
+    if ( $age{$bug} == 0 ) { push @orphaned_html, '<orphaned-today />' }
+    elsif ( $age{$bug} == 1 ) { push @orphaned_html, '<orphaned-yesterday />' }
+    else { push @orphaned_html, "<orphaned-days \"$age{$bug}\" />" }
     push @orphaned_html, "</li>\n";
 }
 if ($#orphaned_html == -1) { @orphaned_html = ('<li><noo /></li>') }
@@ -137,9 +137,9 @@ foreach (sort {$a <=> $b} keys %orphaned) {
     push @orphaned_byage_html, "<li><btsurl bugnr=\"$_\">$orphaned{$_}</btsurl>";
     (my $pkg = $orphaned{$_}) =~ s/^(.+?):\s+.*$/$1/;
     push @orphaned_byage_html, " <pdolink \"$pkg\" />";
-    if ( $age{$_} == 0 ) { push @orphaned_byage_html, '<adoption-today />' }
-    elsif ( $age{$_} == 1 ) { push @orphaned_byage_html, '<adoption-yesterday />' }
-    else { push @orphaned_byage_html, "<adoption-days \"$age{$_}\" />" }
+    if ( $age{$_} == 0 ) { push @orphaned_byage_html, '<orphaned-today />' }
+    elsif ( $age{$_} == 1 ) { push @orphaned_byage_html, '<orphaned-yesterday />' }
+    else { push @orphaned_byage_html, "<orphaned-days \"$age{$_}\" />" }
     push @orphaned_byage_html, "</li>\n";
 }
 if ($#orphaned_byage_html == -1) { @orphaned_byage_html = ('<li><noo /></li>') }
