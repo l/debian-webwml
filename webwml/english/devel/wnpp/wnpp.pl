@@ -13,6 +13,8 @@ use HTML::Entities;
 
 # The maintainers flat database
 my $maintainers_file = "$(ENGLISHDIR)/devel/wnpp/Maintainers";
+# The popcon flat database
+my $popcon_file = "$(ENGLISHDIR)/international/l10n/data/popcon";
 
 my %maintainer;
 open MAINTAINERS, '<', $maintainers_file or die "Can't find $maintainers_file file at $host: $!\n";
@@ -23,6 +25,14 @@ while (<MAINTAINERS>) {
 }
 close MAINTAINERS;
 
+my %popcon;
+open POPCON, '<', $popcon_file or die "Can't find $popcon_file file at $host: $!\n";
+while (<POPCON>) {
+	if (/^(\d+)\s+(.*?)\s/) {
+		$popcon{$2} = $1;
+	}
+}
+
 my $soap = SOAP::Lite->uri('Debbugs/SOAP')->proxy('http://bugs.debian.org/cgi-bin/soap.cgi')
        or die "Couldn't make connection to SOAP insterface: $@";
 my $bugs = $soap->get_bugs(package=>'wnpp')->result;
@@ -31,7 +41,7 @@ my $status = $soap->get_status($bugs)->result() or die;
 my $curdate = time;
 
 my ( %rfa, %orphaned, %rfabymaint, %rfp, %ita, %itp, %age,
-     %rfh, %oth, %activity, %ita_activity, %itp_activity );
+     %rfh, %rfh_pkg, %oth, %activity, %ita_activity, %itp_activity );
  ALLPKG: foreach my $bugid (@$bugs) {
      use integer;
      next if $status->{$bugid}->{done};
@@ -66,6 +76,8 @@ my ( %rfa, %orphaned, %rfabymaint, %rfp, %ita, %itp, %age,
          $rfp{$bugid} = join(": ", split(/\s+-+\s+/, $1,2));
      } elsif ($subject =~ m/^RFH:\s*(.*)/) {
          $rfh{$bugid} = join(": ", split(/\s+-+\s+/, $1,2));
+	 $rfh_pkg{$bugid} = $rfh{$bugid};
+	 $rfh_pkg{$bugid} =~ s/^(.+?):\s+.*$/$1/;
      } elsif ($subject =~ m/^(?:OTH|ITH):\s*(.*)/) {
          $oth{$bugid} = join(": ", split(/\s+-+\s+/, $1,2));
      } else {
@@ -77,7 +89,7 @@ my (@rfa_bypackage_html, @rfa_bymaint_html, @orphaned_html);
 my (@being_adopted_html, @being_packaged_html, @requested_html);
 my (@rfh_html, @oth_html, %rfh_count);
 my (@rfa_byage_html, @orphaned_byage_html, @being_adopted_byage_html, @being_adopted_byactivity_htm);
-my (@being_packaged_byage_html, @being_packaged_byactivity_html, @requested_html, @rfh_byage_html);
+my (@being_packaged_byage_html, @being_packaged_byactivity_html, @requested_html, @rfh_byage_html, @rfh_bypop_html);
 my ($rfa_number, $orphaned_number, $adopted_number, $packaged_number, $requested_number, $help_number );
 
 foreach my $bug (sort { $rfa{$a} cmp $rfa{$b} } keys %rfa) {
@@ -259,34 +271,44 @@ if ($#requested_byage_html == -1) { @requested_byage_html = ('<li><norfp /></li>
 
 
 foreach (sort { $rfh{$a} cmp $rfh{$b} } keys %rfh) {
-    (my $pkg = $rfh{$_}) =~ s/^(.+?):\s+.*$/$1/;
     push @rfh_html, 
          "<li><btsurl bugnr=\"$_\">$rfh{$_}</btsurl>, ";
     push @rfh_html,
-         " <pdolink \"$pkg\" />, ";
+         " <pdolink \"$rfh_pkg{$_}\" />, ";
     if ( $age{$_} == 0 ) { push @rfh_html, '<req-today />' }
     elsif ( $age{$_} == 1 ) { push @rfh_html, '<req-yesterday />' }
     else { push @rfh_html, "<req-days \"$age{$_}\" />" };
     push @rfh_html, "</li>\n";
     # There might be more than one RFH for one package, we want to
     # display them all, but don't want to count the same package twice.
-    $rfh_count{$pkg} = $_;
+    $rfh_count{$rfh_pkg{$_}} = $_;
 }
 if ($#rfh_html == -1) { @rfh_html = ('<li><norfh /></li>') }
 else { $help_number = scalar(keys %rfh_count) }
 
 foreach (sort {$a <=> $b} keys %rfh) {
-    (my $pkg = $rfh{$_}) =~ s/^(.+?):\s+.*$/$1/;
     push @rfh_byage_html, 
          "<li><btsurl bugnr=\"$_\">$rfh{$_}</btsurl>, ";
     push @rfh_byage_html,
-         " <pdolink \"$pkg\" />, ";
+         " <pdolink \"$rfh_pkg{$_}\" />, ";
     if ( $age{$_} == 0 ) { push @rfh_byage_html, '<req-today />' }
     elsif ( $age{$_} == 1 ) { push @rfh_byage_html, '<req-yesterday />' }
     else { push @rfh_byage_html, "<req-days \"$age{$_}\" />" };
     push @rfh_byage_html, "</li>\n";
 }
 if ($#rfh_byage_html == -1) { @rfh_byage_html = ('<li><norfh /></li>') }
+
+foreach (sort { $popcon{$rfh_pkg{$a}} <=> $popcon{$rfh_pkg{$b}} } keys %rfh) {
+	push @rfh_bypop_html,
+	"<li><btsurl bugnr=\"$_\">$rfh{$_}</btsurl>, ";
+	push @rfh_bypop_html,
+	" <pdolink \"$rfh_pkg{$_}\" />, <popcon \"$popcon{$rfh_pkg{$_}}\" />, ";
+	if ( $age{$_} == 0 ) { push @rfh_bypop_html, '<req-today />' }
+	elsif ( $age{$_} == 1 ) { push @rfh_bypop_html, '<req-yesterday />' }
+	else { push @rfh_bypop_html, "<req-days \"$age{$_}\" />" };
+	push @rfh_bypop_html, "</li>\n";
+}
+if ($#rfh_bypop_html == -1) { @rfh_byage_html = ('<li><norfh /></li>') }
 
 
 <protect pass="2">
@@ -312,6 +334,7 @@ print "<define-tag requested><ul>@requested_html</ul></define-tag>\n";
 print "<define-tag requested_byage><ul>@requested_byage_html</ul></define-tag>\n";
 print "<define-tag help_req><ul>@rfh_html</ul></define-tag>\n";
 print "<define-tag help_req_byage><ul>@rfh_byage_html</ul></define-tag>\n";
+print "<define-tag help_req_bypop><ul>@rfh_bypop_html</ul></define-tag>\n";
 </protect>
 
 </perl>
