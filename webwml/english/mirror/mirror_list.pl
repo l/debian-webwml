@@ -209,27 +209,7 @@ END
       next unless (defined $mirror[$id]{method}{'archive-ftp'} or defined $mirror[$id]{method}{'archive-http'});
       my $aliaslist;
       if (exists $mirror[$id]{'aliases'}) {
-        if (exists $mirror[$id]{includes}) {
-          $aliaslist .= "  (";
-          my @tmparray = @{$mirror[$id]{includes}};
-          my $notalldone = $#tmparray + 1;
-SUBSITE:  foreach my $subsite (@{ $mirror[$id]{includes} }) {
-            # this is basically a sanity check
-            my $subsite_id;
-SUBSITEID:  foreach my $mid (0 .. $#mirror) {
-              if ($mirror[$mid]{site} eq $subsite) {
-                $subsite_id = $mid;
-                last SUBSITEID;
-              }
-            }
-            die $subsite ." included in " . $mirror[$id]{site} . " does not exist\n" unless defined $subsite_id; # must be an error
-            # this prints the canonical name of the included site rather than its reference - should be in sync, but might actually vary
-            $aliaslist .= $mirror[$subsite_id]{site};
-            $notalldone--;
-            $aliaslist .= ", " if ($notalldone);
-          }
-          $aliaslist .= ")";
-        } else {
+        if (!exists $mirror[$id]{includes}) {
           # we want to display aliases in the main list for official mirrors
           # but for others, it's just clutter, so skip them
           if ($mirror[$id]{site} =~ /$officialsiteregex/) {
@@ -240,6 +220,27 @@ SUBSITEID:  foreach my $mid (0 .. $#mirror) {
             $aliaslist .= "  (" . $truename . ")";
           }
         }
+      }
+      if (exists $mirror[$id]{includes}) {
+	$aliaslist .= "  (";
+	my @tmparray = @{$mirror[$id]{includes}};
+	my $notalldone = $#tmparray + 1;
+SUBSITE:  foreach my $subsite (@{ $mirror[$id]{includes} }) {
+	  # this is basically a sanity check
+	  my $subsite_id;
+SUBSITEID:  foreach my $mid (0 .. $#mirror) {
+	    if ($mirror[$mid]{site} eq $subsite) {
+	      $subsite_id = $mid;
+	      last SUBSITEID;
+	    }
+	  }
+	  die $subsite ." included in " . $mirror[$id]{site} . " does not exist\n" unless defined $subsite_id; # must be an error
+	  # this prints the canonical name of the included site rather than its reference - should be in sync, but might actually vary
+	  $aliaslist .= $mirror[$subsite_id]{site};
+	  $notalldone--;
+	  $aliaslist .= ", " if ($notalldone);
+	}
+	$aliaslist .= ")";
       }
       if ($html) {
         print "<tr>\n";
