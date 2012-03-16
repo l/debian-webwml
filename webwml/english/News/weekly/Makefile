@@ -38,7 +38,9 @@ endif
 # When building the html files we have to change into the right directory
 # so wml gets all the relative links right.
 %.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
-	                   $(TEMPLDIR)/weeklynews/header.wml $(GETTEXTDEP)
+	                   $(TEMPLDIR)/weeklynews/header.wml $(GETTEXTDEP) \
+			   $(TEMPLDIR)/weeklynews/boilerplates.wml
+		
 ifeq "$(LANGUAGE)" "ja"
 	cd $(@D) && $(subst ../../convert,$(ABS_DIR)/../../convert,$(WML)) $(notdir $(<))
 else

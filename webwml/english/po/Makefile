@@ -30,12 +30,13 @@ legal_FILES     = $(addprefix $(TEMPLDIR)/, legal.wml legal_tags.wml)
 mailinglists_FILES = $(ENGLISHDIR)/MailingLists/mklist.tags
 newsevents_FILES = $(addprefix $(TEMPLDIR)/, \
   events_common.wml news.wml speakers.wml \
-  projectnews/footer.wml weeklynews/footer.wml) \
+  projectnews/footer.wml weeklynews/footer.wml \
+  projectnews/boilerplates.wml ) \
   $(ENGLISHDIR)/News/press/press.tags \
   $(ENGLISHDIR)/events/speakers/speakers.defs \
   $(ENGLISHDIR)/events/talks.defs \
   $(ENGLISHDIR)/News/news.rdf.in \
-  $(ENGLISHDIR)/News/weekly/dwn-to-rdf.pl
+  $(ENGLISHDIR)/News/weekly/dwn-to-rdf.pl 
 organization_FILES = $(ENGLISHDIR)/intro/organization.data
 ports_FILES     = $(ENGLISHDIR)/ports/menu.defs \
   $(shell export LC_COLLATE=C; echo $(ENGLISHDIR)/ports/*/menu.inc) \
