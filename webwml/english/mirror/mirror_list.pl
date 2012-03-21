@@ -255,7 +255,7 @@ SUBSITEID:  foreach my $mid (0 .. $#mirror) {
         my $rest = $longest{'archive-ftp'} - length($mirror[$id]{method}{'archive-ftp'});
         if ($html) {
           print <<END;
-<td valign=top><a href="ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'}">$mirror[$id]{method}{'archive-ftp'}</a></td>
+<td valign=top><a rel="nofollow" href="ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'}">$mirror[$id]{method}{'archive-ftp'}</a></td>
 END
         } elsif ($text) {
           my $formatstring = "%s%${rest}s";
@@ -263,7 +263,7 @@ END
         } elsif ($wml) {
           print <<EOF;
   push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
-        "<a href=\\\"ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'}\\\">$mirror[$id]{method}{'archive-ftp'}</a>";
+        "<a rel=\\\"nofollow\\\" href=\\\"ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'}\\\">$mirror[$id]{method}{'archive-ftp'}</a>";
 EOF
         }
       } else {
@@ -283,7 +283,7 @@ EOF
         my $rest = $longest{'archive-http'} - length($mirror[$id]{method}{'archive-http'});
         if ($html) {
           print <<END;
-<td valign=top><a href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{method}{'archive-http'}</a></td>
+<td valign=top><a rel="nofollow" href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{method}{'archive-http'}</a></td>
 END
         } elsif ($text) {
           my $formatstring = "%s%${rest}s";
@@ -291,7 +291,7 @@ END
         } elsif ($wml) {
           print <<EOF;
   push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
-        "<a href=\\\"http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}\\\">$mirror[$id]{method}{'archive-http'}</a>";
+        "<a rel=\\\"nofollow\\\" href=\\\"http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}\\\">$mirror[$id]{method}{'archive-http'}</a>";
 EOF
         }
       } else {
@@ -552,7 +552,7 @@ END
         print <<END;
 <tr>
   <td>$countryplain</td>
-  <td><a href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}</a></td>
+  <td><a rel="nofollow" href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}</a></td>
   <td><small><small>$arches</small></small></td>
 </tr>
 END
@@ -584,7 +584,7 @@ foreach my \$country (sort langcmp keys \%primaries) {
     print <<EOM;
 <tr>
   <td>\$country</td>
-  <td><a href="http://\$countrysite\$elems[0]">\$countrysite\$elems[0]</a></td>
+  <td><a rel="nofollow" href="http://\$countrysite\$elems[0]">\$countrysite\$elems[0]</a></td>
   <td><small><small>\$elems[1]</small></small></td>
 </tr>
 EOM
@@ -610,7 +610,7 @@ END
       print <<END;
 <tr>
   <td><${countrycode}c></td>
-  <td><a href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{site}</a></td>
+  <td><a rel="nofollow" href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{site}</a></td>
   <td>
 END
       if (exists $mirror[$id]{includes}) {
@@ -742,10 +742,10 @@ sub cdimage_mirrors($) {
             defined $mirror[$id]{method}{'cdimage-http'}) {
           print "  '<${countrycode}c>: $mirror[$id]{site}:";
           if (defined $mirror[$id]{method}{'cdimage-ftp'}) {
-            print qq( <a href="ftp://$mirror[$id]{site}$mirror[$id]{method}{'cdimage-ftp'}">FTP</a>);
+            print qq( <a rel="nofollow" href="ftp://$mirror[$id]{site}$mirror[$id]{method}{'cdimage-ftp'}">FTP</a>);
           }
           if (defined $mirror[$id]{method}{'cdimage-http'}) {
-            print qq( <a href="http://$mirror[$id]{site}$mirror[$id]{method}{'cdimage-http'}">HTTP</a>);
+            print qq( <a rel="nofollow" href="http://$mirror[$id]{site}$mirror[$id]{method}{'cdimage-http'}">HTTP</a>);
           }
           print "',\n";
         }
@@ -959,12 +959,12 @@ EOF
         if ($method =~ /http/) {
           print $display.":  ";
           print "<tt>" if $wml;
-          print "<a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{$method}\">$mirror[$id]{method}{$method}</a>\n";
+          print "<a rel=\"nofollow\" href=\"http://$mirror[$id]{site}$mirror[$id]{method}{$method}\">$mirror[$id]{method}{$method}</a>\n";
           print "</tt>" if $wml;
         } elsif ($method =~ /ftp/) {
           print $display.":  ";
           print "<tt>" if $wml;
-          print "<a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{$method}\">$mirror[$id]{method}{$method}</a>\n";
+          print "<a rel=\"nofollow\" href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{$method}\">$mirror[$id]{method}{$method}</a>\n";
           print "</tt>" if $wml;
         } else {
           print $display.":  ";
@@ -1192,8 +1192,8 @@ sub compact_list($$) {
 
   sub printhtmlftprsync($$$$) {
     my ($site, $http, $ftp, $rsync) = @_;
-    print "<a href=\"http://". $site . $http ."\">HTTP</a> " if (defined $http);
-    print "<a href=\"ftp://". $site . $ftp ."\">FTP</a> " if (defined $ftp);
+    print "<a rel=\"nofollow\" href=\"http://". $site . $http ."\">HTTP</a> " if (defined $http);
+    print "<a rel=\"nofollow\" href=\"ftp://". $site . $ftp ."\">FTP</a> " if (defined $ftp);
     print "rsync&nbsp;". $site . "::" . $rsync if (defined $rsync);
   }
 
@@ -1297,14 +1297,14 @@ sub generate_html_matrix {
       print "<tr><th>$mirror[$id]{site}</th>";
       print "<td>";
       if (defined $mirror[$id]{method}{"$archive_name_lc-ftp"}) {
-        print "<a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{\"$archive_name_lc-ftp\"}\">";
+        print "<a rel=\"nofollow\" href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{\"$archive_name_lc-ftp\"}\">";
         print $mirror[$id]{method}{"$archive_name_lc-ftp"};
         print "</a>\n";
       }
       print "</td>\n";
       print "<td>";
       if (defined $mirror[$id]{method}{"$archive_name_lc-http"}) {
-        print "<a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{\"$archive_name_lc-http\"}\">";
+        print "<a rel=\"nofollow\" href=\"http://$mirror[$id]{site}$mirror[$id]{method}{\"$archive_name_lc-http\"}\">";
         print $mirror[$id]{method}{"$archive_name_lc-http"};
         print "</a>\n";
       }
