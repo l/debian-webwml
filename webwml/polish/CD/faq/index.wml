@@ -1,6 +1,6 @@
 #use wml::debian::cdimage title="Często zadawane pytania o płytach CD Debiana" NOHEADER=true BARETITLE=true
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.99"
+#use wml::debian::translation-check translation="1.110"
 #include "$(ENGLISHDIR)/releases/info"
 
 <define-tag toc-title-formatting endtag="required" whitespace="delete">
@@ -21,8 +21,8 @@ formie pliku komputerowego, który może być np. przesłany przez
 Internet. Programy do wypalania płyt mogą użyć tego obrazu, by stworzyć
 prawdziwą płytę.</p>
 
-<p>Dla prawidłowo nagranej płyty CD, plik <tt>.iso</tt> na niej nie
-istnieje, kiedy ją sprawdzasz! Zamiast niego powinieneś zobaczyć wiele
+<p>Na prawidłowo nagranej płycie CD nie powinno być widać pliku <tt>.iso</tt>!
+Zamiast niego powinieneś zobaczyć wiele
 plików i katalogów - w przypadku Debiana powinien to być przynajmniej
 katalog <q>dists</q> i plik <q>README.html</q>.</p>
 
@@ -60,7 +60,7 @@ instalacją:</p>
 
   <li><a href="http://lists.debian.org/debian-cd/">debian-cd</a>:
   Dyskusja na temat tworzenia obrazów płyt, dostępnych serwerach lustrzanych z
-  obrazami płyt, problemach związanych z bootowaniem z płyty, ogłoszenia o nowych
+  obrazami płyt, problemach związanych z uruchamianiem systemu z płyty, ogłoszenia o nowych
   oficjalnych obrazach (j. angielski).</li>
 
   <li><a href="http://lists.debian.org/debian-boot/">debian-boot</a>: Nazwa
@@ -395,7 +395,7 @@ nieaktualne - dlaczego nie wypuścicie nowej wersji?</toc-add-entry>
 
 <p>Wydajemy oficjalną wersję dystrybucji <q>stabilnej</q>, kiedy sądzimy,
 że naprawdę zasługuje ona na tą nazwę. Niestety, oznacza to, że wersje
-stabilne pojawiają się co około 1,5 roku...</p>
+stabilne pojawiają się co około 1,5 roku do dwóch lat...</p>
 
 <p>Jeśli wymagasz nowszych wersji jakichś programów Debiana,
 możesz zainstalować dystrybucję stabilną i dokonać upgrade'u
@@ -410,6 +410,11 @@ dla <q>testing</q></a>, zwłaszcza jeśli działa on jako serwer. Więcej na tem
 <a href="../../security/faq#testing">wsparcia bezpieczeństwa dla
 <q>testing</q></a> jest dostępne na stronie FAQ dotyczącej bezpieczeństwa.</p>
 
+<p>Jeśli potrzebujesz nowszych wersji wybranych pakietów, możesz spróbować użyć
+usługi <q>backportów</q>, która polega na tym, że pakiety z dystrybucji
+<q>testing</q> są modyfikowane tak, aby działały w stabilnej. Ta opcja może być
+bezpieczniejsza, niż instalowanie pakietu bezpośrednio z <q>testing</q>.</p>
+
 # ============================================================
 
 <toc-add-entry name="newest">Skąd mam wiedzieć, że pobieram
@@ -418,20 +423,76 @@ najnowsze obrazy płyt?</toc-add-entry>
 <p>Uwaga na dole strony <a href="../"><q>Debian na CD-ROM'ach</q></a>
 zawsze pokazuje numer wersji ostatniego wydania.</p>
 
-<p>Strony serwerów, które oferują ściąganie przez HTTP/FTP, zwykle
-używają standardowego schematu
-<tt>/&lt;wersja&gt;/&lt;architektura&gt;/&lt;obraz&gt;.iso</tt>,
-na przykład <tt>/3.0_r1/i386/binary-i386-1.iso</tt> lub
-<tt>/3.0_r1/source/source-1.iso</tt>.
-</p>
-
 # ============================================================
 
-<toc-add-entry name="verify">Jak mogę sprawdzić, że ściągnięte
-obrazy płyt są poprawne?</toc-add-entry>
+<toc-add-entry name="verify">Jak mogę sprawdzić poprawność pobranych
+obrazów ISO i zapisanych nośników optycznych?</toc-add-entry>
 
-<p>Szczegółowe informacje są dostępne na <a href="../verify">stronie
-poświęconej weryfikacji autentyczności</a>.</p>
+<p>Szczegółowe informacje na temat uwierzytelniania podpisanych plików sum
+kontrolnych, zawierających sumy kontrolne plików obrazów ISO są dostępne na <a
+href="../verify">stronie poświęconej weryfikacji autentyczności</a>. Po
+kryptograficznej weryfikacji plików sum kontrolnych, możemy sprawdzić czy:</p>
+
+<ul>
+ <li>Sumy kontrolne <em>pobranych plików obrazów ISO</em> pasują do tych
+ zawartych w plikach z sumami kontrolnymi. Sumy kontrolne plików obrazów
+ oblicza się przy pomocy narzędzi takich jak <q>md5sum</q>, <q>sha1sums</q> lub
+ <q>sha512sums</q>.</li>
+ <li>Sumy kontrolne <em>już zapisanych nośników optycznych</em> pasują do tych
+ zawartych w plikach z sumami kontrolnymi. Opisanie tej operacji jest nieco
+ bardziej skomplikowane.</li>
+</ul>
+
+<p>Problem ze sprawdzaniem nośników magnetycznych polega na tym, że z
+niektórych typów nośników można odczytać więcej bajtów, niż znajduje się w
+obrazie ISO. Tych śmieci nie da się uniknąć w płytach CD nagrywanych w trybie
+TAO, przyrostowo nagrywanych DVD-R[W], formatowanych DVD-RW, DVD+RW, BD-RE oraz
+napędami USB. Z tego powodu trzeba odczytać z nośnika dokładnie taką samą ilość
+sektorów danych ile znajduje się w obrazie ISO; odczytanie jakichkolwiek
+dodatkowych bajtów z nośnika spowoduje zmianę sumy kontrolnej.</p>
+
+<ul>
+ <li>Przy pomocy programu <q>isosize</q> można odnaleźć właściwą liczbę bajtów
+ do odczytania z nośnika. Pokazuje on <q>liczbę sektorów</q> i
+ <q>rozmiar sektora</q> nośnika optycznego, gdzie <q>&lt;urządzenie&gt;</q> to
+ plik urządzenia załadowanego nośnika optycznego.
+ <br/><tt>$ /sbin/isosize -x &lt;urządzenie&gt;</tt>
+ <br/><tt>liczba sektorów: 25600, rozmiar sektora: 2048</tt>
+ </li>
+ <li>Następnie <q>liczbę sektorów</q> i <q>rozmiar sektora</q> można przekazać
+ do <q>dd</q> aby odczytać odpowiednią ilość bajtów z nośnika optycznego, a
+ strumień danych przekazać do odpowiedniego narzędzia do obliczania sum
+ kontrolnych (md5sum, sha1sum itp).
+ <br/><tt>$ dd if=&lt;urządzenie&gt; count=&lt;liczba sektorów&gt; bs=&lt;rozmiar sektora&gt; | sha1sum</tt>
+ </li>
+ <li>Obliczoną sumę kontrolną należy porównać z odpowiednią sumą kontrolną
+ znalezioną w pliku z sumami kontrolnymi (MD5SUMS, SHA1SUMS itp).
+ </li>
+</ul>
+
+<p>Alternatywnie, istnieje przydatny skrypt pomocniczy <a
+href="http://people.debian.org/~danchev/debian-iso/check_debian_iso">check_debian_iso</a>,
+który może sprawdzić zarówno pliki obrazów ISO jak i nośniki optyczne,
+odczytując odpowiednią ilość bajtów z nośników, następnie obliczając sumę
+kontrolną i porównując ją z plikiem sum kontrolnych.</p>
+
+
+<ul>
+ <li><em>Weryfikacja plików ISO</em>
+ Następująca komenda porówna sumę kontrolną pliku obrazu
+ debian-6.0.3-amd64-netinst.iso z odpowiednią sumą kontrolną znajdującą się w
+ pliku MD5SUMS.
+ <br/><tt>$ ./check_debian_iso  MD5SUMS  debian-6.0.3-amd64-netinst.iso</tt>
+ </li>
+ <li><em>Weryfikacja nośnika optycznego</em>
+ Następująca komenda porówna sumę kontrolną nośnika dostępnego jako /dev/dvd
+ ze sumą obrazu debian-6.0.3-amd64-DVD-1.iso znalezioną w pliku MD5SUMS.
+ Uwaga: sam plik obrazu ISO nie jest wymagany, jego nazwa jest potrzebna jedynie
+ do zlokalizowania sumy kontrolnej w pliku MD5SUMS.
+ <br/><tt>$ ./check_debian_iso  MD5SUMS  debian-6.0.3-amd64-DVD-1.iso  /dev/dvd</tt>
+ </li>
+</ul>
+
 
 <p>Program <tt>md5sum</tt> dla systemów Windows jest dostępny jako część <a
 href="http://www.cygwin.com">zestawu Cygwin</a> (w pakiecie coreutils). Można
@@ -464,25 +525,35 @@ lub użyj programu <tt>curl</tt>, narzędzia obsługiwanego z linii poleceń:
 
 # ============================================================
 
-<toc-add-entry name="record-unix">Jak mam nagrać nagrać płytę CD-R
+<toc-add-entry name="record-unix">Jak nagrać nagrać obraz ISO
 pod Linuksem/Uniksem?</toc-add-entry>
 
-<p>Użyj programu
-<a href="http://cdrecord.berlios.de/old/private/cdrecord.html">cdrecord</a>
-wydając polecenie (jako root):
-<br /><tt>nice&nbsp;--18&nbsp;cdrecord&nbsp;-eject&nbsp;-v&nbsp;speed=2&nbsp;dev=0,6,0&nbsp;-data&nbsp;-pad&nbsp;binary-i386-1.iso</tt></p>
+<p>Zwróć uwagę, że obrazy ISO Debiana można także uruchomić z napędu USB
+&mdash; patrz <a href="#write-usb">nagrywanie na napęd USB</a>, poniżej.</p>
 
-<p>
-Debian rozdzielił cdrecord w etch. Prosimy spróbować wodim na systemach
-opartych na Debianie, zamiast cdrecord.
+<p><a href="http://www.gnu.org/software/xorriso/xorriso.html">xorriso</a>
+obsługuje wszystkie typy nośników optycznych (nie wymaga praw administratora):
+<br/><tt>xorriso -as cdrecord -v dev=/dev/sr0 -eject debian-x.y.z-arch-NOŚNIK-NN.iso</tt>
+<br/>aby osiągnąć pełną prędkość nominalną przy zapisie BD-RE (tzn. bez
+spowolnienia spowodowanego wewnętrzną kontrolą wad napędu), dodaj opcję
+<tt>stream_recording=on</tt>.</p>
+
+<p><a href="http://fy.chalmers.se/~appro/linux/DVD+RW/">growisofs</a> obsługuje
+nośniki DVD i BD:
+<br/><tt>growisofs -dvd-compat -Z /dev/sr0=debian-x.y.z-arch-NOŚNIK-NN.iso</tt>
 </p>
+
+<p><a href="http://www.cdrkit.org/">wodim</a> obsługuje nośniki CD:
+<br/><tt>wodim -v dev=/dev/sr0 -eject -sao debian-x.y.z-arch-CD-NN.iso</tt>
+</p>
+
 
 <p>Pod Linuksem są jeszcze programy dla X Window, takie jak
 <a href="http://www.gnome.org/projects/brasero/">Brasero</a>,
 <a href="http://k3b.plainblack.com/">K3B</a>
 i
 <a href="http://www.xcdroast.org/">X-CD-Roast</a>.
-Wszystkie one są nakładkami na cdrecord.</p>
+Wszystkie one są nakładkami na wyżej wspomniane programy niskopoziomowe.</p>
 
 <dl>
 
@@ -515,7 +586,7 @@ Wszystkie one są nakładkami na cdrecord.</p>
 
 # ============================================================
 
-<toc-add-entry name="record-windows">Jak mam nagrać płytę CD-R
+<toc-add-entry name="record-windows">Jak nagrać obraz ISO
 pod Windows?</toc-add-entry>
 
 <p>Tu może powstać pewien problem, gdyż wiele programów windowsowych
@@ -612,12 +683,6 @@ informacje, jak nagrać płyty na konkretnych programach:</p>
   polecenie o składni
   <tt>cdburn&nbsp;drive:&nbsp;iso-file.iso&nbsp;/speed&nbsp;max</tt></dd>
 
-  <dt><strong><a NAME="cdrecord-win" href="http://www.fokus.gmd.de/research/cc/glone/employees/joerg.schilling/private/cdrecord.html">cdrecord</a></strong></dt>
-
-  <dd>Ten program jest również dostępny
-  <a href="ftp://ftp.fokus.gmd.de/pub/unix/cdrecord/alpha/win32/">dla
-  systemów Windows 9x/NT</a>. Więcej w pliku README.</dd>
-
 </dl>
 
 <p>Jeśli posiadasz aktualniejsze informacje lub szczegóły na temat
@@ -627,8 +692,8 @@ href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;debian-cd&#64;lists.debian.org"
 
 # ============================================================
 
-<toc-add-entry name="record-mac">Jak mam nagrać płytę CD-R pod
-Mac OS-em?</toc-add-entry>
+<toc-add-entry name="record-mac">Jak nagrać obraz ISO pod
+Mac OS?</toc-add-entry>
 
 <p>Program <strong>Toast</strong> dla Mac OS, jak nam wiadomo, pracuje
 dobrze na plikach <tt>.iso</tt>. Możesz uzyskać dodatkową pewność przez
@@ -644,10 +709,38 @@ X&nbsp;10.1 i nowszych): Po otwarciu aplikacji Disk Copy (w folderze
 obraz płyty do wypalenia. Sprawdź poprawność ustawień i kliknij
 <i>Burn</i>.</p>
 
-<p>Dodatkowo jest również dostępny program
-<a href="http://www.fokus.gmd.de/research/cc/glone/employees/joerg.schilling/private/cdrecord.html">cdrecord</a>
-<a href="ftp://ftp.fokus.gmd.de/pub/unix/cdrecord/alpha/macos-x/">dla
-Mac OS X</a>.</p>
+
+# ============================================================
+
+<toc-add-entry name="write-usb">Jak nagrać obraz ISO na napęd flash USB?</toc-add-entry>
+
+<p>Wybrane obrazy Debian CD i Debian Live są utworzone z wykorzystaniem
+technologii <i>isohybrid</i>, co oznacza, że można je wykorzystać na dwa
+sposoby:</p>
+
+<ul>
+ <li>Można je zapisać na nośniku optycznym (CD/DVD) i użyć zwyczajnie do
+ uruchomienia systemu.</li>
+ <li>Można je zapisać na napędzie flash USB, i uruchomić z nich większość
+ komputerów PC.</li>
+</ul>
+
+<p>Najbardziej popularnym sposobem skopiowania obrazu na napęd USB jest użycie
+komendy <q>dd</q> na maszynie z Linuksem:</p>
+
+<p><code>dd if=&lt;plik&gt; of=&lt;urządzenie&gt; bs=4M; sync</code></p>
+
+<p>gdzie:</p>
+<ul>
+ <li>&lt;plik&gt; to nazwa obrazu wejściowego, np. <q>netinst.iso</q></li>
+ <li>&lt;urządzenie&gt; to urządzenie napędu flash USB, np. /dev/sda, /dev/sdb.
+ Upewnij się, że podajesz właściwą nazwę urządzenia &mdash; ta komenda z
+ łatwością zamaże Twój dysk twardy, jeśli podasz niewłaściwą nazwę!</li>
+ <li><q>bs=4M</q> każe <q>dd</q> czytać/pisać w czteromegabajtowych kawałkach,
+ co poprawia wydajność. Domyślna wartość to 512 bajtów, co jest dużo
+ wolniejsze.</li>
+ <li>Komenda  <q>sync</q> zapisuje wszystkie zbuforowane dane.</li>
+</ul>
 
 # ============================================================
 
@@ -659,8 +752,8 @@ sugerujemy przyjąć następujący schemat, w celu pewnego ujednolicenia:</p>
 
 <div class="cdflash">
       <p>Debian GNU/{Linux|Hurd}
-      &lt;version&gt;[&lt;revision&gt;]<br />Official
-      {&lt;architecture&gt;} {CD|DVD|BD}-&lt;number&gt;</p>
+      &lt;wersja&gt;<br />Official
+      {&lt;architektura&gt;} {CD|DVD|BD}-&lt;numer&gt;</p>
 </div>
 
 <p>Na przykład:</p>
@@ -686,7 +779,7 @@ pierwszej linii <i>Debian GNU/Linux 6.0.3 <q>Squeeze</q></i>.</p>
 <p>Prosimy używać napisu <em>Official</em>
 <strong>tylko</strong> na płytach, które mają sumę kontrolną
 zgodną z jednym z sumą
-<a href="http://www.debian.org/CD/jigdo-cd/#which">plików
+<a href="../jigdo-cd/#which">plików
 jigdo oficjalnego wydania</a>.
 Płyty z niezgodnymi sumami (np. zbudowane przez Ciebie) powinny mieć
 wyraźne wyróżnienie <em>Unofficial</em>, na przykład:</p>
@@ -729,13 +822,10 @@ archiwalnej cdimage.debian.org</a>. Możesz spróbować użyć starszych
 obrazów np. dla architektury, która została usunięta z nowszych
 wydań.</p>
 
-<p>Zauważ, instalując ze starych płyt, że zawartość pliku
-<tt>/etc/apt/sources.list</tt> będzie odnosić się do <em>bieżącej</em>
+<p>Uwaga: po instalacji z bardzo starych płyt (sprzed 4.0, etch), zawartość
+pliku <tt>/etc/apt/sources.list</tt> będzie odnosić się do <em>bieżącej</em>
 stabilnej edycji Debiana. Oznacza to, że jakakolwiek aktualizacja przez
-sieć dokona upgrade'u do bieżącej edycji stabilnej. Aby temu zapobiec,
-a otrzymywać poprawki bezpieczeństwa dla starej edycji, jeśli jest
-wspierana, powinieneś zmienić zawartość tego pliku, poprzez zamianę
-<q>stable</q> na <q>oldstable</q>.</p>
+sieć dokona pełnej aktualizacji do bieżącej edycji stabilnej.</p>
 
 # ============================================================
 
@@ -771,7 +861,7 @@ cache, mając trzy opcje do wyboru:</p>
   na przestrzeń dyskową proxy, całość będzie działać nawet dla lokalizacji
   z ograniczonymi zasobami, przy zachowaniu korzyści płynących z
   ograniczenia korzystania z pasma sieci przez zmniejszenie
-  liczby koniecznych do ściągniecia pakietów. Możesz użyć programu
+  liczby koniecznych do pobrania pakietów. Możesz użyć programu
   squid przez dodanie linii do pliku<tt>/etc/squid/squid.conf</tt>:<br />
   <tt>refresh_pattern&nbsp;&nbsp;&nbsp;debian.org/.*.deb$&nbsp;&nbsp;&nbsp;129600&nbsp;100%&nbsp;129600</tt>
   </li>
