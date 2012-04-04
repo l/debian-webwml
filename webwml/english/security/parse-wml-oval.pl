@@ -66,7 +66,7 @@ sub printdsas {
 	# XML entries
 	print "<definition id=\"OVAL-DSA-$dsa\">\n";
 	print "\t<affected family=\"debian\">\n";
-	print "\t\t<debian:platform>Debian GNU/Linux $debian_version</debian:platform>\n";
+	print "\t\t<debian:platform>Debian $debian_version</debian:platform>\n";
 	print "\t\t<product>$dsaref{$dsa}{'package'}</product>\n";
         print "\t</affected>\n";
 	# Print CVE entries
