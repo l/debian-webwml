@@ -6,5 +6,3 @@ CUR_DIR=ports/beowulf
 SUBS=
 
 include $(WMLBASE)/Make.lang
-
-$(HTMLFILES): $(ENGLISHSRCDIR)/ports/beowulf/menu.inc $(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml
