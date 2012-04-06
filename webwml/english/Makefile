@@ -16,10 +16,14 @@ include $(WMLBASE)/Make.lang
 ifndef SUBLANG
 SITEMAP = sitemap.$(LANGUAGE).html
 DESTSITEMAP = $(HTMLDIR)/$(SITEMAP)
+SEARCHXML = search.$(LANGUAGE).xml
+DESTSEARCHXML =  $(HTMLDIR)/$(SEARCHXML)
 else
 SITEMAP = $(sort $(foreach i,$(SUBLANG),\
 	$(patsubst %.wml,%.$(LANGUAGE)-$(i).html,sitemap.wml)))
 DESTSITEMAP = $(patsubst %.html,$(HTMLDIR)/%.html,$(SITEMAP))
+SEARCHXML = $(sort $(foreach i,$(SUBLANG),$(subst search,search.$(LANGUAGE)-$(i),search.xml)))
+DESTSEARCHXML = $(patsubst %.xml,$(HTMLDIR)/%.xml,$(SEARCHXML))
 endif
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml $(GETTEXTDEP) \
@@ -49,9 +53,9 @@ contact.$(LANGUAGE).html : contact.wml $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
   $(ENGLISHDIR)/devel/website/tc.data $(LOCALEDIR)/others.mo
 endif
 
-all:: $(SITEMAP)
+all:: $(SITEMAP) $(SEARCHXML)
 
-install:: $(DESTSITEMAP)
+install:: $(DESTSITEMAP) $(DESTSEARCHXML)
 ifeq "$(LANGUAGE)" "en"
 
 install:: $(HTMLDIR)/favicon.ico
@@ -59,6 +63,22 @@ install:: $(HTMLDIR)/favicon.ico
 $(HTMLDIR)/favicon.ico: favicon.ico
 	install -p -m 664 favicon.ico $(HTMLDIR)
 endif
+
+$(SEARCHXML): $(ENGLISHDIR)/search.xml.in $(GETTEXTDEP)
+ifeq "$(LANGUAGE)" "zh"
+	@echo -n "Processing $(<F): "
+	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:search.zh-$$1.xml,g') \
+	$(shell egrep '^-D (CUR_|CHAR)' .wmlrc) \
+	  $(shell echo $(ENGLISHDIR) | sed s,./,,)/search.xml.in
+	@$(GENERATE_ZH_VARIANTS) search xml
+else
+	$(WML) $(shell egrep '^-D (CUR_|CHAR)' .wmlrc) \
+	  $(shell echo $(ENGLISHDIR) | sed s,./,,)/search.xml.in
+endif
+
+$(DESTSEARCHXML): $(HTMLDIR)/%: %
+	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
+	install -m 664 -p $< $(HTMLDIR)
 
 install-locale:
 	$(MAKE) -C po install
