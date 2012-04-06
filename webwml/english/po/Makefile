@@ -65,7 +65,7 @@ templates_FILES = $(addprefix $(TEMPLDIR)/, \
   common_tags.wml common_translation.wml \
   ddp.wml fixes_link.wml footer.wml languages.wml \
   links.tags.wml navbar.wml recent_list.wml release.wml \
-  translation-check.wml url.wml users.wml)
+  translation-check.wml url.wml users.wml) $(ENGLISHDIR)/search.xml.in
 
 
 POTFILES = $(addprefix $(ENGLISHDIR)/po/,$(addsuffix .pot,$(DOMAINS)))
