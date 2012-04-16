@@ -1,0 +1,53 @@
+#use wml::debian::translation-check translation="1.1" mindelta="1"
+<define-tag description>usikker standardopsætning</define-tag>
+<define-tag moreinfo>
+<p>Niels Heinen bemærkede, et sikkerhedsproblem i Apaches standardopsætning på 
+Debian, hvis visse scripting-moduler, så som mod_php eller mod_rivet er 
+installeret.  Problemer viser sig, fordi mappen /usr/share/doc, som er mappet 
+til URL'en /doc, kan indeholder skripteksempler, der kan udføres når denne URL 
+besøges.  Selv om adgang til URL'en /doc er begrænset til forbindelser fra 
+localhost, opstår der stadig sikkerhedsproblemer i forbindelse med to specifikke
+opsætninger:</p>
+
+<ul>
+<li>
+hvis en frontendserver på den samme host forward'er forbindelser til en 
+apache2-backendserver på localhostaddressen, eller
+</li>
+<li>
+hvis maskinen, der kører apache2, også anvendes til webbrowsing.
+</li>
+</ul>
+
+<p>Systemer, der ikke opfylder en af disse to betingelser, er så vidt vides ikke
+sårbare.  Den faktiske sikkerhedspåvirkning er afhængig af, hvilke pakker (og 
+dermed hvilke eksempelskripter) er installeret på systemet.  Mulige problemer er 
+blandt andre udførelser af skripter tværs af servere, udførelse af kode eller 
+lækage af følsomme oplysninger.</p>
+
+<p>Opdateringen fjerner de problematiske opsætningsafsnit fra filerne 
+/etc/apache2/sites-available/default og .../default-ssl.  Når man opgraderer, 
+bør man ikke blindt indføre ændringerne, dvs. fjernelsen af lijen <q>Alias /doc 
+"/usr/share/doc"</q> og den relaterede blok 
+<q>&lt;Directory "/usr/share/doc/"$gt;</q>, i ens version af disse 
+opsætningsfiler.  Man bør også kontrollere, hvis man har kopieret disse afsnit 
+til yderligere en virtuel hosts opsætning.</p>
+
+<p>I den stabile distribution (squeeze), er dette problem rettet i version 
+2.2.16-6+squeeze7.</p>
+
+<p>I distributionen testing (wheezy), vil dette problem blive rettet i version 
+2.2.22-4.</p>
+
+<p>I den ustabile distribution (sid), vil dette problem blive rettet i version 
+2.2.22-4.</p>
+
+<p>I den eksperimentelle distribution, er dette problem rettet i version 
+2.4.1-3.</p>
+
+<p>Vi anbefaler at du opgraderer dine apache2-pakker samt tilpasse din 
+opsætning.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2012/dsa-2452.data"
