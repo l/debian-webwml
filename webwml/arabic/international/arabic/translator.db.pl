@@ -38,6 +38,18 @@ sub init_translators {
                        compress        => 'none'
                 },
 
+
+                'Mohamed Amine' => {
+                       email           => 'aminedeb@gmail.com',
+                       summary         => 3,
+                       logs            => 3,
+                       diff            => 3,
+                       tdiff           => 0,
+                       file            => 0,
+                       compress        => 'none'
+                },
+
+
                 maxdelta            => {
                         email       => 'debian-l10n-arabic@lists.debian.org',
                         summary     => 2,
