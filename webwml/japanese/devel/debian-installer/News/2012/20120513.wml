@@ -1,0 +1,171 @@
+<define-tag pagetitle>Debian Installer 7.0 Alpha1 をリリース</define-tag>
+<define-tag release_date>2012-05-13</define-tag>
+#use wml::debian::news
+#use wml::debian::translation-check translation="1.2"
+
+<p>
+Debian Installer <a 
+href="http://wiki.debian.org/DebianInstaller/Team">チーム</a> は、
+Debian 7.0 <q>Wheezy</q> 用インストーラの最初のアルファリリースを
+発表いたします。
+</p>
+
+
+<h2>インストーラについて、今回のリリースにおける改善点</h2>
+
+<h4>ネットワーク設定</h4>
+
+<ul>
+  <li>インストーラへの WPA サポートの追加
+    (<a href="http://bugs.debian.org/327309">#327309</a>)。</li>
+  <li>リンク検出および DHCP 設定の改良。
+    風変わりなネットワークカードを装備したシステムでの信頼性が向上するはずです
+    (<a href="http://bugs.debian.org/496647">#496647</a>,
+    <a href="http://bugs.debian.org/414117">#414117</a>,
+    <a href="http://bugs.debian.org/606515">#606515</a>)。</li>
+  <li>インストーラの最終段階での DHCP リースの解放。
+    RFC 非互換の DHCP サーバにおける問題の回避策です
+    (<a href="http://bugs.debian.org/610553">#610553</a>)。</li>
+  <li>ホスト名要件が明白となり、いくつかの実際には良くない名前を避けるために
+    パーサが強化されました
+    (<a href="http://bugs.debian.org/399071">#399071</a>)。</li>
+  <li>スパンニングツリープロトコル (STP) サポートの追加。</li>
+</ul>
+
+
+<h4>Linux 固有</h4>
+
+<ul>
+  <li>カーネルバージョンは 3.2.16 にアップデートされました。</li>
+  <li>デフォルトのファイルシステムが ext4 に変更されました。</li>
+  <li>/boot パーティションに Btrfs を使うことが (GRUB2 および LILO において) 許容されました。</li>
+  <li>ネットワークブロックデバイス (NBD) のサポートが追加されました。</li>
+</ul>
+
+
+<h4>kFreeBSD 固有</h4>
+
+<ul>
+  <li>カーネルがバージョン 8.3 にアップデートされました。</li>
+  <li>インストール中に新しい 9.0 カーネルを利用する選択肢もあります。</li>
+  <li>LVM デバイスの検出。</li>
+</ul>
+
+
+<h4>オペレーティングシステムの探査</h4>
+
+<ul>
+  <li>Windows 8 の検出、BSD システム、Mee Go、Linux From Scratch、
+    BeFS パーティション上の Haiku のサポートを追加。</li>
+  <li>Windows および MS-DOS の検出を改良。</li>
+  <li>OS 探査における Gentoo の検出を修正。</li>
+</ul>
+
+
+<h4>Win32 ローダ</h4>
+
+<ul>
+  <li>PXE 機能の追加
+    (<a href="http://bugs.debian.org/607417">#607417</a>)。</li>
+</ul>
+
+
+<h4>USB メモリインストール</h4>
+
+<ul>
+  <li>複数のイメージがインストールメディアに発見されたときの、
+    ISO イメージ選択の追加
+    (<a href="http://bugs.debian.org/564441">#564441</a>)。 
+    これは iso-scan コンポーネントの状態マシンの完全な書き換えを
+    含みます。
+    この作業には、Frans Pop と Frédéric Boiteux が寄与しました。</li>
+</ul>
+
+
+<h4>翻訳</h4>
+
+<ul>
+  <li>新しい言語のサポート: ウイグル語。</li>
+</ul>
+
+
+<h2>このリリースにおける動作の変更</h2>
+
+<ul>
+  <li>CoLo は以前の形式しか関知しないので、Colo 設定ファイルでは
+    "sda" ではなく "hda" を指定するようにしてください
+    (<a href="http://bugs.debian.org/614839">#614839</a>)。</li>
+  <li>debootstrap が追加の必須依存を探すときの 5 秒のスリープを
+    削除しました。これで d-i はより速くなりました。</li>
+  <li>SHA チェックサムを使うようになりました。</li>
+  <li>kfreebsd-i386 において ZFS を再度有効にしました。</li>
+  <li>ルートファイルシステムにストリップド ZFS を許容します。</li>
+  <li>ZFS ファイルシステムでミラーおよび RAID-Z をサポートします。</li>
+  <li>ZFS プール管理を再設計しました。新しい機能には次のようなものがあります:
+    <ul>
+      <li>複数の物理デバイスによるプールをサポート。</li>
+      <li>ZFS プール内で複数のファイルシステムをサポート。</li>
+      <li>ZFS ボリュームを利用してのレガシーファイルシステム (ZVOL) をサポート。</li>
+      <li>ZFS プール、ファイルシステム、ZVOL に任意の名前を指定可能。</li>
+      </ul>
+  </li>
+  <li>espearkup の言語選択を切り替えました
+    (<a href="http://bugs.debian.org/630477">#630477</a>)。</li>
+</ul>
+
+
+<h2>ハードウェアサポートの変更</h2>
+
+<ul>
+  <li>AMD CPU ファミリー 20 をサポート
+    (LP: <a href="https://bugs.launchpad.net/ubuntu/+source/base-installer/+bug/676838">#676838</a>)。</li>
+  <li>次をサポート:
+    <ul>
+      <li>Buffalo Linkstation LiveV3 (LS-CHL)
+	(<a href="http://bugs.debian.org/612167">#612167</a>)。</li>
+      <li>Buffalo Linkstation Mini (LS-WSGL)。</li>
+      <li>Toshiba AC100。</li>
+      <li>MX53 LOCO ボード。</li>
+      <li>OMAP4 Pandora。</li>
+      <li>armhf アーキテクチャ。</li>
+      <li>Genesi Efika MX nettops および smarttops
+	(<a href="http://bugs.debian.org/612376">#612376</a>)。</li>
+    </ul>
+  </li>
+  <li>snd-powermac が動作するよう、snd-aoa をブラックリスト化。</li>
+  <li>ディスクが見つからないときに、いくつかのデバイスがハードドライブではなく SD スロットにあることを想定して mmc-modules をインストール
+    (<a href="http://bugs.debian.org/593108">#593108</a>)。</li>
+  <li>ドライバやディスクの初期化に長い時間のかかるいくつかの SCSI サブシステム
+    にある新しいディスクデバイスを検出するために、試行回数を増加
+    (<a href="http://bugs.debian.org/611314">#611314</a>)。</li>
+  <li>QNAP TS-419P+ の ahci モジュールを収録
+    (<a href="http://bugs.debian.org/613497">#613497</a>)。</li>
+  <li>T2+ Sparc システムで必要となる niu ネットワークドライバを sparc に追加
+    (<a href="http://bugs.debian.org/608516">#608516</a>)。</li>
+  <li>/dev/duart* をシリアルコンソールとして認識。</li>
+</ul>
+
+
+<h2>このリリースにおける既知の問題</h2>
+
+<p>
+詳細および既知の問題の一覧については、<a href="$(DEVEL)/debian-installer/errata">エラッタ</a>
+を参照してください。
+</p>
+
+
+<h2>このリリースではまだ既知の問題はありません</h2>
+
+<p>
+私たちは、バグの発見およびさらなるインストーラの改良のために、あなたの助力を求めています。まずはぜひ試してみてください。
+インストーラ CD やその他のメディア含め、あなたが必要とするものはすべて、私たちの
+<a href="$(DEVEL)/debian-installer">Web サイト</a> から入手できます。
+</p>
+
+
+<h2>謝辞</h2>
+
+<p>
+Debian Installer チームは、このリリースに協力いただいた方すべてに
+感謝します。
+</p>
