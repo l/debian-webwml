@@ -38,7 +38,7 @@ sub init_translators {
                        compress        => 'none'
                 },
                 'Francesca Ciceri' => {
-                	email		=> 'madamezou@yahoo.it',
+                	email		=> 'madamezou@debian.org',
                 	summary		=> 3,
                 	logs		=> 0,
                 	diff		=> 0,
