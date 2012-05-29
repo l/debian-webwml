@@ -37,6 +37,15 @@ sub init_translators {
                        file            => 0,
                        compress        => 'none'
                 },
+                'Ionel Mugurel Ciobica' => {
+                       email            => 'I.M.Ciobica@gmail.com',
+                       summary          => 3,
+                       logs             => 0,
+                       diff             => 3,
+                       tdiff            => 0,
+                       file             => 0,
+                       compress         => 'none'
+                },
                 # Below are special users, used to handle special cases
                 #     default:      default values
                 #     untranslated: pages not translated
