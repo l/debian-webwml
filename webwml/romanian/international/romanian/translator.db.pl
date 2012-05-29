@@ -37,7 +37,7 @@ sub init_translators {
                        file            => 0,
                        compress        => 'none'
                 },
-                'Ionel Mugurel Ciobica' => {
+                'Ionel Mugurel Ciobîcă' => {
                        email            => 'I.M.Ciobica@gmail.com',
                        summary          => 3,
                        logs             => 0,
