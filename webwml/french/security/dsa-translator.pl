@@ -220,8 +220,8 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 
 	# Short recurrent part of text. Take care ! substitution order might be important
 	$output =~ s|(Several\|Multiple).vulnerabilities.(have.been\|were).discovered in|Plusieurs vulnérabilités ont été découvertes dans|gs;
-	$output =~ s|It.was.discovered.that|On a découvert que|gs;
-	$output =~ s|It.was.discovered|On a découvert|gs;
+	$output =~ s|It.was.discovered.that||gs;
+	$output =~ s|It.was.discovered||gs;
 	$output =~ s|A.buffer.overflow has been discovered in|Un dépassement de tampon a été découvert dans|gs; 
 	$output =~ s|The.Common.Vulnerabilities.and.Exposures.project.identifies.the.following.(problem\|vulnerabilitie\|issue)s:|\n\nLe projet « Common Vulnerabilities and Exposures » (CVE) identifie les problèmes suivants.|s;
 	$output =~ s|,.which.may.lead.to.the.execution.of.arbitrary.code|. Cela peut permettre l'exécution de code arbitraire|gs;
