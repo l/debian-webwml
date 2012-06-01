@@ -380,27 +380,31 @@ instance, qemu's e1000 board is not supported, the rtl8139 one should work:
 </p>
 
 <p>
-Starting from version 20120219-1, the hurd package include DDE drivers which
+Starting from version 20120520-1, the hurd package includes DDE drivers which
 can be used to support more recent devices (drivers are taken from Linux
-2.6.39). For instance, to use the rtl8139 driver, the following translators
-should be set:
+2.6.32). Translators for that are already set up for you, and all you
+need to do is to replace <code>eth0</code> (the mach driver name) with
+<code>/dev/eth0</code> (the DDE driver path) in the remainder of this document.
+</p>
+
+<p>
+It is possible to try to use the DDE driver even if GNU Mach has a driver:
+passing <code>nonetdev</code> on the gnumach command line will disable the GNU
+Mach driver, and the DDE driver will start working.
+</p>
+
+<p>
+If network does not seem to work, use the following to get debugging information
+from the DDE driver:
 </p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
- \# settrans -c /dev/rtl8139 /hurd/dde_rtl8139
-</pre></td></tr><tr><td>&nbsp;</td><td class=example><pre>
- \# settrans -c /dev/eth0 /hurd/devnode -M /dev/rtl8139 eth0
+ \# settrans -fgap /dev/netdde /hurd/netdde
 </pre></td></tr></table>
 
 <p>
-In the remainder of this document, you can then replace <code>eth0</code> (the mach
-driver name) with <code>/dev/eth0</code> (the DDE driver path).
-</p>
-
-<p>
-<b>Warning:</b> do not use a DDE driver if GNU Mach recognizes the card, they
-would interfere and get catastrophic results. To disable all GNU Mach network
-drivers, pass <code>nonetdev</code> on the gnumach command line.
+and then kill any devnode and pfinet process to let them restart with the newer
+netdde.
 </p>
 
 <p>
