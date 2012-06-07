@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; Installation" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.101"
+#use wml::debian::translation-check translation="1.102"
 # $Id$
 # Translator: Helge Kreutzmann <debian@helgefjell.de>  2005-07-17
 # Updated: Holger Wansing <linux@wansing-online.de>, 2011, 2012.
@@ -406,28 +406,32 @@ Der Debian-typische Weg wird derzeit nicht unterstützt:
 </p>
 
 <p>
-Beginnend mit Version 20120219-1 enthält das hurd-Paket DDE-Treiber, die
+Beginnend mit Version 20120520-1 enthält das hurd-Paket DDE-Treiber, die
 verwendet werden können, um aktuellere Geräte zu unterstützen (die Treiber
-stammen von Linux 2.6.39). Um zum Beispiel den rtl8139-Treiber zu nutzen,
-sollten die folgenden Übersetzer gesetzt werden:
+stammen aus Linux 2.6.32). Übersetzer dafür wurden bereits für Sie eingerichtet;
+alles was Sie tun müssen ist, im Rest dieses Dokuments <code>eth0</code> (den
+Mach-Treibernamen) durch <code>/dev/eth0</code> (den DDE-Treiberpfad) zu ersetzen.
+</p>
+
+<p>
+Es ist möglich zu versuchen, den DDE-Treiber zu verwenden, auch wenn GNU Mach
+einen Treiber enthält: das Hinzufügen von <code>nonetdev</code> auf der
+gnumach-Kommandozeile wird den GNU Mach-Treiber deaktivieren, und der
+DDE-Treiber wird mit seiner Arbeit beginnen.
+</p>
+
+<p>
+Falls das Netzwerk nicht zu funktionieren scheint, verwenden Sie Folgendes,
+um Debugging-Informationen vom DDE-Treiber zu erhalten:
 </p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
- \# settrans -c /dev/rtl8139 /hurd/dde_rtl8139
-</pre></td></tr><tr><td>&nbsp;</td><td class=example><pre>
- \# settrans -c /dev/eth0 /hurd/devnode -M /dev/rtl8139 eth0
+ \# settrans -fgap /dev/netdde /hurd/netdde
 </pre></td></tr></table>
 
 <p>
-Als letzte Änderung können Sie dann <code>eth0</code> (den Mach-Treibernamen)
-mit <code>/dev/eth0</code> (dem DDE-Treiberpfad) ersetzen.
-</p>
-
-<p>
-<b>Warnung:</b> verwenden Sie keinen DDE-Treiber, wenn GNU Mach Ihre Karte
-erkennt, die beiden würden sich behindern und das würde zu katastrophalen
-Ergebnissen führen. Um alle GNU Mach-Netzwerktreiber zu deaktivieren,
-fügen Sie <code>nonetdev</code> zur gnumach-Kommandozeile hinzu.
+und beenden Sie dann alle devnode- und pfinet-Prozesse, um diese mit dem
+neueren netdde neu starten zu lassen.
 </p>
 
 <p>
