@@ -14,7 +14,7 @@ $ua->timeout("10");
 my $res = $ua->request($req);
 
 ## Check the outcome of the response
-$res->is_success or die 'Input file cannot be fetched';
+$res->is_success or die "Input file cannot be fetched from $inputfile";
 my $arch_space = $res->content;
 
 my $total ;
