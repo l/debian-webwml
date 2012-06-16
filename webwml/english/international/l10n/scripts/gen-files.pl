@@ -36,7 +36,7 @@ if (not Getopt::Long::GetOptions(qw(
 usage(0) if $opt_h;
 
 my $data = Debian::L10n::Db->new();
-$data->read("$opt_l/data/$opt_d.gluck");
+$data->read("$opt_l/data/$opt_d");
 my $date = $data->get_date();
 my %popcon = ();
 if ($opt_s ne '' && -r $opt_s && open (POPCON, "< $opt_s")) {

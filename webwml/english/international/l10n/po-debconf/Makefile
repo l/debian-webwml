@@ -46,7 +46,7 @@ $(HTML_PODEBC90): tmpl90.$(LANGUAGE).tmpl $(ENGLISHDIR)/$(CUR_DIR)/gen/main.orig
 $(HTML_PODEBCNOT): tmpl.$(LANGUAGE).tmpl $(ENGLISHDIR)/$(CUR_DIR)/gen/main.orig
 	$(L10N_DIR)/scripts/fix-files.sh $(ENGLISHDIR)/$(CUR_DIR)/gen $(LANGUAGE) tmpl $(LANGS_PODEBCNOT)
 
-$(ENGLISHDIR)/$(CUR_DIR)/gen/main.orig $(ENGLISHDIR)/$(CUR_DIR)/gen/rank.inc $(L10N_DIR)/date.gen $(L10N_DIR)/data/langs: $(L10N_DIR)/scripts/gen-files.pl $(L10N_DIR)/data/$(DIST).gluck
+$(ENGLISHDIR)/$(CUR_DIR)/gen/main.orig $(ENGLISHDIR)/$(CUR_DIR)/gen/rank.inc $(L10N_DIR)/date.gen $(L10N_DIR)/data/langs: $(L10N_DIR)/scripts/gen-files.pl $(L10N_DIR)/data/$(DIST)
 	-rm -rf $(ENGLISHDIR)/$(CUR_DIR)/../*/gen
 	perl $(L10N_DIR)/scripts/gen-files.pl --sort=$(SORT_PKGS) --dist=$(DIST) --l10ndir=$(L10N_DIR)  --langs --po --podebconf --po4a
 
