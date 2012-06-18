@@ -27,14 +27,15 @@ use Webwml::Langs;
 use Webwml::TransCheck;
 use Webwml::TransIgnore;
 use Debian::L10n::Db ('%LanguageList');
+use Net::Domain qw(hostfqdn);
 
 BEGIN {
-    $udd_available = 0;
+    $dde_available = 0;
     eval {
         require JSON;
         require LWP::Simple;
         LWP::Simple->import;
-        $udd_available = 1;
+        $dde_available = 1;
     }; if ($@) {
         warn "One or more modules required for DDE support failed to load: $@\n";
     }
@@ -321,8 +322,10 @@ mkdir ($config{'htmldir'}, 02775) if (! -d $config{'htmldir'});
 
 # Read website hit statistics, if available
 my %hits;
+my $hits_hostname;
+my $hits_datetime;
 my $file_sorter = sub($$) { $_[0] cmp $_[1] };
-if ($config{'hit_file'} and $config{'hit_file'} =~ m{^(f|ht)tps?://} and ! $udd_available) {
+if ($config{'hit_file'} and $config{'hit_file'} =~ m{^(f|ht)tps?://} and ! $dde_available) {
     warn "Disabling fetching of hit data.\n";
     $config{'hit_file'} = undef;
 }
@@ -332,6 +335,9 @@ if ($config{'hit_file'}) {
         my $json = LWP::Simple::get($config{'hit_file'});
         if ($json) {
             my $perl = JSON::from_json($json, {utf8 => 1});
+            my %metadata = %{$perl->{'m'}};
+            $hits_hostname = $metadata{'hostname'} || undef;
+            $hits_datetime = defined $metadata{'Last-Modified'} ? strftime "%Y-%m-%d %T GMT", gmtime $metadata{'Last-Modified'} : undef;
             foreach my $e (@{$perl->{'r'}}) {
                 my ($count, $url) = @$e;
                 last if $count < 3; # URLS with 2 or 1 hits are most likely mistakes; let's not waste RAM on them
@@ -341,6 +347,8 @@ if ($config{'hit_file'}) {
             warn "Retrieving hit data failed.\n";
         }
     } else {
+        $hits_hostname = hostfqdn;
+        $hits_datetime = strftime "%Y-%m-%d %T %Z", localtime;
         open(HITS, $config{'hit_file'}) or die sprintf("Opening hit file [%s] failed: $!", $config{'hit_file'});
         printf "Reading hit file [%s]\n", $config{'hit_file'} if ($config{'verbose'});
         foreach my $hit_line (<HITS>) {
@@ -557,7 +565,11 @@ foreach $lang (@search_in) {
             # Make the table of content
 	    print HTML "<toc-display/>\n";
             if (%hits) {
-                print HTML '<p><gettext domain="stats">Note: the lists of pages are sorted by popularity. Hover over the page name to see the number of hits.</gettext></p>'."\n";
+                print HTML '<p><gettext domain="stats">Note: the lists of pages are sorted by popularity. Hover over the page name to see the number of hits.</gettext>';
+                if (defined $hits_hostname and defined $hits_datetime) {
+                    printf HTML ' <stats_hit_source "%s" "%s">', $hits_hostname, $hits_datetime;
+                }
+                print HTML "</p>\n";
             }
 
             # outputs the content
