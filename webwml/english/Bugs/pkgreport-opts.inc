@@ -138,6 +138,14 @@
   <input type="checkbox" name="bug-rev" >&nbsp;<gettext domain="bugs">Reverse Bugs</gettext><br>
   <input type="checkbox" name="pend-rev" >&nbsp;<gettext domain="bugs">Reverse Pending</gettext><br>
   <input type="checkbox" name="sev-rev" >&nbsp;<gettext domain="bugs">Reverse Severity</gettext><br>
+  <input type="checkbox" name="noaffects">&nbsp;<gettext domain="bugs">No Bugs which affect packages</gettext><br>
+  <select name="dist">
+<option value="">&nbsp;<gettext domain="bugs">None</gettext></option>
+<option value="testing">&nbsp;<gettext domain="bugs">testing</gettext></option>
+<option value="oldstable">&nbsp;<gettext domain="bugs">oldstable</gettext></option>
+<option value="experimental">&nbsp;<gettext domain="bugs">experimental</gettext></option>
+<option value="unstable" selected>&nbsp;<gettext domain="bugs">unstable</gettext></option>
+  </select>
   <select name="archive">
   <option value="0" selected>
     <gettext domain="bugs">Unarchived</gettext>
