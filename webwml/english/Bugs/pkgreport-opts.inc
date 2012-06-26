@@ -143,6 +143,7 @@
 <option value="">&nbsp;<gettext domain="bugs">None</gettext></option>
 <option value="testing">&nbsp;<gettext domain="bugs">testing</gettext></option>
 <option value="oldstable">&nbsp;<gettext domain="bugs">oldstable</gettext></option>
+<option value="stable">&nbsp;<gettext domain="bugs">stable</gettext></option>
 <option value="experimental">&nbsp;<gettext domain="bugs">experimental</gettext></option>
 <option value="unstable" selected>&nbsp;<gettext domain="bugs">unstable</gettext></option>
   </select>
