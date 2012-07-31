@@ -275,10 +275,11 @@ sub get_stats {
                                         $total{$section} += $1;
 					$curtotal = $1;
                                 }
-                                $addorig .= " [<a href=\"".$root.
-					((($file eq 'templates.pot') or ($type ne 'po-debconf')) ? 'po' : 'templates').
+				if (($file eq 'templates.pot') or ($type ne 'po-debconf')) {
+	                                $addorig .= " [<a href=\"".$root.'po'.
 					"/$opt_d/".$data->pooldir($pkg).
                                         "/$link.gz\">$file</a>]";
+				}
                                 next;
                         }
                         $lang = uc($lang) || 'UNKNOWN';
