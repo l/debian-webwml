@@ -1,6 +1,6 @@
 #use wml::debian::template title="Errata pour l'installateur Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.165" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.166" maintainer="David Prévot"
 
 # Translators:
 # Nicolas Bertolissio, 2003-2008
@@ -9,11 +9,11 @@
 # David Prévot, 2010-2012
 
 
-<h1 id="wheezy-alpha1"><i>Errata</i> de la première version alpha
+<h1 id="wheezy-alpha1"><i>Errata</i> de la première version bêta
 pour Wheezy</h1>
 
 <p>
-Voici une liste des problèmes connus dans la première version alpha
+Voici une liste des problèmes connus dans la première version bêta
 de l'installateur Debian pour Wheezy. Si vous n'y voyez pas le
 problème que vous rencontrez, veuillez nous envoyer un <a
 href="$(HOME)/releases/stable/i386/ch05s04.html#submit-bug">compte-rendu d'installation</a> (en anglais) décrivant
@@ -22,76 +22,46 @@ le problème.
 
 <dl class="gloss">
 <dt>
-Les autres systèmes d'exploitation ne sont
-pas ajoutés au menu de démarrage de GRUB
+Le premier CD dans miroir réseau ne permet pas
+d'installer un environnement de bureau complet
 </dt>
 <dd>
-Les autres systèmes d'exploitation, comme Windows, sont détectés mais,
-dans certains cas, ils ne sont pas ajoutés au menu de démarrage de GRUB.
-
-Contournement : après l'installation, exécutez update-grub.
-<br/>
-Consultez les bogues <a href="http://bugs.debian.org/666750">nº 666750</a>
-et <a href="http://bugs.debian.org/608025">nº 608025</a>.
+Ce problème est en cours de discussion.
 </dd>
 
 <dt>
-Table de partitions incompatible avec Mac OS 9
+Synthèse vocale : échec de changement de langue
 </dt>
 <dd>
-Il a été signalé que l'outil de partitionnement rend la table de
-partition non reconnaissable par Mac OS 9, qui ne peut plus démarrer.
-
-Bien que les partitions HFS+ soient compatibles avec Linux et
-Mac OS X, il est recommandé de prendre toutes les précautions
-nécessaires lors de l'installation d'une machine avec Mac OS 9.
-<br/>
-Consultez le bogue <a href="http://bugs.debian.org/604134">nº 604134</a>.
+Malheureusement, la migration incomplète d'espeakup en multiarchitecture (bogue
+<a href="http://bugs.debian.org/682313">nº 682313</a>) a été découverte trop
+tard dans le processus de publication de l'installateur Debian, la correction
+du bogue sera disponible pour la prochaine publication de l'installateur.
 </dd>
 
 <dt>
-Échec de partitionnement sur kFreeBSD
+Problèmes réseau lors de l'installation d'un
+ordinateur de bureau par connexion sans fil
 </dt>
 <dd>
-Plusieurs échecs de partitionnement sur kFreeBSD ont été signalés.
+En installant un ordinateur de bureau avec une connexion sans fil, le
+composant network-manager du système installé risque de ne pas fonctionner
+tel quel (bogue <a href="http://bugs.debian.org/682608">nº 682608</a>).
 
-Le problème semble lié à l'alignement des
-partitions sur les partitions étendues.
-
-Consultez les bogues <a href="http://bugs.debian.org/593733">nº 593733</a>,
-<a href="http://bugs.debian.org/597088">nº 597088</a> et
-<a href="http://bugs.debian.org/602129">nº 602129</a>.
+Un contournement possible est de commenter les lignes à
+propos de wlan0 dans le fichier « /etc/network/interfaces ».
 </dd>
 
 <dt>
-Des cartes graphiques, réseau ou contrôleurs ne fonctionnent pas correctement
+kfreebsd : grub-install risque de ne pas trouver de disque GRUB
 </dt>
 <dd>
-Certaines cartes réseau, cartes
-graphiques et contrôleurs de stockage exigent un microprogramme
-(« firmware ») non libre pour fonctionner correctement.
-<br/>
-Debian s'est engagé à respecter les valeurs du logiciel libre et
-à ne jamais rendre le système dépendant de logiciels non libres
-(consultez le <a href="social_contract">contrat social</a> de Debian).
+Des modifications dans les scripts d'amorçage ont eu pour
+conséquence la suppression de /proc du fstab par défaut, ce
+qui doit être corrigé pour les systèmes GNU/kFreeBSD (bogue
+<a href="http://bugs.debian.org/637684">nº 637684</a>).
 
-Ainsi, les microprogrammes non libres ne font pas partie de l'installateur.
-<br/>
-Si vous voulez charger un microprogramme externe
-lors de l'installation, vous êtes libre de le faire.
-
-La méthode est documentée dans le manuel d'installation.
-</dd>
-
-<dt>
-Un problème d'installation de zipl rend s390 impossible à installer
-</dt>
-<dd>
-Quand une partition /boot dédiée est créée,
-l'amorçage du système échoue après l'installation
-si cette partition est montée avant la partition racine.
-<br/>
-Consultez le bogue <a href="http://bugs.debian.org/519254">nº 519254</a>.
+Ce sera corrigé dans la prochaine publication de l'installateur.
 </dd>
 
 <!-- conservé pour une possible utilisation ultérieure...
@@ -106,29 +76,5 @@ Consultez le bogue <a href="http://bugs.debian.org/519254">nº 519254</a>.
     </dd>
 -->
 
-<dt>Les partitions de plus de 16 Tio ne sont pas prises en charge par ext4</dt>
-<dd>
-Les outils ext4 ne permettent pas de créer de systèmes de fichiers de plus de
-16 To.
-</dd>
-
-  <dt>Architecture s390&nbsp;: capacités non gérées</dt>
-    <dd>
-    <ul>
-      <li>La gestion de la règle<!-- discipline ? --> DASD DIAG n'est
-        actuellement pas disponible.</li>
-    </ul>
-    </dd>
-
-<dt>Les CD avec microprogrammes non libres ne fonctionnent pas</dt>
-<dd>
-<ul>
-<li>
-Les CD avec microprogrammes (<q>firmwares</q>) ne fonctionnent pas
-pour l'instant, parce que le CD est livré avec un vmlinux pour le noyau
-Linux 2.6.32 mais avec des fichiers udebs pour le noyau Linux 3.2.0.
-</li>
-</ul>
-</dd>
 </dl>
 
