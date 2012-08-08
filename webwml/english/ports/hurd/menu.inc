@@ -13,7 +13,7 @@
 <menu-item name="ports"         basename="$(HOME)/ports/index">
 <menu-item name="hurd"          basename="index">
 <menu-item name="news"          basename="hurd-news">
-<menu-item name="install"       basename="hurd-install">
+<menu-item name="configure"     basename="hurd-install">
 <menu-item name="hurd-cd"       basename="hurd-cd">
 <menu-item name="doc"           basename="hurd-doc">
 <menu-item name="devel"         basename="hurd-devel">
