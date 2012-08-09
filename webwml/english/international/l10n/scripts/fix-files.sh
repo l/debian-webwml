@@ -90,6 +90,7 @@ do
             $tmpl.$lang.tmpl |\
         sed -e '/<!-- DO NOT REMOVE THIS LINE/d' |\
 	sed -e ':t /BEGIN SECTION/,/END SECTION/{/END SECTION/!{$!{N;bt};};/DELETE-ME/d;}' |\
+	sed -e '/DELETE-ME/d' |\
 	sed -e ':begin;$!N;s,<h3>.*</h3>\n<h,<h,;tbegin;P;D'\
                 > $code.$lang.html
 done
