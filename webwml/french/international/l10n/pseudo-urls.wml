@@ -1,0 +1,182 @@
+#use wml::debian::template title="Coordination des équipes de localisation"
+#use wml::debian::translation-check translation="1.1" maintainer="David Prévot"
+
+
+<h1>Format des messages</h1>
+
+<p>
+Le programme qui suit les listes de coordination comme
+debian-l10n-french est capable de comprendre des pseudo-URL du sujet.
+
+Les sujets doivent être de la forme suivante :
+</p>
+<div class="center"><code>[&lt;état&gt;]&nbsp;&lt;type&gt;://&lt;paquet&gt;/&lt;fichier&gt;</code></div>
+
+<p>
+L'<i>état</i> peut prendre une des valeurs suivantes :
+TAF, MAJ, ITT, RFR, LCFC, BTS#&lt;numéro de bogue&gt;, DONE ou HOLD.
+</p>
+
+
+  <ul>
+    <li>TAF (Travail À Faire)
+      <ul>
+<li>
+Envoyé (normalement par un coordinateur de la
+liste) pour indiquer qu'un document est à traduire.
+</li>
+      </ul>
+    </li>
+    <li>MAJ (Mise À Jour)
+      <ul>
+<li>
+Envoyé (normalement par un coordinateur de la liste) pour indiquer
+qu'un document est à mettre à jour par le précédent traducteur.
+</li>
+      </ul>
+    </li>
+    <li>ITT (<q>Intent To Translate</q>, intention de traduire)
+      <ul>
+<li>
+Envoyé pour indiquer que vous avez l'intention de traduire le document,
+pour éviter que quelqu'un d'autre ne travaille dessus en même temps.
+</li>
+      </ul>
+    </li>
+    <li>RFR (<q>Request For Review</q>, demande de relecture)
+      <ul>
+<li>
+Une première version de la traduction est ajoutée en pièce jointe du message.
+
+Les autres membres de la liste sont invités à la vérifier pour signaler les
+erreurs (éventuellement hors liste si aucun problème n'est découvert).
+</li>
+<li>
+D'autres RFR peuvent suivre pour partager le
+fichier à jour des dernières modifications.
+</li>
+<li>
+Remarque : envoyez une réponse, éventuellement hors liste, si
+vous avez vérifié le fichier et n'avez pas trouvé de défauts.
+</li>
+      </ul>
+    </li>
+    <li>ITR (<q>Intent To Review</q>, intention de relire)
+      <ul>
+<li>
+Pour éviter d'envoyer un LCFC quand il y a des relectures en cours.
+</li>
+<li>
+Surtout utilisé si vous avez l'intention d'envoyer une relecture mais qu'elle
+ne sera pas prête avant quelques jours (parce que la traduction est grosse ou
+que vous n'avez pas le temps avant quelques jours par exemple).
+</li>
+<li>
+Le corps du message devrait indiquer une date approximative de relecture.
+</li>
+<li>
+Remarquez que cet état n'est pas considéré par le robot.
+</li>
+      </ul>
+    </li>
+    <li>LCFC (<q>Last Chance For Comment</q>, dernier appel à commentaires)
+      <ul>
+<li>
+Indique que la traduction est terminée, que les
+modifications du processus de relecture ont été intégrées
+et que la traduction va être envoyée à l'endroit approprié.
+</li>
+<li>
+Peut être envoyé s'il n'y a pas d'ITR et que la discussion
+suivant le RFR est terminée depuis quelques jours.
+</li>
+<li>
+Ne devrait pas être envoyé avant d'avoir reçu au moins une relecture.</li>
+      </ul>
+    </li>
+    <li>BTS#&lt;numéro de bogue&gt; (<q>Bug Tracking System</q>, système de gestion des bogues)
+      <ul>
+<li>
+Utilisé pour enregistrer un numéro de bogue
+une fois envoyée la traduction au BTS.
+</li>
+<li>
+Le robot vérifiera régulièrement l'état du rapport de bogue.
+</li>
+      </ul>
+    </li>
+    <li>DONE (terminé)
+      <ul>
+<li>
+Utilisé pour fermer un fil quand la traduction a été prise
+en compte, utile si elle n'a pas été envoyée au BTS.
+</li>
+      </ul>
+    </li>
+    <li>HOLD (mise en attente)
+      <ul>
+<li>
+Utilisé pour mettre une traduction en attente, par
+exemple si d'autres modifications sont attendues.
+
+Il n'est donc pas nécessaire de mettre à jour la traduction
+tout de suite, car elle serait probablement inutile.
+</li>
+      </ul>
+    </li>
+  </ul>
+
+<p>
+Le <i>type</i> permet d'indiquer le type de document, comme
+po-debconf, debian-installer, po, po4a ou wml.
+</p>
+
+<p>
+<i>paquet</i> est le nom du paquet d'où vient le document.
+
+Veuillez utiliser <i>www.debian.org</i> ou rien
+du tout pour les fichiers WML du site web.
+</p>
+
+<p>
+<i>fichier</i> est le nom de fichier du document, qui peut contenir
+d'autres renseignements pour l'identifier de façon unique, comme le
+chemin complet vers le fichier.
+
+C'est en général fr.po pour le français.
+</p>
+
+<p>
+La structure de <i>fichier</i> dépend du type choisi, et bien sûr de la langue.
+
+En principe, c'est juste un identifiant, mais puisqu'il est
+utilisé pour mettre à jour les pages d'état de cette section,
+il est sérieusement recommandé de suivre les schémas suivantes.
+</p>
+
+<ul>
+<li><code>po-debconf://nom_de_paquet/fr.po</code></li>
+<li><code>po://nom_de_paquet/arborescence_dans_le_code_source/fr.po</code></li>
+<li><code>debian-installer://nom_de_paquet/arborescence_dans_le_code_source/fr.po</code></li>
+<li><code>wml://chemin_dans_le_répertoire_french_du_dépôt_CVS</code></li>
+<li><code>po4a://nom_de_paquet/arborescence_dans_le_code_source/fr.po</code></li>
+</ul>
+
+<p>
+L'état BTS est un peu particulier, il est utilisé pour enregistrer un
+numéro de bogue, ce qui permet au robot de suivre l'état de la traduction
+envoyée au BTS : il vérifiera si les rapports de bogue ont été fermés.
+
+Par exemple :
+</p>
+<div class="center"><code>[BTS#123456] po-debconf://cups/fr.po</code></div>
+
+<p>
+Si vous avez l'intention de traduire plusieurs paquets,
+vous pouvez envoyer un seul ITT pour tous, par exemple :
+</p>
+<div class="center"><code>[ITT] po-debconf://{cups,courier,apache2}/fr.po</code></div>
+<p>
+Le développement des accolades fonctionne comme
+dans bash(1), mais est limité à une paire.
+</p>

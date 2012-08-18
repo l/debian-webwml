@@ -1,0 +1,141 @@
+#use wml::debian::template title="Coordination of l10n teams"
+
+
+<h1>Pseudo-URLs</h1>
+
+<p>
+The program that listens to debian-l10n-* lists understands pseudo-URLs in the
+subject header.
+The pseudo-URLs need to have the following form.
+</p>
+<div class="center"><code>[&lt;state&gt;]&nbsp;&lt;type&gt;://&lt;package&gt;/&lt;file&gt;</code></div>
+
+<p>
+The <i>state</i> must be one of the following:
+TAF, MAJ, ITT, RFR, LCFC, BTS#&lt;bug number&gt;, DONE, or HOLD.
+</p>
+
+
+  <ul>
+    <li>TAF (<i>Travail À Faire</i>)
+      <ul>
+	<li>Sent to indicate that there is a document that needs to be worked
+	    on.</li>
+      </ul>
+    </li>
+    <li>MAJ (<i>Mise À Jour</i>)
+      <ul>
+	<li>Sent to indicate that there is a document that needs to be updated
+	    and that the work is reserved for the previous translator.</li>
+      </ul>
+    </li>
+    <li>ITT (Intent To Translate)
+      <ul>
+	<li>Sent to indicate that you plan to work on the translation; used to
+	    avoid double work.</li>
+      </ul>
+    </li>
+    <li>RFR (Request For Review)
+      <ul>
+	<li>An initial draft translation is attached. Others on the list are
+	    requested to check it for errors and send a reply (possibly
+	    off-list if they found no flaws).</li>
+	<li>Further RFRs may follow if substantial changes have been made.</li>
+      </ul>
+    </li>
+    <li>ITR (Intent To Review)
+      <ul>
+	<li>Used to avoid LCFCs being sent when there are reviews pending.</li>
+	<li>Mainly used when you expect your review not to be ready for several
+	    days (because the translation is big, or you don't have any time
+	    before the weekend, etc.)</li>
+	<li>The mail body should contain an indication of when to expect the
+	    review.</li>
+        <li>Note that ITR pseudo-URLs are ignored by the spider.</li>
+      </ul>
+    </li>
+    <li>LCFC (Last Chance For Comment)
+      <ul>
+	<li>Indicates that translation is finished, with changes from the
+	    review process incorporated, and that it will be sent to the
+	    appropriate place.</li>
+	<li>Can be sent when there are no ITRs, and discussion following the
+            last RFR has ended for a few days.</li>
+	<li>Should not be sent before there has been at least one review.</li>
+      </ul>
+    </li>
+    <li>BTS#&lt;bug number&gt; (Bug Tracking System)
+      <ul>
+	<li>Used to register a bug number once you have submitted the
+            translation to the BTS.</li>
+	<li>The spider will regularly check if an open bug report has been
+	    fixed or closed.</li>
+      </ul>
+    </li>
+    <li>DONE
+      <ul>
+	<li>Used to close a thread once the translation has been dealt with;
+	    useful if it has not been sent to the BTS.</li>
+      </ul>
+    </li>
+    <li>HOLD
+      <ul>
+	<li>Used to put a translation on hold, for example when more changes
+	    are due, so any work done on updates now is likely to be wasted.
+	</li>
+      </ul>
+    </li>
+  </ul>
+
+<p>
+The <i>type</i> can be anything indicating the type of the document, such as
+po-debconf, debian-installer, po, po4a, or wml.
+</p>
+
+<p>
+<i>package</i> is the name of the package that the document comes from.
+Please use <i>www.debian.org</i> or nothing for the WML files of the
+Debian web site.
+</p>
+
+<p>
+<i>file</i> is the filename of the document; it can contain other information
+to uniquely identify the document, such as the path to the file.
+It's usually a name like <i>lc</i>.po where <i>lc</i> is the language code
+(e.g.: de for German, or pt_BR for Brazilian Portuguese).
+</p>
+
+<p>
+The structure of <i>file</i> depends on the chosen type, and of course the
+language.
+
+In principle it's just an identifier, but since it's used to
+track the translation status in the web pages of this section,
+it's strongly recommended to follow the scheme given below.
+</p>
+
+<ul>
+<li><code>po-debconf://package-name/lc.po</code></li>
+<li><code>po://package-name/path-in-sourcepackage/lc.po</code></li>
+<li><code>debian-installer://package-name/path-in-sourcepackage/lc.po</code></li>
+<li><code>wml://path_under_language_name_in_CVS</code></li>
+<li><code>po4a://package-name/path-in-sourcepackage/lc.po</code></li>
+</ul>
+
+<p>
+The BTS state is somewhat special; it registers a bug number so the
+l10n-bot can track the status of the translation once submitted to
+the BTS by checking whether any of the open bug reports have been
+closed. Thus for instance the debian-l10n-spanish list might use:
+</p>
+<div class="center"><code>[BTS#123456] po-debconf://cups/es.po</code></div>
+
+<p>
+If you intend to translate a lot of packages, you can ITT them all
+at once. An example (for the debian-l10n-danish list):
+</p>
+<div class="center"><code>[ITT] po-debconf://{cups,courier,apache2}/da.po</code></div>
+<p>
+So put the packages between braces and separate them with commas. No
+extra spaces!
+</p>
