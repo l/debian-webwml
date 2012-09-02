@@ -133,16 +133,24 @@ sub transform_team {
 }
 
 sub linklist {
-	my ($typo, $pkg, $lang, %status_db) = @_;
+	my ($typo, $pkg, $lang, $trufile, %status_db) = @_;
 	my $add = "";
+	my ($dir, $pofile);
+	if ($pkg eq 'manpages-fr-extra') {
+		$dir = $trufile;
+		$dir =~ s/\/.*$//;
+		$pofile = $trufile;
+		$pofile =~ s/^.*\///;
+	}
 	if (    $status_db{$lang}->has_package($pkg)
 	    and $status_db{$lang}->has_status($pkg)) {
 		foreach my $statusline (@{$status_db{$lang}->status($pkg)}) {
 			my ($type, $file, $date, $status, $translator, $list, $url, $bug_nb) = @{$statusline};
 			my $bug_link = (defined $bug_nb) ? "<a href=\"http://bugs.debian.org/$bug_nb\">$bug_nb</a>" : "";
-			if ($type eq $typo) {
+			if ($type eq $typo and ($pkg ne 'manpages-fr-extra' or $file =~ m/^$dir.*$pofile$/)) {
 				# Only keep the last status (most recent)
 				# Assume there is only one $typo file
+				# unless $pkg is manpages-fr-extra
 				$date =~ s/\s*\+0000$//;
 				$list =~ /^(\d\d\d\d)-(\d\d)-(\d\d\d\d\d)$/;
 				$add = "<a href=\"http://lists.debian.org/debian-l10n-$LanguageList{$lang}/$1/debian-l10n-$LanguageList{$lang}-$1$2/msg$3.html\">$status</a>";
@@ -325,7 +333,7 @@ sub get_stats {
 			} else {
 				my $add = "";
 				if (defined $status_db{$lang} and (($type eq 'po-debconf') or ($team eq "debian-l10n-$LanguageList{$lang} at lists dot debian dot org"))) {
-					$add = linklist($typo, $pkg, $lang, %status_db);
+					$add = linklist($typo, $pkg, $lang, $file, %status_db);
 					unless (length $add) {
 						$add .= "<td></td><td></td><td></td><td></td>";
 					}
@@ -355,7 +363,7 @@ sub get_stats {
 			$str .= ($curtotal eq '0') ? $pkg : "<a href=\"pot#$pkgid\">$pkg</a>";
 			my $add = "";
 			if (defined $status_db{$l}) {
-				$add = linklist($typo, $pkg, $l, %status_db);
+				$add = linklist($typo, $pkg, $l, '', %status_db);
 				if (length $add) {
 					$str  = "&nbsp;&nbsp;$str" if $type eq 'po-debconf';
 					$str  = "<td>$str</td><td>";
