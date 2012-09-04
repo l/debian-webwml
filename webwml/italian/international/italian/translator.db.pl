@@ -57,7 +57,7 @@ sub init_translators {
 		},
 		'skizzhg' => {
 			email		=> 'skizzhg@gmx.com',
-			summary		=> 3,
+			summary		=> 2,
 			logs		=> 0,
 			diff		=> 0,
 			tdiff		=> 0,
