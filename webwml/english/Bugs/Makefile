@@ -33,3 +33,10 @@ pseudo-packages.$(LANGUAGE).html: $(ENGLISHDIR)/Bugs/pseudo-packages.description
 
 $(ENGLISHDIR)/Bugs/pseudo-packages.description:
 	wget -O $(ENGLISHDIR)/Bugs/pseudo-packages.description http://bugs.debian.org/pseudopackages/pseudo-packages.description
+
+ifeq "$(LANGUAGE)" "en"
+$(HTMLDIR)/hashbug_redirect.js: hashbug_redirect.js
+	install -m 664 -p $< $(HTMLDIR)
+
+install:: $(HTMLDIR)/hashbug_redirect.js
+endif
