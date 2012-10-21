@@ -40,7 +40,7 @@ sub init_translators {
 
 
                 'Mohamed Amine' => {
-                       email           => 'aminedeb@gmail.com',
+                       email           => 'med@mailoo.org',
                        summary         => 3,
                        logs            => 3,
                        diff            => 3,
