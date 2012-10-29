@@ -1,0 +1,26 @@
+#use wml::debian::translation-check translation="1.9"
+<define-tag description>libc NLSPATH バッファオーバフロー</define-tag>
+<define-tag moreinfo>
+<p>最初の報告提出者: &lt;solar@ideal.ru&gt;</p>
+
+<p>[exploit] シェルコードが普通とは少々異なる:</p>
+
+<ul>
+  <li>setuid(geteuid()) を自ら行う。</li>
+  <li>改変が容易 (シェルコードに固定オフセットがなくなり、
+      シェルの名前も変更可能 &mdash; 長さが不定)。</li>
+  <li>NULL ポインタ自身が %edx の execve システムコールに渡され、ポインタを
+      NULL にしない (これは Aleph One の記事の誤りだと思われる)。
+      これによる影響は特にないと思われますが。</li>
+</ul>
+
+<p>この欠陥は巨大な環境変数の値をエクスポートできるようにパッチを適用した
+telnet クライアントを使うことで、リモートから悪用可能です。
+オーバフローは /bin/login を開始した時点から発生します
+(有名な LD_PRELOAD の悪用にやや似ていますがこれはオーバフローです)。
+自分はそれが何なのかよくわかっていませんが、telnetd
+の環境変数の制限の一部かもしれません。</p>
+</define-tag>
+
+# do not modify the following line
+#include '$(ENGLISHDIR)/security/1997/19970213.data'
