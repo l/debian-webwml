@@ -1,0 +1,29 @@
+#use wml::debian::translation-check translation="1.10"
+<define-tag description>minicom に標準のバッファオーバラン</define-tag>
+<define-tag moreinfo>
+<p>最初の報告提出者: Dmitry E. Kim &lt;jason@redline.ru&gt;</p>
+
+<p>minicom にある脆弱性は (特定の) ローカルユーザに
+「uucp」のグループ権限、特定の場合には root 権限の取得を許します。</p>
+
+<p>Minicom バイナリは通常、ユーザ「root」、グループ「uucp」の所有で、
+「-rwxr-sr-x」あるいは古いディストリビューションでは「-rwsr-sr-x」
+となっているものもあります。
+実際に、minicom には任意サイズのバッファが<strong>大量に</strong>あり、
+そのうちいくつかを超過させることは実に容易です。このような超過可能なバッファの
+1 つとして automatic があります &mdash; minicom の「-d」オプションの引数が
+128 バイト長の自動配列に複製されます。したがって、
+関数の戻りアドレスを上書きして任意のコードを実行することが
+(それが普通のように) 可能です。</p>
+
+<p>minicom が setuid root でインストールされている場合、minicom
+の使用を許可されているあらゆるユーザが root シェルを取得可能です。
+minicom が setgid uucp でインストールされている場合、
+あらゆる minicom ユーザが uucp グループ権限を取得可能です
+(これが無意味なことだとは考えないでください &mdash; 少なくとも
+Slackware マシンの /usr/lib/uucp はグループが書き込み可能です。
+これは uucico/uuxqt/etc を自分のスクリプトで簡単に代用できるということです)。</p>
+</define-tag>
+
+# do not modify the following line
+#include '$(ENGLISHDIR)/security/1997/19970210.data'
