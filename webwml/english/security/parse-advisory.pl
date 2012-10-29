@@ -111,7 +111,7 @@ foreach $l (<ADV>) {
     }
   }
   $headersnearingend++ if ($l =~ /^Debian-specific:/);
-  if ($headersnearingend && $l !~ /^.{15}:.*$/) {
+  if ($headersnearingend && $l =~ /^\s*$/) {
     $mi++;
     $headersnearingend = 0;
   }
