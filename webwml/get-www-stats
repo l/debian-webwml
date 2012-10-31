@@ -19,11 +19,13 @@
 
 # This program is run from a crontab on a Debian website mirror like this:
 #
+# MAILTO="porridge@debian.org"
 # # Atomically and concurrent-safely create a stats.tgz
 # 18 3   *   *   *     cd "$HOME" && d=$(mktemp -d stats-wip-XXXXXXXXXX) && printf '{"hostname":"\%s"}' $(hostname -f) > "$d/stats.meta.json" && ./get-www-stats > "$d/stats.json" && tar zcf stats-wip.tgz "$d" && rm -rf "$d" && mv stats-wip.tgz stats.tgz
 #
 # And the output is transferred to dde.debian.net like this:
 #
+# MAILTO="porridge@debian.org"
 # # Atomically transfer stats and replace them.
 # 18 4   *   *   *     cd $HOME && { [ ! -e stats-old ] || please_cleanup_failed_run ; } && cp -al stats-new stats-old && ln -s stats-old stats-old.s && mv -T stats-old.s stats && { scp -q -i .ssh/stats-transfer-nopass senfl.debian.org:stats.tgz stats.tgz || scp_failed ; } && rm -rf stats-new && mkdir stats-new && tar zxf stats.tgz -C stats-new --strip-components=1 && rm stats.tgz && ln -s stats-new stats-new.s && mv -T stats-new.s stats && rm -rf stats-old
 #
