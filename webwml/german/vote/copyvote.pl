@@ -253,8 +253,8 @@ while (<SRC>)
 	    s#The outcome#Das Ergebnis#;
 	    s#The actual text of the resolution is as follows.  Please note#Der eigentliche Text des Beschlusses lautet wie folgt. Bitte beachten#;
 	    s#The actual text of the resolution is as follows. Please note#Der eigentliche Text des Beschlusses lautet wie folgt. Bitte beachten#;
-            s#that this does not include preludes, prologues, any preambles to#Sie, dass dieser keinen Vorspann, Nachspann, Präamblen des Beschlusses,#;
-	    s#the resolution, post-ambles to the resolution, abstracts,#Postamblen des Beschlusses, Zusammenfassungen, Vorworte, Nachworte,#;
+            s#that this does not include preludes, prologues, any preambles to#Sie, dass dieser keinen Vorspann, Nachspann, Präambeln des Beschlusses,#;
+	    s#the resolution, post-ambles to the resolution, abstracts,#Postambeln des Beschlusses, Zusammenfassungen, Vorworte, Nachworte,#;
 	    s#fore-words, after-words, rationales, supporting documents,#Begründungen, Unterstützende Dokumente, Meinungsumfragen, Argumente für#;
 	    s#opinion polls, arguments for and against, and any of the other#und gegen, oder irgendwelches andere wichtige Material, das Sie in den#;
 	    s#important material you will find on the mailing list#Mailinglisten-Archiven finden, beinhaltet. Bitte lesen Sie die#;
@@ -278,7 +278,7 @@ while (<SRC>)
 	    s#a foundation document, namely, the#verlangen würde, genauer gesagt der <a#;
 	    s#<a href="http://www.debian.org/devel/constitution">constitution</a>#href="http://www.debian.org/devel/constitution">Verfassung</a>,#;
 	    s#it requires a 3:1 majority to pass.#benötigt er eine 3:1-Mehrheit, um angenommen zu werden.#;
-	    s#Not determinted yet#Noch nicht bestimmt#;
+	    s#Not determined yet#Noch nicht bestimmt#;
 	    s#Debian Project Secretary#Debian-Projekt-Schriftführer#;
 	    s#The amendment need simple majority#Die Änderungsvorschläge benötigen eine einfache Mehrheit#;
 
