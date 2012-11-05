@@ -34,7 +34,7 @@ while (<POPCON>) {
 }
 
 my $soap = SOAP::Lite->uri('Debbugs/SOAP')->proxy('http://bugs.debian.org/cgi-bin/soap.cgi')
-       or die "Couldn't make connection to SOAP insterface: $@";
+       or die "Couldn't make connection to SOAP interface: $@";
 my $bugs = $soap->get_bugs(package=>'wnpp')->result;
 my $status = $soap->get_status($bugs)->result() or die;
 
