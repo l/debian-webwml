@@ -1,0 +1,40 @@
+#use wml::debian::translation-check translation="1.9"
+<define-tag description>「screen」プログラムが gecos フィールド複製時にオーバフロー</define-tag>
+<define-tag moreinfo>
+<p>オーバフローは存在しますが screen はコードの実行前に root 権限を破棄します</p>
+
+<p>最初の報告提出者: Khelbin &lt;khelbin@connix.com&gt;</p>
+
+<p>Screen 3.07.02 で (通常どおりに) setuid root
+した場合、少なくとも特定のプラットホームでバッファオーバフローに [陥りやすく]
+なります。ソース全体を読んだわけではなく簡単に見てみただけですが、
+attacher.c が:</p>
+
+<pre>
+      struct passwd ppp;
+      char fullname[100];
+
+      strcpy(fullname, ppp-&gt;pw_gecos);
+</pre>
+
+<p>のようにしていることがわかりました。
+簡単な悪用方法を作ることはできましたが、chpass/chfn
+が特定の文字を除外しないため BSDI 1.1 では機能しませんでした。
+このようにして、シェルコードでフルネームフィールドを読み込むことで
+「Illegal Character found in the Full Name field, re-edit [y]?」
+というようなエラーメッセージを出しています。</p>
+
+<p>OS やバージョンを問わず、フィールドに入力される情報について
+「不正な文字」や長さを確認していない chfn/chpass
+(BSDI 1.1 は長さを確認しておらず、不正な文字だけを確認しています)
+は脆弱な可能性があります (suid root 権限を取ることは、
+シェルコード文字列でオーバフローさせることで\
+実現しようとしていましたがまだ確認していません)。</p>
+
+<p>やってみたことは、シェルコード文字列を環境変数にセットして (NOP と NOP
+への戻りアドレスを付加して) 環境変数をファイルに書き込みます。それから新しい
+gecos 情報として chpass/chfn が存在するときにそのファイルを読み込むだけです。</p>
+</define-tag>
+
+# do not modify the following line
+#include '$(ENGLISHDIR)/security/1997/19970220.data'
