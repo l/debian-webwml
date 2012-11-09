@@ -1,0 +1,38 @@
+#use wml::debian::translation-check translation="1.9"
+<define-tag description>metamail に任意のコマンドを実行にできる可能性</define-tag>
+<define-tag moreinfo>
+<p>最初の報告提出者: Olaf Kirch &lt;okir@lst.de&gt;</p>
+
+<p>この欠陥は、タイプが message/external-body であるメッセージに対して
+metamail に showext を実行させている場合に悪用可能である可能性があります。
+少なくとも tcsh と、もしかすると他の csh
+の一部でコマンドラインの引数を展開する際に恐ろしいことをしているようです。
+スクリプトに引数として「foo FTP=/tmp/evilcmd」を与えると、</p>
+
+<pre>
+	set var=$1
+</pre>
+
+<p>を実行します。これは foo を $var に、/tmp/evilcmd を
+$FTP に割り当てます。残念ながら、metamail はコマンドラインに
+MIME 属性を付加して showext を呼び出すので、基本的に</p>
+
+<pre>
+   Content-type:  message/external-body;
+	   access-type="anon-ftp";
+	   name="passwd";
+	   site="monad.swb.de";
+	   directory="/etc";
+	   mode="image FTP=/tmp/evilcmd"
+</pre>
+
+<p>のようなヘッダを送ります。さらに続いて、スクリプトは $FTP を実行して FTP
+接続を開始します。今のところ、引数をコマンドに渡すことはできていませんが、
+それは上記のようにしてひどいことができないという意味ではありません。</p>
+
+<p>[時間が過ぎたためパッチは削除されました。]</p>
+
+</define-tag>
+
+# do not modify the following line
+#include '$(ENGLISHDIR)/security/1997/19970409.data'
