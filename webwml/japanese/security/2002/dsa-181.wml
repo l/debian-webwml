@@ -1,0 +1,31 @@
+#use wml::debian::translation-check translation="1.1"
+<define-tag description>クロスサイトスクリプティング</define-tag>
+<define-tag moreinfo>
+<p>Joe Orton さんが、ウェブサーバに強力な暗号化 (つまり HTTPS サポート)
+を追加する Apache モジュールである mod_ssl
+にクロスサイトスクリプティングの問題を発見しました。このモジュールは SSL
+ポートへの HTTP リクエストに対する応答で、サーバ名をエスケープせずに返します。</p>
+
+<p>最近の他の Apache XSS (クロスサイトスクリプティング) バグと同様、
+これは「UseCanonicalName off」 (Debian パッケージの Apache のデフォルト)
+とワイルドカード DNS を組み合わせて利用しているサーバにのみ影響します。
+これはかなり可能性は低いですが。Apache 2.0/mod_ssl ではこの HTML
+はすでにエスケープされているため、この脆弱性はありません。</p>
+
+<p>この設定が有効にされている場合、Apache が自己参照 URL
+(応答の発信元であるサーバへと差し戻す URL)
+を構成する必要がある場合、常にサーバ名とポートで「canonical」名を形成します。
+無効にされている場合、Apache
+は可能な場合、クライアントにより送られたホスト名:ポートを使います。
+これは CGI スクリプトの SERVER_NAME と SERVER_PORT にも影響します。</p>
+
+<p>この問題は、現在の安定版 (stable) ディストリビューション (woody)
+ではバージョン 2.8.9-2.1、旧安定版 (old stable) ディストリビューション
+(potato) ではバージョン 2.4.10-1.3.9-1potato4、不安定版 (unstable)
+ディストリビューション (sid) ではバージョン 2.8.9-2.3 で修正されています。</p>
+
+<p>直ちに libapache-mod-ssl パッケージをアップグレードすることを勧めます。</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2002/dsa-181.data"
