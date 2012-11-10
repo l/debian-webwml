@@ -11,10 +11,6 @@ NOGENERICDEP := true
 NOGENERICINSTDEP := true
 include $(WMLBASE)/Make.lang
 
-ifeq "$(LANGUAGE)" "ja"
-ABS_DIR = $(CURDIR)
-endif
-
 # This Makefile will handle converting all .wml files in this directory
 # and all subdirectories to .html files. It does it this way so
 # a new Makefile isn't needed for each new issue.
@@ -40,15 +36,11 @@ endif
 %.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml $(GETTEXTDEP) \
 			   $(TEMPLDIR)/weeklynews/boilerplates.wml
-		
-ifeq "$(LANGUAGE)" "ja"
-	cd $(@D) && $(subst ../../convert,$(ABS_DIR)/../../convert,$(WML)) $(notdir $(<))
-else
+
 ifeq "$(LANGUAGE)" "pl"
 	cd $(@D) && $(subst ../../znaczki.sh,$(CURDIR)/../../znaczki.sh,$(WML)) $(notdir $(<))
 else
 	cd $(@D) && $(WML) $(notdir $(<))
-endif
 endif
 
 install:: $(HTMLDESTFILES) $(PNGDESTFILES)
@@ -82,9 +74,6 @@ $(HTMLDIR)/%.png: %.png
 # Have to add to the default clean rule to clean up all the html the
 # above target produces.
 clean::
-ifeq "$(LANGUAGE)" "ja"
-	-find . -type f -name \*.$(LANGUAGE).html.tmp | xargs rm -f
-endif
 	-find . -type f -name \*.$(LANGUAGE).html | xargs rm -f
 
 # Need to rebuild the index when anything changes.

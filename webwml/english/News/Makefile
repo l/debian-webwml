@@ -14,9 +14,6 @@ include $(WMLBASE)/Make.lang
 
 clean::
 	rm -f $(NEWSRDF)
-ifeq "$(LANGUAGE)" "ja"
-	rm -f $(NEWSRDF).tmp
-endif
 
 ifndef SUBLANG
 NEWSRDF     := news.$(LANGUAGE).rdf
