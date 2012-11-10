@@ -1,0 +1,90 @@
+#use wml::debian::common_tags
+#use wml::debian::openrecode
+
+<perl>
+
+# this file is a modified version from recent_list.wml for use with users/
+
+# get_users_list($eng_dir, $rel_path, $format, $match)
+#
+# get_users_list grabs title of all files from directory $rel_path.
+#
+# The format parameter specifies the type of output: numbered, definition
+# and bulleted list, a table, or a RDF file (rdf, rdflong, or rfsseq).  
+# RDF output is currently only supported for DSAs.
+#
+# The match parameter is a regexp used to determine if the file should be
+# parsed.
+
+<protect pass=2>
+    my $listhead = '<ul>';
+    my $listfoot = '</ul>';
+    my $elemhead = '<li>';
+    my $elemfoot = '</li>';
+</protect>
+
+sub get_users_list {
+    my ($eng_dir, $rel_path, $match) = @_;
+
+    opendir DIR, "$eng_dir/$rel_path/"
+	or do {
+	warn "couldn't open dir $eng_dir/$rel_path: $!\n";
+	return;
+	};
+    my @files = grep { !/^(index\.wml|Makefile|profiles\.def)$/
+		       && -f "$eng_dir/$rel_path/$_"
+		     } readdir(DIR);
+    closedir DIR;
+
+    @files = sort {lc($a) cmp lc($b)} @files;
+
+    #warn "files: " . join " ", @files; warn "\n";
+    #warn "eng_dir=$eng_dir rel_path=$rel_path match=$match\n";
+
+    my $str = grab_titles($eng_dir, $rel_path, $match , @files);
+       $str = "$listhead$str$listfoot";
+
+    #warn "$str\n";
+    return $str;
+}
+
+# grab_titles is an auxiliary function to get_users_list, which actually
+# does the real work.
+sub grab_titles {
+    my ($eng_dir, $rel_path, $match, @files) = @_;
+
+    my $str = "";
+    foreach $file (@files) {
+	(my $trans_title = $file) =~ s/wml$/title/;
+	my $base = $1 if ($file =~ m|^([[:alpha:]./]*(\d{4})?/(?:$match)).wml|);
+	#warn "$file -> $base\n";
+
+	# read file in
+	my $fh = openrecode("$rel_path/$file", "$rel_path/$trans_title", "$eng_dir/$rel_path/$file")
+	    or die "couldn't open $eng_dir/$rel_path/$file: $!\n";
+	my $content;
+	<protect pass=2>
+	{
+	    local $/;
+	    $content = <$fh>;
+	}
+	</protect>
+	close $fh;
+
+	my ($title, $webpage);
+	<protect pass=2>
+	if ($content =~ /^<define-tag pagetitle>\s*(.*?)\s*<\/define-tag>/ms) {
+	    $title = qq/$1/; }
+	my ($shortfile) = $file =~ /^(?:.*\/)?(.*)\.wml$/;
+	#$eng_dir =~ /^(?:.*\/)?(.*)$/;
+	</protect>
+	$str .= "$elemhead<a href=\"$rel_path/$shortfile\">$title</a>$elemrelfoot\n";
+    } # for each file
+
+return $str;
+}
+</perl>
+
+#
+# vim:ts=8:sw=4:
+#
