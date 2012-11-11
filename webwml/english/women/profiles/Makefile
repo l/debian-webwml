@@ -9,10 +9,13 @@ PROFILES := $(filter-out index.wml, $(wildcard *.wml))
 
 include $(WMLBASE)/Make.lang
 
-index.$(LANGUAGE).html: index.wml $(PROFILES) \
-	$(TEMPLDIR)/template.wml $(TEMPLDIR)/users_list.wml \
-	$(TEMPLDIR)/toc.wml $(GETTEXTDEP)
-	$(WML) $(<F)
+index.$(LANGUAGE).html: index.wml
+
+## disabled while I try to understand how get the users_list subroutine actually work
+## index.$(LANGUAGE).html: index.wml $(PROFILES) \
+##	$(TEMPLDIR)/template.wml $(TEMPLDIR)/users_list.wml \
+##	$(TEMPLDIR)/toc.wml $(GETTEXTDEP)
+##	$(WML) $(<F)
 
 %.$(LANGUAGE).html: %.wml \
 	$(ENGLISHSRCDIR)/women/profiles/profiles.def $(TEMPLDIR)/faqs.wml \
