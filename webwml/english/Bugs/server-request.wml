@@ -121,6 +121,119 @@ maintainer(s) - the files available are:
 Requests that the mailservers' reference card be sent in plain ASCII.
 </dd>
 
+<dt><a name="user"><code>user</code> <var>address</var></a></dt>
+<dd>
+Sets <var>address</var> to be the <q>user</q> of all <code>usertag</code>
+commands that follow.
+</dd>
+
+<dt><a name="usertag"><code>usertag</code> <var>bugnumber</var>
+    [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tag</var>
+    [ <var>tag</var> ... ]</a></dt>
+<dd>
+Allows to define tags on a per-user basis. The <code>usertag</code>
+command works just like the regular <code>tag</code> command, except
+that you get to make up whatever tags you like. By default, the address
+in the <code>From:</code> or <code>Reply-To:</code> header of your mail
+will be used to set the user of the <code>usertag</code>.
+</dd>
+
+</dd>
+
+<dt><a name="usercategory"><code>usercategory</code>
+     <var>category-name</var> [ <code>[hidden]</code> ]</a></dt>
+<dd>
+<p>
+Adds, updates or removes a <code>usercategory</code>. By default the user
+category is visible, if the optional argument <code>[hidden]</code>
+is specified then it will not be visible, but still be available to be
+referenced from other user category definitions.
+</p>
+
+<p>
+This command is somewhat special, as when adding or updating a user
+category it requires a body following immediately after the command. If
+the body is empty the user category will get removed instead. The body
+is composed of lines starting with any number of spaces. Each category
+should start with a line with <code>*</code>, and optionally it can be
+followed by several selection lines starting with <code>+</code>. The
+complete format is as follows:
+</p>
+
+<div>
+* <var>category-name-1</var><br />
+* <var>Category Title 2</var>
+  [ <code>[</code><var>selection-prefix</var><code>]</code> ]<br />
+&nbsp;+ <var>Selection Title 1</var> <code>[</code>
+        [ <var>order</var><code>:</code> ]
+        <var>selection-1</var> <code>]</code><br />
+&nbsp;+ <var>Selection Title 2</var> <code>[</code>
+        [ <var>order</var><code>:</code> ]
+        <var>selection-2</var> <code>]</code><br />
+&nbsp;+ <var>Default Selection Title</var> <code>[</code>
+        [ <var>order</var>: ] <code>]</code><br />
+* <var>category-name-3</var><br />
+</div>
+
+<p>
+The <var>category-names</var> appearing in the command and in the body
+are used to make references between them, to avoid unneecessary inlining.
+The <var>Category Titles</var> are used in the package report summary.
+</p>
+
+<p>
+The optional <var>selection-prefix</var> is prefixed to every
+<var>selection</var> on each entry in the category section. The first
+<var>selection</var> which matches gets the bug shown under it. The
+optional <var>order</var> parameter specifies the position when showing
+the selected entries, this is useful when using a match that selects a
+superset of the previous ones but that needs to be shown before them.
+</p>
+
+<p>
+The <var>category-names</var> <code>normal</code> has the special meaning
+of being the default view, so by replacing it with a different user category
+for the <var>pkgname</var>@packages.debian.org user one can change the
+default classification for a package.
+</p>
+
+<p>
+Example usage:
+</p>
+
+<pre>
+    usercategory dpkg-program [hidden]
+     * Program
+       + dpkg-deb [tag=dpkg-deb]
+       + dpkg-query [tag=dpkg-query]
+       + dselect [package=dselect]
+
+    usercategory new-status [hidden]
+     * Status [pending=]
+       + Outstanding with Patch Available [0:pending+tag=patch]
+       + Outstanding and Confirmed [1:pending+tag=confirmed]
+       + Outstanding and More Information Needed [pending+tag=moreinfo]
+       + Outstanding and Forwarded [pending+tag=forwarded]
+       + Outstanding but Will Not Fix [pending+tag=wontfix]
+       + Outstanding and Unclassified [2:pending]
+       + From other Branch [absent]
+       + Pending Upload [pending-fixed]
+       + Fixed in NMU [fixed]
+       + Resolved [done]
+       + Unknown Pending Status []
+
+    \# Change default view
+    usercategory normal
+      * new-status
+      * severity
+
+    usercategory old-normal
+      * status
+      * severity
+      * classification
+</pre>
+</dd>
+
 <dt><code>help</code></dt>
 <dd>
 Requests that this help document be sent by email in plain ASCII.
