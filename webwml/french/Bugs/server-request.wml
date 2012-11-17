@@ -1,7 +1,12 @@
-#use wml::debian::template title="Suivi des bogues Debian - serveur de requêtes" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::template title="Suivi des bogues Debian — serveur de requêtes" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.29" translation_maintainer="David Prévot"
 
-#use wml::debian::translation-check translation="1.25" translation_maintainer="Cyril Brulebois"
-
+# Translators:
+# Christophe Le Bars, 1999.
+# Christian Couder, 2000, 2004.
+# Simon Paillard, 2007.
+# Cyril Brulebois, 2007.
+# David Prévot, 2012.
 
 <h1><a name="introduction">
 Introduction au serveur de requêtes du système de suivi des bogues
@@ -129,6 +134,135 @@ paquets.
 Demande que la carte de référence des serveurs de messages soit envoyée
 uniquement en ASCII.
 </dd>
+
+<dt><a name="user"><code>user</code> <var>adresse</var></a></dt>
+<dd>
+Définit l'<var>adresse</var> de l'utilisateur (<q>user</q>)
+pour toutes les commandes <code>usertag</code> suivantes.
+</dd>
+
+<dt><a name="usertag"><code>usertag</code> <var>NuméroDeBogue</var>
+    [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>Marque</var>
+    [ <var>Marque</var> ... ]</a></dt>
+<dd>
+Permet de définir des marques par utilisateur.
+
+La commande <code>usertag</code> fonctionne comme la commande <code>tag</code>
+classique, à l'exception que n'importe quel marque peut être utilisée.
+
+Par défaut, l'adresse d'en-tête <code>From</code> ou <code>Reply-To</code> du
+message est utilisée pour définir l'utilisateur pour <code>usertag</code>.
+</dd>
+
+<dt><a name="usercategory"><code>usercategory</code>
+     <var>nom-de-catégorie</var> [ <code>[hidden]</code> ]</a></dt>
+<dd>
+<p>
+Ajoute, met à jour ou supprime une catégorie
+d'utilisateur (<code>usercategory</code>).
+
+Par défaut la catégorie d'utilisateur est visible.
+
+Si l'argument optionnel <code>[hidden]</code> est indiqué, alors
+elle ne sera pas visible, mais il sera toujours possible de la
+référencer depuis d'autres définitions de catégorie d'utilisateur.
+</p>
+
+<p>
+Cette commande est un peu spéciale, car en ajoutant ou en mettant à jour une
+catégorie d'utilisateur, elle nécessite un corps directement après la commande.
+
+Si le corps est vide, la catégorie d'utilisateur sera alors retirée.
+
+Le corps est composé de lignes commençant par n'importe quel nombre d'espaces.
+
+Chaque catégorie devrait commencer par <code>*</code>, et être
+éventuellement suivie de plusieurs lignes commençant par <code>+</code>.
+
+Le format complet est le suivant :
+</p>
+
+<div>
+* <var>nom-de-catégorie-1</var><br />
+* <var>Titre de catégorie 2</var>
+  [ <code>[</code><var>préfixe-de-sélection</var><code>]</code> ]<br />
+&nbsp;+ <var>Titre de sélection 1</var> <code>[</code>
+        [ <var>ordre</var><code>:</code> ]
+        <var>sélection-1</var> <code>]</code><br />
+&nbsp;+ <var>Titre de sélection 2</var> <code>[</code>
+        [ <var>ordre</var><code>:</code> ]
+        <var>sélection-2</var> <code>]</code><br />
+&nbsp;+ <var>Titre de sélection par défaut</var> <code>[</code>
+        [ <var>ordre</var>: ] <code>]</code><br />
+* <var>nom-de-catégorie-3</var><br />
+</div>
+
+<p>
+Les <var>noms-de-catégorie</var> apparaissant dans la commande
+et dans le corps sont utilisés pour faire des références
+entre eux, pour éviter un alignement non nécessaire.
+
+Les <var>Titres de catégorie</var> sont
+utilisés dans le résumé des rapports du paquet.
+</p>
+
+<p>
+Le <var>préfixe-de-sélection</var> facultatif est ajouté au début de toutes
+les <var>sélections</var>, sur chaque entrée de la section de catégorie.
+
+La première <var>sélection</var> qui correspond y montre le bogue en question.
+
+Le paramètre d'<var>ordre</var> facultatif indique la position
+lors de l'affichage des entrées sélectionnées, c'est pratique en
+utilisant une correspondance qui sélectionne un ensemble incluant
+les précédents, mais qui doit être affiché avant ceux-là.
+</p>
+
+<p>
+Le <var>nom-de-catégorie</var> <code>normal</code> a la
+signification particulière d'être la vue par défaut, donc
+en le remplaçant par une autre catégorie d'utilisateur pour
+l'utilisateur <var>nom_de_paquet</var>@packages.debian.org,
+le classement par défaut est modifié pour le paquet.
+</p>
+
+<p>
+Exemple d'utilisation :
+</p>
+
+<pre>
+    usercategory dpkg-program [hidden]
+     * Program
+       + dpkg-deb [tag=dpkg-deb]
+       + dpkg-query [tag=dpkg-query]
+       + dselect [package=dselect]
+
+    usercategory new-status [hidden]
+     * Status [pending=]
+       + Outstanding with Patch Available [0:pending+tag=patch]
+       + Outstanding and Confirmed [1:pending+tag=confirmed]
+       + Outstanding and More Information Needed [pending+tag=moreinfo]
+       + Outstanding and Forwarded [pending+tag=forwarded]
+       + Outstanding but Will Not Fix [pending+tag=wontfix]
+       + Outstanding and Unclassified [2:pending]
+       + From other Branch [absent]
+       + Pending Upload [pending-fixed]
+       + Fixed in NMU [fixed]
+       + Resolved [done]
+       + Unknown Pending Status []
+
+    \# Modifier la vue par défaut
+    usercategory normal
+      * new-status
+      * severity
+
+    usercategory old-normal
+      * status
+      * severity
+      * classification
+</pre>
+</dd>
+
 
 <dt><code>help</code></dt>
 <dd>
