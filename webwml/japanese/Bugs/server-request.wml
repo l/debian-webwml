@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - リクエストサーバ" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.25"
+#use wml::debian::translation-check translation="1.29"
 
 <h1><a name="introduction">バグシステムリクエストサーバ入門</a></h1>
 
@@ -28,8 +28,8 @@
 <h1>利用可能なコマンド</h1>
 
 <dl>
-<dt><code>send</code> <var>bugnumber</var></dt>
-<dt><code>send-detail</code> <var>bugnumber</var></dt>
+<dt><code>send</code> <var>バグ番号</var></dt>
+<dt><code>send-detail</code> <var>バグ番号</var></dt>
 <dd>
 引き数で指定したバグ報告の写しを要求します。<code>send-detail</code>
 では、自動通知など全ての<q>退屈な</q>メッセージが送られます。
@@ -47,15 +47,13 @@
 <dt><code>index-maint</code></dt>
 <dd>
 バグ追跡システムで(未解決または最近クローズされた)バグを持つ
-メンテナーリストのインデックスページを要求します。
+メンテナリストのインデックスページを要求します。
 </dd>
 
-<dt><code>index maint</code> <var>maintainer</var></dt>
+<dt><code>index maint</code> <var>メンテナ</var></dt>
 <dd>
-メンテナ <var>maintainer</var> の
-バグのインデックスページを要求します。
-検索語は、完全一致です。
-バグのインデックスは個別のメールで送られます。
+メンテナ <var>メンテナ</var> のバグのインデックスページを要求します。
+検索語は、完全一致です。バグのインデックスは個別のメールで送られます。
 </dd>
 
 <dt><code>index-packages</code></dt>
@@ -64,9 +62,9 @@
 パッケージリストのインデックスページを要求します。
 </dd>
 
-<dt><code>index packages</code> <var>package</var></dt>
+<dt><code>index packages</code> <var>パッケージ</var></dt>
 <dd>
-パッケージ <code>package</code> のバグ一覧を要求します。
+パッケージ <var>パッケージ</var> のバグ一覧を要求します。
 検索語は、完全一致です。
 バグのインデックスは個別のメールで送られます。
 </dd>
@@ -79,7 +77,7 @@
 該当しないメッセージのログを要求します(水曜日を週末として扱います)
 </dd>
 
-<dt><code>getinfo</code> <var>filename</var></dt>
+<dt><code>getinfo</code> <var>ファイル名</var></dt>
 <dd>
 <p>
 パッケージやメンテナの情報を含むファイルを要求します。
@@ -89,14 +87,14 @@
 <dl>
 <dt><code>maintainers</code></dt>
 <dd>
-バグ追跡システムで利用されるパッケージメンテナー一覧。
+バグ追跡システムで利用されるパッケージメンテナ一覧。
 これは <code>Packages</code> ファイル、override ファイルおよび
 擬似パッケージファイル中の情報から作られます。
 </dd>
 
-<dt><code>override.</code><var>distribution</var></dt>
-<dt><code>override.</code><var>distribution</var><code>.non-free</code></dt>
-<dt><code>override.</code><var>distribution</var><code>.contrib</code></dt>
+<dt><code>override.</code><var>ディストリビューション</var></dt>
+<dt><code>override.</code><var>ディストリビューション</var><code>.non-free</code></dt>
+<dt><code>override.</code><var>ディストリビューション</var><code>.contrib</code></dt>
 <dt><code>override.experimental</code></dt>
 <dd>
 パッケージの重要度(priority)とセクション(section)の情報やメンテナ
@@ -116,6 +114,117 @@
 <dt><code>refcard</code></dt>
 <dd>
 メールサーバリファレンスカードを平文で送るよう要求します。
+</dd>
+
+<dt><a name="user"><code>user</code> <var>メールアドレス</var></a></dt>
+<dd>
+<var>メールアドレス</var>を後に続く全 <code>usertag</code>
+の「user」にセットします。
+</dd>
+
+<dt><a name="usertag"><code>usertag</code> <var>バグ番号</var>
+    [ <code>+</code> | <code>-</code> | <code>=</code> ]
+    <var>タグ</var> [ <var>タグ</var> ... ]</a></dt>
+<dd>
+ユーザ毎のタグを定義できます。<code>usertag</code> コマンドは通常の
+<code>tag</code> コマンドと同じように動作します。
+違うのは自分で好きなタグを使える点です。デフォルトでは、メールの
+<code>From:</code> または <code>Reply-To:</code> ヘッダのメールアドレスが
+<code>usertag</code> のユーザにセットされます。
+</dd>
+
+</dd>
+
+<dt><a name="usercategory"><code>usercategory</code>
+     <var>カテゴリ名</var> [ <code>[hidden]</code> ]</a></dt>
+<dd>
+<p><code>usercategory</code> を追加、更新、削除します。
+デフォルトでは、ユーザカテゴリは見えます。引数 <code>[hidden]</code>
+がオプションに指定されると見えなくなりますが、
+他に定義したユーザカテゴリから参照することは可能です。</p>
+
+<p>
+このコマンドはある種特別です。
+ユーザカテゴリの追加や更新ではコマンド直後に本文が続く必要があります。
+本文がない場合、そのユーザカテゴリは削除されます。
+本文は任意の個数の空白から始まる行で構成されます。カテゴリはそれぞれ
+<code>*</code> の行から始まり、オプションで <code>+</code>
+から始まる抽出項目の行をいくつか続けることができます。
+完全な形式は:
+</p>
+
+<div>
+* <var>カテゴリ名1</var><br />
+* <var>カテゴリタイトル2</var>
+  [ <code>[</code><var>抽出項目-プレフィクス</var><code>]</code> ]<br />
+&nbsp;+ <var>抽出項目 タイトル1</var> <code>[</code>
+	[ <var>序列</var><code>:</code> ]
+	<var>抽出項目-1</var> <code>]</code><br />
+&nbsp;+ <var>抽出項目 タイトル2</var> <code>[</code>
+	[ <var>序列</var><code>:</code> ]
+	<var>抽出項目-2</var> <code>]</code><br />
+&nbsp;+ <var>デフォルト 抽出項目 タイトル</var> <code>[</code>
+	[ <var>序列</var>: ] <code>]</code><br />
+* <var>カテゴリ名3</var><br />
+</div>
+
+<p>
+コマンドや本文中から参照して無用な埋め込みを避けるのに<var>カテゴリ名</var>\
+を使います。<var>カテゴリタイトル</var>はパッケージ報告サマリで使用されます。
+</p>
+
+<p>
+オプションの<var>抽出項目-プレフィクス</var>
+はそのカテゴリの全<var>抽出項目</var>の各エントリの前に付加されます。
+バグは最初にマッチした<var>抽出項目</var>に表示されます。オプションの\
+<var>序列</var>パラメータは選択したエントリを表示する位置を指定します。
+先に定義したものの上位集合を選択するようなマッチを使い、
+それを先に表示したいときに有用です。
+</p>
+
+<p>
+<var>カテゴリ名</var> <code>normal</code>
+には、それがデフォルト表示になるという特別な意味があります。
+したがって、これを<var>パッケージ名</var>@packages.debian.org
+ユーザの別のユーザカテゴリに置き換えることにより、
+パッケージのデフォルト分類を変更することができます。
+</p>
+
+<p>
+使用例:
+</p>
+
+<pre>
+    usercategory dpkg-program [hidden]
+     * プログラム
+       + dpkg-deb [tag=dpkg-deb]
+       + dpkg-query [tag=dpkg-query]
+       + dselect [package=dselect]
+
+    usercategory new-status [hidden]
+     * 状態 [pending=]
+       + 未解決でパッチ有 [0:pending+tag=patch]
+       + 未解決で確認済 [1:pending+tag=confirmed]
+       + 未解決で情報不足 [pending+tag=moreinfo]
+       + 未解決で転送済 [pending+tag=forwarded]
+       + 未解決で修正予定無 [pending+tag=wontfix]
+       + 未解決で未分類 [2:pending]
+       + 別ブランチから [absent]
+       + アップロード待ち [pending-fixed]
+       + NMUで修正済 [fixed]
+       + 解決済 [done]
+       + 未解決で状態不明 []
+
+    \# Change default view
+    usercategory normal
+      * new-status
+      * severity
+
+    usercategory old-normal
+      * status
+      * severity
+      * classification
+</pre>
 </dd>
 
 <dt><code>help</code></dt>
@@ -147,9 +256,9 @@
 コメント行。<code>#</code> は行頭になければいけません。
 </dd>
 
-<dt><code>debug</code> <var>level</var></dt>
+<dt><code>debug</code> <var>レベル</var></dt>
 <dd>
-デバッグレベルを<var>level</var>に設定します。<var>level</var>には
+デバッグレベルを<var>レベル</var>に設定します。<var>レベル</var>には
 負でない整数が使用できます。0 の場合はデバッグ出力をしません。通常のデバッグ
 には 1 で十分です。デバッグ出力は写しに書き出されますが、これば
 バグシステムの一般ユーザに役立つ情報ではありません。
