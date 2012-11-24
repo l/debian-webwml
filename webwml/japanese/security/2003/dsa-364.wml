@@ -1,0 +1,43 @@
+#use wml::debian::translation-check translation="1.4"
+<define-tag description>バッファオーバフロー、任意のコマンド実行</define-tag>
+<define-tag moreinfo>
+<p>man-db は Debian システムに標準の man(1) コマンドを提供します。
+このパッケージの設定中、
+管理者は生成済みマニュアルページの共有キャッシュを活用するために専用のユーザ
+(「man」) に setuid して man(1) を実行するかどうかを聞かれます。デフォルトは
+man(1) を setuid で実行<em>しない</em>で、この設定では既知の脆弱性は存在しません。
+しかし、setuid での操作をユーザが明示的に要求した場合、
+ローカルの攻撃者は以下のバグを悪用し、
+「man」ユーザで任意のコードを実行することが可能です。</p>
+
+<p>繰り返しますが、この脆弱性は man を setuid
+で実行しないデフォルトの設定では影響ありません。</p>
+
+<ul>
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0620">CAN-2003-0620</a>:
+  man-db 2.4.1 およびそれ以前を setuid
+  でインストールした場合に複数のバッファオーバフローがあり、
+  (1) manp.c の add_to_dirlist への MANDATORY_MANPATH、MANPATH_MAP、MANDB_MAP 引数、
+  (2) ult_src.c の ult_src への長いパス名、
+  (3) ult_src.c の test_for_include への長い .so 引数、
+  (4) 長い MANPATH 環境変数、
+  (5) 長い PATH 環境変数、
+  を経由した権限の獲得をローカルユーザに許します。</li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0645">CAN-2003-0645</a>:
+  実行されるコマンドを含む <code>~/.manpath</code> 中の特定の
+  DEFINE ディレクティブにより、setuid で実行した場合でも、
+  あらゆるユーザに「man」ユーザでのコマンド実行を許します。</li>
+</ul>
+
+<p>現在の安定版 (stable) ディストリビューション (woody)
+では、この問題はバージョン 2.3.20-18.woody.4 で修正されています。</p>
+
+<p>不安定版 (unstable) ディストリビューション (sid)
+では、この問題はバージョン 2.4.1-13 で修正されています。</p>
+
+<p>直ちに man-db パッケージを更新することを勧めます。</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2003/dsa-364.data"
