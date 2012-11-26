@@ -1,0 +1,74 @@
+#use wml::debian::translation-check translation="1.6"
+<define-tag description>複数の脆弱性</define-tag>
+<define-tag moreinfo>
+<p>Alexander Hvostov さんと Julien Blache さんと Aurelien Jarno
+さんが、sane-backends パッケージに複数のセキュリティ関連の問題を発見しました。
+これにはスキャン用デーモン (パッケージ libsane による) 等、スキャナ用の
+API ライブラリが含まれ、リモートから悪用可能です。
+この問題はリモートの攻撃者にセグメンテーション違反や任意の量のメモリ消費を許します。
+攻撃者のコンピュータが saned.conf に記載されていない場合でも攻撃は成功します。</p>
+
+<p>saned を、例えば xinetd や inetd 等で実際に実行している場合に限り脆弱です。
+xinetd や inetd それぞれに設定ファイル中の当該エントリがコメントアウト、
+あるいは存在しない場合は安全です。</p>
+
+<p>saned を実行している可能性のあるサーバで「<kbd>telnet localhost
+6566</kbd>」を試してみてください。「connection refused」が返ってきた場合、saned
+は実行されておらず安全です。</p>
+
+<p>The Common Vulnerabilities and Exposures project
+は以下の問題を認識しています:</p>
+
+<ul>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0773">CAN-2003-0773</a>:
+
+<p>saned は最初の通信 (SANE_NET_INIT) が始まった後にのみ、リモートホストの識別子
+   (IP アドレス) を確認します。そのため、リモートホストがスキャンを許可されていなくても
+   (saned.conf に記載されていなくても) その RPC を誰でも送ることができます。</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0774">CAN-2003-0774</a>:
+
+<p>saned はほぼ全面的にコードのエラーチェックを欠いています。
+   そのため、接続の切断の検出がとても遅れます。
+   接続の切断が検出されなければ、内部の wire バッファにアクセスすることにより
+   割り当てたメモリの限度はそのままになります。そのために、セグメンテーション違反に続く
+   wire バッファの「後」にランダムメモリが読み込まれます。</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0775">CAN-2003-0775</a>:
+
+<p>saned が文字列を要求すると、
+   文字列のサイズを受け取った後に文字列全体を記憶するために必要となるメモリを確保します。
+   サイズの転送前に接続が切断されると、malloc は任意の量のメモリを予約します。
+   そのサイズと利用可能なメモリの量により、malloc は機能しなくなる (-&gt;saned
+   が見事に落ちる) か大量のメモリを割り当てます。
+   カーネルによりますが、スワップおよびメモリ不足が発生する可能性があります。</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0776">CAN-2003-0776</a>:
+
+<p>saned は取得する RPC 番号の正当性をパラメータ取得前に検証していません。</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0777">CAN-2003-0777</a>:
+
+<p>デバッグメッセージが有効になっていて接続が切断された場合、null
+   以外の終端文字列が表示されてセグメンテーション違反が発生する可能性があります。</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0778">CAN-2003-0778</a>:
+
+<p>接続が切断されなくても、saned
+   が実行されているサーバで任意の量のメモリを割り当てることが可能です。
+   作者によると、今のところ簡単に修正することはできません。
+   saned が使えるメモリの総量 (ulimit) を制限しておくのが良いでしょう。</p></li>
+</ul>
+
+<p>安定版 (stable) ディストリビューション (woody)
+では、この問題はバージョン 1.0.7-4 で修正されています。</p>
+
+<p>不安定版 (unstable) ディストリビューション (sid)
+では、この問題はバージョン 1.0.11-1 以降で修正されています。</p>
+
+<p>直ちに libsane パッケージをアップグレードすることを勧めます。</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2003/dsa-379.data"
