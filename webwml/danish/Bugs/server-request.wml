@@ -1,9 +1,9 @@
 #use wml::debian::template title="Debians fejlrapporteringssystem - forespørgselsserver" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.25"
+#use wml::debian::translation-check translation="1.29"
 
 <h1><a name="introduction">Introduktion til fejlrapportsforespørgselsserveren</a></h1>
 
-<p>Der er en e-mailserver som kan sende fejlrapporter og indeks i form af ren 
+<p>Der er en e-mail-server som kan sende fejlrapporter og indeks i form af ren 
 tekst.</p>
 
 <p>For at anvende den sender man en e-mail til 
@@ -94,6 +94,102 @@ vil en hjælpetekst blive returneret.</p>
 
   <dt><code>refcard</code></dt>
   <dd>Beder om at få tilsendt e-mailserverens referencekort som ren tekst.</dd>
+
+<dt><a name="user"><code>user</code> <var>adresse</var></a></dt>
+<dd>Opsætter <var>adresse</var> til at være <q>user</q> (bruger) af alle de 
+<code>usertag</code>-kommandoer, som følger.</dd>
+
+<dt><a name="usertag"><code>usertag</code> <var>fejlnummer</var>
+    [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tag</var>
+    [ <var>tag</var> ... ]</a></dt>
+<dd>Gør det muligt at definere tags pr. bruger.  Kommandoen <code>usertag</code>
+fungerer præcis som den almindelige <code>tag</code>-kommando, bortset fra at 
+man kan opfinde vilkårlige tags.  Som standard vil adressen i 
+<code>From:</code>- eller <code>Reply-To:</code>-headeren på din mail blive 
+benyttet til at opsætte brugeren af <code>usertag</code>'et.</dd>
+
+<dt><a name="usercategory"><code>usercategory</code>
+    <var>kategorinavn</var> [ <code>[hidden]</code> ]</a></dt>
+<dd>
+<p>Tilføjer, opdaterer eller fjerner en <code>usercategory</code> 
+(brugerkategori).  Som standard er brugerkategorien synlig; hvis det valgfrie 
+parameter <code>[hidden]</code> (skjult) er angivet, vil den ikke være synlig, 
+men stadig tilgængelig til referering fra andre definitioner af 
+brugerkategorier.</p>
+
+<p>Kommandoen er noget speciel, da tilføjelse eller opdatering af en 
+brugerkategori kræver en krop umiddelbart efter kommandoen.  Hvis kroppen er 
+tom, vil brugerkategorien i stedet blive fjernet.  Kroppen består af linjer, som
+begynder med et vilkårligt antal mellemrumstegn.  Hver kategori bør begynde med 
+en linje med <code>*</code>, samt valgfrit efterfulgt af flere valglinjer, der 
+begynder med <code>+</code>.  Det komplette format er som følger:</p>
+
+<div>
+* <var>kategorinavn-1</var><br />
+* <var>Kategorititel 2</var>
+  [ <code>[</code><var>vælgpræfiks</var><code>]</code> ]<br />
+&nbsp;+ <var>Valgtitel 1</var> <code>[</code>
+        [ <var>rækkefølge</var><code>:</code> ]
+        <var>valg-1</var> <code>]</code><br />
+&nbsp;+ <var>Valgtitel 2</var> <code>[</code>
+        [ <var>rækkefølge</var><code>:</code> ]
+        <var>valg-2</var> <code>]</code><br />
+&nbsp;+ <var>Standardvalgtitel</var> <code>[</code>
+        [ <var>rækkefølge</var>: ] <code>]</code><br />
+* <var>kategorinavn-3</var><br />
+</div>
+
+<p><var>Kategorinavne</var> som optræder i kommandoen og i kroppen, benyttes til 
+at lave referencer mellem dem, for at undgå unødvendig inlining.  
+<var>Kategorititler</var> benyttes i pakkerapportresuméet.</p>
+
+<p>Det valgfrie <var>valgpræfiks</var> sættes foran alle <var>valg</var> i hver 
+forekomst i kategoriafsnittet.  Det første <var>valg</var> som opfylder 
+kriterierne vises med fejlen under sig.  Det valgfrie 
+<var>rækkefølge</var>-parameter angiver positionen når de valgte forekomster 
+vises, hvilket er nyttigt når man anvender en match, der vælger en delmængde af 
+de tidligere, men som skal vises før dem.</p>
+
+<p><var>Kategorinavnet</var> <code>normal</code> har en særlig betydning, da det 
+er standardvisningen, så ved at erstatte det med en anden brugerkategori for 
+<var>pakkenavn</var>@packages.debian.org, kan brugernavnet ændre en pakkes 
+standardklassifikation.</p>
+
+<p>Eksempler på brug:</p>
+
+<pre>
+    usercategory dpkg-program [hidden]
+     * Program
+       + dpkg-deb [tag=dpkg-deb]
+       + dpkg-query [tag=dpkg-query]
+       + dselect [package=dselect]
+
+    usercategory new-status [hidden]
+     * Status [pending=]
+       + Outstanding with Patch Available [0:pending+tag=patch]
+       + Outstanding and Confirmed [1:pending+tag=confirmed]
+       + Outstanding and More Information Needed [pending+tag=moreinfo]
+       + Outstanding and Forwarded [pending+tag=forwarded]
+       + Outstanding but Will Not Fix [pending+tag=wontfix]
+       + Outstanding and Unclassified [2:pending]
+       + From other Branch [absent]
+       + Pending Upload [pending-fixed]
+       + Fixed in NMU [fixed]
+       + Resolved [done]
+       + Unknown Pending Status []
+
+    \# Change default view
+    usercategory normal
+      * new-status
+      * severity
+
+    usercategory old-normal
+      * status
+      * severity
+      * classification
+</pre>
+</dd>
+
 
   <dt><code>help</code></dt>
   <dd>Beder om at dette hjælpedokument sendes som e-mail i ren tekst.</dd>
