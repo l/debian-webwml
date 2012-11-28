@@ -114,3 +114,255 @@
 <p><gettext domain="newsevents">Please help us create this newsletter. We still need more volunteer writers to watch the Debian community and report about what is going on. Please see the <a href="http://wiki.debian.org/ProjectNews/HowToContribute">contributing page</a> to find out how to help. We're looking forward to receiving your mail at <a href="mailto:debian-publicity@lists.debian.org">debian-publicity@lists.debian.org</a>.</gettext></p>
 </define-tag>
 
+#####################################
+# head           |         | <p>hoge:</p><ul>
+# item-pre       |         | <li>
+# item[0]        | "a"     | <a href="">item a</a>
+# item-post      | ", "    | </li>
+# item-pre       |         | <li>
+# item[1]        | "b"     | <a href="">item b</a>
+# item-post      | ", "    | </li>
+# item-pre       |         | <li>
+# item[2]        | "c"     | <a href="">item c</a>
+# item-post-last | " and " | </li>
+# item-pre       |         | <li>
+# item[3]        | "d"     | <a href="">item d</a>
+# item-post      |         | </li>
+# foot           | "."     | </ul><p>fuga.</p>
+<define-tag abandc-wrapper endtag=required whitespace=delete>
+<preserve head item-pre item-post item-post-last foot>
+<set-var %attributes>
+%body
+<restore head item-pre item-post item-post-last foot>
+</define-tag>
+
+<define-tag abandc endtag=required whitespace=delete>
+<preserve list attr item i j>
+<set-var %attributes>
+
+<set-var list="%Aattributes">
+<foreach attr list>
+<ifneq  "<get-var attr>" ""
+<array-push item <get-var attr>>
+>
+</foreach>
+
+<get-var head>
+<set-var i=0 j=<substract <array-size item> 1>>
+<foreach attr item>
+<ifneq  <get-var i> 0
+<ifeq  <get-var i> <get-var j>
+<get-var item-post-last>
+<get-var item-post>
+>
+>
+<get-var item-pre><get-var attr>
+<increment i>
+</foreach>
+<get-var foot>
+
+<restore list attr item i j>
+</define-tag>
+
+#############################
+# "dsa": 3 tags (dsa, stable announce, bpo announce) each one with own
+# list, inside 2 blocks of gettextized text + if one is not added just
+# skip it
+<define-tag dsa-ml-guide>
+<preserve url-dsa url-bpo url-stable-announce url-volatile-announce old-stable />
+<set-var %attributes />
+<ifeq "<get-var url-volatile-announce />" ""
+<p><gettext domain="newsevents">Please note that these are a selection of the more important security advisories of the last weeks. If you need to be kept up to date about security advisories released by the Debian Security Team, please subscribe to the <a href="<get-var url-dsa />">security mailing list</a> (and the separate <a href="<get-var url-bpo />">backports list</a>, and <a href="<get-var url-stable-announce />">stable updates list</a>) for announcements.</gettext></p>
+<p><gettext domain="newsevents">Please note that these are a selection of the more important security advisories of the last weeks. If you need to be kept up to date about security advisories released by the Debian Security Team, please subscribe to the <a href="<get-var url-dsa />">security mailing list</a> (and the separate <a href="<get-var url-bpo />">backports list</a>, and <a href="<get-var url-stable-announce />">stable updates list</a> or <a href="<get-var url-volatile-announce />">volatile list</a>, for <q><get-var old-stable /></q>, the oldstable distribution) for announcements.</gettext></p>
+>
+<restore url-dsa url-bpo url-stable-announce url-volatile-announce old-stable />
+</define-tag>
+
+<define-tag stable-announce-list endtag=required>
+<preserve base />
+<set-var %attributes />
+<abandc-wrapper
+	head="<p><gettext domain="newsevents">Debian's Stable Release Team released an update announcement for the package: </gettext>"
+	item-pre=""
+	item-post="<gettext domain="newsevents">, </gettext>"
+	item-post-last="<gettext domain="newsevents"> and </gettext>"
+	foot="<gettext domain="newsevents">. </gettext><gettext domain="newsevents">Please read them carefully and take the proper measures.</gettext></p>"
+><abandc %body /></abandc-wrapper>
+<restore base />
+</define-tag>
+
+<define-tag bpo-list endtag=required>
+<preserve base />
+<set-var %attributes />
+<abandc-wrapper
+	head="<p><gettext domain="newsevents">Debian's Backports Team released advisories for these packages: </gettext>"
+	item-pre=""
+	item-post="<gettext domain="newsevents">, </gettext>"
+	item-post-last="<gettext domain="newsevents"> and </gettext>"
+	foot="<gettext domain="newsevents">. </gettext><gettext domain="newsevents">Please read them carefully and take the proper measures.</gettext></p>"
+><abandc %body /></abandc-wrapper>
+<restore base />
+</define-tag>
+
+<define-tag dsa-list endtag=required>
+<preserve base />
+<set-var %attributes />
+<abandc-wrapper
+	head="<p><gettext domain="newsevents">Debian's Security Team recently released advisories for these packages (among others): </gettext>"
+	item-pre=""
+	item-post="<gettext domain="newsevents">, </gettext>"
+	item-post-last="<gettext domain="newsevents"> and </gettext>"
+	foot="<gettext domain="newsevents">. </gettext><gettext domain="newsevents">Please read them carefully and take the proper measures.</gettext></p>"
+><abandc %body /></abandc-wrapper>
+<restore base />
+</define-tag>
+
+<define-tag dsa-item endtag=required>
+<preserve href text post-element />
+<set-var %attributes />
+<a href="<get-var base /><get-var href />"><get-var text /></a><get-var post-element />
+<restore href text post-element />
+</define-tag>
+
+<define-tag bpo-item endtag=required>
+<dsa-item %attributes />
+</define-tag>
+
+<define-tag stable-announce-item endtag=required>
+<dsa-item %attributes />
+</define-tag>
+
+#############################
+# "nnwp": gettextized block + list
+<define-tag nnwp-intro whitespace=delete>
+<preserve num-newpkg url-newpkg />
+<set-var %attributes />
+<p><gettext domain="newsevents"><get-var num-newpkg /> packages were added to the unstable Debian archive recently.</gettext>
+<ifneq "<get-var url-newpkg />" ""
+<gettext domain="newsevents"> <a href="<get-var url-newpkg />">Among many others</a> are:</gettext>
+></p>
+<restore num-newpkg url-newpkg />
+</define-tag>
+
+<define-tag nnwp-list endtag=required>
+<preserve base />
+<set-var %attributes />
+<abandc-wrapper
+	head="<ul>"
+	item-pre="<li>"
+	item-post="</li>"
+	item-post-last="</li>"
+	foot="</ul>"
+><abandc %body /></abandc-wrapper>
+<restore base />
+</define-tag>
+
+<define-tag nnwp-item endtag=required>
+<set-var %attributes />
+<a href="<get-var base />%0">%0 &mdash; %body</a>
+</define-tag>
+
+#############################
+# "events": need to add a list of events inside to block of standard
+# (and gettextized) text
+<define-tag events-intro>
+<p><gettext domain="newsevents">There are several upcoming Debian-related events:</gettext></p>
+</define-tag>
+
+<define-tag events-ml-guide>
+<preserve events-section events-ml-eu events-ml-nl events-ml-ha events-ml-na />
+<set-var %attributes />
+<p><gettext domain="newsevents">You can find more information about Debian-related events and talks on the <a href="<get-var events-section />">events section</a> of the Debian web site, or subscribe to one of our events mailing lists for different regions: <a href="<get-var events-ml-eu />">Europe</a>, <a href="<get-var events-ml-nl />">Netherlands</a>, <a href="<get-var events-ml-ha />">Hispanic America</a>, <a href="<get-var events-ml-na />">North America</a>.</gettext></p>
+<restore events-section events-ml-eu events-ml-nl events-ml-ha events-ml-na />
+</define-tag>
+
+<define-tag events-info>
+<preserve events-talks events-team />
+<set-var %attributes />
+<p><gettext domain="newsevents">Do you want to organise a Debian booth or a Debian install party? Are you aware of other upcoming Debian-related events? Have you delivered a Debian talk that you want to link on our <a href="<get-var events-talks />">talks page</a>? Send an email to the <a href="<get-var events-team />">Debian Events Team</a>.</gettext></p>
+<restore events-talks events-team />
+</define-tag>
+
+#############################
+# "newcontributors": 3 vars (dd, dm, uploader) + if one of them ==0 just
+# skip it
+<define-tag newcontributors-dd>
+<ifeq %# 0 <return> >
+<preserve dd-num />
+<set-var dd-num=%#>
+<set-var dd-text="<gettext domain="newsevents"><get-var dd-num /> applicants have been <a href="<get-var dd-url />">accepted</a> as Debian Developers</gettext>">
+<set-var dd-name="%Aattributes">
+<restore dd-num />
+</define-tag>
+
+<define-tag newcontributors-dm>
+<ifeq %# 0 <return> >
+<preserve dm-num />
+<set-var dm-num=%#>
+<set-var dm-text="<gettext domain="newsevents"><get-var dm-num /> applicants have been <a href="<get-var dm-url />">accepted</a> as Debian Maintainers</gettext>">
+<set-var dm-name="%Aattributes">
+<restore dm-num />
+</define-tag>
+
+<define-tag newcontributors-uploader>
+<ifeq %# 0 <return> >
+<preserve uploader-num />
+<set-var uploader-num=%#>
+<set-var uploader-text="<gettext domain="newsevents"><get-var uploader-num /> people have <a href="<get-var uploader-url />">started to maintain packages</a></gettext>">
+<set-var uploader-name="%Aattributes">
+<restore uploader-num />
+</define-tag>
+
+<define-tag newcontributors-name-list whitespace=delete>
+<abandc-wrapper
+	head=""
+	item-pre="<get-var pre-name />"
+	item-post="<get-var post-name /><gettext domain="newsevents">, </gettext>"
+	item-post-last="<get-var post-name /><gettext domain="newsevents"> and </gettext>"
+	foot="<get-var post-name />"
+><abandc
+	<get-var dd-name />
+	<get-var dm-name />
+	<get-var uploader-name />
+/></abandc-wrapper>
+</define-tag>
+
+<define-tag newcontributors-text-list whitespace=delete>
+<abandc-wrapper
+	head=""
+	item-pre=""
+	item-post="<gettext domain="newsevents">, </gettext>"
+	item-post-last="<gettext domain="newsevents"> and </gettext>"
+	foot=""
+><abandc
+	<get-var dd-text />
+	<get-var dm-text />
+	<get-var uploader-text />
+/></abandc-wrapper>
+</define-tag>
+
+<define-tag newcontributors endtag=required>
+<preserve pre-name post-name />
+<preserve dd-url  dm-url  uploader-url />
+<preserve dd-text dm-text uploader-text />
+<preserve dd-name dm-name uploader-name />
+<preserve eval-newcontributors-text-list eval-newcontributors-name-list/>
+<set-var %attributes />
+%body
+<set-var eval-newcontributors-text-list="<newcontributors-text-list />" />
+<set-var eval-newcontributors-name-list="<newcontributors-name-list />" />
+<p><gettext domain="newsevents"><get-var eval-newcontributors-text-list /> since the previous issue of the Debian Project News. Please welcome <get-var eval-newcontributors-name-list /> into our project!</gettext></p>
+<restore eval-newcontributors-text-list eval-newcontributors-name-list/>
+<restore pre-name post-name />
+<restore dd-url  dm-url  uploader-url />
+<restore dd-text dm-text uploader-text />
+<restore dd-name dm-name uploader-name />
+</define-tag>
+
+#############################
+<define-tag other-devel-news-intro endtag=required>
+<preserve issue-devel-news url-devel-news />
+<set-var %attributes />
+<p><gettext domain="newsevents">The <get-var issue-devel-news /> issue of the <a href="<get-var url-devel-news />">miscellaneous news for developers</a> has been released and covers the following topics:</gettext></p>
+<restore issue-devel-news url-devel-news />
+</define-tag>
