@@ -4,7 +4,7 @@
 # random hint: for i in ../../english/Pics/*.png ../../english/Pics/debian.jpg ../../english/Pics/logo-50.jpg; do ln -s $i . ; done
 
 WMLBASE=../../../
-CUR_DIR=pictures
+CUR_DIR=women/profiles/pictures
 SUBS=
 
 include $(WMLBASE)/Make.lang
