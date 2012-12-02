@@ -394,16 +394,6 @@ foreach $lang (@search_in) {
     @processed_langs = ("zh-cn", "zh-tw") if $langs{$lang} eq "zh";
     foreach $l (@processed_langs) {
         print "$l.wml " if ($config{'verbose'});
-
-		$charset{$lang};
-		open (wmlrc,"$opt_w/$lang/.wmlrc") ;
-		while (<wmlrc>) {
-			if ( /^-D CHARSET=(.*)$/ ) { 
-				$charset{$lang} = $1;
-			}
-		}		
-		close wmlrc ;
-
         $t_body = $u_body = $ui_body = $un_body = $uu_body = $o_body = "";
         $translated{$lang} = $outdated{$lang} = $untranslated{$lang} = 0;
 
