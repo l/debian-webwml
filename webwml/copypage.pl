@@ -25,14 +25,6 @@ use Local::VCS qw(vcs_file_info);
 use File::Temp qw/tempfile/;
 use Getopt::Std;
 
-
-# Declare variables only used in references to avoid warnings
-use vars qw(@iso_8859_2_compat  @iso_8859_3_compat  @iso_8859_4_compat
-            @iso_8859_5_compat  @iso_8859_6_compat  @iso_8859_7_compat
-            @iso_8859_8_compat  @iso_8859_9_compat  @iso_8859_10_compat
-            @iso_8859_13_compat @iso_8859_14_compat @iso_8859_15_compat
-            @iso_8859_16_compat);
-
 # Get configuration
 # Read first two valid lines from language.conf
 if (open CONF, "<language.conf")
@@ -106,70 +98,13 @@ die "Language not defined in DWWW_LANG or language.conf\n"
 #warn "Maintainer name not defined in DWWW_MAINT or language.conf\n"
 #	if not defined $maintainer;
 
-
-# Table of entities used when copying to non-latin1 encodings
-@entities = (
-	'&nbsp;', '&iexcl;', '&cent;', '&pound;', '&curren;', '&yen;',
-	'&brvbar;', '&sect;', '&uml;', '&copy;', '&ordf;', '&laquo;', '&not;',
-	'&shy;', '&reg;', '&macr;', '&deg;', '&plusmn;', '&sup2;', '&sup3;',
-	'&acute;', '&micro;', '&para;', '&middot;', '&cedil;', '&sup1;',
-	'&ordm;', '&raquo;', '&frac14;', '&frac12;', '&frac34;', '&iquest;',
-	'&Agrave;', '&Aacute;', '&Acirc;', '&Atilde;', '&Auml;', '&Aring;',
-	'&AElig;', '&Ccedil;', '&Egrave;', '&Eacute;', '&Ecirc;', '&Euml;',
-	'&Igrave;', '&Iacute;', '&Icirc;', '&Iuml;', '&ETH;', '&Ntilde;',
-	'&Ograve;', '&Oacute;', '&Ocirc;', '&Otilde;', '&Ouml;', '&times;',
-	'&Oslash;', '&Ugrave;', '&Uacute;', '&Ucirc;', '&Uuml;', '&Yacute;',
-	'&THORN;', '&szlig;', '&agrave;', '&aacute;', '&acirc;', '&atilde;',
-	'&auml;', '&aring;', '&aelig;', '&ccedil;', '&egrave;', '&eacute;',
-	'&ecirc;', '&euml;', '&igrave;', '&iacute;', '&icirc;', '&iuml;',
-	'&eth;', '&ntilde;', '&ograve;', '&oacute;', '&ocirc;', '&otilde;',
-	'&ouml;', '&divide;', '&oslash;', '&ugrave;', '&uacute;', '&ucirc;',
-	'&uuml;', '&yacute;', '&thorn;', '&yuml;'
-);
-
-# Compatibility tables for the iso-8859 series; 1 indicates that the
-# codepoint is the same as in iso-8859-1. Used to perform partial remaps
-# for these.
-@iso_8859_2_compat = (1,0,0,0,1,0,0,1,1,0,0,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1,0,1,0,1,0,1,1,0,0,0,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,1,0,0,1,0,1,0,1,0,1,1,0,0,0,0,1,1,0,1,1,0,0,1,0,1,1,0,0);
-@iso_8859_3_compat = (1,0,0,1,1,0,0,1,1,0,0,0,0,1,0,0,1,0,1,1,1,1,0,1,1,0,0,0,0,1,0,0,1,1,1,0,1,0,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,1,1,0,1,1,1,1,0,0,1,1,1,1,0,1,0,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,1,1,0,1,1,1,1,0,0,0);
-@iso_8859_4_compat = (1,0,0,0,1,0,0,1,1,0,0,0,0,1,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,1,0,1,0,1,1,0,0,0,0,0,1,1,1,1,1,0,1,1,1,0,0,1,0,1,1,1,1,1,1,0,0,1,0,1,0,1,1,0,0,0,0,0,1,1,1,1,1,0,1,1,1,0,0,0);
-@iso_8859_5_compat = (1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-@iso_8859_6_compat = (1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-@iso_8859_7_compat = (1,0,0,1,0,0,1,1,1,1,0,1,1,1,0,0,1,1,1,1,0,0,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-@iso_8859_8_compat = (1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-@iso_8859_9_compat = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1);
-@iso_8859_10_compat =(1,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,1,0,1,0,1,1,1,1,0,0,1,1,1,1,0,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,0,0,1,0,1,0,1,1,1,1,0,0,1,1,1,1,0,1,0,1,1,1,1,1,0);
-@iso_8859_13_compat =(1,0,1,1,1,0,1,1,0,1,0,1,1,1,1,0,1,1,1,1,0,1,1,1,0,1,0,1,1,1,1,0,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,0,0,0,1,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,0,0,0,1,0,0,0);
-@iso_8859_14_compat =(1,0,0,1,0,0,0,1,0,1,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1);
-@iso_8859_15_compat =(1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
-@iso_8859_16_compat =(1,0,0,0,0,0,0,1,0,1,0,1,0,1,0,0,1,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,0,1,0,0,1,1,1,1,0,0,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,0,1,0,0,1,1,1,1,0,0,1);
-
-# Check destination character encoding
-my $recode = 0;
-if (open WMLRC, "$language/.wmlrc")
-{
-	while (<WMLRC>)
-	{
-		if (s/^-D CHARSET=//)
-		{
-			$recode = 1 unless /^utf-8$/i;
-			if ($recode && /^iso-8859-([0-9]+)$/)
-			{
-				my $compattablename = 'iso_8859_' . $1 . '_compat';
-				$compat = \@{$compattablename} if defined @{$compattablename};
-			}
-			last;
-		}
-	}
-}
-
 # Loop over command line
 foreach $page (@ARGV)
 {
 	# Check if valid source
 	if ($page =~ /wml$/ || $page =~ /src$/)
 	{
-		&copy($page, $recode, $compat);
+		&copy($page);
 	}
 	else
 	{
@@ -181,8 +116,6 @@ foreach $page (@ARGV)
 sub copy
 {
 	my $page = shift;
-	my $recodelatin1 = shift;
-	my $compattable = shift;
 	print "Processing $page...\n";
 
 	# Remove english/ from path
@@ -294,30 +227,6 @@ sub copy
 		}
 		else
 		{
-			# Transform the string into a string that is fit for the encoding
-			# of the output language. We do that by first converting any
-			# SGML entities in the input stream into 8-bit ISO 8859-1
-			# encoding, and then convert extended characters (back) into
-			# entities if necessary for the target encoding.
-
-			# Decode
-			s/(&[^#;]+;)/&decodeentity($1)/ge;
-			s/&#(1[6-9][0-9]|2[0-4][0-9]|25[0-5]);/chr($1)/ge;
-
-			# Encode
-			if (defined $compattable)
-			{
-				# Output encoding is in part compatible with ISO 8859-1, only
-				# convert incompatible characters into entities.
-				s/([\xA0-\xFF])/$$compattable[ord($1)-160]?$1:$entities[ord($1)-160]/ge;
-			}
-			elsif ($recodelatin1)
-			{
-				# Output encoding is incompatible with ISO 8859-1, convert all
-				# 8-bit characters into entities.
-				s/([\xA0-\xFF])/$entities[ord($1)-160]/ge;
-			}
-
 			print DST $_;
 		}
 	}
@@ -337,18 +246,6 @@ sub copy
 	print "Copied $page, remember to edit $dstfile\n";
 	print "and to remove $dsttitle when finished\n"
 		if defined $dsttitle;
-}
-
-# Return the ISO-8859-1 character that corresponds to the given entity
-sub decodeentity
-{
-	my $ent = shift;
-	# Start at one to avoid decoding &nbsp;
-	for (my $i = 1; $i < $#entities; ++ $i)
-	{
-		return chr($i + 160) if $entities[$i] eq $ent;
-	}
-	return $ent;
 }
 
 # Find for old translations in the CVS Attic 
