@@ -225,14 +225,14 @@ sub copy
 
 		mkpath([$dstdir],0,0755)
 			or die "Could not create $dstdir: $!\n";
-		if ( -e $srcmake )
-		{
-			print "creating it and making a $dstmake\n";
-			open MK, "> $dstmake"
-				or die "Could not create $dstmake: $!\n";
-			print MK "include \$(subst webwml/$language,webwml/english,\$(CURDIR))/Makefile\n";
-			close MK;
-		}
+	}
+	if ( -e $srcmake && ! -e $dstmake )
+	{
+		print "creating it and making a $dstmake\n";
+		open MK, ">", "$dstmake"
+			or die "Could not create $dstmake: $!\n";
+		print MK "include \$(subst webwml/$language,webwml/english,\$(CURDIR))/Makefile\n";
+		close MK;
 	}
 
 	# Check if title translation exists, if so - load it
