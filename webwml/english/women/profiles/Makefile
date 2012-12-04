@@ -9,8 +9,6 @@ PROFILES := $(filter-out index.wml, $(wildcard *.wml))
 
 include $(WMLBASE)/Make.lang
 
-index.$(LANGUAGE).html: index.wml
-
 index.$(LANGUAGE).html: index.wml $(PROFILES) \
 	$(TEMPLDIR)/template.wml $(TEMPLDIR)/users_list.wml \
 	$(GETTEXTDEP)
