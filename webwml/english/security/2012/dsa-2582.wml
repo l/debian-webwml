@@ -1,0 +1,103 @@
+<define-tag description>several vulnerabilities</define-tag>
+<define-tag moreinfo>
+<p>Multiple denial of service vulnerabilities have been discovered
+in the Xen Hypervisor. One of the issue
+(<a href="http://security-tracker.debian.org/tracker/CVE-2012-5513">CVE-2012-5513</a>)
+could even lead to privilege escalation from guest to host.</p>
+
+<p>Some of the recently published Xen Security Advisories (XSA 25 and 28)
+are not fixed by this update and should be fixed in a future release.</p>
+
+<ul>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-3131">CVE-2011-3131</a>
+	<a href="http://lists.xen.org/archives/html/xen-devel/2011-08/msg00450.html">(XSA 5)</a>:
+	DoS using I/OMMU faults from PCI-passthrough guest
+	<p>A VM that controls a PCI[E] device directly can cause it to issue DMA
+	requests to invalid addresses. Although these requests are denied by the
+	I/OMMU, the hypervisor needs to handle the interrupt and clear the error from
+	the I/OMMU, and this can be used to live-lock a CPU and potentially hang the
+	host.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-4535">CVE-2012-4535</a>
+	<a href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00001.html">(XSA 20)</a>:
+	Timer overflow DoS vulnerability
+	<p>A guest which sets a VCPU with an inappropriate deadline can cause an
+	infinite loop in Xen, blocking the affected physical CPU indefinitely.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-4537">CVE-2012-4537</a>
+	<a href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00005.html">(XSA 22)</a>:
+	Memory mapping failure DoS vulnerability
+	<p>When set_p2m_entry fails, Xen's internal data structures (the p2m and m2p
+	tables) can get out of sync. This failure can be triggered by unusual guest
+	behaviour exhausting the memory reserved for the p2m table. If it happens,
+	subsequent guest-invoked memory operations can cause Xen to fail an assertion
+	and crash.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-4538">CVE-2012-4538</a>
+	<a href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00004.html">(XSA 23)</a>:
+	Unhooking empty PAE entries DoS vulnerability
+	<p>The HVMOP_pagetable_dying hypercall does not correctly check the
+	caller's pagetable state, leading to a hypervisor crash.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-4539">CVE-2012-4539</a>
+	<a href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00002.html">(XSA 24)</a>:
+	Grant table hypercall infinite loop DoS vulnerability
+	<p>Due to inappropriate duplicate use of the same loop control variable,
+	passing bad arguments to GNTTABOP_get_status_frames can cause an
+	infinite loop in the compat hypercall handler.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-5510">CVE-2012-5510</a>
+	<a href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00000.html">(XSA 26)</a>:
+	Grant table version switch list corruption vulnerability
+	<p>Downgrading the grant table version of a guest involves freeing its status
+	pages. This freeing was incomplete - the page(s) are freed back to the
+	allocator, but not removed from the domain's tracking list. This would cause
+	list corruption, eventually leading to a hypervisor crash.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-5513">CVE-2012-5513</a>
+	<a href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00004.html">(XSA 29)</a>:
+	XENMEM_exchange may overwrite hypervisor memory
+	<p>The handler for XENMEM_exchange accesses guest memory without range checking
+	the guest provided addresses, thus allowing these accesses to include the
+	hypervisor reserved range.</p>
+	<p>A malicious guest administrator can cause Xen to crash. If the out of address
+	space bounds access does not lead to a crash, a carefully crafted privilege
+	escalation cannot be excluded, even though the guest doesn't itself control
+	the values written.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-5514">CVE-2012-5514</a>
+	<a href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00005.html">(XSA 30)</a>:
+	Broken error handling in guest_physmap_mark_populate_on_demand()
+	<p>guest_physmap_mark_populate_on_demand(), before carrying out its actual
+	operation, checks that the subject GFNs are not in use. If that check fails,
+	the code prints a message and bypasses the gfn_unlock() matching the
+	gfn_lock() carried out before entering the loop.
+	A malicious guest administrator can then use it to cause Xen to hang.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-5515">CVE-2012-5515</a>
+	<a href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00001.html">(XSA 31)</a>:
+	Several memory hypercall operations allow invalid extent order values
+	<p>Allowing arbitrary extent_order input values for XENMEM_decrease_reservation,
+	XENMEM_populate_physmap, and XENMEM_exchange can cause arbitrarily long time
+	being spent in loops without allowing vital other code to get a chance to
+	execute. This may also cause inconsistent state resulting at the completion
+	of these hypercalls.</p></li>
+
+</ul>
+
+<p>For the stable distribution (squeeze), these problems have been fixed in
+version 4.0.1-5.5.</p>
+
+<p>For the testing distribution (wheezy), these problems have been fixed in
+version 4.1.3-6.</p>
+
+<p>For the unstable distribution (sid), these problems have been fixed in
+version 4.1.3-6.</p>
+
+<p>We recommend that you upgrade your xen packages.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2012/dsa-2582.data"
+# $Id$
