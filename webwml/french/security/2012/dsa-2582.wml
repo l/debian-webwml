@@ -1,0 +1,150 @@
+#use wml::debian::translation-check translation="1.2" maintainer="David Prévot"
+<define-tag description>Plusieurs vulnérabilités</define-tag>
+<define-tag moreinfo>
+<p>
+Plusieurs vulnérabilités de déni de service
+ont été découvertes dans l'hyperviseur Xen.
+
+Un des problèmes (<a
+href="http://security-tracker.debian.org/tracker/CVE-2012-5513">CVE-2012-5513</a>)
+pourrait même permettre une augmentation de droits du client vers l'hôte.
+</p>
+
+<p>
+Certaines annonces de sécurité Xen récemment publiées (<a
+href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00006.html">XSA 25</a>
+et <a href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00003.html">\
+28</a>) ne sont pas corrigées par cette mise à jour et
+devraient être corrigées dans une prochaine version.
+</p>
+
+<ul>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-3131">CVE-2011-3131</a>
+(<a href="http://lists.xen.org/archives/html/xen-devel/2011-08/msg00450.html">XSA 5</a>) :
+déni de service en utilisant des défauts I/OMMU
+de tunnel PCI (« PCI passthrough ») du client
+<p>
+Une machine virtuelle contrôlant un périphérique PCI[E] directement
+peut le forcer à envoyer des requêtes DMA à des adresses incorrectes.
+
+Bien que ces requêtes soient refusées par l'I/OMMU, l'hyperviseur doit traiter
+l'interruption et effacer l'erreur de l'I/OMMU, et cela peut être utilisé
+pour verrouiller directement un processeur et éventuellement bloquer l'hôte.
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-4535">CVE-2012-4535</a> (<a
+href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00001.html">XSA 20</a>) :
+vulnérabilité de déni de service de dépassement de temporisation
+<p>
+Un hôte qui définit un processeur virtuel avec une limite
+inappropriée peut provoquer une boucle infinie dans Xen,
+en bloquant le processeur physique affecté indéfiniment.
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-4537">CVE-2012-4537</a> (<a
+href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00005.html">XSA 22</a>) :
+vulnérabilité de déni de service d'échec de projection en mémoire
+<p>
+Lorsque set_p2m_entry échoue, les structures de données internes
+de Xen (les tables p2m et m2p) peuvent se désynchroniser.
+
+Cet échec peut être déclenché par un comportement de client
+inhabituel épuisant la mémoire réservée pour la table p2m.
+
+Si cela arrive, les opérations suivantes sur la mémoire invoquée par
+le client peuvent forcer Xen à rater une assertion et à planter.
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-4538">CVE-2012-4538</a> (<a
+href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00004.html">XSA 23</a>) :
+vulnérabilité de déni de service de déblocage d'entrées PAE vides
+<p>
+L'hyperappel HVMOP_pagetable_dying ne vérifie pas
+correctement l'état du tableau de page de l'appelant,
+avec pour conséquence un plantage de l'hyperviseur.
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-4539">CVE-2012-4539</a> (<a
+href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00002.html">XSA 24</a>) :
+vulnérabilité de déni de service de boucle
+infinie d'hyperappel d'attribution de tableau
+<p>
+À cause d'une utilisation dupliquée inappropriée de la même
+variable de contrôle de boucle, passer de mauvais arguments
+à GNTTABOP_get_status_frames peut provoquer une boucle
+infinie dans le traitement d'hyperappel de compatibilité.
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-5510">CVE-2012-5510</a> (<a
+href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00000.html">XSA 26</a>) :
+vulnérabilité de corruption de liste de
+changement de version d'attribution de tableau
+<p>
+Diminuer la version d'attribution de tableau d'un client implique la
+libération de ces pages d'état. Cette libération était incomplète
+— la ou les pages sont libérées de nouveau vers l'allocateur,
+mais ne sont pas supprimées de la liste de suivi de domaine.
+
+Cela provoquerait une corruption de liste, avec pour
+conséquence éventuelle un plantage de l'hyperviseur.
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-5513">CVE-2012-5513</a> (<a
+href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00004.html">XSA 29</a>) :
+XENMEM_exchange pourrait écraser la mémoire de l'hyperviseur
+<p>
+Le traitement de XENMEM_exchange accède à la mémoire du client sans
+vérifier l'intervalle des adresses fournies par le client, permettant
+donc à ces accès d'inclure l'intervalle réservé de l'hyperviseur.
+</p>
+<p>
+Un administrateur de client malveillant peut forcer Xen à planter.
+
+Si les limites d'espace hors d'adresse ne conduisent pas à un plantage,
+une augmentation de droits soigneusement contrefaite n'est pas à
+exclure, même si le client ne contrôle pas lui-même les valeurs écrites.
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-5514">CVE-2012-5514</a> (<a
+href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00005.html">XSA 30</a>) :
+traitement d'erreur cassé dans guest_physmap_mark_populate_on_demand()
+<p>
+guest_physmap_mark_populate_on_demand(), avant de réaliser vraiment
+son opération, vérifie que les objets GFN ne sont pas utilisés.
+
+Si cette vérification échoue, le code affiche un
+message et contourne la correspondance de gfn_unlock()
+avec gfn_lock() réalisée avant d'entrer dans la boucle.
+
+Un administrateur de client malveillant peut
+alors utiliser cela pour forcer Xen à se bloquer.
+</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-5515">CVE-2012-5515</a> (<a
+href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00001.html">XSA 31</a>) :
+plusieurs opérations d'hyperappel mémoire permettent
+des valeurs incorrectes d'ordre d'extension
+<p>
+Permettre des valeurs d'entrée extent_order arbitraires pour
+XENMEM_decrease_reservation, XENMEM_populate_physmap et XENMEM_exchange
+peut forcer à passer du temps arbitrairement long dans des boucles
+sans donner une chance de s'exécuter à un autre code vital.
+
+Cela pourrait aussi provoquer un état incohérent à la fin de ces hyperappels.
+</p></li>
+
+</ul>
+
+<p>Pour la distribution stable (Squeeze), ces problèmes ont été corrigés dans la version 4.0.1-5.5.</p>
+
+<p>Pour la distribution testing (Wheezy), ces problèmes ont été corrigés dans la version 4.1.3-6.</p>
+
+<p>Pour la distribution unstable (Sid), ces problèmes ont été corrigés dans la version 4.1.3-6.</p>
+
+<p>Nous vous recommandons de mettre à jour vos paquets xen.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2012/dsa-2582.data"
+# $Id$
