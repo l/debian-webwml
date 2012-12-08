@@ -1,0 +1,111 @@
+#use wml::debian::translation-check translation="1.2"
+<define-tag description>複数の脆弱性</define-tag>
+<define-tag moreinfo>
+<p>Xen Hypervisor にサービス拒否の脆弱性が複数発見されました。そのうち 1 つ
+(<a href="http://security-tracker.debian.org/tracker/CVE-2012-5513">CVE-2012-5513</a>)
+はゲストからホストへと特権の昇格につながる可能性もあります。</p>
+
+<p>最近公開された Xen セキュリティ勧告の一部 (<a
+href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00006.html">XSA 25</a> と
+<a href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00003.html">28</a>)
+はこの更新では修正されていません。将来のリリースで修正されるはずです。</p>
+
+<ul>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-3131">CVE-2011-3131</a>
+	(<a href="http://lists.xen.org/archives/html/xen-devel/2011-08/msg00450.html">XSA 5</a>):
+	PCI パススルーのゲストからの I/OMMU の誤りを使ったサービス拒否
+	<p>PCI[E] デバイスを直接制御する VM がこれを引き起こし、不正なアドレスへの
+	DMA リクエストを発する可能性があります。この類のリクエストは
+	I/OMMU により拒否されますが、ハイパーバイザーは処理を中断して
+	I/OMMU からエラーをクリアする必要があります。これにより
+	CPU を能動的にロックすることが可能で、
+	潜在的にはホストをハングさせます。</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-4535">CVE-2012-4535</a>
+	(<a href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00001.html">XSA 20</a>):
+	タイマーのオーバーフローによるサービス拒否脆弱性
+	<p>VCPU に適切でない期限をセットしたゲストが Xen
+	で無限ループを引き起こす可能性があります。影響のある物理
+	CPU はいつまでもブロックされます。</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-4537">CVE-2012-4537</a>
+	(<a href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00005.html">XSA 22</a>):
+	メモリ割り当て不履行によるサービス拒否の脆弱性
+	<p>set_p2m_entry が失敗すると、Xen の内部データ構造 (p2m および
+	m2p テーブル) が同期しなくなります。この失敗はゲストの異常な挙動が p2m
+	テーブルのために予約したメモリを使い果たすことにより発生する可能性があります。
+	これが起きると、それに続いてゲストが発動したメモリ操作によって
+	Xen の表明違反およびクラッシュが発生します。</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-4538">CVE-2012-4538</a>
+	(<a href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00004.html">XSA 23</a>):
+	空の PAE エントリ切り離しでのサービス拒否脆弱性
+	<p>HVMOP_pagetable_dying
+	ハイパーコールが呼び出し元のページテーブルの状態を正常に確認しておらず、
+	ハイパーバイザーのクラッシュにつながります。</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-4539">CVE-2012-4539</a>
+	(<a href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00002.html">XSA 24</a>):
+	権限テーブルのハイパーコールに無限ループによるサービス拒否脆弱性
+	<p>同じループ制御変数の適切でない複製使用のため、不正な引数を
+	GNTTABOP_get_status_frames に渡すと、
+	互換ハイパーコールハンドラで無限ループを起こす可能性があります。</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-5510">CVE-2012-5510</a>
+	(<a href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00000.html">XSA 26</a>):
+	権限テーブルのバージョン切り替えリスト衝突の脆弱性
+	<p>ゲストの権限テーブルのバージョンをダウングレードすると、
+	その状態ページの開放が生じます。この開放が不完全です
+	- ページはアロケータまで遡って開放されますが、
+	ドメイン追跡リストからは削除されません。
+	これはリストの衝突を引き起こし、
+	最終的にはハイパーバイザーのクラッシュにつながります。</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-5513">CVE-2012-5513</a>
+	(<a href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00004.html">XSA 29</a>):
+	XENMEM_exchange がハイパーバイザーメモリを上書きする可能性
+	<p>XENMEM_exchange のハンドラゲストが、
+	提供したアドレスの範囲を確認せずにゲストメモリにアクセスします。
+	したがって、ハイパーバイザーが予約した範囲を含めたアクセスを許します。</p>
+	<p>悪意のあるゲスト管理者が Xen のクラッシュを引き起こすことが可能です。
+	アドレス空間の境界外へのアクセスがクラッシュにつながらなかった場合、
+	書かれた値をゲスト自体が制御していなくても、
+	巧妙に細工した特権昇格を除外することができません。</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-5514">CVE-2012-5514</a>
+	(<a href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00005.html">XSA 30</a>):
+	guest_physmap_mark_populate_on_demand() に壊れたエラー処理
+	<p>guest_physmap_mark_populate_on_demand()
+	は実際の操作を開始する前に対象の GFN が使用中でないか確認します。
+	この確認に失敗すると、コードはメッセージを表示して gfn_unlock()
+	照合を迂回し、gfn_lock() はループに入る前に操作を開始します。
+	悪意のあるゲスト管理者はこれを使って Xen
+	のハングを引き起こすことが可能です。</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-5515">CVE-2012-5515</a>
+	(<a href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00001.html">XSA 31</a>):
+	複数のメモリハイパーコール操作が不正な extent_order 値を許す
+	<p>XENMEM_decrease_reservation、XENMEM_populate_physmap、
+	XENMEM_exchange への任意の extent_order 入力値を許すことにより、
+	ループ内で任意の長い時間の消費を引き起こさせることが可能で、
+	他の重要なコードを実行する機会を与えなくなります。
+	こういったハイパーコールの完了時には、
+	状態に矛盾が生じる結果となる可能性もあります。</p></li>
+
+</ul>
+
+<p>安定版 (stable) ディストリビューション (squeeze)
+では、この問題はバージョン 4.0.1-5.5 で修正されています。</p>
+
+<p>テスト版 (testing) ディストリビューション (wheezy)
+では、この問題はバージョン 4.1.3-6 で修正されています。</p>
+
+<p>不安定版 (unstable) ディストリビューション (sid)
+では、この問題はバージョン 4.1.3-6 で修正されています。</p>
+
+<p>直ちに xen パッケージをアップグレードすることを勧めます。</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2012/dsa-2582.data"
