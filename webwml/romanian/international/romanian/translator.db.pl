@@ -61,6 +61,7 @@ sub init_translators {
                 unmaintained        => {
                         email       => 'andreimpopescu@gmail.com',
                         summary     => 2,
+                        diff        => 2,
                         mailsubject => 'Pagini web orfane',
                         mailbody    => 'romanian/international/romanian/mail_unmaintained.txt',
                 },
