@@ -3,6 +3,7 @@
 ##
 #
 # This script, taken from the OpenBSD CVS repository.
+# Modified to close Debian bugs fixed by the commits.
 #
 # Perl filter to handle the log messages from the checkin of files in
 # a directory.  This script will group the lists of files by log
@@ -275,6 +276,52 @@ EOF
     }
 }
 
+sub close_bugs {
+	local(@text) = @_;
+	my @bug_numbers;
+	my $log = join("\n", @text);
+	my $log_copy = $log;
+	while( $log_copy =~ s/(closes:\s*(?:bug)?\#\s*\d+(?:,\s*(?:bug)?\#\s*\d+)*)//is )
+	{
+		my $match = $1;
+		push @bug_numbers, $1 while $match =~ s/#(\d+)//;
+	}
+	return unless scalar @bug_numbers;
+
+	my @bugs;
+	my @done;
+	foreach $bug (@bug_numbers) {
+		push @bugs, "#$bug";
+		push @done, "$bug-done\@bugs.debian.org";
+	}
+	my $bugs = join(", ", @bugs);
+	my $done = join(", ", @done);
+
+	open MAIL, "| $MAILER -t";
+	print MAIL <<EOF ;
+From: Debian WWW CVS <webmaster\@debian.org>
+To: $done
+Subject: Debian WWW CVS commit by $login fixes $bugs
+Reply-To: debian-www\@lists.debian.org
+Mail-Followup-To: debian-www\@lists.debian.org
+Mail-Copies-To: never
+
+This bug was closed by $login in the webwml CVS repository:
+
+http://www.debian.org/devel/website/using_cvs
+
+Note that it might take some time until www.debian.org has been updated.
+
+Commit message:
+
+$log
+EOF
+	close MAIL;
+	if ($debug) {
+		print STDERR "close_bugs(): login = ", $login, "; bugs = ", $bugs, ".\n";
+	}
+}
+
 sub write_commitlog {
     local($logfile, @text) = @_;
 
@@ -379,6 +426,7 @@ if ($files[1] eq "- New directory") {
     }
 
     &mail_notification($mailto, $files[0], @text);
+    &close_bugs(@text);
 
     if ($commitlog) {
 	&write_commitlog($commitlog, @text);
@@ -444,6 +492,7 @@ if ($files[1] eq "- Imported sources") {
     }
 
     &mail_notification($mailto, "Import $file[0]", @text);
+    &close_bugs(@text);
 
     if ($commitlog) {
 	&write_commitlog($commitlog, @text);
@@ -570,6 +619,7 @@ if ($#status_txt >= 0) {
 # Mailout the notification.
 #
 &mail_notification($mailto, $subject_txt, @text);
+&close_bugs(@text);
 
 # cleanup
 #
