@@ -1,0 +1,113 @@
+#use wml::debian::translation-check translation="1.2" mindelta="1"
+<define-tag description>flere sårbarheder</define-tag>
+<define-tag moreinfo>
+<p>Flere lammelsesangrebssårbarheder (denial of service) blev opdaget i Xen 
+Hypervisor.  Et af problemerne 
+(<a href="http://security-tracker.debian.org/tracker/CVE-2012-5513">\
+CVE-2012-5513</a>) kunne endda medføre rettighedsforøgelse fra gæst til 
+vært.</p>
+
+<p>Nogle af de nyligt udgivne Xen Security Advisories
+(<a href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00006.html">\
+XSA 25</a> og 
+<a href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00003.html">\
+28</a>) er ikke rettet i forbindelse med denne opdatering, og forventes rettet i 
+en senere udgivelse.</p>
+
+<ul>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2011-3131">CVE-2011-3131</a>
+    (<a href="http://lists.xen.org/archives/html/xen-devel/2011-08/msg00450.html">XSA 5</a>):
+    Lammelsesangreb vha. I/OMMU-fejl fra PCI-gennemstillingsgæst
+    <p>En VM som kontrollerer en PCI[E]-enhed direkte, kunne få den til at 
+    sende DMA-forespørgsler til ugyldige adresser.  Selv om disse forespørgsler 
+    afvises af I/OMMU, skal hypervisor'en håndtere interrupt'et og stryge fejlen
+    fra I/OMMU, og det kunne benyttes at live-låse en CPU samt potentielt få 
+    værten til at hænge.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-4535">CVE-2012-4535</a>
+    (<a href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00001.html">XSA 20</a>):
+    Lammelsesangrebssårbarhed pga. timeroverløb
+    <p>En gæst, der opsætter en VCPU med en upassende deadline kunne forårsage 
+    en uendelig løkke i Xen, hvilket uden tidsbegrænsning blokerede den 
+    påvirkede fysiske CPU.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-4537">CVE-2012-4537</a>
+    (<a href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00005.html">XSA 22</a>):
+    Lammelsesangrebssårbarhed pga. hukommelsesmapningsfejl
+    <p>Når set_p2m_entry fejler, kan Xens interne datastrukturer (p2m- og 
+    m2p-tabellerne) komme ud af synkronisering.  Fejlen kunne udløses af 
+    usædvanlig gæsteopførsel ved udnyttelse af den reserverede hukommelse til 
+    p2m-tabellen.  Hvis det sker, kunne efterfølgende gæsteaktiverede 
+    hukommelseshandlinger medføre at Xen fejlene en assertion og gik 
+    ned.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-4538">CVE-2012-4538</a>
+    (<a href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00004.html">XSA 23</a>):
+    Lammelsesangrebssårbarhed pga. unhooking af tomme PAE-registreringer
+    <p>Hypercall'et HVMOP_pagetable_dying kontrollerede ikke på korrekt vis den 
+    kaldendes pagetable-tilstand, førende til et hypervisor-nedbrud.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-4539">CVE-2012-4539</a>
+    (<a href="http://lists.xen.org/archives/html/xen-announce/2012-11/msg00002.html">XSA 24</a>):
+    Lammelsesangrebssårbarhed pga. uendelig løkke i grant table-hypercall
+    <p>På grund af upassende gentaget brug af den samme variabel til kontrol af 
+    en løkke, blev der overført forkerte parametre til 
+    GNTTABOP_get_status_frames hvilket kunne forårsage en uendelig løkke i 
+    compat hypercall-handler'en.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-5510">CVE-2012-5510</a>
+    (<a href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00000.html">XSA 26</a>):
+    Korruptionssårbarhed i grant table-versionskiftsningsliste
+    <p>Nedgradering af en gæsts grant table-version involverer frigivelse af 
+    dens statussider.  Frigivelsen var ikke komplet - siden/siderne blev 
+    frigivet tilbage til allocator'en, men ikke fjernet fra domænets 
+    sporingsliste.  Det kunne medføre listekorruption, som med tiden førte til 
+    et hypervisor-nedbrud.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-5513">CVE-2012-5513</a>
+    (<a href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00004.html">XSA 29</a>):
+    XENMEM_exchange kunne overskrive hypervisor-hukommelse
+    <p>Handler'en af XENMEM_exchanges gav adgang til gæstehukommelse uden at 
+    grænsekontrollere gæstens leverede adresser, dermed kunne tilgangene medtage 
+    et interval reserveret til hypervisor'en.</p>
+    <p>En ondsindet gæsts administrator kunne få Xen til at gå ned.  Hvis 
+    tilgang til adresserum uden for grænserne ikke medførte et nedbrud, kunne en 
+    omhyggeligt fremstillet rettighedsforøgelse ikke udelukkes, selv om gæsten 
+    ikke selv kontrollerede de skrevne værdier.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-5514">CVE-2012-5514</a>
+    (<a href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00005.html">XSA 30</a>):
+    Defekt fejlhåndtering i guest_physmap_mark_populate_on_demand()
+    <p>Før udførelse af sin egentlige handling, kontrollerer
+    guest_physmap_mark_populate_on_demand() hvorvidt emnets GFN'er 
+    allerede er i brug eller ej.  Hvis kontrollen fejlede, ville koden udskrive 
+    en fejlmeddelelse og omgå gfn_unlock() svarende til gfn_lock() udført før 
+    løkken begyndte.  En ondsindet gæsts administrator kunne derefter benytte 
+    fejlen til at få Xen til at hænge.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2012-5515">CVE-2012-5515</a>
+    (<a href="http://lists.xen.org/archives/html/xen-announce/2012-12/msg00001.html">XSA 31</a>):
+    Flere hukommelses-hypercall-handlinger tillod ugyldige extent order-værdier
+    <p>Tilladelse af vilkårlige extent_order-inddataværder i 
+    XENMEM_decrease_reservation, XENMEM_populate_physmap og XENMEM_exchange 
+    kunne forårsage at der blev brugt vilkårlig lang tid i løkker, uden at give 
+    vital anden kode mulighed for at blive udført.  Det kunne også medføre en 
+    inkonsistent ved afslutningen af disse hypercalls.</p></li>
+
+</ul>
+
+<p>I den stabile distribution (squeeze), er disse problemer rettet i version 
+4.0.1-5.5.</p>
+
+<p>I distributionen testing (wheezy), er disse problemer rettet i version 
+4.1.3-6.</p>
+
+<p>I den ustabile distribution (sid), er disse problemer rettet i version 
+4.1.3-6.</p>
+
+<p>Vi anbefaler at du opgraderer dine xen-pakker.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2012/dsa-2582.data"
