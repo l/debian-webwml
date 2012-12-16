@@ -685,6 +685,7 @@ sub mirror_sponsors {
 <tr><td colspan="3"><hr></td></tr>
 END
   foreach my $country (sort keys %countries) {
+    next unless $countries_sponsors{$country};
     foreach my $id (sort @{ $countries_sponsors{$country} }) {
       # sites which have Includes don't have to have Sponsor, the included ones
       # have it; and those are looped over separately anyway, so no need to repeat
@@ -930,6 +931,7 @@ EOF
     }
     print "\n";
     foreach my $id (@{ $countries_sorted{$country} }) {
+      next unless keys %{$mirror[$id]{'method'}};
       print "Site: ";
       print "<tt>" if $wml;
       print $mirror[$id]{site};
@@ -1694,20 +1696,8 @@ foreach my $id (0..$#mirror) {
 foreach my $id (0..$#mirror) {
   if (exists $mirror[$id]{country}) {
     push @{ $countries{ $mirror[$id]{country} } }, $id;
-    if (exists $mirror[$id]{sponsor}) {
+    if (exists $mirror[$id]{sponsor} && keys %{$mirror[$id]{method}}) {
       push @{ $countries_sponsors{ $mirror[$id]{country} } }, $id;
-# optionally do this...
-#      if ((defined $mirror[$id]{method}{'archive-ftp'} ||
-#           defined $mirror[$id]{method}{'archive-http'} ||
-#           defined $mirror[$id]{method}{'nonus-ftp'} ||
-#           defined $mirror[$id]{method}{'nonus-http'} ||
-#           defined $mirror[$id]{method}{'cdimage-ftp'} ||
-#           defined $mirror[$id]{method}{'cdimage-http'} ||
-#           defined $mirror[$id]{method}{'volatile-ftp'} ||
-#           defined $mirror[$id]{method}{'volatile-http'} ||
-#  ...
-# but this would be fairly tedious and hardcoded, for no apparent reason
-# because we use this in mirror_sponsors() which doesn't really care
     }
   } elsif ($mirror[$id]{type} =~/GeoDNS/i) {
     # TODO these are not currently displayed anywhere
