@@ -1,0 +1,115 @@
+#!/usr/bin/python
+
+import mechanize
+import datetime
+import locale
+import sys
+import os
+import re
+
+debug = False
+dump = False
+
+config_dir = os.path.expanduser('~/.lwn-settings')
+config_file = os.path.expanduser('~/.lwn-settings/config.py')
+if not os.path.isdir(config_dir) and not os.path.exists(config_file):
+	print("Please configure your LWN settings in ~/.lwn-settings/config.py")
+	print("username = 'someone'")
+	print("password = 'somepass'")
+	print("debug = True")
+	print("dump = True")
+	sys.exit(1)
+
+sys.path.append(config_dir)
+from config import *
+
+b = mechanize.Browser()
+b.set_handle_refresh(False)
+b.set_handle_robots(False)
+
+if debug:
+	b.set_debug_redirects(True)
+	b.set_debug_responses(True)
+	b.set_debug_http(True)
+
+	if dump:
+		import logging
+		logger = logging.getLogger("mechanize")
+		logger.addHandler(logging.StreamHandler(sys.stdout))
+		logger.setLevel(logging.INFO)
+
+def login(b):
+	b.open('http://lwn.net/Calendar/new/')
+
+	for form in b.forms():
+		if form.method == 'POST':
+			b.form = form
+
+	b['Username'] = username
+	b['Password'] = password
+
+	r = b.submit()
+
+def load_event(event_fn):
+	f = open(event_fn)
+	event_text = f.readlines()
+	f.close()
+	
+	tag_pattern = r'<define-tag ([^>]+)>(.*)<\/define-tag>'
+	
+	event = {}
+	
+	for line in event_text:
+		try:
+			(tag, value) = re.search(tag_pattern, line).groups()
+		except AttributeError:
+			continue
+		event[tag] = value
+	
+	desc = event.get('pagetitle')
+	shortname = event.get('abbr')
+	start = event.get('startdate')
+	end = event.get('enddate')
+	url = event.get('infolink')
+	where = event.get('where')
+	
+	place, city, country = where.split(', ')
+	year, month, day = map(int, end.split('-'))
+	end = datetime.date(year, month, day)
+	year, month, day = map(int, start.split('-'))
+	start = datetime.date(year, month, day)
+	month = start.strftime('%B')
+	days = (end-start).days+1
+	
+	return (desc, shortname, year, month, day, days, url, city, country)
+
+def post_event(b, desc, shortname, year, month, day, days, url, city, country):
+	b.open('http://lwn.net/Calendar/new/')
+
+	for form in b.forms():
+		if form.method == 'POST':
+			b.form = form
+
+	b['desc'] = desc
+	b['shortname'] = shortname
+	b['bdate_dw_year'] = year
+	b['bdate_dw_month'] = month
+	b['bdate_dw_day'] = day
+	b['days'] = days
+	b['url'] = url
+	b['city'] = city
+	b['country'] = country
+
+	r = b.submit()
+
+def logout(b):
+	b.follow_link(url_regex=r'logout', nr=1)
+
+def main():
+	login(b)
+	for event_fn in sys.argv[1:]:
+		event = load_event(event_fn)
+		post_event(b, *event)
+	logout(b)
+
+sys.exit(main())
