@@ -2,7 +2,7 @@
 # please contact debian-www.
 
 WMLBASE=../..
-CUR_DIR=events/2012
+CUR_DIR=events/2013
 SUBS=
 
 GETTEXTFILES += newsevents.mo
