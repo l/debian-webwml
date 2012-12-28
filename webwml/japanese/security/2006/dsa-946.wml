@@ -1,0 +1,43 @@
+#use wml::debian::translation-check translation="1.3"
+<define-tag description>入力のサニタイジング欠落</define-tag>
+<define-tag moreinfo>
+<p>sudo パッケージの脆弱性に対する以前の修正はうまく動作していましたが、
+環境によっては制限を厳しくしすぎたため、変更を再び見直して、
+権限のある実行環境で環境変数をいくらか許可するようにしました。
+それに伴い更新しています。</p>
+
+<p>設定オプション「env_reset」は現在デフォルトで有効化されています。
+環境変数は HOME、LOGNAME、PATH、SHELL、TERM、DISPLAY、XAUTHORITY、XAUTHORIZATION、
+LANG、LANGUAGE、LC_*、USER に加え、分離した SUDO_* 変数を維持します。</p>
+
+<p>参考までに前の勧告を再掲します。</p>
+
+<blockquote>
+<p>制限されたスーパーユーザ権限を特定のユーザに提供する権限のあるプログラム sudo
+が昇格した権限で動作するプログラムに複数の環境変数を渡していることが発見されました。
+(例えば Perl や Python、Ruby その他のスクリプティング言語の) パスが含まれる場合、
+攻撃者が細工したバージョンのシステムライブラリに向けることにより、
+権限のあるユーザで任意のコードの実行を引き起こす可能性があります。</p>
+
+<p>この更新では sudo の以前の挙動を変更し、サポートする環境変数を
+LC_*、LANG、LANGUAGE、TERM に制限します。それ以外の変数は
+/etc/sudoers で env_check をセットされている場合にのみ通されます。
+スクリプトによっては、今後の動作にこの設定が必要となるかもしれません。</p>
+</blockquote>
+
+<p>旧安定版 (old stable) ディストリビューション (woody)
+では、この問題はバージョン 1.6.6-1.6 で修正されています。</p>
+
+<p>安定版 (stable) ディストリビューション (sarge)
+では、この問題はバージョン 1.6.8p7-1.4 で修正されています。</p>
+
+<p>不安定版 (unstable) ディストリビューション
+(sid) では、同様の挙動は近く実装予定です。</p>
+
+<p>直ちに sudo パッケージをアップグレードすることを勧めます。
+不安定版 (unstable) ディストリビューション (sid)
+では、手作業により「Defaults = env_reset」を /etc/sudoers に追加する必要があります。</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2006/dsa-946.data"
