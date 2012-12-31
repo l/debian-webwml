@@ -1,7 +1,8 @@
 #use wml::debian::template title="Debian BTS &ndash; Abfrage-Server" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.25"
+#use wml::debian::translation-check translation="1.29"
 # $Id$
 # Translator: Gerfried Fuchs <alfie@debian.org>  2001-09-14
+# Updated: Holger Wansing <linux@wansing-online.de>, 2012.
 
 <h1><a name="introduction">Einführung zum Fehlerdatenbankabfrage-Server</a></h1>
 
@@ -35,7 +36,7 @@ Hilfetext über den Server schicken.</p>
 <dt><code>send-detail</code> <var>Fehlernummer</var></dt>
 <dd>
 
-Fordert eine Kopie des entsprechenden Fehlerberichtes an.
+Fordert eine Kopie des entsprechenden Fehlerberichts an.
 <code>send-detail</code> sendet ebenfalls all die <q>langweiligen</q> Nachrichten
 als Kopie, wie zum Beispiel die diversen automatischen Bestätigungen.</dd>
 
@@ -120,6 +121,124 @@ Liste der Beschreibungen respektive Paketbetreuer für Pseudo-Pakete.</dd>
 <dd>
 Fordert die Referenzkarte des E-Mail-Servers in reiner Textform an.</dd>
 
+<dt><a name="user"><code>user</code> <var>adresse</var></a></dt>
+<dd>
+Setzt <var>adresse</var> als Benutzer (<q>user</q>) aller
+<code>usertag</code>-Befehle, die folgen.
+</dd>
+
+<dt><a name="usertag"><code>usertag</code> <var>Fehlernummer</var>
+    [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tag</var>
+    [ <var>tag</var> ... ]</a></dt>
+<dd>
+Erlaubt es, Tags (Markierungen) für jeweils einen bestimmten Benutzer zu
+definieren. Der <code>usertag</code>-Befehl funktioniert wie der reguläre
+<code>tag</code>-Befehl, nur dass Sie alle Tags erstellen können, die
+Sie möchten. Standardmäßig wird die Adresse im <code>From:</code>- oder
+<code>Reply-To:</code>-Header Ihrer E-Mail als Benutzer (user) des
+<code>Usertags</code> verwendet.
+</dd>
+
+<dt><a name="usercategory"><code>usercategory</code>
+     <var>Kategorie-Name</var> [ <code>[hidden]</code> ]</a></dt>
+<dd>
+<p>
+Hinzufügen, aktualisieren oder entfernen einer Benutzer-spezifischen
+Kategorie (<code>usercategory</code>). Standardmäßig ist eine solche Kategorie
+sichtbar; wenn das optionale Argument <code>[hidden]</code> angegeben wird,
+wird sie nicht sichtbar sein, aber dennoch können andere Benutzer-spezifischen
+Kategoriedefinitionen sich darauf beziehen.
+</p>
+
+<p>
+Dieser Befehl ist ein wenig speziell, da ein Nachrichtentext direkt
+auf den Befehl folgen muss, um eine Kategorie hinzuzufügen oder zu
+aktualisieren. Falls der Nachrichtentext leer ist, wird die Kategorie
+stattdessen entfernt. Der Nachrichtentext ist aus Zeilen zusammengesetzt,
+die mit jeglicher Anzahl von Leerzeichen beginnen. Jede Kategorie sollte
+mit einer Zeile mit einem <code>*</code> beginnen, optional gefolgt von
+mehreren Auswahlzeilen, die mit <code>+</code> beginnen. Das vollständige
+Format ist wie folgt:
+</p>
+
+<div>
+* <var>kategorie-name-1</var><br />
+* <var>Kategorie-Titel 2</var>
+  [ <code>[</code><var>Auswahl-Prefix</var><code>]</code> ]<br />
+&nbsp;+ <var>Auswahl-Titel 1</var> <code>[</code>
+        [ <var>Reihenfolge</var><code>:</code> ]
+        <var>auswahl-1</var> <code>]</code><br />
+&nbsp;+ <var>Auswahl-Titel 2</var> <code>[</code>
+        [ <var>Reihenfolge</var><code>:</code> ]
+        <var>auswahl-2</var> <code>]</code><br />
+&nbsp;+ <var>Standard-Auswahl-Titel</var> <code>[</code>
+        [ <var>Reihenfolge</var>: ] <code>]</code><br />
+* <var>kategorie-name-3</var><br />
+</div>
+
+<p>
+Die <var>kategorie-namen</var>, die in dem Befehl und im Nachrichtentext
+erscheinen, werden verwendet, um Beziehungen zwischen diesen festzulegen
+und so unnötiges Verschachteln zu vermeiden. Die
+<var>Kategorie-Titel</var> werden in der Paket-Bericht-Zusammenfassung
+benutzt.
+</p>
+
+<p>
+Die optionale Angabe <var>Auswahl-Prefix</var> ist eine Vorbelegung für jede
+<var>auswahl</var> in jedem Eintrag des Kategorie-Abschnitts. Die erste
+<var>auswahl</var>, die zutrifft, bekommt den Fehler bei sich angezeigt.
+Der optionale <var>Reihenfolge</var>-Parameter bestimmt die Position bei der
+Anzeige der ausgewählten Einträge; dies ist nützlich, wenn ein Treffer
+verwendet wird, der eine Obermenge der vorherigen Auswahl beinhaltet, der
+aber vor dieser angezeigt werden soll.
+</p>
+
+<p>
+Der <var>kategorie-name</var> <code>normal</code> hat eine spezielle Bedeutung:
+es ist die Standard-Ansicht, so dass über dessen Ersetzen mit einer anderen
+Benutzer-spezifischen Kategorie für den Benutzer
+<var>pkgname</var>@packages.debian.org die Standard-Klassifizierung für ein
+Paket verändert werden kann.
+</p>
+
+<p>
+Anwendungsbeispiele:
+</p>
+
+<pre>
+    usercategory dpkg-program [hidden]
+     * Program
+       + dpkg-deb [tag=dpkg-deb]
+       + dpkg-query [tag=dpkg-query]
+       + dselect [package=dselect]
+
+    usercategory new-status [hidden]
+     * Status [pending=]
+       + Outstanding with Patch Available [0:pending+tag=patch]
+       + Outstanding and Confirmed [1:pending+tag=confirmed]
+       + Outstanding and More Information Needed [pending+tag=moreinfo]
+       + Outstanding and Forwarded [pending+tag=forwarded]
+       + Outstanding but Will Not Fix [pending+tag=wontfix]
+       + Outstanding and Unclassified [2:pending]
+       + From other Branch [absent]
+       + Pending Upload [pending-fixed]
+       + Fixed in NMU [fixed]
+       + Resolved [done]
+       + Unknown Pending Status []
+
+    \# Ändern der Standard-Ansicht
+    usercategory normal
+      * new-status
+      * severity
+
+    usercategory old-normal
+      * status
+      * severity
+      * classification
+</pre>
+</dd>
+
 <dt><code>help</code></dt>
 <dd>
 Fordert dieses Hilfedokument auf Englisch per E-Mail in reiner Textform
@@ -153,7 +272,7 @@ stehen.</dd>
 <dt><code>debug</code> <var>Level</var></dt>
 <dd>
 
-Setzt den Debugging-Level auf <var>Level</var>, was eine nichtnegative Zahl
+Setzt den Debugging-Level auf <var>Level</var>, was eine nicht-negative Zahl
 sein sollte. 0 steht für kein Debugging; 1 ist üblicherweise ausreichend.
 Die Debugging-Ausgabe taucht im Transkript auf. Es ist unwahrscheinlich,
 dass sie hilfreich für die üblichen Benutzer der Fehlerdatenbank ist.</dd>
