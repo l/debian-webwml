@@ -1,7 +1,7 @@
 # Top-level Makefile for the Debian Web pages
 
 LANGUAGES := english arabic armenian bulgarian catalan chinese croatian czech \
-             danish dutch esperanto finnish french german greek hebrew \
+             danish dutch esperanto finnish french galician german greek hebrew \
              hungarian indonesian italian japanese korean lithuanian \
              norwegian persian polish portuguese romanian russian slovak slovene \
              spanish swedish tamil turkish ukrainian vietnamese
