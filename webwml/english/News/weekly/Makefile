@@ -33,9 +33,9 @@ endif
 
 # When building the html files we have to change into the right directory
 # so wml gets all the relative links right.
-%.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
-	                   $(TEMPLDIR)/weeklynews/header.wml $(GETTEXTDEP) \
-			   $(TEMPLDIR)/weeklynews/boilerplates.wml
+%.$(LANGUAGE).html : %.wml $(TEMPLDIR)/projectnews/footer.wml \
+	                   $(TEMPLDIR)/projectnews/header.wml $(GETTEXTDEP) \
+			   $(TEMPLDIR)/projectnews/boilerplates.wml
 
 ifeq "$(LANGUAGE)" "pl"
 	cd $(@D) && $(subst ../../znaczki.sh,$(CURDIR)/../../znaczki.sh,$(WML)) $(notdir $(<))
