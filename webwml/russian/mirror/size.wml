@@ -1,0 +1,64 @@
+#use wml::debian::template title="Размер зеркала"
+#use wml::debian::translation-check translation="1.42" maintainer="Lev Lamberov"
+
+<h2>Каков размер архива Debian?</h2>
+
+# (note for the English editors on how to update some of the numbers below)
+# dak psql database on ftp-master is 'projectb'
+# and there's a copy on merkel
+# projectb=> select architecture.arch_string as Architecture,
+#            sum(files.size)/1024/1024/1024 as Size
+#            from files,binaries,architecture
+#            where architecture.id=binaries.architecture
+#            and files.id=binaries.file
+#            group by architecture.arch_string
+#            order by Size;
+# projectb=> select sum(size)/1024/1024/1024 from files where
+#            filename ~ '.diff.gz$' or filename ~ '.dsc$'
+#            or filename ~ '.orig.tar.gz$';
+# projectb=> select sum(files.size)/1024/1024/1024
+#            from files, binaries, architecture
+#            where architecture.id=binaries.architecture
+#            and files.id=binaries.file
+#            and architecture.arch_string='i386';
+
+# wc -c'ing files inside the debian/ directory might occasionally give
+# slightly different results than the SQL queries, but the difference
+# is usually negligible -joy
+
+<p>Числа на этой странице обновляются ежедневно.</p>
+
+<table>
+<tr><th>Архитектура</th>  <th>Размер в ГБ</th></tr>
+#include "$(ENGLISHDIR)/mirror/size.data"
+</table>
+
+<p>Заметьте, архив постоянно растёт; размер тестируемого выпуска растёт по мере приближения
+выпуска. Также мы не рекомендуем уменьшать размер зеркала
+путём исключения каких-либо определённых выпусков; лучше исключить некоторые архитектуры
+в соответствии с их <a href="http://popcon.debian.org/">популярностью</a>.</p>
+
+<h3>Каков размер архива Debian CD?</h3>
+
+<p>Архив CD очень сильно разнится в зависимости от зеркала, на котором он размещён &mdash; файлы Jigdo
+имеют размер около 100-150 МБ на архитектуру, в то время как полные DVD/CD образы
+имеют размер около 15 ГБ каждый, также требуется дополнительное место для CD-образов с <q>обновлениями</q>,
+файлов Bittorrent и т. д.</p>
+
+<p>Дополнительную информацию о зеркалировании архива CD смотрите
+на <a href="../CD/mirroring/">страницах зеркал Debian CD</a>.</p>
+
+<h3>Каков размер архива Debian Security?</h3>
+
+<p>Архив debian-security имеет размер около 44 ГБ.</p>
+
+<h3>Каков размер архива Debian Backports?</h3>
+
+<p>Архив debian-backports имеет размер около 55 ГБ.</p>
+
+<h2>Каков размер регулярных обновлений зеркал?</h2>
+
+<p>Информацию об обновлениях основного архива Debian смотрите
+на <a href="http://ftp-master.debian.org/size-quarter.png">ежедневно
+обновляемом графике</a>.</p>
+
