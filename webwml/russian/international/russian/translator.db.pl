@@ -37,6 +37,16 @@ sub init_translators {
 			file		=> 0,
 			compress	=> 'none'
 		},
+		'Lev Lamberov' => {
+			email		=> 'l.lamberov@gmail.com',
+			missing		=> 0,
+			summary		=> 3,
+                        logs		=> 0,
+                        diff		=> 0,
+                        tdiff		=> 0,
+                        file		=> 0,
+			compress	=> 'none'
+		},
 	default   => {
 			email       => '',
 			missing     => 0,
