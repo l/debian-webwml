@@ -269,17 +269,47 @@
 <p><gettext domain="newsevents">There are several upcoming Debian-related events:</gettext></p>
 </define-tag>
 
-<define-tag events-ml-guide>
+<define-tag events-ml-guide-paragraph>
 <preserve events-section events-ml-eu events-ml-nl events-ml-ha events-ml-na />
 <set-var %attributes />
 <p><gettext domain="newsevents">You can find more information about Debian-related events and talks on the <a href="<get-var events-section />">events section</a> of the Debian web site, or subscribe to one of our events mailing lists for different regions: <a href="<get-var events-ml-eu />">Europe</a>, <a href="<get-var events-ml-nl />">Netherlands</a>, <a href="<get-var events-ml-ha />">Hispanic America</a>, <a href="<get-var events-ml-na />">North America</a>.</gettext></p>
 <restore events-section events-ml-eu events-ml-nl events-ml-ha events-ml-na />
 </define-tag>
 
-<define-tag events-info>
+<define-tag events-ml-guide>
+<preserve events-section events-ml-eu events-ml-nl events-ml-ha events-ml-na />
+<set-var %attributes />
+<ifeq <get-var events-section /> "" <set-var events-section="$(HOME)/events" /> />
+<ifeq <get-var events-ml-eu /> "" <set-var events-ml-eu="http://lists.debian.org/debian-events-eu" /> />
+<ifeq <get-var events-ml-nl /> "" <set-var events-ml-nl="http://lists.debian.org/debian-events-nl" /> />
+<ifeq <get-var events-ml-ha /> "" <set-var events-ml-ha="http://lists.debian.org/debian-events-ha" /> />
+<ifeq <get-var events-ml-na /> "" <set-var events-ml-na="http://lists.debian.org/debian-events-na" /> />
+<events-ml-guide-paragraph
+        events-section="<get-var events-section />"
+        events-ml-eu="<get-var events-ml-eu />"
+        events-ml-nl="<get-var events-ml-nl />"
+        events-ml-ha="<get-var events-ml-ha />"
+        events-ml-na="<get-var events-ml-na />"
+/>
+<restore events-section events-ml-eu events-ml-nl events-ml-ha events-ml-na />
+</define-tag>
+
+<define-tag events-info-paragraph>
 <preserve events-talks events-team />
 <set-var %attributes />
 <p><gettext domain="newsevents">Do you want to organise a Debian booth or a Debian install party? Are you aware of other upcoming Debian-related events? Have you delivered a Debian talk that you want to link on our <a href="<get-var events-talks />">talks page</a>? Send an email to the <a href="<get-var events-team />">Debian Events Team</a>.</gettext></p>
+<restore events-talks events-team />
+</define-tag>
+
+<define-tag events-info>
+<preserve events-talks events-team />
+<set-var %attributes />
+<ifeq <get-var events-talks /> "" <set-var events-talks="$(HOME)/events/talks" /> />
+<ifeq <get-var events-team /> "" <set-var events-team="mailto:events@debian.org" /> />
+<events-info-paragraph
+        events-talks="<get-var events-talks />"
+        events-team="<get-var events-team />"
+/>
 <restore events-talks events-team />
 </define-tag>
 
@@ -288,29 +318,23 @@
 # skip it
 <define-tag newcontributors-dd>
 <ifeq %# 0 <return> >
-<preserve dd-num />
-<set-var dd-num=%#>
+<ifeq <get-var dd-num /> "" <set-var dd-num=%#> />
 <set-var dd-text="<gettext domain="newsevents"><get-var dd-num /> applicants have been <a href="<get-var dd-url />">accepted</a> as Debian Developers</gettext>">
 <set-var dd-name="%Aattributes">
-<restore dd-num />
 </define-tag>
 
 <define-tag newcontributors-dm>
 <ifeq %# 0 <return> >
-<preserve dm-num />
-<set-var dm-num=%#>
+<ifeq <get-var dm-num /> "" <set-var dm-num=%#> />
 <set-var dm-text="<gettext domain="newsevents"><get-var dm-num /> applicants have been <a href="<get-var dm-url />">accepted</a> as Debian Maintainers</gettext>">
 <set-var dm-name="%Aattributes">
-<restore dm-num />
 </define-tag>
 
 <define-tag newcontributors-uploader>
 <ifeq %# 0 <return> >
-<preserve uploader-num />
-<set-var uploader-num=%#>
+<ifeq <get-var uploader-num /> "" <set-var uploader-num=%#> />
 <set-var uploader-text="<gettext domain="newsevents"><get-var uploader-num /> people have <a href="<get-var uploader-url />">started to maintain packages</a></gettext>">
 <set-var uploader-name="%Aattributes">
-<restore uploader-num />
 </define-tag>
 
 <define-tag newcontributors-name-list whitespace=delete>
@@ -346,8 +370,11 @@
 <preserve dd-url  dm-url  uploader-url />
 <preserve dd-text dm-text uploader-text />
 <preserve dd-name dm-name uploader-name />
+<preserve dd-num dm-num uploader-num />
 <preserve eval-newcontributors-text-list eval-newcontributors-name-list/>
 <set-var %attributes />
+<ifeq <get-var dd-url /> "" <set-var dd-url="https://nm.debian.org/public/nmlist#done" /> />
+<ifeq <get-var uploader-url /> "" <set-var uploader-url="http://udd.debian.org/cgi-bin/new-maintainers.cgi" /> />
 %body
 <set-var eval-newcontributors-text-list="<newcontributors-text-list />" />
 <set-var eval-newcontributors-name-list="<newcontributors-name-list />" />
@@ -357,6 +384,7 @@
 <restore dd-url  dm-url  uploader-url />
 <restore dd-text dm-text uploader-text />
 <restore dd-name dm-name uploader-name />
+<restore dd-num dm-num uploader-num />
 </define-tag>
 
 #############################
