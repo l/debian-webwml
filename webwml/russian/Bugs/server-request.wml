@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - сервер запросов" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.25"
+#use wml::debian::translation-check translation="1.29" maintainer="Lev Lamberov"
 
 <h1><a name="introduction">Введение в работу сервера запросов системы отслеживания ошибок</a></h1>
 
@@ -111,6 +111,118 @@
 <dd>
 Запрашивает краткое описание работы почтовых серверов в простом ASCII-тексте.
 </dd>
+
+<dt><a name="user"><code>user</code> <var>адрес</var></a></dt>
+<dd>
+Устанавливает <var>адрес</var> в качестве <q>пользователя</q> всех следующих за ней
+команд <code>usertag</code>.
+</dd>
+
+<dt><a name="usertag"><code>usertag</code> <var>номер_ошибки</var>
+    [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>метка</var>
+    [ <var>метка</var> ... ]</a></dt>
+<dd>
+Позволяет определить метки для каждого пользователя. Команда <code>usertag</code>
+работает также как и обычная команда <code>tag</code> за исключением того, что
+вы можете создавать любые метки. По-умолчанию, в качестве пользователя команды
+<code>usertag</code> используется адрес
+в заголовке <code>From:</code> или <code>Reply-To:</code> вашего сообщения.
+</dd>
+
+<dt><a name="usercategory"><code>usercategory</code>
+     <var>имя-категории</var> [ <code>[hidden]</code> ]</a></dt>
+<dd>
+<p>
+Добавляет, обновляет или удаляет <code>usercategory</code>. По умолчанию, пользовательская
+категория видна; если указан добавочный аргумент <code>[hidden]</code>,
+она не будет видна, но всё ещё будет доступна для
+указания из других определений пользовательских категорий.
+</p>
+
+<p>
+Эта команда в некотором смысле особа, поскольку при добавлении или обновлении 
+пользовательской категории она требует, чтобы сразу за командой передавалось
+тело команды. Если
+тело пусто, пользовательская категория будет удалена. Тело составляется
+из строк с любым количеством пробелов. Всякая категория
+должна начинаться со строки с <code>*</code>, дополнительно за ней могут
+следовать несколько строк выбора, начинающихся с <code>+</code>. Её полный
+формат таков:
+</p>
+<div>
+* <var>имя-категории-1</var><br />
+* <var>Заголовок Категории 2</var>
+  [ <code>[</code><var>префикс-выбора</var><code>]</code> ]<br />
+&nbsp;+ <var>Заголовок Выбора 1</var> <code>[</code>
+        [ <var>порядок</var><code>:</code> ]
+        <var>выбор-1</var> <code>]</code><br />
+&nbsp;+ <var>Заголовок Выбора 2</var> <code>[</code>
+        [ <var>порядок</var><code>:</code> ]
+        <var>выбор-2</var> <code>]</code><br />
+&nbsp;+ <var>Заголовок Выбора По-умолчанию</var> <code>[</code>
+        [ <var>порядок</var>: ] <code>]</code><br />
+* <var>имя-категории-3</var><br />
+</div>
+
+<p>
+<var>Имена-категорий</var>, встречающиеся в команде и в теле
+используются для того, чтобы создавать между ними ссылки и избежать ненужного усложнения строк.
+<var>Заголовки категорий</var> используются в резюме отчёта о пакете.
+</p>
+
+<p>
+Дополнительный <var>префикс-выбора</var> предписывается каждому
+<var>выбору</var> всякого элемента в разделе категории. Первый
+<var>выбор</var>, который подходит, получает ошибку, показанную под ним.
+Дополнительный параметр <var>порядок</var> определяет позицию при показе
+выбранных элементов, это полезно, когда используется шаблон, который выбирает
+надмножество предыдущих элементов, но который следует показать перед ними.
+</p>
+<p>
+<var>Имя-категории</var> <code>normal</code> имеет специальное значение&nbsp;&mdash;
+вид по умолчанию, поэтому, заменяя его отличной пользовательской категорией
+для <var>имя-пакета</var>@packages.debian.org, пользователь может изменять
+классификацию пакета по умолчанию.
+</p>
+
+<p>
+Пример использования:
+</p>
+
+<pre>
+    usercategory dpkg-program [hidden]
+     * Program
+       + dpkg-deb [tag=dpkg-deb]
+       + dpkg-query [tag=dpkg-query]
+       + dselect [package=dselect]
+
+    usercategory new-status [hidden]
+     * Status [pending=]
+       + Outstanding with Patch Available [0:pending+tag=patch]
+       + Outstanding and Confirmed [1:pending+tag=confirmed]
+       + Outstanding and More Information Needed [pending+tag=moreinfo]
+       + Outstanding and Forwarded [pending+tag=forwarded]
+       + Outstanding but Will Not Fix [pending+tag=wontfix]
+       + Outstanding and Unclassified [2:pending]
+       + From other Branch [absent]
+       + Pending Upload [pending-fixed]
+       + Fixed in NMU [fixed]
+       + Resolved [done]
+       + Unknown Pending Status []
+
+    \# Изменение вида по умолчанию
+    usercategory normal
+      * new-status
+      * severity
+
+    usercategory old-normal
+      * status
+      * severity
+      * classification
+</pre>
+</dd>
+
+
 <dt><code>help</code></dt>
 <dd>
 Запрашивает настоящую справку в простом ASCII-тексте.
