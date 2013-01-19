@@ -40,7 +40,7 @@ sub init_translators {
 		'Lev Lamberov' => {
 			email		=> 'l.lamberov@gmail.com',
 			missing		=> 0,
-			summary		=> 3,
+			summary		=> 2,
                         logs		=> 0,
                         diff		=> 0,
                         tdiff		=> 0,
