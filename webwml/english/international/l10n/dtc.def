@@ -128,37 +128,37 @@
 <:
 use lib '$(ENGLISHDIR)/../Perl';
 use Locale::gettext;
+use SDBM_File;
 
 sub language_name {
         my $lang=shift;
         my $country=undef;
 
-	# make the build fail if isoquery is not available
-	`isoquery -h > /dev/null`;
+	my (%languages,%countries);
+	dbmopen(%languages,'../languages',0444) or die($!);
 
 	$lang  =~ s/@.*$//;
         if ($lang =~ m,^(..)_(..)$,) {
                 $lang=$1;
                 $country=$2;
         }
-	my $lang_fullname = `isoquery -i 639-3 $lang 2>/dev/null`;
-	chomp $lang_fullname;
+	my $lang_fullname = $languages{$lang};
 	if ($lang_fullname ne '') {
-		$lang_fullname =~ s/^.*\t//;
 		$lang_fullname = dgettext("iso_639_3", "$lang_fullname");
 		# #624476 workaround: French typography expect languages to start with a lowercase
 		$lang_fullname = lcfirst $lang_fullname if ($(CUR_LANG) eq 'French');
         } else {
                 return qq(<Unknown_Language>);
         }
+	dbmclose(%languages) or die($!);
 	if (defined $country) {
-		my $country_fullname = `isoquery -c $country 2>/dev/null`;
-		chomp $country_fullname;
+		dbmopen(%countries,'../countries',0444) or die($!);
+		my $country_fullname = $countries{$country};
 		if ($country_fullname ne '') {
-			$country_fullname =~ s/^.*\t//;
 			$country_fullname = dgettext("iso_3166", "$country_fullname");
 			return "<langcountryoutput $lang_fullname $country_fullname>";
 		}
+		dbmclose(%countries) or die($!);
         }
         return $lang_fullname;
 }

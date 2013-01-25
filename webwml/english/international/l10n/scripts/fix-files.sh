@@ -18,27 +18,31 @@ do
         country=${langname#*_}
         langname=${langname%_*}
     fi
-    if [ $lang = 'en' ]
-    then
-	    arg=''
-    else
-	    arg="-l $lang"
-    fi
-	langname=`isoquery -i 639-3 $arg --name $langname | sed 's/^.*\t//'`
-        # #624476 workaround: French typography expect languages to start with a lowercase
-	if [ $lang = 'fr' ]
-        then
-            langname=`perl -e "print lcfirst '$langname'"`
-        fi
-	if [ "$country" != '' ]
-       	then
-            country=`isoquery -c $arg -n $country | sed 's/^.*\t//'`
-	    if [ "$country" != '' ]
-	    then
-	        langname="$langname \&ndash; $country"
-            fi
-        fi
-
+    langname=`perl -e '
+my $langname = "'$langname'";
+my $lang = "'$lang'";
+my $country = "'$country'";
+use Locale::gettext;
+use SDBM_File;
+my (%languages,%countries);
+dbmopen(%languages,"../languages",0444) or die($!);
+$langname = $languages{$langname};
+    if ($langname ne "") {
+	    $langname = dgettext("iso_639_3", $langname);
+	    # #624476 workaround: French typography expect languages to start with a lowercase
+	    $langname = lcfirst $langname if ($lang eq "fr");
+    }
+    dbmclose(%languages) or die($!);
+    if ($country ne "") {
+	    dbmopen(%countries,"../countries",0444) or die($!);
+	    my $country = $countries{$country};
+	    if ($country ne "") {
+		    $langname .= " &ndash; ".$country;
+	    }
+	    dbmclose(%countries) or die($!);
+    }
+    print $langname;
+'`
     for dist in main contrib non-free
     do
         echo 'DELETE-ME' > $dir/${dist}-$code.todo-nostatus
