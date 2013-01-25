@@ -41,6 +41,7 @@ $(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc $(ENGLISHDIR)/$(CUR_DIR)/gen/rank.inc $(L1
 clean::
 	-rm -rf gen
 	-rm -f tmpl.$(LANGUAGE).tmpl
+	-rm -f $(L10N_DIR)/*.dir $(L10N_DIR)/*.pag
 
 install:: $(patsubst %,$(HTMLDIR)/%,$(HTML_PO4A))
 

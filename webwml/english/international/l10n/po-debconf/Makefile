@@ -55,6 +55,7 @@ clean::
 	-rm -rf gen
 	-rm -f tmpl90.$(LANGUAGE).tmpl
 	-rm -f tmpl.$(LANGUAGE).tmpl
+	-rm -f $(L10N_DIR)/*.dir $(L10N_DIR)/*.pag
 
 install:: $(patsubst %,$(HTMLDIR)/%,$(HTML_PODEBCONF))
 
