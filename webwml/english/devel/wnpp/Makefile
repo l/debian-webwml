@@ -23,8 +23,6 @@ DATADIR = $(ENGLISHSRCDIR)/$(CUR_DIR)
 $(DATADIR)/wnpp.data: WMLOUTFILE=$(DATADIR)/wnpp.data
 $(DATADIR)/wnpp.data:
 	$(WML) -W7,-Squotes $(DATADIR)/wnpp.pl
-	mv $(DATADIR)/wnpp.data $(DATADIR)/wnpp-utf8.data
-	cat $(DATADIR)/wnpp-utf8.data | uni2ascii -a D > $(DATADIR)/wnpp.data
 
 ifeq "$(LANGUAGE)" "en"
 .PHONY: $(DATADIR)/wnpp.data
