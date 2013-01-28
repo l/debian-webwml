@@ -24,13 +24,6 @@ ZHTEMPLATE = $(WMLBASE)/template/debian-zh/template.tmpl
 
 COMMON_SCRIPTS = $(TOCN) $(TOTW) $(TOHK) $(FORMAT_ZH) $(GENERATE_ZH_VARIANTS)
 
-# how to include openlogo-nd-50.png here? it's in logos, not in Pics/ ...
-COMMONPICS = debian.png \
-	blue-upperleft.png blue-upperright.png \
-	blue-lowerleft.png blue-lowerright.png
-
-COMMONPICS_ZH = $(addprefix $(WMLBASE)/Pics/,$(COMMONPICS))
-
 # ZHMAGIC is obsolete!  Don't use it any more.
 # Old magic that coped with the co-existence of international/chinese -> zh
 ZHMAGIC = @if `echo $(HTMLDIR) | grep -q '^$(WMLBASE)/$(RELHTMLBASE)/international/chinese'`; then \
@@ -96,15 +89,13 @@ $(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
 ifndef NOGENERICDEP
 %.zh-cn.html %.zh-hk.html %.zh-tw.html: %.wml \
 		$(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
-		$(COMMON_SCRIPTS) $(ZHTEMPLATE) $(GETTEXTDEP) \
-		$(COMMONPICS_ZH)
+		$(COMMON_SCRIPTS) $(ZHTEMPLATE) $(GETTEXTDEP)
 	@echo -n "Processing $(<F): "
 	@$(WML) $(<F)
 	@$(GENERATE_ZH_VARIANTS) $* html
 else
 %.zh-cn.html %.zh-hk.html %.zh-tw.html: %.wml \
-		$(COMMON_SCRIPTS) $(ZHTEMPLATE) $(GETTEXTDEP) \
-		$(COMMONPICS_ZH)
+		$(COMMON_SCRIPTS) $(ZHTEMPLATE) $(GETTEXTDEP)
 	@echo -n "Processing $(<F): "
 	@cd $(@D) && $(WML) $(notdir $(<))
 	@$(GENERATE_ZH_VARIANTS) $* html
@@ -116,7 +107,3 @@ $(ZHTEMPLATE): $(TEMPLDIR)/template.wml \
 		$(WMLBASE)/template/debian-zh/macros.tmpl \
 		$(WMLBASE)/template/debian-zh/navbar.tmpl
 	touch $@
-
-$(COMMONPICS_ZH):
-	cd $(WMLBASE)/Pics \
-		&& cp -sf $(addprefix ../../english/Pics/,$(COMMONPICS)) .
