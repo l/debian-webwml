@@ -1,5 +1,5 @@
 #use wml::debian::template title="Настройка push-сервера"
-#use wml::debian::translation-check translation="1.20"
+#use wml::debian::translation-check translation="1.21" maintainer="Lev Lamberov"
 #use wml::debian::toc
 
 <p>Настройка push-сервера состоит из двух основных задач: настройка rsync
@@ -87,53 +87,24 @@ ssh-keygen -f ~/.ssh/identity.mysite
 </p>
 
 <pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADDRESS" &amp;"
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADDRESS"
 </pre>
 
 <p>Вам нужно настроить сценарий, который будет связываться с нижележащими зеркалами.
-Создайте файл с именем <code>signal</code>, содержащий следующее:
+ftpsync tarball содержит сценарий <code>runmirrors</code>, который выполняет все
+необходимые вам задачи. Просто измените ваш ftpsync.conf так, чтобы он содержал
+<code>HUB=true</code>, скопируйте <code>runmirrors.conf.sample</code> в
+<code>runmirrors.conf</code>, <code>runmirrors.mirror.sample</code> в
+<code>runmirrors.mirror</code> и измените файл настроек так, чтобы он подходил вашей системе.
+Затем добавьте все ваши нижележащие зеркала в файл runmirrors.mirror, а дуэт ftpsync/runmirror
+сделает за вас всю тяжёлую работу.
 </p>
 
-<protect>
-<pre>
-#!/bin/sh
-
-# This script is called to signal the remote host that it is time to
-# mirror the archive.
-
-echo Signalling $1
-ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
-</pre>
-</protect>
-
-<p>Этот сценарий будет соединяться с удалённым хостом, используя специальный ключ ssh,
-который вы создали выше, предлагая его добавить в ~/.ssh/authorized_keys 
-каждому оператору нижележащих зеркал (заменяет <q>ftpsync</q> на любую другую команду 
-для начала зеркалирования).
-Сам по себе сценарий удалённо не делает ничего &mdash; будет запущена 
-единственная команда, зависящая от настроек ключа.</p>
-
-<p>Фактически, чтобы связать зеркала, вам нужно выполнить <code>./signal
-&lt;сайт&gt; &lt;имя_пользователя&gt;</code> после завершения синхронизации 
-с помощью rsync. Соответственно, как только будет закончено зеркалирование
-с вышележащим сайтом, вы стартуете проталкивание нижележащим от вас сайтам.
+<p>Это приведёт к тому, что ваша система попытается подключиться по ssh к вашим нижележащим зеркалам
+после того, как ваше зеркало будет обновлено, так они смогут начать своё обновление. Это предполагает,
+что вы передадите операторам ваших нижележащих зеркал ssh-ключ, который вы указали при настройке runmirrors,
+и что они добавят его к свой собственный файл ~/.ssh/authorized_keys, как это было описано выше.
 </p>
-
-<p>Также можно разместить эти команды в конце вашего <code>ftpsync.conf</code>
-или создать новый сценарий и запускать его из <code>anonftpsync</code>.
-<br />Например:
-</p>
-
-<protect>
-<pre>
-#!/bin/sh
-
-# This script is called by websync to signal the downstream mirrors.
-
-./signal some.other.site archvsync
-./signal and.another.site othersiteaccount
-</pre>
-</protect>
 
 <p>Если у вас появились с этим какие-то проблемы, <a href="mailto:mirrors@debian.org">
 свяжитесь с нами</a>.
