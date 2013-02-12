@@ -29,8 +29,6 @@ dbmopen(%languages,"../languages",0444) or die($!);
 $langname = $languages{$langname};
     if ($langname ne "") {
 	    $langname = dgettext("iso_639_3", $langname);
-	    # #624476 workaround: French typography expect languages to start with a lowercase
-	    $langname = lcfirst $langname if ($lang eq "fr");
     }
     dbmclose(%languages) or die($!);
     if ($country ne "") {
