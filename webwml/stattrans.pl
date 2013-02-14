@@ -283,9 +283,10 @@ foreach $lang (@search_in) {
       print "$0: can't find $opt_w/$lang/po! Skipping ...\n";
       next;
     }
-    my @status = qx,LC_ALL=C make -C $opt_w/$lang/po stats 2>&1 1>/dev/null,;
+    my @status = qx,LC_ALL=C make -C $opt_w/$lang/po stats 2>&1,;
     foreach $line (@status) {
         chomp $line;
+        next if($line =~ /make: (Enter|Leav)ing directory/);
         ($domain = $line) =~ s/\..*//;
         $po_translated{$domain}{$lang} = ($line =~ /(\d+) translated/ ? $1 : "0");
         $po_fuzzy{$domain}{$lang} = ($line =~ /(\d+) fuzzy/ ? $1 : "0");
