@@ -87,7 +87,7 @@ SOURCEFILES = \
   $(organization_FILES)         \
   $(ports_FILES)                \
   $(security_FILES)             \
-  $(stats_FILES)		\
+  $(stats_FILES)                \
   $(vendors_FILES)              \
   $(vote_FILES)                 \
   $(wnpp_FILES)                 \
@@ -222,8 +222,6 @@ clean::
 	rm -f *.mo
 
 
-# TODO: there a bug here: if the translation .po files doesn't exist (i.e.
-# nothing translated), the stats are incorrect. 
 stats: $(POTFILES)
 # Suppress errors from msgmerge as they corrupt translation stats on
 # the Debian website
@@ -233,7 +231,7 @@ stats: $(POTFILES)
 			msgmerge -q $$d.$(LANGUAGE).po $(ENGLISHDIR)/po/$$d.pot 2>/dev/null | \
 			msgfmt -o /dev/null --statistics -; \
 		else \
-			echo -n $$(egrep '^msgid ' $(ENGLISHDIR)/po/$$d.pot | wc -l); \
+			echo -n $$(expr $$(egrep '^msgid ' $(ENGLISHDIR)/po/$$d.pot | wc -l) - 1); \
 			echo ' untranslated messages.'; \
 		fi; \
 	done
