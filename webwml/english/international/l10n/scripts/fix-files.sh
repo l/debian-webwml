@@ -24,6 +24,7 @@ my $lang = "'$lang'";
 my $country = "'$country'";
 use Locale::gettext;
 use SDBM_File;
+$ENV{LANGUAGE}=$lang;
 my (%languages,%countries);
 dbmopen(%languages,"../../../../english/international/l10n/languages",0444) or die($!);
 $langname = $languages{$langname};
