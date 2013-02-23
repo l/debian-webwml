@@ -1,13 +1,13 @@
 #use wml::debian::template title="Errata corrige dell'Installatore Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.178" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.186" maintainer="Luca Monducci"
 
 
-<h1 id="squeeze-beta4">Errata per il rilascio Wheezy beta 4</h1>
+<h1 id="squeeze-beta4">Errata per il rilascio Wheezy Release Candidate 1</h1>
 
 
 <p>
-Questo è l'elenco dei problemi conosciuti presenti nella versione Wheezy beta 4
+Questo è l'elenco dei problemi conosciuti presenti nella versione Wheezy Release Candidate 1
 dell'Installatore Debian. Chi riscontra un problema non ancora presente
 in questa pagina è invitato a inviare un <a href="$(HOME)/releases/stable/i386/ch05s04.html#submit-bug">resoconto
 dell'installazione</a> in cui viene descritto il problema.
@@ -15,14 +15,51 @@ dell'installazione</a> in cui viene descritto il problema.
 
 <dl class="gloss">
 
-	<dt>Problemi di rete dopo l'installazione di un desktop con connessione wireless</dt>
- 	<dd>
-	Il componente network-manager potrebbe non funzionare una volta
-	completata l'installazione di un desktop se l'installazione avviene
-	usando una connessione wireless
-	(<a href="http://bugs.debian.org/682608">#682608</a>). Un modo
-	per aggirare questo problema è commentare le righe relative	a wlan0
-	nel file /etc/network/interfaces.
+	<dt>L'installazione del bootloader GRUB può fallire se sono presenti più dischi.</dt>
+	<dd>Se durante l'installazione sono presenti più dischi (per esempio
+	un disco fisso e una chiavetta USB, questo è il caso quando si usa una
+	chiavetta USB per avviare l'installatore), <code>grub-install</code>
+	potrebbe avere dei problemi: infatti è stato segnalato più volte che
+	il bootloader GRUB era installato sulla chiavetta USB anziché sul
+	disco fisso su cui era stato appena installato il sistema operativo.
+	<br />
+	Per evitare che questo problema si verifichi, rispondere <q>No</q> quando
+	durante il processo d'installazione viene chiesto: <q>Installare il boot
+	loader GRUB nel master boot record?</q>; sarà possibile specificare il
+	device corretto al passaggio successivo: <q>Device per l'installazione
+	del boot loader</q>.
+	<br />
+	Se l'installazione finisce nonostante la configurazione sbagliata di GRUB,
+	è possibile correggerla usando l'installatore in modalità di ripristino:
+	eseguire il chroot nel filesystem di root, se necessario montare la
+	partizione boot aggiuntiva, ed eseguire <code>grub-install</code>
+	specificando come parametro il device corretto.
+	<br />
+	Si spera che questo problema verrà risolto nella prossima Release Candidate.
+	</dd>
+
+	<dt>Le installazioni desktop su i386 non funzionano con il solo CD#1.</dt>
+	<dd>A causa dei limiti di spazio sul primo CD, non è possibile inserire
+	tutti i pacchetti necessari al desktop GNOME nel CD#1. Per completare
+	l'installazione è necessario usare altre fonti di pacchetti (per esempio
+	un altro CD oppure un mirror in rete) oppure un DVD.
+	<br />
+	Si spera che questo problema verrà risolto nella prossima Release Candidate.
+	</dd>
+
+	<dt>Potenziali problemi con l'avvio UEFI su amd64.</dt>
+	<dd>Sono stati segnalati di problemi nell'avviare il Debian Installer
+	in modalità UEFI su sistemi amd64. Su alcuni sistemi l'avvio usando
+	<code>grub-efi</code> non è affidabile e su altri ci sono dei problemi
+	sulla grafica quando viene mostrato lo splash screen iniziale.
+	<br />
+	Chiunque riscontra uno di questi problemi è invitato segnalarlo allegando
+	quanti più dettagli possibile sui sintomi e sull'hardware in modo da
+	aiutare la correzione di questi bug. Per ora è possibile aggirare il
+	problema disattivando UEFI ed effettuando l'installazione con <q>Legacy
+	BIOS</q> o <q>Fallback mode</q>.
+	<br />
+	Si spera che questo problema verrà risolto nella prossima Release Candidate.
 	</dd>
 
 <!-- leaving this in for possible future use...
