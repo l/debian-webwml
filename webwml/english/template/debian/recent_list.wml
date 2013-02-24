@@ -250,7 +250,8 @@ sub grab_titles {
 	 }
 
 	my ($title, $date, $rdate, $rvdate, $hdate, $desc, $status,
-	    $where, $moreinfo, $startdate, $enddate, $repfile, $just);
+	    $where, $moreinfo, $startdate, $enddate, $repfile, $just,
+	    $release, $codename, $revision);
 	my (@hdate, @rdate, @isodate) = ();
 	<protect pass=2>
 	if ($content =~ /^<define-tag pagetitle>\s*(.*?)\s*<\/define-tag>/ms) {
@@ -280,6 +281,12 @@ sub grab_titles {
 	    $repfile = $1; }        # Report (events)
 	if ($content =~ /<report\s+href="([^"]*)\s*"\/?>/ms) { #"
             $repfile = $1; }        # Report (events)
+	if ($content =~ /^<define-tag release>(.*?)<\/define-tag>/ms) {
+	    $release = qq/$1/; }	# News
+	if ($content =~ /^<define-tag codename>(.*?)<\/define-tag>/ms) {
+	    $codename = qq/$1/; }	# News
+	if ($content =~ /^<define-tag revision>(.*?)<\/define-tag>/ms) {
+	    $revision = qq/$1/; }	# News
 	</protect>
 	$hdate = $date || $startdate;
 	#warn "file=$file hdate=$hdate date=$date rdate=$rdate\n";
@@ -450,6 +457,9 @@ sub grab_titles {
                 $moreinfo =~ s#<email "?([^>"]+)"?>#<a href="mailto:$1">$1</a>#g;
                 $moreinfo =~ s#<url "([^>]+)">#<a href="$1">$1</a>#g;
                 $moreinfo =~ s#\$\(HOME\)#http://www.debian.org#g;
+                $moreinfo =~ s#<release>#$release#g;
+                $moreinfo =~ s#<codename>#$codename#g;
+                $moreinfo =~ s#<revision>#$revision#g;
                 # HTML tags
                 $moreinfo =~ s/</&lt;/g;
                 $moreinfo =~ s/>/&gt;/g;
