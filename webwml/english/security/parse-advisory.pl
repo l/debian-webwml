@@ -11,6 +11,7 @@
 # Licensed under the GNU General Public License version 2.
 
 use WWW::Mechanize;
+use File::Path qw(remove_tree make_path);
 
 my $debug = 0;
 my $adv = $ARGV[0];
@@ -98,6 +99,7 @@ foreach $l (<ADV>) {
       }
   }
   last if ($l =~ /Further information about Debian Security Advisories.*$/i);
+  last if ($l =~ /Thanks to.+for proof read/i);
   $mi = 0 if ($l =~ /^(wget url|Obtaining updates|Upgrade Instructions)/i);
   $moreinfo .= "<p>" if ($mi && $nl);
   $nl = 0;
@@ -126,6 +128,7 @@ close ADV;
 $moreinfo =~ s/(- )?-+\n//g;
 $moreinfo =~ s/\n\n$/\n/s;
 $moreinfo =~ s/\n<p>\n$//;
+$moreinfo =~ s|\n+(<p>(CAN\|CVE)-\d+-\d+[\:]*)\s?(\s*)(\S+)|\n\n$1\n$3$4|g;
 $moreinfo =~ s/\n\n/<\/p>\n\n/sg;
 $moreinfo =~ s|\n<p>((CAN\|CVE)-\d+-\d+[^\n]*)</p>\n|\n<li>$1\n|g;
 $moreinfo =~ s|\n<p>((CAN\|CVE)-\d+-\d+[^\n]*)\n|\n<li>$1\n<p>\n|g;
@@ -134,8 +137,33 @@ $moreinfo =~ s|<p>(\s+)|$1<p>|g;
 $moreinfo =~ s|<p><p>|<p>|g;
 $moreinfo =~ s|</p>\n\n<li>|</p></li>\n\n<li>|g;
 $moreinfo =~ s|</li>\n\n<li>|\n\n<ul>\n\n<li>|;
+$moreinfo =~ s|(\s+)(http://[^\s<>{}\\^\[\]\"\'\`]+)|$1<a href="$2">$2</a>|g;
 #$moreinfo =~ s|</p>\n\n<p>(\w* \w* stable)|</p></li>\n\n</ul>\n\n<p>$1|; 
-if ($moreinfo =~ /<ul>\n\n<li>/) { $moreinfo =~ s|</p>\n\n<p>(\w+ \w+ \w* ?(old ?stable\|stable\|testing))|</p></li>\n\n</ul>\n\n<p>$1|; }
+
+# matrix creation start
+#  in matrix lines, each item cannot have space charecter sequence in it
+#     space charecter sequence (>=2) is treated as a delimiter
+# $matrix_h is used as header and $matrix_f is used as footer
+my $matrix_h = qq|<div class="centerdiv">\n  <table cellspacing="0" cellpadding="2">\n|;
+my $matrix_f = "  </table>\n</div>\n";
+$moreinfo =~ s{(<p>The following matrix[\s\S]+?</p>\n+)\s+<p>([\s\S]+?)</p>}{$1<matrix>\n&nbsp;  $2\n</matrix>}g;
+$moreinfo =~ m|<matrix>\n([\s\S]+?)</matrix>|;
+my $matrix = $1;
+$matrix =~ s/\n\s+/\n/g;
+my @matrixl = split(/\n/,$matrix);
+for my $i(0 .. $#matrixl){
+  $matrixl[$i] = "    <tr>\n      <td>" .
+		 join("</td>\n      <td>", split(/\s{2,}/,$matrixl[$i])) .
+		 "</td>\n    </tr>\n";
+# 1st line, use <th>
+  $matrixl[$i] =~ s/td>/th>/g if($i<1);
+}
+$matrix = join("", @matrixl);
+$moreinfo =~ s|<matrix>\n([\s\S]+?)</matrix>|$matrix_h$matrix$matrix_f|;
+# matrix end
+
+if ($moreinfo =~ /<ul>\n\n<li>/) {
+   $moreinfo =~ s{</p>\n\n<p>((\w+ \w+ \w* ?(old ?stable|stable|testing))|Th[eo]se)}{</p></li>\n\n</ul>\n\n<p>$1}; }
 chomp ($moreinfo);
 
 $files =~ s/(- )?-+\n//g;
@@ -176,29 +204,93 @@ if (defined($package) && $dsa =~ /DSA[- ](\d+)-(\d+)/ ) {
 }
 $data = $wml = "-" if ($debug);
 
-die "directory $curyear does not exist!\n" if (!(-d $curyear));
-die "$wml already exists!\n" if (-f $wml);
-die "$data already exists!\n" if (-f $data);
+if (!(-d $curyear)){
+  print "directory $curyear does not exist!  Creating $curyear\n";
+  make_path($curyear,{ verbose => 0, mode => 0755 }) or print "Could not create $curyear: $!\n";
+}
 
-$files =~ s,^</dl>\n\n,,;
-open DATA, ">$data";
-print DATA "<define-tag pagetitle>$pagetitle</define-tag>\n";
-print DATA "<define-tag report_date>$date</define-tag>\n";
-print DATA "<define-tag secrefs>@dbids</define-tag>\n" if @dbids;
-print DATA "<define-tag packages>$package</define-tag>\n";
-print DATA "<define-tag isvulnerable>yes</define-tag>\n";
-print DATA "<define-tag fixed>yes</define-tag>\n";
-print DATA "<define-tag fixed-section>no</define-tag>\n"; # Kaare, 2011-01-24: Line added because the "fixed in" section is no longer available
-print DATA "\n#use wml::debian::security\n\n";
-print DATA "$files\n\n</dl>\n";
-close DATA;
-
-open WML, ">$wml";
-print WML "<define-tag description>$desc</define-tag>\n";
-print WML "<define-tag moreinfo>$moreinfo</p>\n</define-tag>\n";
-print WML "\n# do not modify the following line\n";
-print WML "#include \"\$(ENGLISHDIR)/security/$data\"\n";
-printf WML "# %sId: \$\n", "\$";
-close WML;
-
+&make_data;
+&make_wml;
 print "Now edit $data and remove any English-specific stuff from it.\n";
+&make_index;
+&make_makefile;
+
+
+sub make_data{
+  if (-f $data){
+    print "$data already exists!\n";
+    return;
+  }
+  $files =~ s,^</dl>\n\n,,;
+  open DATA, ">", "$data";
+  print DATA "<define-tag pagetitle>$pagetitle</define-tag>\n";
+  print DATA "<define-tag report_date>$date</define-tag>\n";
+  print DATA "<define-tag secrefs>@dbids</define-tag>\n" if @dbids;
+  print DATA "<define-tag packages>$package</define-tag>\n";
+  print DATA "<define-tag isvulnerable>yes</define-tag>\n";
+  print DATA "<define-tag fixed>yes</define-tag>\n";
+  print DATA "<define-tag fixed-section>no</define-tag>\n"; # Kaare, 2011-01-24: Line added because the "fixed in" section is no longer available
+  print DATA "\n#use wml::debian::security\n\n";
+  print DATA "$files\n\n</dl>\n";
+  close DATA;
+}
+
+sub make_wml{
+  if (-f $wml){
+    print "$wml already exists!\n";
+    return;
+  }
+  open WML, ">", "$wml";
+  print WML "<define-tag description>$desc</define-tag>\n";
+  print WML "<define-tag moreinfo>$moreinfo</p>\n</define-tag>\n";
+  print WML "\n# do not modify the following line\n";
+  print WML "#include \"\$(ENGLISHDIR)/security/$data\"\n";
+  printf WML "# %sId: \$\n", "\$";
+  close WML;
+}
+
+sub make_index{
+  return if (-f "$curyear/index.wml");
+  print "$curyear/index.wml does not exist! Creating...";
+  my $ldo = '<a href="http://lists.debian.org/';
+  my $dsan = 'debian-security-announce';
+  my $index = "<define-tag pagetitle>Security Advisories from $curyear</define-tag>\n";
+  $index .= qq|#use wml::debian::template title="<pagetitle>" GEN_TIME="yes"\n|;
+  $index .= qq|#use wml::debian::recent_list\n\n|;
+  $index .= qq|<:= get_recent_list ('.', '0', '\$(ENGLISHDIR)/security/$curyear', '', 'dsa-\\d+' ) :>\n\n|;
+  $index .= qq|<p>You can get the latest Debian security advisories by subscribing to our\n|;
+  $index .= qq|$ldo$dsan/">\\\n|;
+  $index .= qq|<strong>$dsan</strong></a> mailing list.\n|;
+  $index .= qq|You can also $ldo$dsan/$dsan-2013/">\\\n|;
+  $index .= qq|browse the archives</a> for the list.</p>\n|;
+  open INDEX, ">", "$curyear/index.wml";
+  print INDEX $index;
+  close INDEX;
+  print "done\n";
+  print "Do not forget to commit index.wml.\n";
+}
+
+sub make_makefile{
+  return if (-f "$curyear/Makefile");
+  print "$curyear/Makefile does not exist! Creating...";
+  my $makefile = qq|# If this makefile is not generic enough to support a translation,\n|;
+  $makefile .= qq|# please contact debian-www.\n\n|;
+  $makefile .= qq|WMLBASE=../..\n|;
+  $makefile .= qq|CUR_DIR=security/2013\n|;
+  $makefile .= qq|SUBS=\n\n|;
+  $makefile .= qq|GETTEXTFILES += security.mo\n\n|;
+  $makefile .= qq|NOGENERICDEP := true\n|;
+  $makefile .= qq|include \$(WMLBASE)/Make.lang\n\n\n|;
+  $makefile .= qq|\%.\$(LANGUAGE).html: \%.wml \$(TEMPLDIR)/security.wml \\\n|;
+  $makefile .= qq|  \$(ENGLISHSRCDIR)/\$(CUR_DIR)/\%.data \$(GETTEXTDEP)\n|;
+  $makefile .= qq|\t\$(WML) \$(<F)\n\n|;
+  $makefile .= qq|index.\$(LANGUAGE).html: index.wml \$(wildcard dsa-[0-9]*.wml) \\\n|;
+  $makefile .= qq|  \$(ENGLISHSRCDIR)/\$(CUR_DIR)/dsa-[0-9]*.data \\\n|;
+  $makefile .= qq|  \$(TEMPLDIR)/template.wml \$(TEMPLDIR)/recent_list.wml \$(GETTEXTDEP)\n|;
+  $makefile .= qq|\t\$(WML) \$(<F)\n|;
+  open MAKEFILE, ">", "$curyear/Makefile";
+  print MAKEFILE $makefile;
+  close MAKEFILE;
+  print "done\n";
+  print "Do not forget to commit Makefile.\n";
+}
