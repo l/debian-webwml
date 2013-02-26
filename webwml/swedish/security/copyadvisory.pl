@@ -120,6 +120,7 @@ while (<SRC>)
 	s/This has been fixed in version/Detta har rättats i version/;
 	s/(<td>.*) architecture/$1-arkitekturen/;
 	s/The following matrix lists additional packages that were rebuilt for/Följande tabell beskriver ytterligare paket som byggts om för kompatibilitet/;
+	s/The following matrix lists additional source packages that were rebuilt for/Följande tabell beskriver ytterligare källkodspaket som byggts om för kompatibilitet/;
 	s/compatibility with or to take advantage of this update:/med, eller för att dra nytta av, denna uppdatering:/;
 	s/(?:,)?( )?th(?:is|e) problem (?:has been|was) fixed in/$1har detta problem rättats i/;
 	s/(?:,)?( )?th(?:is|e) problem (?:has been|was) fixed$/$1har detta problem rättats/;
