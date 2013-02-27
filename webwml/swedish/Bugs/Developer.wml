@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debians felrapporteringssystem &ndash; utvecklarinformation" NOHEADER=yes NOCOPYRIGHT=true
 #include "$(ENGLISHDIR)/Bugs/pkgreport-opts.inc"
-#use wml::debian::translation-check translation="1.82"
+#use wml::debian::translation-check translation="1.88"
 <h1>Information om felbehandlingssystemet för paketutvecklare
   och felsorterare</h1>
 
@@ -98,39 +98,41 @@ Detta kommer <b>inte</b> markera rapporten som avhjälpt.
 </p>
 
 <p>
-Felrapporteringssystemet kommer att ta emot svaret på
-<var>nnn</var><code>@bugs.debian.org</code>, vidaresända det till den ansvarige för
-paketet, arkivera svaret tillsammans med övriga loggar för felrapporten och
-vidaresända det till <code>debian-bugs-dist</code>.
-</p>
-
-<p>
-Om du sänder e-post till <var>nnn</var><code>-submitter@bugs.debian.org</code>
-kommer det explicit sändas till den som rapporterade felet och en kopia
-kommer sparas i felrapporteringssystemet.
-Brevet kommer inte sändas till paketansvariga.
-</p>
-
-<p>
-Om du vill sända ett uppföljningsmeddelande som inte är lämpligt för
-<code>debian-bugs-dist</code> kan du göra det genom att skicka till
-<var>nnn</var><code>-quiet@bugs.debian.org</code> eller
-<var>nnn</var><code>-maintonly@bugs.debian.org</code>.
-E-post till <var>nnn</var><code>-quiet@bugs.debian.org</code> arkiveras i
-felrapporteringssystemet, men vidaresänds inte till andra individer eller
-sändlistor.
-E-post till <var>nnn</var><code>-maintonly@bugs.debian.org</code> arkiveras i
-felrapporteringssystemet och vidaresänds enbart till den som
-har hand om paketet i fråga.
-</p>
-
-<p>
 Använd <em>inte</em> <q>svara till alla mottagare</q> eller <q>följ upp</q>
 i ditt e-postprogram såvida
 du inte manuellt vill redigera mottagarlistan ordentligt.
 Du bör definitivt se till att inte skicka uppföljningsmeddelanden till
 <code>submit@bugs.debian.org</code>.
 </p>
+
+<p>
+Meddelanden kan skickas till följande adresser för att lagras i
+felrapporteringssystemet.
+</p>
+ 
+<ul>
+	<li>
+		<var>nnn</var><code>@bugs.debian.org</code> — sådana meddelanden skickas
+		även till paketunderhållaren och blir vidarebefordrade till <code>debian-bugs-dist</code>,
+		men <strong>inte</strong> till felrapportens avsändare;
+	</li>
+	<li>
+		<var>nnn</var><code>-submitter@bugs.debian.org</code> — dessa skickas även
+		till felrapportens avsändare och blir vidarebefordrade till 
+		<code>debian-bugs-dist</code>,
+		men <strong>inte</strong> till paketunderhållaren;
+	</li>
+	<li>
+		<var>nnn</var><code>-maintonly@bugs.debian.org</code> — dessa skickas 
+		endast till paketunderhållaren, <strong>inte</strong> till felrapportens
+		avsändare, eller <code>debian-bugs-dist</code>;
+	</li>
+	<li>
+		<var>nnn</var><code>-quiet@bugs.debian.org</code> —  dessa skickas endast
+		till felrapporteringssystemet (likt alla ovan), men skickas
+		<strong>inte</strong> till någon annan.
+	</li>
+</ul>
 
 <p>
 För vidare information om brevhuvuden för att förhindra svarsmeddelanden
@@ -221,7 +223,8 @@ pseudohuvudet när felrapporten sänds in (se
 eller genom att använda kommandot <code>tags</code> via
 <a href="#requestserv">styrservern</a>.
 
-<p>Tillgängliga felrapportsmarkeringar är: <bts_tags>.</p>
+<p>Tillgängliga felrapportsmarkeringar är: <bts_tags>. Här följer detaljerad
+infomation om markeringarna:</p>
 
 <dl>
 
@@ -361,6 +364,18 @@ eller genom att använda kommandot <code>tags</code> via
   <strong>Detta märke får enbart användas av ansvarige för utgivningarna;
   sätt inte det själv utan explicit dennes tillåtelse.</strong></dd>
 
+<dt><code>wheezy</code>
+  <dd>Detta är en utgåvemarkering som har två effekter.
+  När den är satt på ett fel kan felet bara påverka Wheezy
+  (men det kan också påverka andra utgåvor om andra utgåvemarkeringar är satta)
+  men för övrigt gäller de vanliga reglerna.
+  Felet ska inte heller arkiveras förrän det rättats i Wheezy.</dd>
+
+<dt><code>wheezy-ignore</code>
+  <dd>Detta utgivningskritiska fel skall ignoreras för utgivningen av Wheezy.
+  <strong>Detta märke får enbart användas av ansvarige för utgivningarna;
+  sätt inte det själv utan explicit dennes tillåtelse.</strong></dd>
+
 <dt><code>sid</code>
   <dd>Detta är en utgåvemarkering som har två effekter.
   När den är satt på ett fel kan felet bara påverka Sid
@@ -377,8 +392,8 @@ eller genom att använda kommandot <code>tags</code> via
 </dl>
 
 <p>
-  Betydelsen av de åtta sista, distributionsspecifika markeringarna har ändrats
-  nyligen; <q>Ignorera</q> (-ignore) betyder att felet skall ignoreras för
+  Lite information om distributions-specifika markeringar; <q>Ignorera</q> 
+  (-ignore) betyder att felet skall ignoreras för
   övergången till uttestningsutgåvan. Utgåvemarkeringarna anger att felet i
   fråga inte ska arkiveras tills det rättats i den
   specificerade mängden utgåvor. Utgåvemarkeringarna indikerar också att ett fel
