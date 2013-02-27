@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debians felrapporteringssystem - styrservern" NOHEADER=yes NOCOPYRIGHT=true
 #include "$(ENGLISHDIR)/Bugs/pkgreport-opts.inc"
-#use wml::debian::translation-check translation="1.94"
+#use wml::debian::translation-check translation="1.102"
 
 <h1>Introduktion till e-postservern för felrapportsstyrning och -manipulering</h1>
 
@@ -64,6 +64,7 @@ tillgängligt via webben, i
 	  <li><a href="#submitter">submitter</a></li>
 	  <li><a href="#affects">affects</a></li>
 	  <li><a href="#summary">summary</a></li>
+	  <li><a href="#outlook">outlook</a></li>
 	</ul>
       </td>
       <!-- Versioning -->
@@ -380,17 +381,21 @@ den övergripande utvecklardokumentationen för felrapporteringssystemet.
       är kopplat till, gör detta kommando att felet listas som standard i
       <var>paket</var>s lista. Detta ska generellt användas
       när felet är allvarligt nog att föranleda användare att rapportera
-      flera rapporter som kopplas till fel paket.
+      flera rapporter som kopplas till fel paket. <code>=</code> sätter
+		påverkade paket till den givna listan, och är standard-inställningen
+		om inga paket ges; <code>-</code> tar bort givna paket från
+		listan av påverkade paket; <code>+</code> lägger till till listan
+		av påverkade paket, och är standardinställningen om paket anges.
     </p>
   </dd>
 
   <dt id="summary"><code>summary</code> <var>felnummer</var>
-      [<var>meddelandenummer</var>]</dt>
+      [<var>meddelandenummer</var>] <var>sammanfattning</var></dt>
   <dd>
     <p>
       Väljer ett meddelande som används som sammanfattning av felet. Det första
       stycket i det meddelandet som inte är ett
-      pseudohuvud tolkas och sätts som
+      pseudohuvud och inte ett kontroll-stycke tolkas och sätts som
       sammanfattning av felet.
       Sammanfattningen visas högst upp på felrapportsidan.
       Detta är användbart i fall originalrapporten
@@ -403,7 +408,29 @@ den övergripande utvecklardokumentationen för felrapporteringssystemet.
       listas i utdatat från cgi-skriptet bugreport.
     </p>
   </dd>
- 
+  <dt><a name="outlook"><code>outlook</code> <var>felnummer</var>
+      [ <var>meddelandenummer</var> | <var>utsikts-text</var> ]</a></dt>
+  <dd>
+    <p>
+		Väljer ett meddelande som skall användas som utsikt för rättelse av ett 
+		fel (eller den aktuella statusen på felrättelsen). Det första avsnittet 
+		som inte är en pseudoheader/kontroll i det påföljande meddelandet används
+		som felets utsikter och visas överst på felrapportsidan. Det är användbart
+		för koordinering med andra som arbetar med att rätta samma fel (t.ex
+		under en felrättningfest).
+    </p>
+    <p>
+		Om <var>meddelandenummer</var> icke anges, töms utsikten.
+		<var>meddelandenummer</var> är det meddelandenummer som är utdata från
+		bugreport-cgi-skriptet; om ett <var>meddelandenummer</var> anges som 0,
+		används aktuellt meddelande (alltså meddelandet som skickades till
+		control@bugs.debian.org med kontrollkommandot outlook).
+    </p>
+    <p>
+		Om <var>meddelandenummer</var> inte är ett numeriskt värde och inte en
+		tom sträng antas det att det är texten som skall användas som utsikt.
+    </p>
+  </dd> 
  <dt id="clone">
   <code>clone</code> <var>felnummer</var> <var>nytt-id</var>
   [ <var>nya-id</var> ]
@@ -524,7 +551,7 @@ Om du vill plocka isär fler än en kan du helt enkelt ange flera
   </p>
  </dd>
 
- <dt id="tag">
+ <dt id="tag"><a name="tags"><!-- match tags too --></a>
   <code>tags</code> <var>felnummer</var> [ <code>+</code> |
     <code>-</code> | <code>=</code> ] <var>märke</var> [ <var>märke</var>
     ... ] [ <code>+</code> | <code>-</code>
