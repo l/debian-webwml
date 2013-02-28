@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debians felrapporteringssystem - frågeserver" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.25"
+#use wml::debian::translation-check translation="1.29"
 
 <h1 id="introduction">Introduktion till felrapportsfrågeservern</h1>
 
@@ -149,6 +149,105 @@ Listar beskrivningar och ansvariga för pseudo-paket.
 <dd>
 Skickar e-postserverns referenskort som ren text.
 </dd>
+
+
+<dt><a name="user"><code>user</code> <var>adress</var></a></dt>
+<dd>Sätter <var>adress</var> till att vara <q>user</q> (användare) av alla de
+<code>usertag</code>-kommandon, som följer.</dd>
+
+<dt><a name="usertag"><code>usertag</code> <var>felnummer</var>
+    [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tag</var>
+    [ <var>tag</var> ... ]</a></dt>
+<dd>Gör det möjligt att definiera tags per användare.  Kommandot <code>usertag</code>
+fungerar precis som det vanliga <code>tag</code>-kommandot, förutom att
+man kan uppfinna vilka taggar man vill.  Som standard kommer adressen i 
+<code>From:</code>- eller <code>Reply-To:</code>-huvudet på ditt mail att
+utnyttjas för att sätta användaren av <code>usertag</code>-en.</dd>
+
+<dt><a name="usercategory"><code>usercategory</code>
+    <var>kategorinamn</var> [ <code>[hidden]</code> ]</a></dt>
+<dd>
+<p>Lägger till, uppdaterar eller tar bort en <code>usercategory</code> 
+(användarkategori).  Som standard är användarkategorin synlig; om den valfria
+parametern <code>[hidden]</code> (dold) är angiven, så kommer den inte vara synlig,
+men fortfarande tillgänglig att referera från andra definitioner av 
+användarkategorier.</p>
+
+<p>Detta kommando är något speciellt, då det krävs en kropp direkt efter
+kommandot då man lägger till eller updaterar en användarkategori. Om kroppen
+är tom så kommer användarkategorin istället tas bort. Kroppen startar med
+rader som börjar med ett antal mellanslag. Varje katekori skall starta med
+en rad med <code>*</code>, och om man vill så kan den följas av flera 
+val-linjer, som alla börjar med <code>+</code>. Det kompletta formatet är som 
+följer:
+</p>
+
+<div>
+* <var>Kategorinamn-1</var><br />
+* <var>Kategorititel 2</var>
+  [ <code>[</code><var>valprefix</var><code>]</code> ]<br />
+&nbsp;+ <var>Valtitel 1</var> <code>[</code>
+        [ <var>ordningsföljd</var><code>:</code> ]
+        <var>val-1</var> <code>]</code><br />
+&nbsp;+ <var>Valtitel 2</var> <code>[</code>
+        [ <var>ordningsföljd</var><code>:</code> ]
+        <var>val-2</var> <code>]</code><br />
+&nbsp;+ <var>Standardvaltitel</var> <code>[</code>
+        [ <var>ordningsföljd</var>: ] <code>]</code><br />
+* <var>kategorinamn-3</var><br />
+</div>
+
+<p><var>Kategorinamn</var> som visas i kommandon samt i kroppen, utnyttjas till 
+att skapa referenser mellan dom, för att undgå onödvändig inlining.  
+<var>Kategorititlar</var> utnyttjas i paketrapportresumén.</p>
+
+<p>Det valfria <var>valprefix</var> sätts framför alla <var>val</var> i varje
+förekomst i kategoriavsnittet.  Det första <var>val</var> som uppfyller
+kriterierna visas med felen under sig.  Den valfria 
+<var>ordningsföljd</var>-parametern ger positionen när dom valda förekomsterna
+visas, vilket är användbart när man använder en matchning, som väljer en 
+delmängd av dom tidigare, men som skall visas för dessa.</p>
+
+<p><var>Kategorinamnet</var> <code>normal</code> har en speciell betydelse, då det 
+är standardvyn, så genom att ändra det till en annan användarkategori för
+<var>paketnamn</var>@packages.debian.org, så kan användarnamnet ändra ett pakets
+standardklassifikation.</p>
+
+<p>Exempel på användning:</p>
+
+<pre>
+    usercategory dpkg-program [hidden]
+     * Program
+       + dpkg-deb [tag=dpkg-deb]
+       + dpkg-query [tag=dpkg-query]
+       + dselect [package=dselect]
+
+    usercategory new-status [hidden]
+     * Status [pending=]
+       + Outstanding with Patch Available [0:pending+tag=patch]
+       + Outstanding and Confirmed [1:pending+tag=confirmed]
+       + Outstanding and More Information Needed [pending+tag=moreinfo]
+       + Outstanding and Forwarded [pending+tag=forwarded]
+       + Outstanding but Will Not Fix [pending+tag=wontfix]
+       + Outstanding and Unclassified [2:pending]
+       + From other Branch [absent]
+       + Pending Upload [pending-fixed]
+       + Fixed in NMU [fixed]
+       + Resolved [done]
+       + Unknown Pending Status []
+
+    \# Change default view
+    usercategory normal
+      * new-status
+      * severity
+
+    usercategory old-normal
+      * status
+      * severity
+      * classification
+</pre>
+</dd>
+
 
 <dt><code>help</code>
 </dt>
