@@ -133,12 +133,12 @@ $moreinfo =~ s/\n\n/<\/p>\n\n/sg;
 $moreinfo =~ s|\n<p>((CAN\|CVE)-\d+-\d+[^\n]*)</p>\n|\n<li>$1\n|g;
 $moreinfo =~ s|\n<p>((CAN\|CVE)-\d+-\d+[^\n]*)\n|\n<li>$1\n<p>\n|g;
 $moreinfo =~ s|((CAN\|CVE)-\d+-\d+)|<a href="http://security-tracker.debian.org/tracker/$1">$1</a>|g;
+$moreinfo =~ s|</p>\n\n<p>\n<p>(\w* \w* stable)|</p></li>\n\n</ul>\n\n<p>$1|; 
 $moreinfo =~ s|<p>(\s+)|$1<p>|g;
 $moreinfo =~ s|<p><p>|<p>|g;
 $moreinfo =~ s|</p>\n\n<li>|</p></li>\n\n<li>|g;
 $moreinfo =~ s|</li>\n\n<li>|\n\n<ul>\n\n<li>|;
 $moreinfo =~ s|(\s+)(http://[^\s<>{}\\^\[\]\"\'\`]+)|$1<a href="$2">$2</a>|g;
-#$moreinfo =~ s|</p>\n\n<p>(\w* \w* stable)|</p></li>\n\n</ul>\n\n<p>$1|; 
 
 # matrix creation start
 #  in matrix lines, each item cannot have space charecter sequence in it
@@ -162,7 +162,7 @@ $matrix = join("", @matrixl);
 $moreinfo =~ s|<matrix>\n([\s\S]+?)</matrix>|$matrix_h$matrix$matrix_f|;
 # matrix end
 
-if ($moreinfo =~ /<ul>\n\n<li>/) {
+if (($moreinfo =~ /<ul>\n\n<li>/) && ($moreinfo !~ /<\/li>\n\n<\/ul>/)){
    $moreinfo =~ s{</p>\n\n<p>((\w+ \w+ \w* ?(old ?stable|stable|testing))|Th[eo]se)}{</p></li>\n\n</ul>\n\n<p>$1}; }
 chomp ($moreinfo);
 
@@ -211,7 +211,7 @@ if (!(-d $curyear)){
 
 &make_data;
 &make_wml;
-print "Now edit $data and remove any English-specific stuff from it.\n";
+print "double check the content of $wml and $data, and eventually fix it before commit them.\n";
 &make_index;
 &make_makefile;
 
