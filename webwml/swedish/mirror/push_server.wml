@@ -1,5 +1,5 @@
 #use wml::debian::template title="Sätta upp en &quot;push&quot;-server"
-#use wml::debian::translation-check translation="1.20"
+#use wml::debian::translation-check translation="1.21"
 #use wml::debian::toc
 
 <p>Att sätta upp en <q>push</q>server består av två grundläggande steg:
@@ -88,57 +88,26 @@ innehåller följande i början där IPADRESS är din uppströmsspegels IP:
 </p>
 
 <pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADRESS" &amp;"
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADRESS"
 </pre>
 
 <p>Du måste ställa in skriptet så att det kontaktar speglar nedströms.
-Skapa en fil med namnet <code>signal</code> med följande innehåll:
+Tar-filen ftpsync inhåller skriptet <code>runmirrors</code> som kan ta hand
+om alla nödvändiga uppgifter åt dig. Ändra din ftpsync.conf att inkludera
+inställningen <code>HUB=true</code>, kopiera <code>runmirrors.conf.sample</code>
+till <code>runmirrors.conf</code> och <code>runmirrors.mirror.sample</code> till 
+<code>runmirrors.mirror</code> och konfigurera config-filen för att passa ditt
+system. Lista sedan alla dina nedströmsspeglar i runmirrors.mirror så kommer
+duon ftpsync/runmirror att ta hand om allt tungt arbete åt dig.
 </p>
 
-<protect>
-<pre>
-#!/bin/sh
-
-# Detta skript anropas för att signalera fjärrvärden att det är dags
-# att spegla arkivet.
-
-echo Signalerar $1
-ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
-</pre>
-</protect>
-
-<p>Detta skript kommer att logga in på fjärrvärden genom att använda den
-speciella ssh-nyckel du skapade ovan, förutsatt att varje nedströmsspegelsoperatör
-lägger till denna nyckel till deras egen ~/.ssh/authorized_keys (och ersätter
-<q>ftpsync</q> med namnet på deras kommando för att starta speglingen).
-Skriptet själv gör inget användbart på den andra sidan, 
-kommandot kommer att köras som specificerat i nyckelinställningarna.
+<p>
+Resultatet kommer bli att ditt system kommer försöka ssh'a till dina 
+nedströmsspeglar, efter att din egen spegel har uppdaterats, så dom kan starta 
+sin uppdateringar. Detta antar att du gav operatorerna av nedströmsspeglarna 
+ssh-nyckeln som du sa till runmirrors att använda och att dom la till den i 
+deras egna ~/.ssh/authorized_keys som beskrivet ovan.
 </p>
-
-<p>För att faktiskt signalera speglarna måste du köra
-<code>./signal &lt;plats&gt; &lt;användar-id&gt;</code> efter att din egen
-rsyncning utförts.
-Därmed kommer du, så snart som din plats har speglat klart från din uppströmsplats,
-att börja föra speglingen vidare (<q>push</q>) till de nedströms från dig.
-</p>
-
-<p>Du kan placera dessa kommandon antingen i slutet av ditt
-<code>ftpsync.conf</code> eller, om det är enklare för dig, i ett nytt
-skript och sedan köra detta skript från <code>anonftpsync</code>, exempelvis:
-</p>
-
-<protect>
-<pre>
-#!/bin/sh
-
-# Detta skript anropas av websync för att signalera nedströmsspeglarna.
-
-cd $HOME
-
-./signal någon.annan.plats archvsync
-./signal och.ytterligare.en kontopåandrasidan
-</pre>
-</protect>
 
 <p>Om du har problem med detta,
 <a href="mailto:mirrors@debian.org">kontakta oss</a>.
