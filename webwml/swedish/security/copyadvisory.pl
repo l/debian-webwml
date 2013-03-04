@@ -135,6 +135,7 @@ while (<SRC>)
 	s/(?:,)?( )?these problem are fixed in/$1rättas dessa problem i/;
 	s/(?:,)?( )?these problem are fixed/$1rättas dessa problem/;
 	s/(?:,)?( )?these problems will be fixed soon/$1kommer dessa problem att rättas inom kort/;
+	s/(?:,)?( )?these problems will be fixed in/$1kommer dessa problem att rättas i/;
 	s/this problem with be fixed soon/kommer detta problem att rättas inom kort/;
 	s/(?:been )?fixed in version/rättats i version/;
 	s/\bin version\b/i version/;
