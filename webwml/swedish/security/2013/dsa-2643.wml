@@ -1,0 +1,79 @@
+#use wml::debian::translation-check translation="1.3" mindelta="1"
+<define-tag description>flera sårbarheter</define-tag>
+<define-tag moreinfo>
+<p>Flera sårbarheter har upptäckts i Puppet, ett centraliserat system för 
+konfigurationshantering.</p>
+
+<ul>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-1640">CVE-2013-1640</a>
+
+	<p>En autentiserad illvillig klient kan efterfråga sin katalog från puppet, 
+	och orsaka puppet att köra opålitlig kod. Puppet måste fås att köra
+	<q>template</q>- eller <q>inline_template</q>-funktionerna under
+	katalogkompilering.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-1652">CVE-2013-1652</a>
+
+	<p>En autentiserad illvillig klient kan hämta kataloger från puppet som den
+	inte har rättigheter att få tillgång till. Given ett giltigt certifikat
+	och privat nycekl är det möjligt att konstruera en HTTP GET-förfrågan som
+	kommer att returnera en katalog för en illvillig klient.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-1653">CVE-2013-1653</a>
+
+	<p>En autentiserad illvillig klient kan köra opålitlig kod på Puppetagenter
+	som accepterar kick-anslutningar. Puppetagenter är inte sårbara i sin
+	standardkonfiguration, men om puppetagenten är konfigurerad att lyssna
+	efter inkommande anslutningar, t.ex. listen = true, och agentens
+	auth.conf ger tillgång till <q>run</q>-slutpunkten, så kan en autentiserad
+	klient skapa en HTTP PUT-förfrågan för att köra opålitlig kod på agenten.
+	Detta problem görs värre av det faktum att puppetagenter oftast körs som
+	root.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-1654">CVE-2013-1654</a>
+
+	<p>Ett fel i Puppet tillåter SSL-anslutningar att bli nedgraderade till
+	SSLv2, som är känd att innehålla svagheter på grund av designmisstag. Detta 
+	påverkar SSL-anslutningar mellan agenter och master, likväl som anslutningar
+	som puppetagenter gör till tredjepartsservrar som accepterar 
+	SSLv2-anslutningar. Notera att SSLv2 är inaktiverat sedan OpenSSL 1.0.</p>
+	</li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-1655">CVE-2013-1655</a>
+
+	<p>En icke-autentiserad illvillig klient kan skicka förfrågningar till 
+	puppet, och få den att ladda kod på ett osäkert sätt. Detta påverkar endast
+	användare av puppet som kör version 1.9.3 och högre.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-2274">CVE-2013-2274</a>
+
+	<p>En autentiserad illvillig klient kan exekvera opålitlig kod på puppet
+	i dess standardkonfiguration. Given ett giltigt certifikat och privat
+	nyckel, kan en klient konstruera en HTTP PUT-förfrågan som är tillåten
+	att spara klientens egna rapport, men förfrågan kommer istället att
+	exekvera opålitlig kod.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-2275">CVE-2013-2275</a>
+
+	<p>Standardinställningen i auth.conf tillåter en autentiserad nod att skicka
+	en rapport för vilken annan nod som helst, vilket är ett problem när det
+	gäller överensstämmelse. Detta har gjorts mer restriktivt som standard så
+	att en nod endast är tillåten att spara sin egen rapport.</p></li>
+
+</ul>
+
+<p>För den stabila utgåvan (squeeze) har dessa problem rättats i
+version 2.6.2-5+squeeze7.</p>
+
+<p>För uttestningsutgåvan (wheezy) har dessa problem rättats i
+version 2.7.18-3.</p>
+
+<p>För den instabila utgåvan (Sid) har dessa problem rättats i
+version 2.7.18-3.</p>
+
+<p>Vi rekommenderar att ni uppgraderar era puppet-paket.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2013/dsa-2643.data"
