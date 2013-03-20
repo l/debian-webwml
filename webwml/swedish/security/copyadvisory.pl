@@ -108,6 +108,7 @@ while (<SRC>)
 	s/>missing input sanitising</>städar inte indata</;
 	s/>insufficient input sanitising</>otillräcklig städning av indata</;
 	s/>programming error</>programmeringsfel</;
+	s/cross-site scripting vulnerability/serveröverskridande skriptsårbarhet/;
 	s/>various</>diverse</;
 	s/(Several|Multiple) vulnerabilities/Flera sårbarheter/;
 	s/(several|multiple) vulnerabilities/flera sårbarheter/;
