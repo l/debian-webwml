@@ -1,0 +1,112 @@
+#use wml::debian::template title="Пример автоматического аудита: RATS"
+#use wml::debian::recent_list
+#use wml::debian::translation-check translation="1.11" maintainer="Lev Lamberov"
+
+<p><a href="http://packages.debian.org/rats">RATS</a> &mdash; сканер общего назначения для обнаружения потенциальных проблем безопасности в исходном коде (поддерживается несколько языков программирования).</p>
+
+<h2>Запуск RATS</h2>
+<p>Запуск RATS довольно прост. Следует вызвать команду rats с указанием каталога, который нужно проверить. Каждый файл с исходным кодом, который будет обнаружен в этом каталоге, будет проверен. RATS понимает несколько языков программирования: C, Perl, PHP и Python; и каждый файл на одном из этих языков программирования будет считаться кандидатом для проверки.</p>
+<p>Имеются несколько параметров, которые могут быть переданы в дополнение к имени каталога; они описаны
+справочной странице.</p>
+<p>Наиболее полезными параметрами являются те, которые изменяют вывод; среди них следующие:</p>
+<ul>
+<li>--warning &lt;уровень&gt; (Установить уровень утечек, которые будут выведены в результате работы программы)
+<ul>
+<li>1 включает лишь высокую строгость и строгость по умолчанию.</li>
+<li>2 включает среднюю строгость (по умолчанию).</li>
+<li>3 включает уязвимости низкой строгости.</li>
+</ul></li>
+<li>--xml  (Вывод в XML)</li>
+<li>--html (Вывод в HTML)</li>
+</ul>
+<p>Допустим, у нас имеется <a href="test.c.html">тестовый файл</a>, расположенный в текущем каталоге, в этом каталоге больше нет никаких файлов с исходным кодом, мы можем вызвать сканер следующей командой:</p>
+<pre>
+rats --warning 1 --html . &gt;output.html
+</pre>
+<p>Эта команда создаст HTML-файл, содержащий результаты сканирования, который может быть загружен браузером.</p>
+
+<h2>Результаты</h2>
+<p>Запуск RATS с нашим <a href="test.c.html">примером</a> выдает следующий вывод:</p>
+<hr />
+<div class="sampleblock">
+<h3>Severity: High</h3>
+<p>Issue: fixed size global buffer</p>
+<p>
+  Extra care should be taken to ensure that character arrays that are
+  allocated on the stack are used safely.  They are prime targets for
+  buffer overflow attacks.
+</p>
+<p>
+File: <b>test.c</b><br>
+Lines: 10 11 12
+</p>
+
+<h3>Severity: High</h3>
+<p>Issue: strcpy</p>
+<p>
+    Check to be sure that argument 2 passed to this function call will not
+    copy more data than can be handled, resulting in a buffer overflow.
+  </p>
+<p>
+File: <b>test.c</b><br>
+Lines: 18
+</p>
+
+<h3>Severity: High</h3>
+<p>Issue: getenv</p>
+<p>Environment variables are highly untrustable input. They may be of any length, and contain any data. Do not make any assumptions regarding content or length. If at all possible avoid using them, and if it is necessary, sanitize them and truncate them to a reasonable length.
+  </p>
+<p>
+File: <b>test.c</b><br>
+Lines: 22 24   </p>
+
+<h3>Severity: High</h3>
+<p>Issue: sprintf</p>
+<p>
+    Check to be sure that the format string passed as argument 2 to this
+    function call does not come from an untrusted source that could have added
+    formatting characters that the code is not prepared to handle.
+    Additionally, the format string could contain `%s' without precision that
+    could result in a buffer overflow.
+</p>
+<p>
+File: <b>test.c</b><br>
+Lines: 24   </p>
+
+<h3>Severity: High</h3>
+<p>Issue: popen</p>
+<p>
+    Argument 1 to this function call should be checked to ensure that it does
+    not come from an untrusted source without first verifying that it contains
+    nothing dangerous.
+</p>
+<p>
+File: <b>test.c</b><br>
+Lines: 33   </p>
+
+<h3>Severity: High</h3>
+<p> Issue: printf</p>
+<p>
+    Check to be sure that the non-constant format string passed as argument 1
+    to this function call does not come from an untrusted source that could
+    have added formatting characters that the code is not prepared to handle.
+</p>
+<p>
+File: <b>test.c</b><br>
+Lines: 42   </p>
+<p>
+Total lines analyzed: <b>49</b><br>
+Total time <b>0.000288</b> seconds<br>
+<b>170138</b> lines per second</p>
+</div>
+<hr />
+<p>Этот вывод очень велик, хотя сам по себе код очень короткий; это демонстрирует один из недостатков автоматического сканирования &mdash; большой размер вывода.</p>
+
+<h2>Анализ вывода</h2>
+<p>Вывод, который был произведён, является по сути описанием функций, которые были обнаружены, номером строки, в которой была обнаружена утечка, и описанием проблемы. (Поскольку мы использовали параметр «--warning» для ограничения вывода только «высоким» уровнем функций, мы немного сократили вывод.)</p>
+<p>Каждую из обнаруженных проблем следует изучить вручную на предмет того, имеется ли там что-то неправильное или это было ложное срабатывание (напр., функция, которая может быть использована неправильно, была использована правильно).</p>
+<p>В нашем случае мы можем видеть, что были обнаружены все уязвимости в нашем коде, но это не совсем ясно, если только не просмотреть соответствующие строки кода с помощью редактора.</p>
+<p>Одним из упущений этой программы является то, что она не указывает строки целиком (это позволяет сделать <a href="flawfinder">flawfinder</a>).</p>
+<hr />
+<p><a href="..">Назад на страницу проекта по аудиту</a> | <a href="index">Назад на страницу примеров аудита</a></p>
+

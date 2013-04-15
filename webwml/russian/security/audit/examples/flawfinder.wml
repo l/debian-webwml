@@ -1,0 +1,82 @@
+#use wml::debian::template title="Пример автоматического аудита: flawfinder"
+#use wml::debian::recent_list
+#use wml::debian::translation-check translation="1.7" maintainer="Lev Lamberov"
+
+<p><a href="http://packages.debian.org/flawfinder">flawfinder</a> &mdash; сканер общего назначения для поиска потенциальных утечек в исходном коде на C и C++.</p>
+
+
+<h2>Запуск flawfinder</h2>
+<p>Запуск flawfinder довольно прост. Нужно вызвать flawfinder с именем каталога или файлами, которые следует проверить. Если передано имя каталога, то будут проверены все файлы с исходным кодом, которые будут найдены в этом каталоге.</p>
+<p>Дополнительно к переданному программе списку файлов или каталогов имеется несколько параметров командной строки, которые используются для управления поведением программы.</p>
+<p>Каждый из этих параметров описан в справочной странице, но следующие параметры особенно полезны и будут использоваться в нашем примере:</p>
+<ul>
+<li>--minlevel=X
+<ul>
+<li>Установить минимальный уровень риска в значение X, в выводе будут показаны соответствующие сообщения. Может иметь значение в пределах 1-5, 1 означает «низкий риск», а 5 &mdash; «высокий риск».</li>
+</ul></li>
+<li>--html
+<ul>
+<li>Отформатировать вывод как HTML, а не как простой текст</li>
+</ul></li>
+<li>--context
+<ul>
+<li> Показать контекст, т.е. строку, содержащую потенциальную утечку.</li>
+</ul></li>
+</ul>
+
+<p>Для вывода файла HTML, содержащего результат работы программы, в котором
+отражены только функции с «высоким риском», можно использовать следующую команду:</p>
+<pre>
+flawfinder --html --context --minlevel=4 test.c &gt; output.html
+</pre>
+
+<h2>Результаты</h2>
+<p>Запуск flawfinder с нашим <a href="test.c.html">примером</a> выдает следующий вывод:</p>
+
+<hr />
+<div class="sampleblock">
+<p>
+Examining test.c <br>
+<ul>
+<li>test.c:18: <b>  [4] </b> (buffer) <i> strcpy:
+  Does not check for buffer overflows when copying to destination.
+  Consider using strncpy or strlcpy (warning, strncpy is easily misused).  </i>
+<pre>
+      strcpy( dir, argv[ 1 ] );
+</pre>
+<li>test.c:24: <b>  [4] </b> (buffer) <i> sprintf:
+  Does not check for buffer overflows. Use snprintf or vsnprintf.  </i>
+
+<pre>
+	sprintf( dir, "%s", getenv( "HOME" ) );
+</pre>
+<li>test.c:33: <b>  [4] </b> (shell) <i> popen:
+  This causes a new program to execute and is difficult to use safely.
+  try using a library call that implements the same functionality if
+  available.  </i>
+<pre>
+    fp = popen( cmd, "r" );
+</pre>
+<li>test.c:42: <b>  [4] </b> (format) <i> printf:
+  If format strings can be influenced by an attacker, they can be
+  exploited. Use a constant for the format specification.  </i>
+
+<pre>
+      printf( buff );
+</pre>
+</ul>
+<p>
+Number of hits = 4
+<br>
+Number of Lines Analyzed = 48 in 0.53 seconds (1392 lines/second)
+<br>
+</div>
+<hr />
+
+<h2>Анализ вывода</h2>
+<p>Как и вывод <a href="RATS">RATS</a>, этот отчёт о проверке очень прост для чтения. Он ясно показывает функции, которые являются потенциально опасными, а также описание проблемы.</p>
+<p>Включение контекстной информации также очень полезно, поскольку сразу же обращает ваше внимание на соответствующие области кода, либо исключает другие сообщения как некорректные.</p>
+<p>Анализ <a href="test.c">нашего примера</a> довольно умён в том смысле, что не предупреждает о <i>каждом</i> использовании проблемной <tt>strcpy</tt> функции &mdash; а лишь о тех использованиях, которые, как это предполагается, потенциально опасны.</p>
+<p>Таким образом, программа сумела выделить все недостатки нашего кода без ложных срабатываний.</p>
+<hr />
+<p><a href="..">Назад на страницу проекта по аудиту</a> | <a href="index">Назад на страницу примеров аудита</a></p>
