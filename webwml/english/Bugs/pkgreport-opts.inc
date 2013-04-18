@@ -180,6 +180,7 @@
 <code>lenny</code>, <code>lenny-ignore</code>, 
 <code>squeeze</code>, <code>squeeze-ignore</code>, 
 <code>wheezy</code>, <code>wheezy-ignore</code>, 
+<code>jessie</code>, <code>jessie-ignore</code>, 
 <code>sid</code>, 
 <code>experimental</code></define-tag>
 
