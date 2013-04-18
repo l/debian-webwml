@@ -363,35 +363,35 @@ ignored, <tt>ifup</tt> and <tt>ifdown</tt> do not work. Only the Hurdish way is
 supported for now.
 </p>
 
-<p>
-First, make sure that your network card is recognized by GNU Mach:
-</p>
+#<p>
+#First, make sure that your network card is recognized by GNU Mach:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# devprobe eth0
+# eth0
+#</pre></td></tr></table>
+#
+#<p>
+#If <code>devprobe eth0</code> does not return <code>eth0</code>, the kernel
+#didn't detect your network board and you need to try another board. For
+#instance, qemu's e1000 board is not supported, the rtl8139 one should work:
+#<code>-net nic,model=rtl8139 -net user</code>
+#</p>
 
-<table><tr><td>&nbsp;</td><td class=example><pre>
- \# devprobe eth0
- eth0
-</pre></td></tr></table>
-
-<p>
-If <code>devprobe eth0</code> does not return <code>eth0</code>, the kernel
-didn't detect your network board and you need to try another board. For
-instance, qemu's e1000 board is not supported, the rtl8139 one should work:
-<code>-net nic,model=rtl8139 -net user</code>
-</p>
-
-<p>
-Starting from version 20120520-1, the hurd package includes DDE drivers which
-can be used to support more recent devices (drivers are taken from Linux
-2.6.32). Translators for that are already set up for you, and all you
-need to do is to replace <code>eth0</code> (the mach driver name) with
-<code>/dev/eth0</code> (the DDE driver path) in the remainder of this document.
-</p>
-
-<p>
-It is possible to try to use the DDE driver even if GNU Mach has a driver:
-passing <code>nonetdev</code> on the gnumach command line will disable the GNU
-Mach driver, and the DDE driver will start working.
-</p>
+#<p>
+#Starting from version 20120520-1, the hurd package includes DDE drivers which
+#are used to support more recent devices (drivers are taken from Linux
+#2.6.32). Translators for that are already set up for you, and all you
+#need to do is to replace <code>eth0</code> (the mach driver name) with
+#<code>/dev/eth0</code> (the DDE driver path) in the remainder of this document.
+#</p>
+#
+#<p>
+#It is possible to try to use the DDE driver even if GNU Mach has a driver:
+#passing <code>nonetdev</code> on the gnumach command line will disable the GNU
+#Mach driver, and the DDE driver will start working.
+#</p>
 
 <p>
 If network does not seem to work, use the following to get debugging information
@@ -423,7 +423,7 @@ the operating system will transparently start the server to handle the request.
 </p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
- \# settrans -fgap /servers/socket/2 /hurd/pfinet -i eth0 \
+ \# settrans -fgap /servers/socket/2 /hurd/pfinet -i /dev/eth0 \
    -a a.b.c.d -g e.f.g.h -m i.j.k.l
 </pre></td></tr></table>
 
@@ -477,9 +477,9 @@ each other so that only one is actually started, bound to both nodes:
 </p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
- \# settrans -fgap /servers/socket/2 /hurd/pfinet -6 /servers/socket/26 -i eth0 \
+ \# settrans -fgap /servers/socket/2 /hurd/pfinet -6 /servers/socket/26 -i /dev/eth0 \
    -a a.b.c.d -g e.f.g.h -m i.j.k.l
- \# settrans -fgap /servers/socket/26 /hurd/pfinet -4 /servers/socket/2 -i eth0 \
+ \# settrans -fgap /servers/socket/26 /hurd/pfinet -4 /servers/socket/2 -i /dev/eth0 \
    -a a.b.c.d -g e.f.g.h -m i.j.k.l
 </pre></td></tr></table>
 
@@ -496,7 +496,7 @@ The configuration of pfinet can also be changed live
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
  \# fsysopts /servers/socket/2
- /hurd/pfinet --interface=eth0 --address=10.3.0.1 --netmask=255.255.0.0 --gateway=10.3.0.128
+ /hurd/pfinet --interface=/dev/eth0 --address=10.3.0.1 --netmask=255.255.0.0 --gateway=10.3.0.128
  \# fsysopts /server/socket/2 -a 10.3.0.2 -m 255.255.0.0 -g 10.3.0.128
 </pre></td></tr></table>
 
