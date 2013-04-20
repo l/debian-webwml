@@ -95,6 +95,7 @@ while (<SRC>)
 	s/We recommend that you update your (.*) packages immediately/Vi rekommenderar att ni uppgraderar era $1-paket omedelbart/;
 	s/We recommend that you update your (.*) packages/Vi rekommenderar att ni uppgraderar era $1-paket/;
 	s/We recommend that you update your (.*) package/Vi rekommenderar att ni uppgraderar ert $1-paket/;
+	s/exposure of sensitive information/exponering av känslig information/;
 	s/buffer overflows?/buffertspill/;
 	s/integer overflow/heltalsspill/;
 	s/format string vulnerability/formatsträngssårbarhet/;
@@ -151,6 +152,7 @@ while (<SRC>)
 	s/([Ff])or the Debian stable distribution/$1ör Debians stabila utgåva/;
 	s/([Ff])or the stable distribution/$1ör den stabila utgåvan/;
 	s/([Ff])or the stable/$1ör den stabila/;
+	s/([Ff])or the testing (wheezy) and unstable (sid) distributions/$1ör uttestningsutgåvan (Wheezy) och den instabila utgåvan (Sid)/;
 	s/([Ff])or the testing distribution/$1ör uttestningsutgåvan/;
 	s/([Ff])or the Debian unstable distribution/$1ör Debians instabila utgåva/;
 	s/([Ff])or the unstable distribution/$1ör den instabila utgåvan/;
