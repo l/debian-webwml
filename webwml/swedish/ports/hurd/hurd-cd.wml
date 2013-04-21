@@ -1,0 +1,116 @@
+#use wml::debian::template title="Debian GNU/Hurd --- Hurd-CDs" NOHEADER="yes"
+#include "$(ENGLISHDIR)/ports/hurd/menu.inc"
+#use wml::debian::translation-check translation="1.78"
+
+<define-tag cdserie>L1</define-tag>
+<define-tag cdbasetarball>gnu-2009-10-18.tar.gz</define-tag>
+<define-tag cdbasename>debian-<cdserie>-hurd-i386</define-tag>
+
+<h1>Debian GNU/Hurd</h1>
+
+<p>
+	Många kallar GNU-systemet för GNU/Hurd, men detta är inte helt sant.
+	Kärnan som används är GNU Mach och inte Hurd. Hurd är en serie med servrar 
+	som kör ovanpå mikrokärnan, GNU Mach. Både Hurd och GNU Mach är delar av 
+	GNU-projektet medans Linuxkärnan är ett fristående projekt.
+</p>
+
+<p>
+	Den lättaste (och den mest vältestade) metodeden att prova Debian GNU/Hurd är
+	att använda en virtuell maskin via KVM. Några för-installerade avbildningar
+	finns tillgängliga på <url 
+	"http://people.debian.org/~sthibault/hurd-i386/README">, men man kan också 
+	använda Debian-installeraren för att installera en KVM eller på en fysisk 
+	maskin (men hårdvarustödet varierar, så det rekommenderas att pröva med KVM).
+</p>
+
+<h2>Användning av Debian Installers installations-cd-rom</h2>
+
+<p>
+	En hurd-i386-anpassning av Debian Installer kan laddas ner från
+	<url "http://people.debian.org/~sthibault/hurd-i386/installer/cdimage/">.
+	Den fungerar som en vanlig Linux-anpassning av Debian Installer, dvs.
+	automatiskt, bortsett från några detaljer:
+</p>
+
+<ul>
+
+<li>Säkerställ att du aktiverar swaputrymme, annars kommer Mach få problem om
+du använder allt ditt minne.</li>
+
+<li>Montera inte en separat partition på <code>/usr</code>, eller så kommer
+bootning att misslyckas.</li>
+
+<li>
+Läs <a href="hurd-install">anteckningarna rörande manuell installation</a> som
+dokumenterar några av dom avslutande konfigurationsstegen.</li>
+
+</ul>
+
+<p>Instruktioner för att bränna CDs från avbildningarna kan hittas i
+<a href="$(HOME)/CD/faq/">Debians CD-FAQen</a>.</p>
+
+<h2>Hurd-partitioner</h2>
+
+<p>
+	Hurd använder utökningar till ext2-filsystemet, som anropas på följande sätt:
+	<code>mke2fs -o hurd /dev/[Hurd partition]</code>.
+	Installationsavbildningarna använder sig av detta när dom skapar 
+	Hurd-partitioner.
+</p>
+
+
+<h2>Skapa en GRUB-bootdisk</h2>
+
+<p>
+	Om du installerar endast Hurd på ditt system, så kan du låta installeraren
+	installera GRUB själv. Om du installerar Hurd tillsammans med ett tidigare
+	existerande system, så vill du troligtvis kunna välja mellan dessa. Om ditt
+	tidigare system är Linux, så kan du antagligen helt enkelt köra update-grub och
+	så kommer den att detektera ditt nyligen installerade Hurd-system. Annars,
+	eller om du inte lyckas boota Hurd på det sättet, så kan du använda dig av en
+	GRUB-bootdisk.
+</p>
+
+
+<p>
+	Installera paketet grub-disk eller grub-rescue-pc, dom innehåller en GRUB
+	floppy-avbildning. Du kan använda dig av "dd" om du arbetar i GNU/Linux, eller
+	rawrite om du jobbar i MS.
+</p>
+
+<p>
+	Säkerställ att du förstår Linux, GRUB och Hurd-metoderna att döpa diskar
+	och partitioner. Du kommer att använda alla tre och relationerna mellan
+	dem kan vara förvirrande.
+</p>
+
+<p>
+	Hurd använder olika partitionsnamn än Linux, så var försiktig. IDE-hårddiskar
+	numreras i ordning, börjar med hd0 för primär master och dess slav hd1, följt
+	av sekundär master hd2 och dess slav hd3. SCSI-diskar numreras även i
+	absolut ordning. Dom kommer alltid vara sd0, sd1 och så vidare oberoende om
+	diskarna är SCSI id 4 och 5 eller vad som helst. Erfarenhet säger att 
+	CD-ROM-enheter kan vara problematiska, mer om detta senare.
+</p>
+
+<p>
+	Partitioner som använder Linux-standard heter alltid "sn" när man använder
+	Hurd, där n är partitionsnumret, så första IDE-disken kommer att vara
+	hd0s1, tredje partitionen på andra SCSI-enheten kommer att heta sd1s3, och
+	så vidare.
+</p>
+
+<p>
+	GRUB1 har ytterligare ett namngivningssystem för partitioner. Det kallar 
+	partitioner (hdN,n), men denna gång börjar både disk- och partitionsnumret
+	med noll, och diskarna numreras i nummerordning, första alla IDE-diskar, 
+	och sedan SCSI-enheterna. Denna gång är första partitionen på första
+	IDE-enheten (hd0,0). GRUB2 gör likadant, men partitionsnumret börjar på
+	1, så i det fallet kommer det va (hd0,1). För att verkligen skapa förvirring,
+	kan (hd1,2) referera till den första SCSI-disken om du endast har en 
+	IDE-enhet, eller så kan det referera till andra IDE-enheten. Så det är
+	viktigt att du vet vad varje disk och partition heter innan du börjar.
+</p>
+
+<p>Mycket nöje med Hurd.</p>
