@@ -1,0 +1,160 @@
+#use wml::debian::template title="Debian GNU/Hurd --- Utveckling" NOHEADER="yes"
+#include "$(ENGLISHDIR)/ports/hurd/menu.inc"
+#use wml::debian::translation-check translation="1.51"
+
+<h1>
+Debian GNU/Hurd</h1>
+<h2>
+Utveckling av Distributionen</h2>
+<h3>
+Boot-diskar</h3>
+<p>
+	För närvarande så fungerar vi inte på "native" boot-diskar. Vi jobbar på 
+	att lägga grunden för att det skall fungera, och anpassar ibland 
+	individuellt nödvändiga paket för detta. Om du vill hjälpa till, arbeta
+	med debian-installer-projektet och säkerställ att dess komponenter kör
+	på Hurd.
+</p>
+
+<h3>Anpassa Debianpaket</h3>
+<p>
+	Om du vill hjälpa Debian GNU/Hurd-anpassningen, så bör du göra dig
+	bekant med Debians paketeringssystem. När du har gjort detta genom att
+	läsa dokumentationen och besöka <a href="$(HOME)/devel/">Utevecklarhörnan</a>
+	så bör du veta hur man extraherar ett Debian-källkodspaket och bygger ett
+	Debianpaket. Här följer en snabbkurs för latmaskar:
+</p>
+
+<h3>Få tag på källkod och bygga paket</h3>
+<p>
+	Att packa upp ett Debian-källkodspaket kräver filen
+	<code>paket_version.dsc</code> och filerna som listas i denna. Du skapar
+	Debians byggmapp med kommandot
+	<code>dpkg-source -x paket_version.dsc</code>
+</p>
+
+<p>
+	Bygge av ett paket sker i den nu skapade Debianbyggmappen
+	<code>package-version</code> med hjälp av kommandot
+	<code>dpkg-buildpacakge -B -rsudo "-mMittnamn &lt;MinEmail&gt;"</code>.
+	Istället för <code>-B</code> kan du använda
+	<code>-b</code> om du även vill bygga de arkitekturoberoende delarna
+	av paketet. Du kan använda <code>-rfakeroot</code> istället för
+	<code>-rsudo</code> om du använder fakeroot-paketet. Du klarar dig utan
+	<code>-r</code> om du bygger med root-kontot. Du kan använda dig av
+	<code>-uc</code> för att undvika att signera paketet med din gpg-nyckel.
+</p>
+
+
+<h3>Välj ett paket</h3>
+<p>
+	Vilket paket skall det arbetas på? Varje paket som inte ännu är anpassat
+	beöver det jobbas på. Detta ändrar sig hela tiden, så det uppskattas om man
+	först koncentrerar sig på paket med många bakåtberoenden, vilket kan ses
+	i paketberoendegrafen 
+	<url "http://people.debian.org/~sthibault/graph-radial.pdf"> som uppdateras
+	dagligen, eller på listan över mest efterfrågade paket
+	<url "http://people.debian.org/~sthibault/graph-total-top.txt"> (detta är
+	långtidslistan, korttidslistan är 
+	<url "http://people.debian.org/~sthibault/graph-top.txt">). Det är också
+	en god idé att välja paket från listan på föråldrade paket,
+	<url "http://people.debian.org/~sthibault/out_of_date.txt">, eftersom dessa
+	brukade fungera, men nu inte gör det av några mindre orsaker.
+	Du kan också bara välja ett av de saknade paketen slumpmässigt, eller 
+	kontrollera autobyggloggar på sändlistan debian-hurd-build-logs, eller 
+	använda wanna-build-listan från 
+	<url "http://people.debian.org/~sthibault/failed_packages.txt.gz">.
+</p>
+
+<p>
+Kolla även om arbete har gjorts på
+<url "http://alioth.debian.org/tracker/?atid=410472&amp;group_id=30628&amp;func=browse">,
+<url "http://alioth.debian.org/tracker/?atid=411594&amp;group_id=30628&amp;func=browse">,
+och i BTS (<url "http://bugs.debian.org/cgi-bin/pkgreport.cgi?users=debian-hurd@lists.debian.org;tag=hurd">), och <url "http://wiki.debian.org/Debian_GNU/Hurd">,
+samt aktuell status av paket på buildd.debian.org, t.ex.
+<url "https://buildd.debian.org/util-linux">.
+</p>
+
+<h4>
+Paket som inte anpassas</h4>
+<p>
+Några av dessa paket, eller delar av dem, kan bli anpassningsbara senare, men
+för närvarande är dem åtminstone ansedda att inte vara anpassningsbara.</p>
+
+<ul>
+<li>
+<code>base/update</code>, eftersom Hurd inte behöver en uppdaterings-daemon
+(filsystemen synkroniserar sig själva). För att ändra synkroniseringsintervallen
+kan du använda dig av <code>fsysopts</code> för att ställa in inställningen 
+<code>--sync</code>. Du kan sätta olika synkroniseringsintervaller för varje
+filsystem! För att göra detta manuellt, använd <a
+href="hurd-doc-utils#syncfs"><code>syncfs</code>-verktyget</a>.</li>
+<li>
+<code>base/makedev</code>, eftersom Hurd kommer med sin egna version av detta
+skript. Debians källkodspaket innehåller endast en Linux-specifik version.</li>
+<li>
+<code>base/ld.so</code>, eftersom Hurd använder länkaren som skickas med
+GNU C-biblioteket.</li>
+<li>
+<code>base/modconf</code> och <code>base/modutils</code>, eftersom moduler
+är ett koncept som är specifikt för Linux.</li>
+<li>
+<code>base/netbase</code>, eftersom kvarvarande saker som finns där är högst
+specifikt för Linuxkärnan. Hurd använder 
+<code>inetutils</code> istället.</li>
+<li>
+<code>base/pcmcia-cs</code>, eftersom Hurd inte har något PCMCIA-stöd. (Och
+även om den hade det så är detta paket antagligen Linuxspecifikt).</li>
+<li>
+<code>base/procps</code>, eftersom denna kod är specifik för Linux 
+proc-filsystemet.</li>
+<li>
+<code>base/ppp</code> och <code>base/pppconfig</code>, eftersom Hur inte har
+något PPP-stöd (Och även om den hade det så är detta paket antagligen 
+Linuxspecifikt).</li>
+<li>
+<code>base/setserial</code>, eftersom det är specifikt för Linuxkärnan.
+Dock så kan vi möjligen använda det med hjälp av anpassningen av 
+Linux char-drivrutiner till GNU Mach.</li>
+</ul>
+
+<h3> <a name="porting_issues">
+Allmänna anpassningsproblem</a></h3>
+<p>
+<a href=http://www.gnu.org/software/hurd/hurd/porting/guidelines.html>En lista på
+vanliga problem</a> finns tillgänglig på uppströmswebbsidan. Följande vanliga
+problem är specifika för Debian.</p>
+<p>Innan du försöker rätta något, komtrollera om kanske kfreebsd*-anpassningen
+redan har en fix, som kanske endast måste utökas till hurd-i386.</p>
+
+<ul>
+<li>
+<code>Felaktiga libc6-beroenden</code>
+<p>
+Några paket använder ett felaktigt beroende på <code>libc6-dev</code>. Detta
+är felaktigt eftersom <code>libc6</code> är specifikt för vissa arkitekturer
+av GNU/Linux. Motsvarande paket för GNU är <code>libc0.3-dev</code> men andra
+OS kommer ha andra beroenden. Du kan lokalisera problemet i 
+<code>debian/control</code>-filen i källkodsträdet. En typisk lösning inkluderar
+att detektera OSet med hjälp av <code>dpkg-architecture</code> samt 
+hårdkoda so-namnet, eller (vilket är bättre), använda en logisk OR, exempelvis:
+<code>libc6-dev | libc6.1-dev | libc0.3-dev | libc0.1-dev | libc-dev</code>.
+<code>libc-dev</code> är ett virtuellt paket som fungerar för alla so-namn, men
+du kan endast använda det som det sista alternativet.
+</p></li>
+<li>
+<code>odefinierad referens till snd_*, SND_* odefinierad</code>
+<p>
+Några paket använder ALSA även på icke-Linux-arkitekturer. Paketet oss-libalsa
+ger emulering via OSS, men den är begränsad till 1.0.5, och några funktioner
+ges inte, så som sequencer-hantering.</p>
+<p>
+Om paketet tillåter det, skall alsa-stöd avaktiveras på arkitekturerna
+<code>!linux-any</code> (exempelvis genom en <code>configure</code>-inställning), 
+och en <code>[linux-any]</code>-qualifier tillagd till 
+alsas <code>Build-Depends</code>, och motsatsen läggs till
+<code>Build-Conflicts</code>, så som
+<code>Build-Conflicts: libasound2-dev [!linux-any]</code>.
+</p>
+</li>
+</ul>
