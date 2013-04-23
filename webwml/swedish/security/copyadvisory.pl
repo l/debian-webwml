@@ -108,6 +108,7 @@ while (<SRC>)
 	s/>remote exploit</>fjärrattack</;
 	s/>missing input sanitising</>städar inte indata</;
 	s/>insufficient input sanitising</>otillräcklig städning av indata</;
+	s/>insufficient input validation</>otillräcklig validering av indata</;
 	s/>programming error</>programmeringsfel</;
 	s/cross-site scripting vulnerability/serveröverskridande skriptsårbarhet/;
 	s/>various</>diverse</;
