@@ -100,6 +100,7 @@ while (<SRC>)
 	s/integer overflow/heltalsspill/;
 	s/format string vulnerability/formatsträngssårbarhet/;
 	s/format string vulnerabilities/formatsträngssårbarheter/;
+	s/arbitrary script execution/opålitlig skriptkörning/;
 	s/insecure temporary files/osäkra temporära filer/;
 	s/>insecure temporary file creation</>osäkra temporära filer</;
 	s/>local root exploit</>lokal rootattack</;
