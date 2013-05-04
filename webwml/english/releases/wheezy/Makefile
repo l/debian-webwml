@@ -3,7 +3,9 @@
 
 WMLBASE=../..
 CUR_DIR=releases/wheezy
-SUBS=
+SUBS=debian-installer
+
+
 
 include $(WMLBASE)/Make.lang
 
