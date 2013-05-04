@@ -1,13 +1,13 @@
 #use wml::debian::template title="Debian GNU/Hurd&nbsp;&ndash;&nbsp;Configuration" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.109" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.110" maintainer="David Prévot"
 
 # Translators:
 # Jérome Abela, 1999.
 # Thomas Marteau, 2002.
 # Mohammed Adnène Trojette, 2005.
 # Nicolas Bertolissio, 2007, 2008.
-# David Prévot, 2010-2012.
+# David Prévot, 2010-2013.
 
 <h1>Configuration de Debian&nbsp;GNU/Hurd</h1>
 
@@ -434,38 +434,38 @@ est ignoré, <tt>ifup</tt> et <tt>ifdown</tt> ne fonctionnent pas.
 Seule la méthode Hurd est gérée pour le moment.
 </p>
 
-<p>
-D'abord, assurez-vous que la carte réseau est reconnue par GNU Mach :
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre>
- \# devprobe eth0
- eth0
-</pre></td></tr></table>
-
-<p>
-Si <code>devprobe eth0</code> ne renvoie pas <code>eth0</code>, le noyau
-n'a pas détecté la carte réseau et vous devez essayer une autre carte.
-
-Par exemple, la carte e1000 de QEMU n'est pas prise en charge, la rtl8139
-devrait fonctionner : <code>-net nic,model=rtl8139 -net user</code>.
-</p>
-
-<p>
-Depuis la version 20120520-1, le paquet hurd contient les
-pilotes DDE qui peuvent être utilisés pour les périphériques
-plus récents (les pilotes viennent de Linux 2.6.32).
-
-Les traducteurs pour cela sont déjà configurés, et il ne reste plus qu'à
-remplacer <code>eth0</code> (le nom du pilote Mach) par <code>/dev/eth0</code>
-(le chemin vers le pilote DDE) dans le reste de ce document.
-</p>
-
-<p>
-Le pilote DDE peut même être essayé si GNU Mach a un pilote en passant
-<code>nonetdev</code> à la ligne de commandes de gnumach ce qui désactivera
-le pilote GNU Mach, permettant au pilote DDE de commencer à fonctionner.
-</p>
+# <p>
+# D'abord, assurez-vous que la carte réseau est reconnue par GNU Mach :
+# </p>
+# 
+# <table><tr><td>&nbsp;</td><td class=example><pre>
+#  \# devprobe eth0
+#  eth0
+# </pre></td></tr></table>
+# 
+# <p>
+# Si <code>devprobe eth0</code> ne renvoie pas <code>eth0</code>, le noyau
+# n'a pas détecté la carte réseau et vous devez essayer une autre carte.
+# 
+# Par exemple, la carte e1000 de QEMU n'est pas prise en charge, la rtl8139
+# devrait fonctionner : <code>-net nic,model=rtl8139 -net user</code>.
+# </p>
+# 
+# <p>
+# Depuis la version 20120520-1, le paquet hurd contient les
+# pilotes DDE qui peuvent être utilisés pour les périphériques
+# plus récents (les pilotes viennent de Linux 2.6.32).
+# 
+# Les traducteurs pour cela sont déjà configurés, et il ne reste plus qu'à
+# remplacer <code>eth0</code> (le nom du pilote Mach) par <code>/dev/eth0</code>
+# (le chemin vers le pilote DDE) dans le reste de ce document.
+# </p>
+# 
+# <p>
+# Le pilote DDE peut même être essayé si GNU Mach a un pilote en passant
+# <code>nonetdev</code> à la ligne de commandes de gnumach ce qui désactivera
+# le pilote GNU Mach, permettant au pilote DDE de commencer à fonctionner.
+# </p>
 
 <p>
 Si le réseau n'a pas l'air de fonctionner, utilisez ceci
@@ -504,7 +504,7 @@ transparente le serveur afin de prendre en charge la requête.
 </p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
- \# settrans -fgap /servers/socket/2 /hurd/pfinet -i eth0 \
+ \# settrans -fgap /servers/socket/2 /hurd/pfinet -i /dev/eth0 \
    -a a.b.c.d -g e.f.g.h -m i.j.k.l
 </pre></td></tr></table>
 
@@ -564,9 +564,9 @@ n'y en ait qu'un seul de vraiment démarré, lié aux deux nœuds :
 </p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
- \# settrans -fgap /servers/socket/2 /hurd/pfinet -6 /servers/socket/26 -i eth0 \
+ \# settrans -fgap /servers/socket/2 /hurd/pfinet -6 /servers/socket/26 -i /dev/eth0 \
    -a a.b.c.d -g e.f.g.h -m i.j.k.l
- \# settrans -fgap /servers/socket/26 /hurd/pfinet -4 /servers/socket/2 -i eth0 \
+ \# settrans -fgap /servers/socket/26 /hurd/pfinet -4 /servers/socket/2 -i /dev/eth0 \
    -a a.b.c.d -g e.f.g.h -m i.j.k.l
 </pre></td></tr></table>
 
@@ -586,7 +586,7 @@ enregistrement sur le disque) en utilisant <tt>fsysopts</tt> :
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
  \# fsysopts /servers/socket/2
- /hurd/pfinet --interface=eth0 --address=10.3.0.1 --netmask=255.255.0.0 --gateway=10.3.0.128
+ /hurd/pfinet --interface=/dev/eth0 --address=10.3.0.1 --netmask=255.255.0.0 --gateway=10.3.0.128
  \# fsysopts /server/socket/2 -a 10.3.0.2 -m 255.255.0.0 -g 10.3.0.128
 </pre></td></tr></table>
 
