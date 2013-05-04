@@ -21,3 +21,6 @@ installmanual.$(LANGUAGE).html: installmanual.wml $(TEMPLDIR)/release.wml \
   $(ENGLISHDIR)/releases/wheezy/release.data $(TEMPLDIR)/release_info.wml \
   $(ENGLISHDIR)/releases/arches.data \
   $(wildcard $(HTMLDIR)/*/install*)
+
+$(ENGLISHSRCDIR)/$(CUR_DIR)/release.data: $(TEMPLDIR)/release_images.wml
+	touch $@
