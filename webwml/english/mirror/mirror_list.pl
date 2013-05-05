@@ -635,7 +635,7 @@ END
           my $num = 0;
           my ($sponsorname, $sponsorurl);
           foreach my $sponsor (@{ $mirror[$subsite_id]{sponsor} }) {
-            if ($sponsor =~ /^(.+) (http:.*)$/) {
+            if ($sponsor =~ /^(.+) (https?:.*)$/) {
               $sponsorname = $1;
               $sponsorurl = $2;
             } else {
@@ -709,7 +709,7 @@ END
       my $num = 0;
       my ($sponsorname, $sponsorurl);
       foreach my $sponsor (@{ $mirror[$id]{sponsor} }) {
-        if ($sponsor =~ /^(.+) (http:.*)$/) {
+        if ($sponsor =~ /^(.+) (https?:.*)$/) {
           $sponsorname = $1;
           $sponsorurl = $2;
         } else {
