@@ -7,6 +7,7 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+about.$(LANGUAGE).html: $(TEMPLDIR)/release_info.wml
 
 organization.$(LANGUAGE).html: organization.wml \
   $(ENGLISHSRCDIR)/intro/organization.data \
