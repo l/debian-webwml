@@ -13,7 +13,8 @@ DOMAINS = templates bugs cdimage consultants countries date distrib \
 	  ports security stats vendors vote wnpp others
 
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
-cdimage_FILES   = $(TEMPLDIR)/cdimage.wml $(ENGLISHDIR)/CD/CD-keys.data
+cdimage_FILES   = $(TEMPLDIR)/cdimage.wml $(ENGLISHDIR)/CD/CD-keys.data \
+		  $(ENGLISHDIR)/devel/debian-installer/images.data
 consultants_FILES = $(TEMPLDIR)/consultant.wml \
   $(ENGLISHDIR)/consultants/consultant.defs
 countries_FILES = $(TEMPLDIR)/countries.wml
