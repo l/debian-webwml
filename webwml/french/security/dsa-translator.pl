@@ -53,6 +53,7 @@ $translation = {
 		'NULL pointer dereference'	=>		'Déréférencement de pointeur NULL',
 		'several vulnerabilities'		=>	'Plusieurs vulnérabilités',
 		'multiple vulnerabilities'		=>	'Plusieurs vulnérabilités',
+		'several issues'		=> 		'Plusieurs problèmes',
 		'buffer overflow'				=>	'Dépassement de tampon',
 		'buffer overflows'				=>	'Dépassements de tampon',
 		'cross site scripting'				=>	'Script intersite',
@@ -211,6 +212,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|They.will.be.released.as.soon.as.they.become.available|Ils seront publiés dès qu'ils seront disponibles|gs;
 	$output =~ s|An.update.will.be.released.soon|Une mise à jour sera bientôt publiée|gs;
 	$output =~ s|and.will.migrate.to.the.(\S+).distribution.\((\S+)\).shortly\.|qui migrera bientôt vers la distribution $1 ($2).|gs;
+	$output =~ s|For.the.(\S+).distribution.\((\S+)\),.(\S+).will.be.removed.in.favour.of|Pour la distribution $1 ($2), $3 sera supprimé au bénéfice de|gs;
 	$output =~ s|<p>[\n]?We.recommend.that.you.upgrade.your.(\S+).packages|<p>Nous vous recommandons de mettre à jour vos paquets $1|gs;
 
 
@@ -220,6 +222,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|\(lenny\)|\(Lenny\)|g;
 	$output =~ s|\(squeeze\)|\(Squeeze\)|g;
 	$output =~ s|\(wheezy\)|\(Wheezy\)|g;
+	$output =~ s|\(jessie\)|\(Jessie\)|g;
 
 	# Short recurrent part of text. Take care ! substitution order might be important
 	$output =~ s|(Several\|Multiple).vulnerabilities.(have.been\|were).discovered in|Plusieurs vulnérabilités ont été découvertes dans|gs;
