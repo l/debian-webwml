@@ -14,7 +14,7 @@
 #  * file:     add current version of translated file
 
 sub init_translators {
-    my $translators = { 
+    my $translators = {
 	'Antonio Terceiro' => {
 	    email     => 'asaterceiro@inf.ufrgs.br',
             summary   => 3,
@@ -22,7 +22,7 @@ sub init_translators {
 	    diff      => 0,
 	    tdiff     => 0,
 	    compress  => 'none'
-	},
+	    },
 	'Carlos Laviola' => {
 	    email     => 'claviola@debian.org',
 	    summary   => 3,
@@ -40,15 +40,15 @@ sub init_translators {
 	    tdiff     => 0,
 	    file      => 0,
 	    compress  => 'none'
-	    },	
+	    },
 	'Felipe Augusto van de Wiel (faw)' => {
-            email     => 'faw@debian.org',
-            summary   => 3,
-            logs      => 3,
-            diff      => 3,
-            tdiff     => 0,
-            file      => 0,
-            compress  => 'none'
+	    email     => 'faw@debian.org',
+	    summary   => 3,
+	    logs      => 3,
+	    diff      => 3,
+	    tdiff     => 0,
+	    file      => 0,
+	    compress  => 'none'
 	    },
 	'Gustavo Noronha' => {
 	    email     => 'kov@debian.org',
@@ -67,14 +67,14 @@ sub init_translators {
 	    tdiff     => 0,
 	    compress  => 'none'
 	    },
-        'Marcio Roberto Teixeira' => {
-           email     => 'marciotex@pop.com.br',
-           summary   => 2,
-           logs      => 2,
-           diff      => 0,
-           tdiff     => 0,
-           compress  => 'none'
-           },
+	'Marcio Roberto Teixeira' => {
+	    email     => 'marciotex@pop.com.br',
+	    summary   => 2,
+	    logs      => 2,
+	    diff      => 0,
+	    tdiff     => 0,
+            compress  => 'none'
+	    },
 	'Philipe Gaspar' => {
 	    email     => 'philipegaspar@terra.com.br',
 	    summary   => 3,
@@ -88,7 +88,7 @@ sub init_translators {
 	    email     => 'marcgsantana@yahoo.com.br',
 	    summary   => 3,
 	    logs      => 3,
-	    diff      => 0,
+	    diff      => 3,
 	    tdiff     => 0,
 	    file      => 0,
 	    compress  => 'none'
