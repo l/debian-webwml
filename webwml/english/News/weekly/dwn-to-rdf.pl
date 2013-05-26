@@ -166,6 +166,7 @@ my $name = '';
 
 if (open (F, $current . '/index.wml')) {
     while (<F>) {
+	next if (/^#/);
 	# prevent double utf-8 encode by XML::RSS 
 	$_ = decode_utf8($_) if ($charset eq 'utf-8') ;
 	if (/^<p><strong>(.*)<\/strong>(?:<br \/>)?\s*(.*)/) {
