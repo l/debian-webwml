@@ -153,7 +153,7 @@
   </option>
   <option value="1">
     <gettext domain="bugs">Archived</gettext>
-  </option>
+   </option>
   <option value="both">
     <gettext domain="bugs">Archived and Unarchived</gettext>
   </option>
@@ -164,7 +164,14 @@
 <define-tag bts_severities>
 <code>critical</code>, <code>grave</code>, <code>serious</code>, 
 <code>important</code>, <code>normal</code>, <code>minor</code>, 
-<code>wishlist</code>, <code>fixed</code></define-tag>
+<code>wishlist</code></define-tag>
+
+# obsolete bug severities.
+<define-tag bts_severities_obsolete>
+<code>fixed</code></define-tag>
+
+<define-tag bts_severities_all>
+<bts_severities>, <bts_severities_obsolete></define-tag>
 
 # bug tags. See debbugs/etc/config
 <define-tag bts_tags>
