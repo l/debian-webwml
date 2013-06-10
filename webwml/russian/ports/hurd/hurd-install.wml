@@ -1,0 +1,797 @@
+#use wml::debian::template title="Debian GNU/Hurd &mdash; Настройка" NOHEADER="yes"
+#include "$(ENGLISHDIR)/ports/hurd/menu.inc"
+#use wml::debian::translation-check translation="1.110" maintainer="Lev Lamberov"
+
+<h1>Настройка Debian GNU/Hurd</h1>
+
+<p>
+Этот документ содержит набор простых и относительно не затратных инструкций по
+настройке Debian GNU/Hurd.
+</p>
+
+<p>
+Он основан на <q>Руководстве по установке Hurd</q> Нила Уолфилда (Neil H. Walfield).
+Выражаем благодарность Нилу за его вклад.
+</p>
+
+<h2>Обзор </h2>
+
+<p>
+GNU по природе схож с системами Unix: после входа в систему пользователю
+предоставляется оболочка и знакомая Unix VFS (виртуальная файловая система). Хотя
+GNU и пытается соответствовать стандарту POSIX, она <q>не является Unix</q>. GNU/Hurd построена на многих
+понятиях Unix и расширяет их, либо добавляя новую функциональность, либо исправляя
+то, что кажется недостатками изначального проектирования. Наиболее заметным
+отличием являются трансляторы, программы из пользовательского пространства, которые взаимодействуют с VFS.
+Эти файловые системы не живут в ядре, их также не нужно запускать с правами
+суперпользователя; им нужен лишь доступ к резервному хранилищу и
+<code>точке монтирования</code>. Другим отличием является то, что процессы имеют скорее один
+идентификатор пользователя, который фиксируется во время создания процесса, они имеют токены идентификации, которые не пересекаются
+с процессом, т.е. они могут быть добавлены при соответствующем разрешении того, кто
+обладает соответствующими правами, либо уничтожены.
+</p>
+
+<p>
+Знакомство с окружением Unix (и особенно с пользовательскими программами GNU, которые можно
+найти во многих популярных вариантах GNU/Linux) необходимо для того, чтобы чувствовать себя комфортно в
+GNU. Наличие опыта работы с инструментами Debian также будет весьма ценно при
+настройке и сопровождении системы с GNU/Hurd.
+</p>
+
+<p>
+Настоящее руководство стремится к тому, чтобы установка GNU/Hurd была безболезненным процессом,
+насколько это только возможно. Если в руководстве присутствуют какие-либо ошибки, они скорее всего сделаны автором. Пожалуйста,
+сообщайте о них ему, кроме того, он ждёт ваших предложений и критики; всё будет
+охотно принято.
+</p>
+
+#<h2> 2. Недвижимое имущество, или поиск дома </h2>
+#
+#<p>
+#If you do not have an available partition or an extra hard drive, this can be
+#the longest step. In this case, you will need to repartition the hard drive.
+#One solution is to use GNU's partition editor,
+#<a href="http://packages.debian.org/parted">Parted</a>. It features not only
+#basic partition editing but also partition resizing and moving functionality.
+#The manual is quite complete and includes several tutorials. Note that also
+#there is a <code>63 GNU HURD or SysV</code> partition type, it should not be
+#used or else the installation CD will not find it. Just use <code>83
+#Linux</code>
+#</p>
+#
+#<p>
+#The Hurd supports several extensions to the ext2fs filesystem format. Foremost
+#among these are passive translators and a fourth set of permission bits for
+#unknown users (users without an identity, not the other user). To use these
+#extensions, the owner of the partition must be set to <code>hurd</code>.
+#<code>mke2fs</code>, unless specifically overridden on the command line, will
+#set the owner to whatever kernel it is running on. As the Hurd will diligently
+#respect this setting, care must be taken to set this appropriately or the Hurd
+#will fail in subtle ways. Be aware that even if a file system is owned by a
+#particular kernel, others may still use it; they just may not be able to use
+#certain extensions.
+#</p>
+#
+#<p>
+#To create a filesystem, use <code>mke2fs</code> and pass it <q><var>-b 4096
+#-I 128 -o hurd</var></q> to designate the Hurd as the owner of the new file
+#system. For instance, assuming the partition is <tt><q>/dev/hda1</q></tt>:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# mke2fs -b 4096 -I 128 -o hurd /dev/hda1
+#</pre></td></tr></table>
+#
+#
+#<h2> 3. Загрузчик </h2>
+#
+#<p>
+#The bootloader of the GNU system is Grub, the GRand Unified Boot loader,
+#and it is its main purpose to boot the GNU system core (Mach and the Hurd).
+#Any boot loader that supports the multiboot standard, though, may be used to
+#load Mach and the Hurd. At the moment (that we're aware of), GNU Grub is the
+#only bootloader that supports such standard.
+#</p>
+#
+#<p>
+#A word about Grub. Unlike traditional boot loaders on the x86, such as LILO,
+#Grub is very powerful. It has a command line interface, bootp, dummy terminal
+#support and a plethora of other features. In addition, it can boot almost any
+#kernel. If you have ever booted an alpha or sparc, you will understand what
+#Grub can do. Therefore, do not be scared: Grub is better. You will like it.
+#You will not go back.
+#</p>
+#
+#<p>
+#It is probably better if you install
+#<a href="http://packages.debian.org/grub2">Grub</a> before installing the
+#Hurd, but you can always install it onto your hard drive at a later date.
+#</p>
+#
+#
+#<h2> 4. Перекрёстная установка </h2>
+#
+#<p>
+#The next step is to get a base system. There are several alternatives, if you
+#are running a Debian system you can use the package crosshurd. Otherwise you
+#can get an updated base system tarball from any of the mirrors listed at
+#<url "http://wiki.debian.org/DebianPorts/Mirrors" />.
+#</p>
+#
+#<p>
+#The tarball is set up to extract everything into the current directory.
+#After the filesystem is mounted, the archive can be extracted.
+#Assuming that the filesystem is on <tt><q>/dev/hda2</q></tt>, the mount point
+#is <tt><q>/gnu</q></tt> and archive is in current user's home directory, the
+#following is required:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# mount -t ext2 /dev/hda2 /gnu
+# \# cd /gnu
+# \# tar --same-owner -xvjpf ~/gnu.tar.bz2
+#</pre></td></tr></table>
+#
+#
+#<h2> 5. Загрузка GNU/Hurd </h2>
+#
+#<p>
+#All is now in readiness to boot GNU/Hurd for the first time. Note that depending
+#on your version of GRUB, small details with vary. Please make sure whether you
+#have GRUB1 (aka legacy aka 0.95 and later up to 0.97), or GRUB2 (aka 1.95 and
+#later). Examples below will provide both versions, make sure to pick the right
+#one.
+#</p>
+#
+#<p>
+#Please also note that some problems have been reported when booting with only
+#128MB memory, because of swap not being setup yet at this stage. Make sure to
+#provide at least 256MB memory.
+#</p>
+#
+#<p>
+#If your system already has GRUB installed, just reboot it. Else, you need to use
+#a Grub boot disk. On Debian, the grub-disk (grub1) or grub-rescue-pc (grub2)
+#packages provides CD and Floppy disk images. Make sure that the Grub boot disk
+#is in the drive, reboot. If all goes well, either a Grub menu or command line
+#will be displayed. If the menu has a <tt><q>GNU/Hurd</q></tt> entry, you will
+#probably be able to just reuse it to save a lot of typing burden. For now, if
+#presented with a menu, press <kbd>c</kbd> to go to the command line.
+#</p>
+#
+#<p>
+#First, GNU Mach needs to be loaded. This requires knowing the filesystem
+#and the path to GNU Mach. Grub uses a partition nomenclature that is a bit
+#different from both Linux and the Hurd: both IDE and SCSI drives are named
+#<tt><q>(hdN,M)</q></tt>. <code>N</code> is the drive number (zero based) as
+#enumerated by the BIOS. That is, Grub makes no distinction between IDE and SCSI
+#disks. <code>M</code> identifies the partition on the drive. It is zero based
+#in grub1 but one based in grub2. If this sounds confusing, relax:  Grub is also
+#helpful.
+#</p>
+#
+#<p>
+#To determine on which filesystem a particular file resides, Grub provides the
+#<code>find</code> command. When this command is issued along with a filename,
+#Grub searches on each filesystem for the specified file and prints where it was
+#found. For example, to search for the kernel, <tt><q>/boot/gnumach.gz</q></tt>:
+#</p>
+#
+#<table>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub1&#62; find /boot/gnumach.gz
+#   (hd0,0)
+#</pre></td></tr>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub2&#62; search -f /boot/gnumach.gz
+#   (hd0,1)
+#</pre></td></tr>
+#</table>
+#
+#<p>
+#Here, Grub1 indicates that <tt><q>/boot/gnumach.gz</q></tt> is on
+#<tt><q>(hd0,0)</q></tt> and Grub2, on <tt><q>(hd0,1)</q></tt> (remember the difference
+#in partition numbering between Grub1 and Grub2).  To save you a couple of
+#typing, set Grub's root to that value:
+#</p>
+#
+#<table>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub1&#62; root (hd0,0)
+#</pre></td></tr>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub2&#62; set root=(hd0,1)
+#</pre></td></tr>
+#</table>
+#
+#<p>
+#Before loading the kernel, at least one option, the root partition, must be
+#specified on the command line. This will be used by the Hurd itself (i.e. not
+#Grub). As such, it must be in terms that the Hurd can understand.
+#</p>
+#
+#<p>
+#GNU Mach enumerates disks starting at zero. IDE drives are prefixed with
+#<code>hd</code>, while SCSI disks are prefixed with <code>sd</code>. Like
+#Linux, drives are number by their position on the controller. For instance, the
+#primary master is <code>hd0</code> and the secondary slave is <code>hd3</code>.
+#Partitions use the BSD slice naming convention and append <code>sM</code> to the
+#drive name to indicate a given partition. Note that <code>M</code> is a one, not
+#zero, based index. The slice number is simple to calculate: if you have Grub2,
+#just reuse the same index, if you have Grub1, just increment what was used for
+#Grub1 by one.
+#</p>
+#
+#<p>
+#Since the Hurd has not yet been configured, it must be started in single user
+#mode. Adding a <q><var>-s</var></q> to the kernel command line is all that is
+#required.
+#</p>
+#
+#<p>
+#To sum it up, assuming that the first drive (i.e. <tt><q>(hd0)</q></tt>) is the
+#master on the master controller, we would have:
+#</p>
+#
+#<table>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub1&#62; kernel /boot/gnumach.gz root=device:hd0s1 -s
+#   [Multiboot-elf, ...]
+#</pre></td></tr>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#   grub2&#62; multiboot /boot/gnumach.gz root=device:hd0s1 -s
+#</pre></td></tr>
+#</table>
+#
+#<p>
+#Next, the root filesystem server and the <code>exec</code> server must be
+#loaded. This is done using Grub's boot module capability. The ${var} are
+#filled in by GNU Mach. The arguments are used by the Hurd to indicate what
+#type of information is being provided. Since the ext2fs command line is very
+#long, it can be broken up by escaping the newline character in the normal Unix
+#fashion. Be sure that there is not space after the antislash at the end of each
+#line. Also be sure to differentiate <kbd>{</kbd> and <kbd>}</kbd> from <kbd>
+#(</kbd> and <kbd>)</kbd>. Mind the subttle differences between Grub1 and
+#Grub2: Grub2 needs that the filename be repeated and quotes need
+#to be used. Note that at this stage the <var>--readonly</var> option of
+#<code>ext2fs.static</code> must not be passed.
+#</p>
+#
+#<table>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#  grub1&#62; module /hurd/ext2fs.static \
+#   --multiboot-command-line=${kernel-command-line} \
+#   --host-priv-port=${host-port} \
+#   --device-master-port=${device-port} \
+#   --exec-server-task=${exec-task} -T typed ${root} \
+#   $(task-create) $(task-resume)
+#    [Multiboot-module  0x1c4000, 0x2cfe6a bytes]
+#  grub1&#62; module /lib/ld.so.1 /hurd/exec $(exec-task=task-create)
+#    [Multiboot-module  0x494000, 0x27afe bytes]
+#</pre></td></tr>
+#<tr><td>&nbsp;</td><td class=example><pre>
+#  grub2&#62; module /hurd/ext2fs.static ext2fs \
+#   --multiboot-command-line='${kernel-command-line}' \
+#   --host-priv-port='${host-port}' \
+#   --device-master-port='${device-port}' \
+#   --exec-server-task='${exec-task}' -T typed '${root}' \
+#   '$(task-create)' '$(task-resume)'
+#  grub2&#62; module /lib/ld.so.1 exec /hurd/exec '$(exec-task=task-create)'
+#</pre></td></tr>
+#</table>
+#
+#<p>
+#Alternatively, you can throw these lines into a <tt><q>menu.lst</q></tt>
+#(Grub1) or <tt><q>grub.cfg</q></tt> (Grub2) configuration file in the partition,
+#and load it by using <tt><q>configfile /path/to/menu.lst</q></tt> (Grub1) or
+#<tt><q>configfile /path/to/grub.cfg</q></tt> (Grub2) from the grub prompt. You
+#can of course also simply install grub in some MBR and point it to there.
+#</p>
+#
+#<p>
+#GNU/Hurd can be now booted:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+#grub&#62; boot
+#</pre></td></tr></table>
+#
+#<p>
+#If GNU/Hurd fails to boot, it could be due to shared IRQs: GNU Mach does not
+#play well with these. You can verify your situation by looking at, for
+#instance, the <tt><q>/proc/interrupts</q></tt> file under GNU/Linux. Also, as GNU
+#Mach does not support loadable kernel modules, many of the drivers are compiled
+#into the default kernel. If there are old peripherals, this can be a problem: a
+#device may incorrectly respond to a probe intended for a completely unrelated
+#device and thereby cause a crash. Building a new kernel with only the required
+#device drivers will usually solve this problem. GNU Mach is easily cross
+#compiled. If you are running Debian, install the <tt><q>mig</q></tt> package,
+#and your stock <tt><q>gcc</q></tt> should do.
+#</p>
+#
+#<p>
+#If this does not help, ask on the appropriate mailing list.
+#</p>
+#
+#
+#<h2> 6. Родная установка </h2>
+#
+#<p>
+#Once you are presented with a shell prompt, and any time that the Hurd is in
+#single user mode, it is necessary to set the terminal type:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# export TERM=mach
+#</pre></td></tr></table>
+#
+#<p>
+#Be warned that <kbd>CONTROL-C</kbd> and family will not work in single user
+#mode.
+#</p>
+#
+#<p>
+#We can now run the <code>native-install</code> script. This will configure the
+#packages and set up several important translators:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# ./native-install
+#</pre></td></tr></table>
+#
+#<p>
+#Before the script terminates, it will indicate that you can now reboot and enter
+#multi-user mode. Do so, this is the Hurd, welcome!
+#</p>
+
+
+<h2> Установка </h2>
+
+<p>
+Вы просто можете использовать установщик Debian, см.
+<a href="hurd-cd">подготовленные образы CD</a>.
+Затем, для правильной настройки необходимо будет предпринять следующие шаги.
+</p>
+
+<h2> Настройка </h2>
+
+<h3> Сеть </h3>
+
+<p>
+Способ в стиле Debian пока не поддерживается: <tt>/etc/network/interfaces</tt>
+игнорируется, <tt>ifup</tt> и <tt>ifdown</tt> не работают. В настоящее время поддерживает
+только способ в стиле Hurd.
+</p>
+
+#<p>
+#First, make sure that your network card is recognized by GNU Mach:
+#</p>
+#
+#<table><tr><td>&nbsp;</td><td class=example><pre>
+# \# devprobe eth0
+# eth0
+#</pre></td></tr></table>
+#
+#<p>
+#If <code>devprobe eth0</code> does not return <code>eth0</code>, the kernel
+#didn't detect your network board and you need to try another board. For
+#instance, qemu's e1000 board is not supported, the rtl8139 one should work:
+#<code>-net nic,model=rtl8139 -net user</code>
+#</p>
+
+#<p>
+#Starting from version 20120520-1, the hurd package includes DDE drivers which
+#are used to support more recent devices (drivers are taken from Linux
+#2.6.32). Translators for that are already set up for you, and all you
+#need to do is to replace <code>eth0</code> (the mach driver name) with
+#<code>/dev/eth0</code> (the DDE driver path) in the remainder of this document.
+#</p>
+#
+#<p>
+#It is possible to try to use the DDE driver even if GNU Mach has a driver:
+#passing <code>nonetdev</code> on the gnumach command line will disable the GNU
+#Mach driver, and the DDE driver will start working.
+#</p>
+
+<p>
+Если сеть не работает, используйте следующую команду для получения отладочной информации
+от драйвера DDE:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# settrans -fgap /dev/netdde /hurd/netdde
+</pre></td></tr></table>
+
+<p>
+затем убейте все процессы devnode и pfinet, чтобы дать им возможность перезапуститься с новым
+netdde. Если сеть всё ещё не работает, вышлите нам вывод netdde settrans,
+а также вывод <code>lspci</code> и <code>lspci -n</code> .
+</p>
+
+<p>
+Чтобы настроить сеть, должен быть настроен транслятор pfinet.
+Это можно сделать, используя <code>dhclient</code> из
+пакета <code>isc-dhcp-client</code>, но его запуск пока не производится
+автоматически, поэтому необходимо запускать его вручную, напр. <code>dhclient /dev/eth0</code>
+Это также может быть сделано вручную при помощи <code>inetutils-ifconfig</code>
+из пакета <code>inetutils-tools</code>, <code>ping</code>
+доступен в пакете <code>inetutils-ping</code>.
+Наконец, последнее, но не менее важное, это может быть сделано (и навсегда записано) вручную, используя
+команду <code>settrans</code>, чтобы прикрепить транслятор к данной ноде
+файловой системы. Когда программа обращается к ноде, например отправляя RPC,
+операционная система прозрачно запускает сервер, чтобы обработать этот запрос.
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# settrans -fgap /servers/socket/2 /hurd/pfinet -i /dev/eth0 \
+   -a a.b.c.d -g e.f.g.h -m i.j.k.l
+</pre></td></tr></table>
+
+<p>
+Здесь <code>settrans</code> передаётся несколько параметров. Первые два,
+<q><var>fg</var></q>, заставляют любой существующий транслятор исчезнуть. Следующие два,
+<q><var>ap</var></q>, создают активный и пассивный трансляторы. Создавая
+активный транслятор, мы сразу же видим любые сообщения об ошибках на
+<tt><q>stderr</q></tt>. Последний параметр сохраняет транслятор и аргументы в ноде,
+так что он может быть прозрачно перезапущен позже (т.е., этот параметр делает так, чтобы при
+перезагрузке настройки сохранялись). За параметрами следует нода, к которой должен быть прикреплён
+транслятор, затем программа (т.е., транслятор), которую следует запустить, и любые аргументы,
+которые следует ей передать. Параметр <q><var>-i</var></q> представляет собой интерфейс, который будет
+прослушиваться <code>pfinet</code>, <q><var>-a</var></q> &mdash; IP-адрес, <q><var>-g</var></q> &mdash;
+шлюз, а <q><var>-m</var></q> &mdash; сетевая маска.
+</p>
+
+<p>
+Убедитесь, что серверы имён добавлены в файл <tt><q>/etc/resolv.conf</q></tt>:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+  nameserver 192.168.1.1
+</pre></td></tr></table>
+
+<p>
+Чтобы проверить настройки, выполните <code>ping -c2 gateway</code>. Параметр
+<q><var>-c</var></q> важен для ограничения количества запросов; помните,
+<kbd>CONTROL-C</kbd> не работает в однопользовательском режиме.
+</p>
+
+<p>
+Вы можете получить помощь по <code>settrans</code>, если передадите ей
+параметр <q><var>--help</var></q>. Помощь по какому-либо конкретному транслятору может быть получена,
+если вы вызовите его из командной строки с тем же самым аргументом, например:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# /hurd/pfinet --help
+</pre></td></tr></table>
+
+<p>
+Поскольку вывод может быть очень большим, советуем передать его специальной программе постраничного чтения, такой как
+<code>less</code>.
+</p>
+
+<p>
+Кроме того, чтобы настроить поддержку IPv6, та же самая настройка должна быть записана и в
+<tt>/servers/socket/2</tt>, и в <tt>/servers/socket/26</tt>, которые должны указывать
+друг на друга, чтобы фактически запускался только один файл настройки, привязанный к обеим нодам:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# settrans -fgap /servers/socket/2 /hurd/pfinet -6 /servers/socket/26 -i /dev/eth0 \
+   -a a.b.c.d -g e.f.g.h -m i.j.k.l
+ \# settrans -fgap /servers/socket/26 /hurd/pfinet -4 /servers/socket/2 -i /dev/eth0 \
+   -a a.b.c.d -g e.f.g.h -m i.j.k.l
+</pre></td></tr></table>
+
+<p>
+Сервер pfinet по умолчанию включает автоматическую настройку IPv6. Её текущее состояние
+может быть получено из <tt>fsysopts /servers/socket/26</tt>. Адреса также могут быть
+установлены вручную с помощью, например <tt>-A 2001:123:123::42/64 -G 2001:123:123::1</tt>.
+</p>
+
+<p>
+Настройка pfinet может быть изменена на лету
+(без записи на диск) при помощи <tt>fsysopts</tt>:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# fsysopts /servers/socket/2
+ /hurd/pfinet --interface=/dev/eth0 --address=10.3.0.1 --netmask=255.255.0.0 --gateway=10.3.0.128
+ \# fsysopts /server/socket/2 -a 10.3.0.2 -m 255.255.0.0 -g 10.3.0.128
+</pre></td></tr></table>
+
+<h3> Раскладка клавиатуры </h3>
+
+<p>
+Раскладка клавиатуры может быть настроена через стандартный пакет
+<code>keyboard-configuration</code>. Убедитесь, что он установлен, и
+выполните <code>dpkg-reconfigure keyboard-configuration</code>. Поддерживается
+только одна раскладка, варианты не поддерживаются (пока). Настройка не будет
+принята немедленно, поскольку должна быть перезапущена консоль, чтобы новые параметры начали
+учитываться. Например, вполне подойдет перезагрузка.
+</p>
+
+<h3> Другие файловые системы </h3>
+
+<p>
+Далее, отредактируйте <tt><q>/etc/fstab</q></tt>, чтобы добавить дополнительные файловые системы, а также
+место для подкачки. <em>Очень важно</em> использовать подкачку; Hurd
+будет намного более стабилен. Заметьте, что Hurd может прозрачно
+разделять раздел подкачки с Linux, но он вполне может работать с любым устройством, включая
+непустой раздел, такой как ваш раздел home. По умолчанию <code>nano</code> и <code>vi</code> являются
+единственными редакторами, устанавливаемыми базовым дистрибутивом.
+</p>
+
+<p>
+Ниже приведён пример файла <tt><q>/etc/fstab</q></tt>:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+\# &#60;file system&#62; &#60;mount point&#62;   &#60;type&#62;  &#60;options&#62;  &#60;dump&#62;  &#60;pass&#62;
+/dev/hd0s1      /               ext2    rw         0       1
+/dev/hd0s2      /home           ext2    rw         0       2
+/dev/hd0s3      none            swap    sw         0       0
+</pre></td></tr></table>
+
+<p>
+Если какое-либо устройство <code>/dev</code> отсутствует, не забудьте создать его, используя команду <code>MAKEDEV</code>:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# cd /dev
+ \# ./MAKEDEV hd0s1 hd0s2 hd0s3
+</pre></td></tr></table>
+
+<p>
+Вы также можете монтировать файловые системы вручную, вызывая <code>settrans</code>:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# settrans /mnt /hurd/ext2fs /dev/hd0s5
+</pre></td></tr></table>
+
+<p>
+Суть этой команды состоит в том, что вы устанавливаете на ноду <code>/mnt</code>
+транслятор <code>/hurd/ext2fs /dev/hd0s5</code>. <code>/hurd/ext2fs</code> будет
+выполняться, начинать чтение/запись <code>/dev/hd0s5</code> и показывать его содержимое
+на <code>/mnt</code>. Дополнительная информация может быть найдена в
+<a href="hurd-doc-translator">документации по трансляторам</a>.
+</p>
+
+<p>
+Чтобы смонтировать файловую систему nfs, используется транслятор <code>/hurd/nfs</code>. Когда
+он запущен пользователем, который не является суперпользователем, транслятор подключится к серверу, используя
+порт 1023 из примера. По умолчанию GNU/Linux отклонит это. Чтобы заставить GNU/Linux принять
+соединения, исходящие с незарезервированного порта, добавьте
+параметр <q><var>insecure</var></q> в строку экспорта. Ниже приведён пример
+файла <tt><q>/etc/exports</q></tt>, в примере сделано предположение о том, что клиент имеет IP-адрес
+<tt><q>192.168.1.2</q></tt>:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+  /home  192.168.1.2(rw,insecure)
+</pre></td></tr></table>
+
+<p>
+Чтобы смонтировать этот раздел на системе с GNU, нужно выполнить следующее (допустим, что IP-адрес сервера nfs
+<tt><q>192.168.1.1</q></tt>):
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+\# settrans -cgap /mount/point /hurd/nfs 192.168.1.1:/home
+</pre></td></tr></table>
+
+
+<h2> Развлекаемся с Debian GNU/Hurd </h2>
+
+<p>
+Итак, что мы можем делать с Hurd?
+</p>
+
+<h3> Монтировать образы дисков </h3>
+
+<p>
+Доступ к содержимому образа CD в стандартной системе Unix
+несколько затруднён, если вы, конечно, не суперпользователь. В GNU/Hurd эта процедура сводится к следующему:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+settrans ~/mnt /hurd/iso9660fs CD_image.iso
+</pre></td></tr></table>
+
+<p>
+И это абсолютно безопасно: транслятор <code>iso9660fs</code> запускается
+под вашей учётной записью, а не под суперпользователем. Вы даже можете написать свой собственный транслятор для любой
+файловой системы. Да, это похоже на FUSE. Без всех её ляпов.
+</p>
+
+<h3> Прозрачный FTP </h3>
+
+<p>
+Следующая команда настраивает прозрачный каталог <code>ftp</code>:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+settrans -c /ftp: /hurd/hostmux /hurd/ftpfs /
+</pre></td></tr></table>
+
+<p>
+Теперь перейдите в <code>cd</code>, например <code>/ftp://ftp.gnu.org/</code>, и выполните здесь <code>ls</code>.
+Да, вы можете из своего домашнего каталога запустить <code>tar xf ftp://ftp.gnu.org/pub/gnu/gcc/gcc-4.6.0/gcc-4.6.0.tar.bz2</code> !
+</p>
+
+<h3> Под-Hurd </h3>
+
+<p>
+<a href="http://www.gnu.org/software/hurd/hurd/subhurd.html">Под-Hurd</a> &mdash; это
+полная подсистема. На первый взгляд, очень похоже на контейнеры
+виртуализации. За исключением того, что не обязательно быть суперпользователем, чтобы вообще запустить хотя бы одну подсистему.
+</p>
+
+<h3> gdb ext2fs, pfinet, ... </h3>
+
+<p>
+Да, вы можете запустить gdb на, например реализации ext2fs, стеке <code>pfinet</code> TCP/IP и т.д.
+</p>
+
+<h3> И много всего другого! </h3>
+
+<p>
+Ведётся работа над <code>mboxfs</code>, <code>tarfs</code>, <code>xmlfs</code>, <code>gopherfs</code>, …
+</p>
+
+#<h3> 7.3 Перезагрузка </h3>
+#
+#<p>
+#Finally, reboot into multiuser mode, i.e. in the same way single user mode was
+#brought up minus the <q><var>-s</var></q> option when loading the kernel. For
+#details, see section 5. Booting GNU/Hurd.
+#</p>
+#
+#<p>
+#Happy Hacking!
+#</p>
+
+<h2>Заключительные слова </h2>
+
+<p>
+Ниже приведены лишь базовые быстрые настройки, обязательно прочтите
+документацию для установленной системы: <a href=hurd-doc>Документация по Debian GNU/Hurd</a>,
+а также <a href=http://hurd.gnu.org/>веб-сайт основной ветки разработки</a>.
+</p>
+
+
+#<h3> 8.1 Меню Grub </h3>
+#
+#<p>
+#Having to always load the kernel by hand can be very tedious. Edit the
+#<tt><q>/boot/grub/menu.lst</q></tt> for Grub1 or
+#<tt><q>/boot/grub/grub.cfg</q></tt> for Grub2 and tailor it appropriately;
+#booting will become much quicker and easier.
+#</p>
+#
+#
+#<h3> 8.2 Добавление устройств </h3>
+#
+#<p>
+#By default, only a few devices are created in the <tt><q>/dev</q></tt> directory.
+##Use the <code>MAKEDEV</code> script to create any needed device nodes.
+#</p>
+
+<h3> Установка дополнительных пакетов </h3>
+
+<p>
+Существует несколько способов добавления пакетов. Загрузка и использование
+<code>dpkg -i</code> вполне работает, но это очень неудобно. Наиболее простым методом
+является использование <code>apt-get</code>. Отредактируйте <tt><q>/etc/apt/sources.list</q></tt>
+и добавьте какой-нибудь пункт из списка
+<url "http://www.debian-ports.org/mirrors"> (это ещё не выпущенные переносы) и установите
+пакет <code>debian-ports-archive-keyring</code>:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+deb http://ftp.debian-ports.org/debian unreleased main
+</pre></td></tr></table>
+
+<p>
+<url "http://ftp.debian-ports.org/" /> и его зеркала содержат пакеты, имеющие
+хаки или заплаты, которые ещё не были интегрированы в основную ветку разработки или в Debian.
+</p>
+
+<p>
+Кроме того, добавьте нестабильный выпуск Debian с одного из официальных зеркал (см.
+полный список зеркал по адресу <url "http://www.debian.org/mirror/list" />), содержащий
+данную архитектуру (если apt сообщает, что вы выбрали «плохое зеркало архива», попробуйте другое):
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+deb http://ftp.fr.debian.org/debian unstable main
+</pre></td></tr></table>
+
+<p>
+Если вы выполняете команду <code>apt-get</code>, <code>dpkg</code> сообщает об
+отсутствующих программах, получите права суперпользователя в отдельной оболочке и окружении (т.е., <code>su -</code>, а не просто
+<code>su</code>).
+</p>
+
+<p>
+Если GNU Mach не может распознать вашу сетевую карту, либо если вы используете модем, единственным
+способом обновить пакеты — это загрузить их на другую систему, а потом перенести на систему
+GNU. Наиболее простым способом сделать это — использовать apt в автономном режиме. Обратитесь к
+<tt><q>/usr/share/doc/apt-doc/offline.text.gz</q></tt> за подробными инструкциями.
+</p>
+
+
+<h3>Консоль Hurd</h3>
+
+<p>
+Помимо консоли Mach, которую вы видели во время установки, GNU/Hurd
+имеет мощную консоль для пространства пользователя, предоставляющую виртуальные терминалы.
+Она должна автоматически запуститься во время загрузки системы, если этого не произошло, вы можете запустить её вручную
+при помощи следующей команды:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# console -d vga -d pc_mouse --repeat=mouse -d pc_kbd --repeat=kbd -d generic_speaker -c /dev/vcs
+</pre></td></tr></table>
+
+<p>
+Автоматический запуск консоли включается в файле <tt>/etc/default/hurd-console</tt>
+</p>
+
+<p>
+Внутри консоли Hurd вы можете переключаться между виртуальными терминалами при помощи клавиш
+<kbd>ALT+F1</kbd>, <kbd>ALT+F2</kbd> и т.д. <kbd>ALT+CTRL+BACKSPACE</kbd> прерывает
+консоль Hurd и переводит вас обратно в консоль Mach, из которой вы
+можете заново подключить пользовательскую консоль при помощи приведённой выше команды.
+</p>
+
+
+<h3>X.Org </h3>
+
+<p>
+X.Org и все видеокарты, поддерживаемые им, и которым не требуется наличие модуля ядра или
+drm, были перенесены и должны работать.
+</p>
+
+<p>
+Нужно, чтобы консоль Hurd уже была запущена, а ретрансляторы настроены так, как
+это указано в предыдущем разделе.
+</p>
+
+<p>
+Вам следует выполнить <tt>dpkg-reconfigure x11-common</tt>, чтобы разрешить любому пользователю запускать
+Xorg, поскольку упаковщик X не знает о консолях Hurd и Mach.
+</p>
+
+<p>
+Вам также нужно создать <tt>/etc/X11/xorg.conf</tt>, чтобы включить клавишу быстрого доступа control-alt-backspace:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+Section "InputDevice"
+   Identifier "Generic Keyboard"
+   Driver "kbd"
+   Option "XkbOptions" "terminate:ctrl_alt_bksp"
+EndSection
+</pre></td></tr></table>
+
+<p>
+Вам понадобится несколько пакетов X. <code>xorg</code>,
+<code>rxvt</code> и оконный менеджер: <code>twm</code>, <code>fvwm</code>, <code>wmaker</code>, <code>icewm</code>, <code>openbox</code>, ...
+являются хорошим началом.
+</p>
+
+<p>
+X.Org должен работать из коробки без какого-либо файла настройки. Тем не менее, в некоторых случаях вам, вероятно, придётся использовать драйвер vesa.
+</p>
+
+<p>
+Наконец, выполните <code>startx</code>.
+</p>
+
+<h3>И напоследок</h3>
+
+<p>
+Система инициализации SysV в настоящее время не используется. Чтобы выключить вашу систему, просто используйте <code>halt</code> или <code>reboot</code>.
+</p>
