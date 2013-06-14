@@ -2,6 +2,7 @@ include $(subst webwml/chinese,webwml/english,$(CURDIR))/Makefile
 
 # Ugly hack to handle the "cd" just before wml...
 FORMAT_ZH := $(CURDIR)/$(FORMAT_ZH)
+STRIP_INITIAL_BLANK_LINE := $(CURDIR)/$(STRIP_INITIAL_BLANK_LINE)
 
 %.zh-cn.html %.zh-hk.html %.zh-tw.html : %.wml \
 			   $(TEMPLDIR)/weeklynews/footer.wml \
