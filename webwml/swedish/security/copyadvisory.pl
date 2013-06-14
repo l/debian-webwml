@@ -82,6 +82,8 @@ while (<SRC>)
 
 	s/^(<p>)?A problem has been discovered in\b/$1Ett problem har upptäckts i/;
 	s/\bdiscovered a problem in\b/upptäckte ett problem i/;
+	s/The oldstable distribution/Den gamla stabila utgåvan/;
+	s/is not affected by this problem/påverkas inte av detta problem/;
 	s/^(<p>)?A vulnerability was discovered in\b/$1En sårbarhet upptäcktes i/;
 	s/^(<p>)?Two vulnerabilities were discovered in\b/$1Två sårbarheter upptäcktes i/;
 	s/Several local and remote vulnerabilities/Flera lokala och utifrån nåbara sårbarheter/;
@@ -192,7 +194,7 @@ while (<SRC>)
 	s/\bSeveral vulnerabilities have been discovered in /Man har upptäckt flera sårbarheter i /;
 	s/an unbranded version of the Firefox browser/en varumärkesfri version av webbläsaren Firefox/;
 	s/an unbranded version of the /en varumärkesfri version av /;
-
+	
 	print DST $_;
 }
 
