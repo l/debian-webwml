@@ -184,6 +184,7 @@ while (<SRC>)
 	s/\(lenny\)/(Lenny)/;
 	s/\(squeeze\)/(Squeeze)/;
 	s/\(wheezy\)/(Wheezy)/;
+	s/\(jessie\)/(Jessie)/;
 	s/\(sid\)/(Sid)/;
 	s/Refer to Debian (<.*>)?bug #([0-9]+)</Se Debians $1felrapport $2</;
 	s/(of|from) the Debian Security Audit (Project|Team)/från Debians säkerhetsgranskningsprojekt/i;
