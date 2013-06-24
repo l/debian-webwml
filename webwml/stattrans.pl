@@ -569,7 +569,7 @@ foreach $lang (@search_in) {
         if (open (HTML, ">$config{'htmldir'}/$l.wml")) {
 	    printf HTML "#use wml::debian::template title=\"<:=\$trans{\$CUR_ISO_LANG}{%s}:>\"\n", $lang;
 	    print HTML "#use wml::debian::toc\n";
-            print HTML "<script src='diffstat.js' type='text/javascript'></script>\n\n";
+            print HTML "<script src=\"diffstat.js\" type=\"text/javascript\"></script>\n\n";
             $color = get_color ($percent_a{$lang});
 
             printf HTML '<table summary="<gettext domain="stats">Translation summary for</gettext> <:=$trans{$CUR_ISO_LANG}{'.$lang.'} :>" style="background-color: %s; width: 100%; font-weight: bold; margin: 0; text-align: center;">'."\n", $color;
