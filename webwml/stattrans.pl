@@ -389,6 +389,38 @@ if ($config{'difftype'} eq 'u') {
     $seconddifftype = 'u';
 }
 
+sub alioth_cvs_file_url {
+    my ($path) = @_;
+
+    return
+        sprintf( 'http://anonscm.debian.org/viewvc/webwml/webwml/%s', $path );
+}
+
+sub alioth_cvs_log_url {
+    my ($path) = @_;
+
+    return alioth_cvs_file_url($path);
+}
+
+sub alioth_cvs_diff_url {
+    my ( $path, $r1, $r2, $diff_format ) = @_;
+
+    return alioth_cvs_file_url($path)
+        . sprintf( '?r1=%s;r2=%s;diff_format=%s', $r1, $r2, $diff_format );
+}
+
+sub alioth_cvs_view_url {
+    my ($path) = @_;
+
+    return alioth_cvs_file_url($path) . '?view=markup';
+}
+
+sub alioth_cvs_raw_url {
+    my ($path) = @_;
+
+    return alioth_cvs_file_url($path) . '?view=co';
+}
+
 print "Creating files: " if ($config{'verbose'});
 foreach $lang (@search_in) {
     my @processed_langs = ($langs{$lang});
@@ -435,24 +467,28 @@ foreach $lang (@search_in) {
 		    } else {
 		      if (defined $status_db{$lang}) {
                        if ($transversion{"$lang/$file"} ne ''){
-			$o_body .= sprintf '<td><a title=\'<gettext domain="stats">Unified diff</gettext>\' href="http://alioth.debian.org/scm/viewvc.php/webwml/%s?root=webwml&amp;view=diff&amp;r1=%s&amp;r2=%s&amp;diff_format=u">%s&nbsp;→&nbsp;%s</a> ',
-				"$orig/$file", $transversion{"$lang/$file"}, $version{"$orig/$file"}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
-			$o_body .= sprintf '<a title=\'<gettext domain="stats">Colored diff</gettext>\' href="http://alioth.debian.org/scm/viewvc.php/webwml/%s?root=webwml&amp;view=diff&amp;r1=%s&amp;r2=%s&amp;diff_format=h">%s&nbsp;→&nbsp;%s</a> ',
-				"$orig/$file", $transversion{"$lang/$file"}, $version{"$orig/$file"}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
+			$o_body .= sprintf '<td><a title=\'<gettext domain="stats">Unified diff</gettext>\' href="%s">%s&nbsp;→&nbsp;%s</a> ',
+				alioth_cvs_diff_url( "$orig/$file", $transversion{"$lang/$file"}, $version{"$orig/$file"}, 'u' ),
+				$transversion{"$lang/$file"}, $version{"$orig/$file"};
+			$o_body .= sprintf '<a title=\'<gettext domain="stats">Colored diff</gettext>\' href="%s">%s&nbsp;→&nbsp;%s</a> ',
+				alioth_cvs_diff_url( "$orig/$file", $transversion{"$lang/$file"}, $version{"$orig/$file"}, 'h' ),
+				$transversion{"$lang/$file"}, $version{"$orig/$file"};
 			$o_body .= "$statspan</td>";
 		       } else {
 			$o_body .= sprintf "<td>%d (%.2f&nbsp;&permil;)</td>", $sizes{$file}, $sizes{$file}/$nsize * 1000;
 		       }
 		      } else {
-		        $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/$orig/%s?root=webwml\&amp;view=diff\&amp;r1=%s\&amp;r2=%s\&amp;diff_format=%s\">%s\&nbsp;->\&nbsp;%s</a></td>",
-                                           $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $firstdifftype, $transversion{"$lang/$file"}, $version{"$orig/$file"};
-		        $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/$orig/%s?root=webwml\&amp;view=diff\&amp;r1=%s\&amp;r2=%s\&amp;diff_format=%s\">%s\&nbsp;->\&nbsp;%s</a></td>",
-                                           $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $seconddifftype, $transversion{"$lang/$file"}, $version{"$orig/$file"};
+		        $o_body .= sprintf "<td><a href=\"%s\">%s\&nbsp;->\&nbsp;%s</a></td>",
+					   alioth_cvs_diff_url( "$orig/$file", $transversion{"$lang/$file"}, $version{"$orig/$file"}, $firstdifftype ),
+					   $transversion{"$lang/$file"}, $version{"$orig/$file"};
+		        $o_body .= sprintf "<td><a href=\"%s\">%s\&nbsp;->\&nbsp;%s</a></td>",
+					   alioth_cvs_diff_url( "$orig/$file", $transversion{"$lang/$file"}, $version{"$orig/$file"}, $seconddifftype ),
+					   $transversion{"$lang/$file"}, $version{"$orig/$file"};
 		      }
 		    }
-		    $o_body .= sprintf "<td><a title=\"%s\" href=\"http://alioth.debian.org/scm/viewvc.php/webwml/$orig/%s?root=webwml#rev%s\">[L]</a></td>", $msg, $file, $version{"$orig/$file"};
-                    $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/%s/%s?root=webwml\&amp;view=markup\">[V]</a>\&nbsp;", $lang, $file;
-                    $o_body .= sprintf "<a href=\"http://alioth.debian.org/scm/viewvc.php/*checkout*/webwml/%s/%s?root=webwml\">[F]</a></td>", $lang, $file;
+		    $o_body .= sprintf "<td><a title=\"%s\" href=\"%s#rev%s\">[L]</a></td>", $msg, alioth_cvs_log_url("$orig/$file"), $version{"$orig/$file"};
+                    $o_body .= sprintf "<td><a href=\"%s\">[V]</a>\&nbsp;", alioth_cvs_view_url("$lang/$file");
+                    $o_body .= sprintf "<a href=\"%s\">[F]</a></td>", alioth_cvs_raw_url("$lang/$file");
                     $o_body .= sprintf "<td align=center>%s</td>", $maintainer{"$lang/$file"} || "";
 		    $o_body .= $todo if (defined $status_db{$lang});
                     $o_body .= "</tr>\n";
@@ -656,7 +692,10 @@ foreach $lang (@search_in) {
                 print HTML "</table>\n";
             }
 
-	    print HTML '<address><gettext domain="stats">Created with</gettext> <a href="http://alioth.debian.org/scm/viewvc.php/webwml/stattrans.pl?view=markup&amp;root=webwml">webwml-stattrans</a></address>'."\n";
+            print HTML
+                '<address><gettext domain="stats">Created with</gettext> <a href="'
+                . alioth_cvs_view_url('stattrans.pl')
+                . '">webwml-stattrans</a></address>' . "\n";
             close (HTML);
         } else {
             print "Can't open $config{'htmldir'}/$l.wml\n";
@@ -807,7 +846,10 @@ foreach $lang (@search_in) {
 print HTMLI "</tbody>";
 print HTMLI "</table>\n";
 
-print HTMLI '<address><gettext domain="stats">Created with</gettext> <a href="http://alioth.debian.org/scm/viewvc.php/webwml/stattrans.pl?view=markup&amp;root=webwml">webwml-stattrans</a></address>'."\n";
+print HTMLI
+    '<address><gettext domain="stats">Created with</gettext> <a href="'
+    . alioth_cvs_view_url('stattrans.pl')
+    . '">webwml-stattrans</a></address>' . "\n";
 close (HTMLI);
 
 print "done.\n" if ($config{'verbose'});
