@@ -148,7 +148,8 @@ while (<SRC>)
 	s/privilege escalation/rettighedsforøgelse/;
 	s/cross site/på tværs af servere/;
 	s/heap-based/heap-baseret/;
-	s/\bis not affected by this problem/er ikke påvirket at dette problem/;
+	s/heap overflow/heapoverløb/;
+	s/\bis not affected by this problem/er ikke påvirket af dette problem/;
 	s/does not contain ([[:word:]]*) packages?/indeholder ikke pakker $1-pakker/;
 	s/does not contain a(?:ny)? ([[:word:]]*) packages/indeholder ikke $1-pakker/;
 	s/does not contain a(?:ny)? ([[:word:]]*) package/indeholder ikke pakken $1/;
@@ -159,6 +160,7 @@ while (<SRC>)
 	s/\(lenny\)/(lenny)/;
 	s/\(squeeze\)/(squeeze)/;
 	s/\(wheezy\)/(wheezy)/;
+	s/\(jessie\)/(jessie)/;
 	s/\(sid\)/(sid)/;
 	s/Refer to Debian (<.*>)?bug #([0-9]+)</Se Debians $1fejl nummer $2</;
 
