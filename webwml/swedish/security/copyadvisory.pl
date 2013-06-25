@@ -100,6 +100,7 @@ while (<SRC>)
 	s/exposure of sensitive information/exponering av känslig information/;
 	s/buffer overflows?/buffertspill/;
 	s/integer overflow/heltalsspill/;
+	s/heap overflow/heapbaserat bufferspill/;
 	s/denial of service/överbelastning/;
 	s/interpretation conflict/tolkningskonflikt/;
 	s/format string vulnerability/formatsträngssårbarhet/;
