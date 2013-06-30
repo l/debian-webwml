@@ -5,14 +5,6 @@
 Debian GNU/Hurd</h1>
 <h2>
 Development of the Distribution</h2>
-<h3>
-Boot Disks</h3>
-<p>
-Currently, we do not work on native boot disks.  We are laying out
-some of the necessary foundations for that, though, and sometimes port
-individual necessary packages for that.  If you want to help, work on
-the debian-installer project and make sure its components run on the
-Hurd.
 
 <h3>
 Porting Debian Packages</h3>
@@ -26,22 +18,32 @@ crash course for the very lazy people:</p>
 
 <h3>
 Obtaining Source and Building Packages</h3>
+
+<p>
+Obtaining Source code can be done by simply running <code>apt-get source
+package</code>, which will also extract the source.
+</p>
+
 <p>
 Extracting a Debian source package requires the file
 <code>package_version.dsc</code> and the files listed in it. You build the
 Debian build directory with the command
 <code>dpkg-source -x package_version.dsc</code>
 </p>
+
 <p>
 Building a package is done in the now existing Debian build directory
 <code>package-version</code> with the command
-<code>dpkg-buildpackage -B -rsudo "-mMyName &lt;MyEmail&gt;"</code>.
+<code>dpkg-buildpackage -B "-mMyName &lt;MyEmail&gt;"</code>.
 Instead <code>-B</code> you can use
 <code>-b</code> if you also want to build the architecture independent
-parts of the package. You can use <code>-rfakeroot</code> instead
-<code>-rsudo</code> if you use the fakeroot package.  You can do
-without the <code>-r</code> if you build as user root. You can add
+parts of the package. You can add
 <code>-uc</code> to avoid signing the package with your pgp key.</p>
+
+<p>
+Building may needed additional installed packages. The simplest way it to run
+<code>apt-get build-dep package</code> which will install all required packages.
+</p>
 
 <h3>
 Pick One</h3>
@@ -76,23 +78,15 @@ and the live state of packages on buildd.debian.org, e.g.
 Packages That Won't Be Ported</h4>
 <p>
 Some of these packages, or parts of them, might be portable later, but
-currently they are considered to be unportable at least.</p>
+currently they are considered to be unportable at least. They are normally
+marked as NotForUs in the buildd database.
+</p>
 
 <ul>
-<li>
-<code>base/update</code>, because the Hurd does not need an update
-daemon (the filesystems sync themselves). To change to sync interval,
-you can use <code>fsysopts</code> to adjust the <code>--sync</code>
-option. You can set different sync intervals for each file system!
-To do this manually, use the <a
-href="hurd-doc-utils#syncfs"><code>syncfs</code> utility</a>.</li>
 <li>
 <code>base/makedev</code>, because the Hurd comes with its own version
 of this script. The Debian source package only contains a Linux
 specific version.</li>
-<li>
-<code>base/ld.so</code>, because the Hurd does use the linker that
-ships with the GNU C library.</li>
 <li>
 <code>base/modconf</code> and <code>base/modutils</code>, because
 modules are a concept specific to Linux.</li>
@@ -101,15 +95,7 @@ modules are a concept specific to Linux.</li>
 is highly specific to the Linux kernel. The Hurd uses
 <code>inetutils</code> instead.</li>
 <li>
-<code>base/pcmcia-cs</code>, because the Hurd does not have any PCMCIA
-support (and even if it had, this package is probably Linux specific).</li>
-<li>
-<code>base/procps</code>, because this code is specific to the Linux proc
-filesystem.</li>
-<li>
-<code>base/ppp</code> and <code>base/pppconfig</code>, because the
-Hurd does not have any PPP support (and even if it had, this package
-is probably Linux specific).</li>
+<code>base/pcmcia-cs</code>, because this package is Linux specific.</li>
 <li>
 <code>base/setserial</code>, because it is specific to the Linux
 kernel. However, with the port of Linux char drivers to GNU Mach, we
