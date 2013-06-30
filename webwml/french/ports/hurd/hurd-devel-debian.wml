@@ -1,23 +1,15 @@
 #use wml::debian::template title="Debian GNU/Hurd&nbsp;&ndash;&nbsp;Développement" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.51" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.52" maintainer="David Prévot"
 
 # Translators:
 # Mohammed Adnène Trojette 2005-2007.
-# David Prévot, 2010-2012.
+# David Prévot, 2010-2013.
 
 <h1>
 Debian&nbsp;GNU/Hurd</h1>
 <h2>
 Développement de la distribution</h2>
-<h3>
-Disques d'amorçage</h3>
-<p>
-Actuellement, nous ne travaillons pas sur des disques d'amorçages
-natifs. Nous nous reposons toutefois sur certaines des bases nécessaires
-à cela, et portons parfois individuellement des paquets nécessaires à
-cet effet. Si vous voulez aider, travaillez sur le projet d'installateur
-Debian et assurez-vous que ses composants fonctionnent sur le Hurd.</p>
 
 <h3>
 Porter des paquets Debian</h3>
@@ -33,22 +25,31 @@ paresseuses&nbsp;:</p>
 <h3>
 Obtenir le source et empaqueter des paquets</h3>
 <p>
-Extraire un paquet source Debian requiert le fichier
-<code>package_version.dsc</code> et les fichiers qui y sont listés.
+Le code source peut être obtenu en exécutant simplement
+<code>apt-get source paquet</code>, ce qui extrait aussi les sources.
+</p>
+<p>
+Extraire un paquet source Debian nécessite le fichier
+<code>paquet_version.dsc</code> et les fichiers qui y sont présents.
 Vous créez le répertoire d'empaquetage Debian avec la commande
-<code>dpkg-source -x package_version.dsc</code>.</p>
+<code>dpkg-source -x paquet_version.dsc</code>.
+</p>
 
 <p>
 La construction du paquet se fait dans le nouveau répertoire
-d'empaquetage Debian <code>package-version</code> avec
-la commande <code>dpkg-buildpackage -B -rsudo "-mMonNom &lt;MonAdresseÉlectronique&gt;"</code>.
+d'empaquetage Debian <code>paquet-version</code> avec
+la commande <code>dpkg-buildpackage -B "-mMonNom &lt;MonAdresseÉlectronique&gt;"</code>.
 Vous pouvez utiliser
 <code>-b</code> au lieu de <code>-B</code> si vous voulez aussi compiler
-les parties indépendantes de l'architecture du paquet. Vous pouvez
-utiliser <code>-rfakeroot</code> au lieu de <code>-rsudo</code> si vous
-utilisez le paquet fakeroot. Vous pouvez le faire sans <code>-r</code>
-si vous empaquetez en tant que superutilisateur. Vous pouvez ajouter
-<code>-uc</code> pour éviter de signer le paquet avec votre clé pgp.</p>
+les parties indépendantes de l'architecture du paquet.
+Vous pouvez ajouter
+<code>-uc</code> pour éviter de signer le paquet avec votre clef GPG.
+</p>
+<p>
+La construction pourrait nécessiter d’installer des paquets supplémentaires.
+Le plus simple est d’exécuter <code>apt-get build-dep paquet</code>
+qui installera tous les paquets nécessaires.
+</p>
 
 <h3>
 Choisissez un paquet</h3>
@@ -91,25 +92,15 @@ Paquets qui ne seront pas portés</h4>
 <p>
 Quelques paquets parmi ceux qui suivent, ou des parties de ces paquets,
 seront peut-être portables plus tard, mais ils sont actuellement
-considérés comme non portables au moins.</p>
+au moins considérés comme non portables.
+Ils sont normalement marqués <q>NotForUs</q> dans la base de données de buildd.
+</p>
 
 <ul>
-<li>
-<code>base/update</code>, parce que le Hurd n'a pas besoin d'un démon
-de mise à jour (les systèmes de fichiers se synchronisent eux-mêmes).
-Pour changer l'intervalle de synchronisation, vous pouvez utiliser
-<code>fsysopts</code> pour ajuster l'option <code>--sync</code>. Vous
-pouvez choisir des intervalles de synchronisation différents pour chaque
-système de fichiers&nbsp;!
-Pour le faire vous-même, utilisez l'utilitaire <a
-href="hurd-doc-utils#syncfs"><code>syncfs</code></a>.</li>
 <li>
 <code>base/makedev</code>, parce que le Hurd apporte ses propres versions
 de ce script. Le paquet source Debian ne contient qu'une version
 spécifique à Linux.</li>
-<li>
-<code>base/ld.so</code>, parce que le Hurd utilise l'éditeur de liens
-qui est fourni par la bibliothèque GNU&nbsp;C.</li>
 <li>
 <code>base/modconf</code> et <code>base/modutils</code>, parce que
 les modules sont un concept spécifique à Linux.</li>
@@ -118,16 +109,8 @@ les modules sont un concept spécifique à Linux.</li>
 est hautement spécifique au noyau Linux. Le Hurd utilise
 <code>inetutils</code> à la place.</li>
 <li>
-<code>base/pcmcia-cs</code>, parce que le Hurd ne gère pas le PCMCIA
-(et même s'il le faisait, ce paquet est probablement spécifique à
-Linux).</li>
-<li>
-<code>base/procps</code>, parce que ce code est spécifique au système de
-fichiers «&nbsp;proc&nbsp;» de Linux.</li>
-<li>
-<code>base/ppp</code> et <code>base/pppconfig</code>, parce que le Hurd
-ne gère pas le PPP (et même s'il le faisait, ce paquet est probablement
-spécifique à Linux).</li>
+<code>base/pcmcia-cs</code>, parce que ce paquet est spécifique à Linux.
+</li>
 <li>
 <code>base/setserial</code>, parce que c'est spécifique au noyau Linux.
 Cependant, avec le portage des pilotes de caractères Linux sur GNU Mach,
