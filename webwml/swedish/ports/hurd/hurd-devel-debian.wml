@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd --- Utveckling" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.51"
+#use wml::debian::translation-check translation="1.52"
 
 <h1>
 Debian GNU/Hurd</h1>
@@ -27,6 +27,10 @@ Boot-diskar</h3>
 
 <h3>Få tag på källkod och bygga paket</h3>
 <p>
+	Att skaffa källkoden kan enkelt göras genom att köra <code>apt-get source
+	paket</code>, vilket även extraherar källkoden.
+<p>
+<p>
 	Att packa upp ett Debian-källkodspaket kräver filen
 	<code>paket_version.dsc</code> och filerna som listas i denna. Du skapar
 	Debians byggmapp med kommandot
@@ -36,14 +40,17 @@ Boot-diskar</h3>
 <p>
 	Bygge av ett paket sker i den nu skapade Debianbyggmappen
 	<code>package-version</code> med hjälp av kommandot
-	<code>dpkg-buildpacakge -B -rsudo "-mMittnamn &lt;MinEmail&gt;"</code>.
+	<code>dpkg-buildpacakge -B "-mMittnamn &lt;MinEmail&gt;"</code>.
 	Istället för <code>-B</code> kan du använda
 	<code>-b</code> om du även vill bygga de arkitekturoberoende delarna
-	av paketet. Du kan använda <code>-rfakeroot</code> istället för
-	<code>-rsudo</code> om du använder fakeroot-paketet. Du klarar dig utan
-	<code>-r</code> om du bygger med root-kontot. Du kan använda dig av
-	<code>-uc</code> för att undvika att signera paketet med din gpg-nyckel.
+	av paketet. Du kan använda dig av <code>-uc</code> för att undvika att 
+	signera paketet med din gpg-nyckel.
 </p>
+
+<p>
+	Att bygga paketet kan kräva ytterligare installerade paket. Enklaste sättet
+	att installera dessa är <code>apt-get build-dep paket</p>vilket installerar
+	alla paket som krävs.
 
 
 <h3>Välj ett paket</h3>
@@ -78,23 +85,16 @@ samt aktuell status av paket på buildd.debian.org, t.ex.
 <h4>
 Paket som inte anpassas</h4>
 <p>
-Några av dessa paket, eller delar av dem, kan bli anpassningsbara senare, men
-för närvarande är dem åtminstone ansedda att inte vara anpassningsbara.</p>
+	Några av dessa paket, eller delar av dem, kan bli anpassningsbara senare, men
+	för närvarande är dem åtminstone ansedda att inte vara anpassningsbara. 
+	Normalt markeras dessa med NotForUs i buildd-databasen.
+	
+</p>
 
 <ul>
 <li>
-<code>base/update</code>, eftersom Hurd inte behöver en uppdaterings-daemon
-(filsystemen synkroniserar sig själva). För att ändra synkroniseringsintervallen
-kan du använda dig av <code>fsysopts</code> för att ställa in inställningen 
-<code>--sync</code>. Du kan sätta olika synkroniseringsintervaller för varje
-filsystem! För att göra detta manuellt, använd <a
-href="hurd-doc-utils#syncfs"><code>syncfs</code>-verktyget</a>.</li>
-<li>
 <code>base/makedev</code>, eftersom Hurd kommer med sin egna version av detta
 skript. Debians källkodspaket innehåller endast en Linux-specifik version.</li>
-<li>
-<code>base/ld.so</code>, eftersom Hurd använder länkaren som skickas med
-GNU C-biblioteket.</li>
 <li>
 <code>base/modconf</code> och <code>base/modutils</code>, eftersom moduler
 är ett koncept som är specifikt för Linux.</li>
@@ -103,15 +103,7 @@ GNU C-biblioteket.</li>
 specifikt för Linuxkärnan. Hurd använder 
 <code>inetutils</code> istället.</li>
 <li>
-<code>base/pcmcia-cs</code>, eftersom Hurd inte har något PCMCIA-stöd. (Och
-även om den hade det så är detta paket antagligen Linuxspecifikt).</li>
-<li>
-<code>base/procps</code>, eftersom denna kod är specifik för Linux 
-proc-filsystemet.</li>
-<li>
-<code>base/ppp</code> och <code>base/pppconfig</code>, eftersom Hur inte har
-något PPP-stöd (Och även om den hade det så är detta paket antagligen 
-Linuxspecifikt).</li>
+<code>base/pcmcia-cs</code>, eftersom detta paket är Linuxspecifikt).</li>
 <li>
 <code>base/setserial</code>, eftersom det är specifikt för Linuxkärnan.
 Dock så kan vi möjligen använda det med hjälp av anpassningen av 
