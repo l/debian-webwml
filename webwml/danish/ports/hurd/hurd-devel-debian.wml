@@ -1,18 +1,10 @@
 #use wml::debian::template title="Debian GNU/Hurd --- Udvikling" NOHEADER="yes"
-#use wml::debian::translation-check translation="1.51"
+#use wml::debian::translation-check translation="1.52"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
 
 <h1>Debian GNU/Hurd</h1>
 
 <h2>Udvikling af distributionen</h2>
-
-<h3>Startdisketter</h3>
-
-<p>Pt. arbejder vi ikke på "native" startdisketter.  Vi er dog i gang med de
-foretage de indledende forberedelser, og tilpasser nogle gange nødvendige
-individuelle pakker.  Hvis du vil hjælpe til, så arbejd på projektet 
-debian-installer og forvis dig om at dets komponenter kører under Hurd.</p>
-
 
 <h3>Tilpasning af Debian-pakker</h3>
 
@@ -25,19 +17,23 @@ Her er et lynkursus til glæde for de meget dovne:</p>
 
 <h3>Anskaffelse af kildekode og opbygning af pakker</h3>
 
+<p>Anskaffelse af kildekode kan gøres ved blot at køre <code>apt-get source 
+pakkenavn</code>, hvilket også vil udpakke kildekode.</p>
+
 <p>Udpakning af Debian-kildekodepakker kræver filen 
 <code>package_version.dsc</code> og filerne anført i den.  Man oprette Debians
 opbygningsmappe med kommandoen <code>dpkg-source -x package_version.dsc</code></p>
 
 <p>Opbygning af en pakke foretages i det nu oprettede Debian-opbygningsmappe
 <code>package-version</code> med kommandoen
-<code>dpkg-buildpackage -B -rsudo "-mMitNavn &lt;MinEmail&gt;"</code>.
-I stedet for <code>-B</code> kan man bruge
-<code>-b</code>, hvis man også ønsker at opbygge de arkitekturuafhængige dele 
-af pakken.  Man kan bruge <code>-rfakeroot</code> i stedet for 
-<code>-rsudo</code> hvis man bruger pakken fakeroot.  <code>-r</code> er ikke 
-nødvendig hvis man bygger pakker som brugeren root.  Man kan tilføje 
+<code>dpkg-buildpackage -B "-mMyName &lt;MinEmail&gt;"</code>
+I stedet for <code>-B</code> kan man bruge <code>-b</code>, hvis man også ønsker 
+at opbygge de arkitekturuafhængige dele af pakken.  Man kan tilføje 
 <code>-uc</code> for at undgå signering af pakken med ens pgp-nøgle.</p>
+
+<p>Opbygning kan kræve at yderligere pakker installeres.  Den simpleste måde er 
+at køre <code>apt-get build-dep pakkenavn</code>, som installerer alle krævede 
+pakker.</p>
 
 
 <h3>Vælg en pakke</h3>
@@ -72,33 +68,19 @@ pakketilstand på buildd.debian.org, fx
 <h4>Pakker der ikke vil blive tilpasset</h4>
 
 <p>Nogle af disse pakker, eller dele af dem, kan måske tilpasses senere, men pt.
-anses de, om ikke andet, for at være umulige at tilpasse.</p>
+anses de som minimum for at være umulige at tilpasse.  De er normalt markeret 
+med NotForUs ("ikke til os") i buildd-databasen.</p>
 
 <ul>
-  <li><code>base/update</code>, fordi Hurd ikke har brug for en update-dæmon
-      (filsystemerne synkroniserer sig selv).  For at ældre 
-      synkroniseringsintervallet kan man bruge <code>fsysopts</code> for at 
-      justere på parameteret <code>--sync</code>.  Man kan opsætte forskellige
-      synkroniseringsintervaller for hvert enkelt filsystem!  For at gøre det
-      manuelt anvendes et <a href="hurd-doc-utils#syncfs">\
-      <code>syncfs</code>-værktøj</a>.</li>
   <li><code>base/makedev</code>, fordi Hurd har sin egen version af dette 
       scipt.  Debians kildekodepakke indeholder kun en Linux-specifik 
       version.</li>
-  <li><code>base/ld.so</code>, fordi Hurd bruger den linker som leveres med
-      GNU C-biblioteket.</li>
   <li><code>base/modconf</code> og <code>base/modutils</code>, fordi moduler er
       et Linux-specifikt koncept.</li>
   <li><code>base/netbase</code>, fordi de resterende ting er meget specifikt
       rettet med Linux-kernen.  Hurd bruger i stedet 
       <code>inetutils</code>.</li>
-  <li><code>base/pcmcia-cs</code>, fordi Hurd ikke understøtter PCMCIA (og hvis
-      den gjorde, ville denne pakke formentlig være Linux-specifik).</li>
-  <li><code>base/procps</code>, fordi denne kode er specifikt rettet mod Linux'
-      proc-filsystem.</li>
-  <li><code>base/ppp</code> og <code>base/pppconfig</code>, fordi Hurd ikke
-      understøtter PPP (og hvis den gjorde, ville denne pakke formentlig være
-      Linux-specifik).</li>
+  <li><code>base/pcmcia-cs</code>, fordi pakken er Linux-specifik.</li>
   <li><code>base/setserial</code>, fordi den er specifikt rettet mod 
       Linux-kernen.  Dog vil vi måske kunne bruge den da Linux' char-drivere er 
       tilpasset til GNU Mach.</li>
