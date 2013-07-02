@@ -1,63 +1,65 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; Sviluppo" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.51" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.52" maintainer="Luca Monducci"
 
 <h1>Debian GNU/Hurd</h1>
 
 <h2>Sviluppo della distribuzione</h2>
 
-<h3>Dischi di avvio</h3>
-
-<p>In questo momento non si sta lavorando su dischi per l'avvio nativo,
-comunque si stanno posando le loro fondamenta il che, qualche volta, comporta
-il port di singoli pacchetti. Se si vuole contribuire, si aiuti il progetto
-debian-installer e assicurarsi che i suoi componenti funzionino con Hurd.</p>
-
 <h3>Port dei pacchetti Debian</h3>
 
-<p>Se si desidera contribuire al port Debian GNU/Hurd è necessario aver
-confidenza con il sistema di pacchettizzazione Debian. Una volta fatto questo
-leggendo la documentazione disponibile e visitando <a href="$(HOME)/devel/">\
-l'angolo degli sviluppatori</a> si dovrebbe essere in grado estrarre i
-pacchetti sorgente Debian e creare un pacchetto binario Debian. Per le persone
-più pigre è disponibile un corso rapido:</p>
+<p>Chi desidera contribuire al port Debian GNU/Hurd deve aver confidenza
+con il sistema di pacchettizzazione Debian. Una volta acquisite queste
+conoscenze leggendo la documentazione disponibile e visitando
+<a href="$(HOME)/devel/">l'angolo degli sviluppatori</a> si dovrebbe
+essere in grado di estrarre i pacchetti sorgente Debian e di creare un
+pacchetto binario Debian. Per le persone più pigre è disponibile un
+corso rapido:</p>
 
 <h3>Recuperare i sorgenti e creare i pacchetti</h3>
 
+<p>Per recuperare i sorgenti di un pacchetto usare <code>apt-get
+source pacchetto</code>; questo comando esegue anche l'estrazione
+dei sorgenti dal file di archivio.</p>
+
 <p>L'estrazione di un pacchetto sorgente Debian richiede il file
-<code>pacchetto_versione.dsc</code> e i file che sono elncati al suo
+<code>pacchetto_versione.dsc</code> e dei file che sono elencati al suo
 interno. La directory di compilazione Debian viene creata con il comando
 <code>dpkg-source -x pacchetto_versione.dsc</code>.</p>
 
-<p>La costruzione del pacchetto avviene nella directory di compilazione
-Debian <code>pacchetto-versione</code> appena creata con tramite il comando
-<code>dpkg-buildpackage -B -rsudo "-mMyName &lt;MyEmail&gt;"</code>. Al
-posto di <code>-B</code> si può usare <code>-b</code> per compilare le
-parti indipendenti dall'architettura del pacchetto. &Egrave; possibile
-usare <code>-rfakeroot</code> al posto di <code>-rsudo</code> per usare
-il pacchetto fakeroot. Si può tralasciare <code>-r</code> se si compila
-da utente root. Infine è possibile aggiungere <code>-uc</code> per evitare di
-firmare il pacchetto con la chiave GPG.</p>
+<p>Il pacchetto viene creato nella directory di compilazione Debian
+<code>pacchetto-versione</code> con il comando
+<code>dpkg-buildpackage -B "-mMyName &lt;MyEmail&gt;"</code>. È possibile
+usare <code>-b</code> al posto di <code>-B</code> per creare un pacchetto
+con le sole parti indipendenti dall'architettura. Inoltre è possibile
+aggiungere <code>-uc</code> per evitare di firmare il pacchetto con la
+propria chiave pgp.</p>
+
+<p>La compilazione potrebbe richiedere l'istallazione di altri pacchetti.
+Il modo più semplice per farla funzionare è installare tutti i pacchetti
+necessari usando il comando <code>apt-get build-dep pacchetto</code>.</p>
 
 <h3>Scegliere un pacchetto</h3>
 
-<p>Quale pacchetto richiede del lavoro? Ogni pacchetto che ancora non è
-stato portato e che deve essere portato. Questi cambiano continuamente
-quindi si concentra il lavoro prima sui pacchetti con molte dipendenze
-inverse, che possono essere trovati nel grafico (aggiornato quotidianamente)
-delle dipendenze tra pacchetti <url "http://people.debian.org/~sthibault/graph-radial.pdf">
-o nell'elenco dei più ricercati <url "http://people.debian.org/~sthibault/graph-total-top.txt">
-(ordinato a partire dai pacchetti ricercati da più tempo, lo stesso elenco
-ordinato a partire dai pacchetti ricercati da meno tempo
-<url "http://people.debian.org/~sthibault/graph-top.txt">).
-Solitamente è una buona idea prendere un pacchetto tra quelli non aggiornati
+<p>Quale pacchetto richiede del lavoro? Qualsiasi pacchetto che ancora
+non è stato portato e che deve essere portato. Questi pacchetti cambiano
+in continuazione quindi il lavoro è principalmente concentrato sui pacchetti
+con molte dipendenze inverse, questi pacchetti possono essere individuati
+grazie al grafico (aggiornato quotidianamente) delle dipendenze tra pacchetti
+<url "http://people.debian.org/~sthibault/graph-radial.pdf"> oppure usando
+l'elenco dei pacchetti più ricercati
+<url "http://people.debian.org/~sthibault/graph-total-top.txt"> (ordinato a
+partire dai pacchetti ricercati da più tempo, lo stesso elenco in ordine
+inverso <url "http://people.debian.org/~sthibault/graph-top.txt">).
+Solitamente è una buona idea prendere un pacchetto tra quelli marcati
+<q>out-of-date</q> (NdT: non aggiornati) in
 <url "http://people.debian.org/~sthibault/out_of_date.txt"/> perché tali
-pacchetti erano funzionanti ma adesso non funzionano più probabilmente solo
-per causa di piccoli problemi. È possibile prendere un pacchetto a caso
-oppure prenderne uno dopo aver controllato attentamente
-i log del processo autobuilder sulla lista di messaggi debian-hurd-build-logs
-oppure da <url "http://people.debian.org/~sthibault/failed_packages.txt.gz"/>.
-</p>
+pacchetti erano funzionanti ma adesso non funzionano più, probabilmente a
+causa di piccoli problemi. È anche possibile prendere un pacchetto a caso
+oppure sceglierne uno dopo aver controllato attentamente i log del processo
+autobuilder sulla lista di messaggi debian-hurd-build-logs oppure da
+<url "http://people.debian.org/~sthibault/failed_packages.txt.gz"/>.</p>
+
 <p>
 Inoltre, controllare su
 <url "http://alioth.debian.org/tracker/?atid=410472&amp;group_id=30628&amp;func=browse"/>,
@@ -72,55 +74,28 @@ pacchetti su buildd.debian.org, per esempio
 
 <h4>Pacchetti che non devono essere portati</h4>
 
-<p>Alcuni di questi pacchetti, o delle loro parti, potrebbero essere
-portabili in futuro ma almeno per ora sono considerati non-portabili.</p>
+<p>Alcuni dei seguenti pacchetti, o delle loro parti, potrebbero essere
+portabili in futuro ma almeno per ora sono considerati non-portabili.
+Questi pacchetti sono marcati come NotForUs nel database buildd.</p>
 
 <ul>
-    <li>
-	<code>base/update</code>, perché Hurd non necessita di un demone di
-	aggiornamento (i filesystem si sincronizzano da soli). Per modificare
-	l'intervallo di sincronizzazione si può usare <code>fsysopts</code>
-	e regolare l'opzione <code>--sync</code>. Si possono impostare valori
-	diversi dell'intervallo di sincronizzazione per ogni filesystem! Per
-	farlo manualmente si usi l'utilità
-	<a href="hurd-doc-utils#syncfs"><code>syncfs</code></a>.</li>
+<li><code>base/makedev</code>, perché Hurd dispone della propria
+versione di questo script. Il pacchetto sorgente Debian contiene
+solo la versione specifica per Linux.</li>
 
-    <li>
-	<code>base/makedev</code>, perché Hurd dispone della propria versione
-	di questo script. Il pacchetto sorgente Debian contiene solo la
-	versione specifica per Linux.</li>
+<li><code>base/modconf</code> e <code>base/modutils</code>, perché i
+moduli sono un concetto specifico di Linux.</li>
 
-    <li>
-	<code>base/ld.so</code>, perché Hurd non usa il linker fornito insieme
-	alla libreria C GNU.</li>
+<li><code>base/netbase</code>, perché le parti fornite da questo
+pacchetto non disponibili sono altamente specifiche del kernel Linux.
+Al suo posto Hurd usa <code>inetutils</code>.</li>
 
-    <li>
-	<code>base/modconf</code> e <code>base/modutils</code>, perché i
-	moduli sono un concetto specifico di Linux.</li>
+<li><code>base/pcmcia-cs</code>, perché questo pacchetto è specifico
+di Linux.</li>
 
-    <li>
-	<code>base/netbase</code>, perché le parti fornite da questo pacchetto
-	non disponibili sono altamente specifiche del kernel Linux. Al suo
-	posto Hurd usa <code>inetutils</code>.</li>
-
-    <li>
-	<code>base/pcmcia-cs</code>, perché Hurd non ha nessun tipo supporto
-	per PCMCIA (e se lo avrà probabilmente questo pacchetto risulterà
-	specifico di Linux).</li>
-
-    <li>
-	<code>base/procps</code>, perché il codice è specifico per il
-	filesystem proc di Linux.</li>
-
-    <li>
-	<code>base/ppp</code> e <code>base/pppconfig</code>, perché Hurd non ha
-	nussun supporto per PPP (e se lo avrà probabilmente questo pacchetto
-	risulterà specifico di Linux).</li>
-
-    <li>
-	<code>base/setserial</code>, perché è specifico per il kernel Linux.
-	Comunque con il port dei driver a caratteri di Linux su GNU Mach saremo
-	in grado di usarlo.</li>
+<li><code>base/setserial</code>, perché è specifico per il kernel Linux.
+Comunque con il port dei driver a caratteri di Linux su GNU Mach saremo
+in grado di usarlo.</li>
 </ul>
 
 <h3><a name="porting_issues">Problemi generali del port</a></h3>
@@ -150,21 +125,20 @@ la correzione, che ha solo bisogno di essere estesa a hurd-i386.</p>
     Il pacchetto virtuale <code>libc-dev</code>
     funziona con qualsiasi soname ma deve essere usato solo come ultima
     risorsa.</p></li>
+
 <li>
 <code>undefined reference to snd_*, SND_* undeclared</code>
-<p>
-Alcuni pacchetti utilizzano ALSA anche sulle diverse da Linux. Il
-pacchetto oss-libsalsa fornisce l'emulazione via OSS ma è limitato alla
-versione 1.0.5 e alcune funzionalità non sono disponibili, per esempio
-tutte le operazioni del sequencer.
-</p>
-<p>
-Se il pacchetto lo permette, si dovrebbe disabilitare il supporto ALSA
-sulle architetture <code>!linux-any</code> (per esempio tramite un'opzione
-<code>configure</code>), aggiungendo un qualificatore <code>[linux-any]</code>
-in <code>Build-Depends</code> di alse e aggiungendo il contrario in
-<code>Build-Conflicts</code>, per esempio 
-<code>Build-Conflicts: libasound2-dev [!linux-any]</code>.
-</p>
+
+<p>Alcuni pacchetti utilizzano ALSA anche sulle architetture diverse da
+Linux. Il pacchetto oss-libsalsa fornisce l'emulazione via OSS ma è
+limitato alla versione 1.0.5 e alcune funzionalità, per esempio
+tutte le operazioni del sequencer, non sono disponibili.</p>
+
+<p>Se il pacchetto lo permette, disabilitare il supporto ALSA sulle
+architetture <code>!linux-any</code> (per esempio tramite un'opzione
+<code>configure</code>) e aggiungere un qualificatore
+<code>[linux-any]</code> in <code>Build-Depends</code> di alsa e
+aggiungere il contrario in <code>Build-Conflicts</code>, per esempio
+<code>Build-Conflicts: libasound2-dev [!linux-any]</code>.</p>
 </li>
 </ul>
