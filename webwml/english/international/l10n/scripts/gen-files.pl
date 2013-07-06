@@ -135,19 +135,12 @@ sub transform_team {
 sub linklist {
 	my ($typo, $pkg, $lang, $trufile, %status_db) = @_;
 	my $add = "";
-	my ($dir, $pofile);
-	if ($pkg eq 'manpages-fr-extra') {
-		$dir = $trufile;
-		$dir =~ s/\/.*$//;
-		$pofile = $trufile;
-		$pofile =~ s/^.*\///;
-	}
 	if (    $status_db{$lang}->has_package($pkg)
 	    and $status_db{$lang}->has_status($pkg)) {
 		foreach my $statusline (@{$status_db{$lang}->status($pkg)}) {
 			my ($type, $file, $date, $status, $translator, $list, $url, $bug_nb) = @{$statusline};
 			my $bug_link = (defined $bug_nb) ? "<a href=\"http://bugs.debian.org/$bug_nb\">$bug_nb</a>" : "";
-			if ($type eq $typo and ($pkg ne 'manpages-fr-extra' or $file =~ m/^$dir.*$pofile$/)) {
+			if ($type eq $typo and ($pkg ne 'manpages-fr-extra' or $file eq $trufile)) {
 				# Only keep the last status (most recent)
 				# Assume there is only one $typo file
 				# unless $pkg is manpages-fr-extra
