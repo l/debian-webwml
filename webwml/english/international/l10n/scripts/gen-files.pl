@@ -276,6 +276,7 @@ sub get_stats {
 			$file =~ s#^debian/(po/)?## if $type eq 'po-debconf';
                         $link =~ s/:/\%3a/g;
                         $link =~ s/#/\%23/g;
+			$link =~ s/ /\%20/g;
                         $translator = transform_translator($translator);
                         $team = transform_team($team);
                         if ($lang eq '_') {
