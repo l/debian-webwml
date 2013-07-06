@@ -207,7 +207,7 @@ sub get_stats {
 
         $total{$section} = 0;
         foreach $pkg (sort pkgsort @{$packages}) {
-                if ($type ne 'po-debconf' and $data->upstream($pkg) eq 'dbs') {
+                if ($type ne 'po-debconf') {
                         $none .= "<li>".$pkg." (*)</li>\n";
                         next;
                 }
