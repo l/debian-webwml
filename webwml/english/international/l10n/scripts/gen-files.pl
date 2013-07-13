@@ -214,6 +214,7 @@ sub get_stats {
 		# avoid deprecated characters in anchors
 		my $pkgid = $pkg;
 		$pkgid =~ s/\+/plus/;
+		$pkgid =~ s/^\d/p_$&/;
 
 		if ($type eq 'po-debconf' and $data->has_errors($pkg)) {
 			$podebconf_errors->{$pkg} = { charsetname => [], invalidpo => [], charset => [], missingfile => [], unknownlanguage => [], outofdatetemplate => [], outofdatepo => [] };
