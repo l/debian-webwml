@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - serwer żądań" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.25"
+#use wml::debian::translation-check translation="1.29"
 
 <h1><a name="introduction">Wprowadzenie do serwera żądań (request server) systemu
 śledzenia błędów Debiana</a></h1>
@@ -106,7 +106,6 @@ dla opiekunów. Dane te używane są przez proces generujący pliki
 <code>Packages</code> w archiwum FTP. Informacje dostępne dla każdego z
 głównych drzew dystrybucji uzyskać można używając ich nazw kodowych.
 
-
 <dt><code>pseudo-packages.description</code></dt>
 <dt><code>pseudo-packages.maintainers</code></dt>
 <dd>
@@ -117,6 +116,119 @@ Lista, odpowiednio opisów i opiekunów dla pseudo-pakietów.
 <dt><code>refcard</code></dt>
 <dd>
 Żądanie spisu poleceń serwera pocztowego w czystym ASCII.
+</dd>
+
+<dt><a name="user"><code>user</code> <var>address</var></a></dt>
+<dd>
+Ustawia <var>address</var> na wartość <q>user</q> dla wszystkich 
+poleceń <code>usertag</code> opisanych poniżej.
+</dd>
+
+<dt><a name="usertag"><code>usertag</code> <var>bugnumber</var>
+    [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tag</var>
+    [ <var>tag</var> ... ]</a></dt>
+<dd>
+Pozwala zdefiniować tagi użytkownika. Polecenie <code>usertag</code> 
+działa jak normalne polecenie <code>tag</code>, z tą różnicą, że można
+utworzyć dowolne tagi. Adres w nagłówkach wiadomości <code>From:</code> lub
+<code>Reply-To:</code> będzie użyty do ustawienia wartości user
+w <code>usertag</code>.
+</dd>
+
+<dt><a name="usercategory"><code>usercategory</code>
+     <var>category-name</var> [ <code>[hidden]</code> ]</a></dt>
+<dd>
+<p>
+Dodaje, aktualizuje lub usuwa <code>usercategory</code>. Domyślnie 
+kategoria jest widoczna, jeżeli natomiast dodano opcjonalny argument 
+<code>[hidden]</code>, wtedy nie będzie widoczna, ale wciąż będzie dostępna, 
+aby wskazać na nią z innej kategorii. 
+</p>
+
+<p>
+To specjalne polecenie, kiedy dodaje lub aktualizuje kategorię użytkownika, 
+wymaga ciała następującego bezpośrednio po poleceniu. 
+Jeżeli ciało jest puste, wtedy kategoria będzie usunięta.
+Ciało składa się z linii rozpoczynających się z dowolnej liczby spacji. 
+Każda kategoria powinna rozpoczynać się linią z <code>*</code>, po której
+mogą występować linie rozpoczynające się <code>+</code>. 
+Pełny format przedstawia się następująco:
+</p>
+
+<div>
+* <var>category-name-1</var><br />
+* <var>Category Title 2</var>
+  [ <code>[</code><var>selection-prefix</var><code>]</code> ]<br />
+&nbsp;+ <var>Selection Title 1</var> <code>[</code>
+        [ <var>order</var><code>:</code> ]
+        <var>selection-1</var> <code>]</code><br />
+&nbsp;+ <var>Selection Title 2</var> <code>[</code>
+        [ <var>order</var><code>:</code> ]
+        <var>selection-2</var> <code>]</code><br />
+&nbsp;+ <var>Default Selection Title</var> <code>[</code>
+        [ <var>order</var>: ] <code>]</code><br />
+* <var>category-name-3</var><br />
+</div>
+
+<p>
+<var>category-names</var> pojawiające się w poleceniu i w ciele 
+jest używane aby je powiązać i uniknąć niepotrzebnych linii kodu.
+<var>Category Titles</var> jest używane w podsumowaniu raportu pakietu.
+</p>
+
+<p>
+Opcjonalny <var>selection-prefix</var> poprzedza każde 
+<var>selection</var> w każdym wpisie w sekcji kategorii. Pierwsze
+<var>selection</var> które pasuje określa opisywany błąd.
+Opcjonalny parametr <var>order</var> określa pozycję, na której 
+będzie pokazany wybrany spis, jest to pożyteczne, kiedy używa się 
+podobnego do tego selecta zbioru selectów poprzedzających, ale 
+dany select musi być pokazany przed tym zbiorem.  
+</p>
+
+<p>
+<var>category-name</var> <code>normal</code> ma specjalne znaczenie będąc
+domyślnym widokiem, tak więc zastępując go inną kategorią użytkownika
+dla <var>pkgname</var>@packages.debian.org użytkownik może zmienić 
+domyślną klasyfikację pakietu.
+</p>
+
+<p>
+Przykład:
+</p>
+
+<pre>
+    usercategory dpkg-program [hidden]
+     * Program
+       + dpkg-deb [tag=dpkg-deb]
+       + dpkg-query [tag=dpkg-query]
+       + dselect [package=dselect]
+
+    usercategory new-status [hidden]
+     * Status [pending=]
+       + Outstanding with Patch Available [0:pending+tag=patch]
+       + Outstanding and Confirmed [1:pending+tag=confirmed]
+       + Outstanding and More Information Needed [pending+tag=moreinfo]
+       + Outstanding and Forwarded [pending+tag=forwarded]
+       + Outstanding but Will Not Fix [pending+tag=wontfix]
+       + Outstanding and Unclassified [2:pending]
+       + From other Branch [absent]
+       + Pending Upload [pending-fixed]
+       + Fixed in NMU [fixed]
+       + Resolved [done]
+       + Unknown Pending Status []
+
+    \# Change default view
+    usercategory normal
+      * new-status
+      * severity
+
+    usercategory old-normal
+      * status
+      * severity
+      * classification
+</pre>
+</dd>
 
 <dt><code>help</code></dt>
 <dd>
