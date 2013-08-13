@@ -1,6 +1,6 @@
 #use wml::debian::template title="Konfiguracja serwera push"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.20"
+#use wml::debian::translation-check translation="1.21"
 
 <p>Konfigurowanie serwera w metodzie push składa się z dwóch
 podstawowych kroków: skonfigurowania dostępu przez rsync (jak dla normalnego
@@ -86,56 +86,27 @@ ssh-keygen -f ~/.ssh/identity.mysite
 zawiera na początku następujący wpis, gdzie IPADDRESS to IP nadrzędnego serwera:</p>
 
 <pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADDRESS" &amp;"
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADDRESS"
 </pre>
 
 <p>Musisz utworzyć skrypt, który będzie się kontaktował z serwerami
-podrzędnymi. Utwórz plik o nazwie <code>signal</code> i następującej
-zawartości:</p>
-
-<protect>
-<pre>
-#!/bin/sh
-
-# Ten skrypt jest wywoływany, aby poinformować zdalny komputer, że
-# nadszedł czas na zsynchronizowanie archiwum.
-
-echo Signalling $1
-ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
-</pre>
-</protect>
-
-<p>Skrypt ten zaloguje się na zdalnym komputerze używając
-specjalnego klucza ssh, który utworzyłeś powyżej, przy założeniu, że każdy
-administrator mirrora podrzędnego doda ten klucz do pliku
-~/.ssh/authorized_keys (zamieniając <q>ftpsync</q> na komendę powodującą
-rozpoczęcie procesu synchronizacji).
-Sam skrypt nie robi niczego użytecznego na zdalnym komputerze, zostanie
-uruchomione polecenie określone w kluczu.</p>
-
-<p>Aby zawiadomić serwery lustrzane, musisz dodać linię <code>./signal
-&lt;site&gt; &lt;username&gt;</code> po zakończeniu procesu synchronizacji
-Twojego serwera. Tak więc, kiedy tylko zakończy się synchronizacja z
-serwerem nadrzędnym, rozpoczyna się synchronizacja serwerów zależnych
-od Twojego.
+podrzędnymi. 
+Plik tarball ftpsync zawiera skrypt <code>runmirrors</code>, który
+wykonuje wszystkie zadania. Wystarczy dodać do pliku ftpsync.conf
+ustawienie <code>HUB=true</code>, skopiować <code>runmirrors.conf.sample</code>
+do <code>runmirrors.conf</code>, <code>runmirrors.mirror.sample</code>
+do <code>runmirrors.mirror</code> oraz skonfigurować plik konfiguracyjny
+odpowiednio do swojego systemu. Następnie w pliku runmirrors.mirror 
+należy wypisać wszystkie swoje serwery podrzędne a skrypt ftpsync/runmirror 
+odwali za ciebie ciężką robotę.
 </p>
 
-<p>Możesz umieścić te polecenia albo na końcu pliku <code>ftpsync.conf</code>
-albo, jeśli to Ci bardziej odpowiada, w nowym skrypcie, wywoływanym
-przez <code>anonftpsync</code>, na przykład:
+<p>W wyniku tych działań system spróbuje zalogować się poprzez ssh
+do serwerów podrzędnych, po tym jak sam zostanie zaktualizowany, aby
+rozpocząć ich aktualizację. To wymaga abyś przekazał właścicielom 
+serwerów podrzędnych klucz ssh, który wskazałeś dla runmirrors, 
+aby dodali go do swoich ~/.ssh/authorized_keys jak opisano powyżej.
 </p>
-
-<protect>
-<pre>
-#!/bin/sh
-
-# Ten skrypt jest wywoływany, aby powiadomić podrzędne
-# serwery lustrzane.
-
-./signal some.other.site archvsync
-./signal and.another.site othersiteaccount
-</pre>
-</protect>
 
 <p>Jeśli będziesz miał z tym jakiekolwiek problemy, <a
 href="mailto:mirrors@debian.org">skontaktuj się z nami</a>.</p>
