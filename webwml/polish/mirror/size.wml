@@ -1,0 +1,67 @@
+#use wml::debian::template title="Rozmiar serwerów lustrzanych"
+#use wml::debian::translation-check translation="1.42"
+
+<h2>Jak duże jest archiwum Debiana?</h2>
+
+# (note for the English editors on how to update some of the numbers below)
+# dak psql database on ftp-master is 'projectb'
+# and there's a copy on merkel
+# projectb=> select architecture.arch_string as Architecture,
+#            sum(files.size)/1024/1024/1024 as Size
+#            from files,binaries,architecture
+#            where architecture.id=binaries.architecture
+#            and files.id=binaries.file
+#            group by architecture.arch_string
+#            order by Size;
+# projectb=> select sum(size)/1024/1024/1024 from files where
+#            filename ~ '.diff.gz$' or filename ~ '.dsc$'
+#            or filename ~ '.orig.tar.gz$';
+# projectb=> select sum(files.size)/1024/1024/1024
+#            from files, binaries, architecture
+#            where architecture.id=binaries.architecture
+#            and files.id=binaries.file
+#            and architecture.arch_string='i386';
+
+# wc -c'ing files inside the debian/ directory might occasionally give
+# slightly different results than the SQL queries, but the difference
+# is usually negligible -joy
+
+<p>Liczby na tej stronie są aktualizowane codziennie.</p>
+
+<table>
+<tr><th>Architektura</th>  <th>Rozmiar w GB</th></tr>
+#include "$(ENGLISHDIR)/mirror/size.data"
+</table>
+
+<p>Pamiętaj, że archiwum wciąż się rozrasta, zwłaszcza 
+wersja testowa, kiedy pojawia się nowe wydanie. Nie zalecamy 
+zmniejszania rozmiaru serwera lustrzanego poprzez wykluczenie wybranych 
+dystrybucji, zamiast tego można wykluczyć wybrane architektury stosownie 
+do ich <a href="http://popcon.debian.org/">popularności</a>.</p>
+
+<h3>Jak duże jest archiwum Debian CD?</h3>
+
+<p>Archiwum CD różni się w zależności od rodzaju lustra &mdash; 
+pliki Jigdo mają rozmiar około 100-150 MB w zależności od architektury, 
+podczas gdy pełne obrazy DVD/CD mają około 15GB na każdą architekturę
+plus dodatkowe miejsce dla <q>aktualizacji</q> obrazów CD, plików Bittorrent 
+itp.</p>
+
+<p>Więcej informacji na temat serwera lustrzanego dla 
+archiwum CD znajduje się na stronie 
+<a href="../CD/mirroring/">Debian CD mirror pages</a>.</p>
+
+<h3>Jak duże jest archiwum Debian Security?</h3>
+
+<p>Archiwum debian-security ma rozmiar około 44 GB.</p>
+
+<h3>Jak duże jest archiwum Debian Backports?</h3>
+
+<p>Archiwum debian-backports ma rozmiar około 55 GB.</p>
+
+<h2>Jak duże są regularne aktualizacje luster?</h2>
+
+<p>Dla głównego archiwum Debiana zobacz stronę 
+<a href="http://ftp-master.debian.org/size-quarter.png">
+wykres dzienny </a>.</p>
+
