@@ -1,0 +1,95 @@
+#use wml::debian::template title="Errata do instalatora Debiana"
+#use wml::debian::recent_list
+#use wml::debian::translation-check translation="1.196"
+
+<h1 id="wheezy-rc3">Errata dla wydania Wheezy Release Candidate 3</h1>
+
+<p>
+To jest lista znanych problemów w Instalatorze Debiana w wydaniu 
+wheezy Release Candidate 3. Jeżeli na liście nie ma twojego problemu, 
+proszę wysłać <a href="$(HOME)/releases/stable/i386/ch05s04.html#submit-bug">installation
+report</a> opisujący ten problem.
+</p>
+
+<dl class="gloss">
+
+	<dt>Instalacja programu rozruchowego GRUB może się nie udać, 
+	jeżeli jest dostępne więcej niż jedno urządzenie dyskowe.</dt>
+	<dd>Jeżeli podczas instalacji dostępnych jest więcej niż jeden dysk (na przykład
+	jeden dysk twardy i jeden dysk z pamięci USB, co jest częstym przypadkiem 
+	kiedy uruchamiamy instalatora z pamięci USB), <code>grub-install</code>
+	może mieć problem: kilkakrotnie zgłaszano, że program rozruchowy GRUB
+	został zainstalowany na dysku USB zamiast na dysku twardym, na którym zainstalowano
+	system.
+	<br />
+	Aby temu zapobiec, upewnij się że odpowiedziałeś <q>Nie</q>, kiedy podczas instalacji
+	pojawiło się następujące pytanie:<q>Czy zainstalować program rozruchowy GRUB w głownym
+	rekordzie rozruchowym?</q> (ang: <q>Install the GRUB boot loader to the
+	master boot record?</q>); w następnym kroku instalacji będzie możliwość wskazania
+	właściwego urządzenia: <q>Wybierz urządzenie do zainstalowania programu rozruchowego</q>
+	(ang: <q>Device for boot loader installation</q>).
+	<br />
+	Jeżeli instalacja zakończyła się pomyślnie mimo złej konfiguracji programu GRUB, 
+	powinno być możliwe naprawienie tego używając trybu ratunkowego instalatora: przy 
+	użyciu polecenia chroot przełącz się na główny system plików, zamontuj wszystkie 
+	dodatkowe partycje startowe, jeżeli takie występują (np. <code>/boot</code> i/lub 
+	<code>/boot/efi</code> dla systemu EFI, sprawdź plik <code>/etc/fstab</code>) i
+	uruchom <code>grub-install</code> podając jako parametr właściwe urządzenie.
+	<br />
+	<b>Status:</b> Mamy nadzieję, że ten problem zostanie naprawiony w drugim wydaniu Wheezy.
+	</dd>
+
+	<dt>Instalacja środowiska graficznego na i386 przy użyciu tylko CD#1 nie działa</dt>
+	<dd>Ze względu na ograniczone miejsce na pierwszym dysku CD, nie wszystkie wymagane 
+	pakiety GNOME zmieściły na CD#1. Aby pomyślnie zainstalować środowisko graficzne, 
+	należy użyć dodatkowego źródła pakietów (np. drugiego dysku CD lub serwera lustrzanego)
+	lub użyć zamiast płyty CD płyty DVD.
+	<br />
+	<b>Status:</b> Jest mało prawdopodobne, abyśmy mogli zmieścić więcej pakietów na CD#1.
+	</dd>
+
+	<dt>Potencjalne problemy z uruchomieniem UEFI na amd64</dt>
+	<dd>Istnieją zgłoszenia o problemie z uruchomieniem Instalatora Debiana 
+	w trybie UEFI na systemach amd64. Niektóre z nich nie uruchamiają się 
+	stabilnie przy użyciu <code>grub-efi</code>, inne pokazują krzaki na ekranie zamiast 
+	ekranu powitalnego.
+	<br />
+	Jeżeli napotkasz tego typu problemy, prosimy o wypełnienie raportu o błędzie i wysłanie
+	nam jak najwięcej detali zarówno o objawach jak i o sprzęcie - to powinno pomóc naprawić 
+	ten błąd. Jako tymczasowe rozwiązanie, spróbuj wyłączyć UEFI i zainstalować system 
+	używając <q>Legacy BIOS</q> lub <q>Fallback mode</q>.
+	<br />
+	<b>Status:</b> Więcej poprawionych błędów może pojawić się w kolejnych wydania Wheezy.
+	</dd>
+
+	<dt>Błędne komunikaty o firmware przy niektórych kartach sieci bezprzewodowej Intela</dt>
+
+	<dd>Jeżeli masz kartę sieci bezprzewodowej Intela 6005 lub 6205, instalator poprosi 
+	o plik z firmware <code>iwlwifi-6000g2a-6.ucode</code>. Plik ten nie jest 
+	zawarty w pakiecie <code>firmware-iwlwifi</code> i w chwili obecnej nie jest potrzebny.
+	Musisz odpowiedzieć <code>Nie</code> aby kontynuować instalację. 
+	<br />
+	<b>Status:</b> Ten błąd został naprawiony w pierwszym wydaniu Wheezy.
+	</dd>
+
+	<dt>Brak beep (sygnału dźwiękowego) przy uruchomieniu instalatora</dt>
+
+	<dd>Z uwagi na dostępność, sygnał dźwiękowy (beep) powinien być wydany, 
+	kiedy program startowy instalatora czeka na dane. Niestety, błąd spowodował
+	brak sygnału w pierwszej wersji Wheezy Alpha. Błąd ten był zgłaszany przed wydaniem
+	trzeciej wersji Wheezy Release Candidate.
+	<br />
+	<b>Status:</b> Błąd ten został naprawiony w pierwszym wydaniu Wheezy.
+	</dd>
+
+<!-- leaving this in for possible future use...
+	<dt>i386: more than 32 mb of memory is needed to install</dt>
+	<dd>
+	The minimum amount of memory needed to successfully install on i386
+	is 48 mb, instead of the previous 32 mb. We hope to reduce the
+	requirements back to 32 mb later. Memory requirements may have
+	also changed for other architectures.
+	</dd>
+-->
+
+</dl>
