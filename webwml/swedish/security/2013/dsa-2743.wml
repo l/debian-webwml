@@ -1,0 +1,63 @@
+#use wml::debian::translation-check translation="1.1" mindelta="1"
+<define-tag description>utökning av privilegier/information leak</define-tag>
+<define-tag moreinfo>
+<p>Flera sårbarheter har upptäckts i FreeBSD-kärnan som kan leda till en
+utökning av privilegier eller informationsläckage. Projektet Common
+Vulnerabilities and Exposures identifierar följande problem:
+</p>
+
+<ul>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-3077">CVE-2013-3077</a>
+
+	<p>
+		Clement Lecigne från Googles säkerhetsgrupp rapporterade ett 
+		heltalsspill vid beräkning av storleken av en temporär buffer i koden
+		för IP multicast, vilket kan resultera i en buffer som är för liten för den 
+		efterfrågade operationen. En process utan rättigheter kan läsa eller skriva
+		minnessidor som tillhör kärnan. Detta kan leda till exponering av
+		känslig information eller tillåta rättighetseskalering.
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-4851">CVE-2013-4851</a>
+
+	<p>
+		Rick Macklem, Christopher Key och Tim Zingelman rapporterade att 
+		FreeBSD-kärnan felaktigt använder autentiseringsuppgifter från klienter
+		istället för dom som är konfigurerade i exports(5) vid ifyllning av
+		dom anonyma autentiseringsuppgifterna för en NFS export, när -network-
+		eller -hostrestriktioner används på samma gång. Fjärrklienten kan 
+		tillhandahålla privilegierade autentiseringsuppgifter (exempelvis
+		root-användaren) vid tillgång till en fil under NFS-utdelningen, vilket
+		kommer att kringgå de vanliga åtkomstkontrollerna.
+	</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-5209">CVE-2013-5209</a>
+
+	<p>
+		Julian Seward och Michael Tuexen rapporterade ett avslöjande av kärnminne
+		vid initiering av SCTP-tillståndskakan som skickas i INIT-ACK-bitar, då en
+		buffer från kärnstacken inte är helt initierad. Fragment av kärnminne kan
+		inkluderas i SCTP-paket och bli överförda via nätverket. För varje 
+		SCTP-session finns det två separata instanser där ett 4-bytefragment kan
+		överföras.
+	</p>
+	
+	<p>
+		Detta minne kan innehålla känslig information, som delar av fil-cachen
+		eller terminalbuffertar. Denna information kan vara direkt användbar, 
+		eller kan genomsökas för att få utökade rättigheter på något sätt. 
+		Exempelvis kan en terminalbuffert innehålla ett lösenord som är
+		inmatat av en användare.
+	</p></li>
+
+</ul>
+
+<p>För den stabila utgåvan (Wheezy), har dessa problem rättats i
+version 9.0-10+deb70.3.</p>
+
+<p>Vi rekommenderar att ni uppgraderar era kfreebsd-9-paket.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2013/dsa-2743.data"
