@@ -1,0 +1,55 @@
+#use wml::debian::translation-check translation="1.1" mindelta="1"
+<define-tag description>rettighedsforøgelse/informationslækage</define-tag>
+<define-tag moreinfo>
+<p>Flere sårbarheder er opdaget i FreeBSD-kernen, hvilke måske kunne føre til en
+rettighedsforøgelse eller informationslækage.  Projektet Common Vulnerabilities 
+and Exposures har registreret følgende problemer:</p>
+
+<ul>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-3077">CVE-2013-3077</a>
+
+    <p>Clement Lecigne fra Google Security Team rapporterede om et 
+    heltalsoverløb i beregningen af størrelsen på en midlertidig buffer i 
+    IP multicast-koden, hvilket kunne medføre en buffer, der var for lille til 
+    den ønskede handling.  En proces uden særlige privilegier kunne læse eller 
+    skrive hukommelsessider, der tilhører kernen.  Det kunne medføre 
+    blotlæggelse af følsomme oplysninger eller muliggøre 
+    rettighedsforøgelse.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-4851">CVE-2013-4851</a>
+
+    <p>Rick Macklem, Christopher Key og Tim Zingelman rapporterede at 
+    FreeBSD-kernen på ukorrekt vis benytter klient-leverede brugeroplysninger, 
+    i stedet for dem der er defineret i exports(5), når de anonyme 
+    brugeroplysninger udfyldes til en NFS-eksport samtidig med at -network- 
+    eller -host-begrænsninger anvendes.  Den fjerne klient kunne levere 
+    priviligerede brugeroplysninger (fx root-brugeren), når en fil på NFS-sharet 
+    blev tilgået, hvilket omgik de normale adgangskontroller.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-5209">CVE-2013-5209</a>
+
+    <p>Julian Seward og Michael Tuexen rapporterede om en 
+    kernehukommelsesblotlæggelse, ved initialiseringen af SCTP-tilstandscookien, 
+    der sendes i INIT-ACK-chunks, blev en buffer allokeret fra kernestakken ikke 
+    fuldstændig initialiseret.  Fragmenter af kernehukommelsen kunne være 
+    indeholdt i SCTP-pakker og blive overført via netværket.  For hver 
+    SCTP-session er der to separate forekomster i hvilke et 4-byte-fragment kan 
+    blive overført.</p>
+
+    <p>Hukommelsen kunne indeholde følsomme oplysninger, så som dele af 
+    filcachen eller terminalbuffere.  Oplysningerne kunne være direkte 
+    anvendelige, eller de kunne benyttes som udgangspunkt for at opnå forøgede 
+    rettigheder på en eller anden måde.  Eksempelvis kunne en terminalbuffer 
+    indeholde en brugerindtastet adgangskode.</p></li>
+
+</ul>
+
+<p>I den stabile distribution (wheezy), er disse problemer rettet i version 
+9.0-10+deb70.3.</p>
+
+<p>Vi anbefaler at du opgraderer dine kfreebsd-9-pakker.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2013/dsa-2743.data"
