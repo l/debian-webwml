@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd &ndash; Configurazione" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.112" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.113" maintainer="Luca Monducci"
 
 <h1>Configurazione di Debian GNU/Hurd</h1>
 
@@ -425,7 +425,7 @@ entrambi i nodi:</p>
 
 <p>Il server pfinet attiva la configurazione automatica di IPv6. È possibile
 ottenere lo stato attuale con <tt>fsysopts /servers/socket/26</tt>.  Gli indirizzi
-possono essere anche impostati a mani usando, per esempio,
+possono essere anche impostati manualmente usando, per esempio,
 <tt>-A 2001:123:123::42/64 -G 2001:123:123::1</tt>.</p>
 
 <p>La configurazione di pfinet può essere cambiata anche in diretta (cioè
@@ -436,6 +436,18 @@ senza scrivere sul disco) usando <tt>fsysopts</tt>:</p>
  /hurd/pfinet --interface=/dev/eth0 --address=10.3.0.1 --netmask=255.255.0.0 --gateway=10.3.0.128
  \# fsysopts /server/socket/2 -a 10.3.0.2 -m 255.255.0.0 -g 10.3.0.128
 </pre></td></tr></table>
+
+<p>È possibile creare un firewall interponendo il traduttore
+<tt>eth-filter</tt>, per esempio, questo impedisce l'accesso alla
+porta 22:</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# settrans -c /dev/eth0f /hurd/eth-filter -i /dev/eth0 -r "not port 22"
+</pre></td></tr></table>
+
+<p>Il device filtrato, <tt>/dev/eth0f</tt>, può essere passato a
+<tt>pfinet</tt> oppure a <tt>dhclient</tt> al posto di /dev/eth0.</p>
+
 
 <h3>Configurazione della tastiera</h3>
 
