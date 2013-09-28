@@ -102,6 +102,7 @@ while (<SRC>)
 	s/integer overflow/heltalsspill/;
 	s/heap overflow/heapbaserat bufferspill/;
 	s/denial of service/överbelastning/;
+	s/information leak/informationsläckage/;
 	s/interpretation conflict/tolkningskonflikt/;
 	s/format string vulnerability/formatsträngssårbarhet/;
 	s/format string vulnerabilities/formatsträngssårbarheter/;
