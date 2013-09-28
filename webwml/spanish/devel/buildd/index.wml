@@ -1,11 +1,11 @@
 #use wml::debian::template title="Red autocompiladora" BARETITLE="true"
-#use wml::debian::translation-check translation="1.24"
+#use wml::debian::translation-check translation="1.25"
 
-<p>La red autocompiladora es un desarrollo de Debian que ayuda a 
-incrementar la velocidad de las recompilaciones de paquetes para
+<p>La red autocompiladora es un desarrollo de Debian que gestiona las
+compilaciones de paquetes para
 todas las arquitecturas <a href="$(HOME)/ports/">en las que se puede
 utilizar actualmente
-por Debian</a>. Esta red está constituida por varias máquinas que usan 
+ Debian</a>. Esta red está constituida por varias máquinas que usan 
 un paquete de software específico denominado <em>buildd</em> para coger
 los paquetes del repositorio de Debian y reconstruirlos para la 
 arquitectura que se requiera.</p>
@@ -15,19 +15,20 @@ arquitectura que se requiera.</p>
 <p>La distribución Debian soporta <a href="$(HOME)/ports/">en realidad
 unas pocas arquitecturas</a>, pero los responsables de los paquetes 
 generalmente solo compilan versiones binarias para una sola arquitectura
-(en general i386 amd64). Los desarrolladores para otras arquitecturas tienen 
-que vigilar cuando hay nuevas versiones y recompilarlos si quieren 
-permanecer actualizados con la distribución de Intel.</p>
+(en general i386 o amd64). Las otras compilaciones se producen automáticamente,
+asegurando que cada paquete sólo se compila una vez. Los fallos se registran en 
+la base de datos de autocompilación.</p>
 
 <p>
 En el momento que empezó Debian/m68k (la primera adaptación distinta de
-la arquitectura Intel), 
-todo esto se hizo manualmente: los desarrolladores miraban los nuevos 
-paquetes en la lista de correo de envíos y cogían algunos de ellos para 
+la arquitectura Intel), los desarrolladores tenían que vigilar cuándo había
+nuevas versiones y recompilarlas si querían permanecer actualizados con la 
+distribución de Intel. Todo esto se hacía manualmente: los desarrolladores 
+miraban los nuevos paquetes en la lista de correo de envíos y cogían algunos de ellos para 
 construirlos. La coordinación para que ningún paquete se construya dos 
 veces por personas distintas se hacía anunciándolo en una lista de correo.
 Es obvio que este procedimiento es propenso al error y consume mucho tiempo.
-Esta fue, sin embargo, la forma usual de mantener las distribuciones 
+Ésta fue, sin embargo, la forma usual de mantener las distribuciones 
 Debian actualizadas durante mucho tiempo.
 </p>
 
@@ -38,7 +39,8 @@ y Python) que se han mejorado con el tiempo para ayudar a los que hacen
 adaptaciones
 con varias tareas. Finalmente han evolucionado en un sistema que puede 
 mantener las distribuciones no i386 de Debian actualizadas casi 
-automáticamente.
+automáticamente. Las actualizaciones de seguridad se compilan en el mismo
+conjunto de máquinas para asegurar su disponibilidad a tiempo.
 </p>
 
 
@@ -55,14 +57,16 @@ de diferentes partes:</p>
 una herramienta que ayuda a coordinar la (re)construcción de paquetes a
 través de una base de datos que mantiene una lista de paquetes y su estado.
 Hay una base de datos central por arquitectura que almacena los estados,
-versiones, y alguna otra información de los paquetes.
+versiones, y alguna otra información de los paquetes. Se alimenta de los 
+ficheros de fuentes y de paquetes obtenidos de los distintos archivos de paquetes
+que tiene Debian (por ej. ftp-master y security-master).
 </dd>
 
 <dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">buildd</a></dt>
 <dd>
 un demonio que comprueba periódicamente la base de datos mantenida por 
 <em>wanna-build</em> y llama a <em>sbuild</em> para construir los paquetes.
-Una vez se aprueba un registro de compilación por el administrador del
+Una vez se aprueba un registro de compilación por el administrador de
 buildd el demonio envía el paquete al archivo apropiado.
 </dd>
 
@@ -72,21 +76,14 @@ es responsable de la compilación real de los paquetes en entornos
 enjaulados aislados.  Se asegura que las dependencias fuente están instaladas
 en el chroot antes de compilar y después llama a las herramientas estándar de
 Debian para arrancar el proceso de compilación. Los registros de la compilación
-se envía a la <a href="http://buildd.debian.org">base de datos de registros de
+se envían a la <a href="http://buildd.debian.org">base de datos de registros de
 compilación</a>.
 </dd>
-
-<dt><a href="http://packages.debian.org/quinn-diff">quinn-diff</a></dt>
-<dd>
-compara las versiones disponibles de los paquetes en dos arquitecturas y
-muestra las diferencias (comparando un archivo Sources y un archivo Packages).
-</dd>
-
 
 </dl>
 
 <p>Todas estas partes <a href="operation">operan</a>
-juntas para hacer que la red constructora funciona.</p>
+juntas para hacer que la red constructora funcione adecuadamente.</p>
 
 <h2>¿Qué tiene que hacer un desarrollador de Debian?</h2>
 
@@ -96,7 +93,7 @@ explícitamente la red buildd. Cuando envíe un paquete al repositorio
 la base de datos para todas las arquitecturas (en estado <em>Needs-Build</em>,
 necesita compilación).  Las máquinas de construcción pedirán a la base de datos
 de construcciones paquetes en este estado, y de forma rutinaria tomarán los
-paquetes de esa lista. Esta está priorizada por el estado previo de compilación
+paquetes de esa lista. Ésta se encuentra priorizada por el estado previo de compilación
 (que puede ser <em>out-of-date</em>, des-actualizado, o <em>uncompiled</em>,
 sin compilar), prioridad, sección y finalmente nombre del paquete.
 Adicionalmente, para impedir que algunos paquetes se queden sin recursos al
@@ -116,8 +113,8 @@ construcción falla e informarán al responsable, normalmente, abriendo un
 error en el sistema de seguimiento de fallos.</p>
 
 <p>A veces un paquete se toma un largo período de tiempo para 
-construirlo para una arquitectura dada y eso bloquea al paquete la 
-entrada en <a href="$(HOME)/devel/testing">testing</a>. 
+construirlo para una arquitectura dada y eso bloquea la entrada del 
+paquete en <a href="$(HOME)/devel/testing">testing</a>.
 Si un paquete impide una transición las prioridades se ajustan
 habitualmente bajo petición del equipo responsable de la Publicación de Debian.
 No se aceptarán otras peticiones para acelerar la construcción de un paquete ya
@@ -143,7 +140,7 @@ Adicionalmente la sección
 Adaptar y ser adaptado</a> de la
 <a href="$(HOME)/doc/manuals/developers-reference/">Referencia de 
 desarrolladores de Debian</a> proporciona información complementaria 
-sobre como funciona y también algo de información sobre 
+sobre cómo funciona y también algo de información sobre 
 <a href="$(HOME)/doc/manuals/developers-reference/tools#tools-builders">\
 constructores de paquetes</a> y
 <a href="$(HOME)/doc/manuals/developers-reference/tools#tools-porting">\
@@ -184,5 +181,5 @@ ejemplo <email i386@buildd.debian.org>.</p>
 <p><small>Esta introducción a la red autocompiladora se escribió con 
 aportaciones y partes proporcionadas de Roman Hodek, 
 Christian T. Steigies, Wouter Verhelst, Andreas Barth, Francesco Paolo
-Lovergine y Javier Fern&aacute;ndez-Sanguino y Philipp Kern.</small></p>
+Lovergine, Javier Fernández-Sanguino y Philipp Kern.</small></p>
 
