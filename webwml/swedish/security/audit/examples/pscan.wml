@@ -1,0 +1,83 @@
+#use wml::debian::template title="Automatiserat Granskningsexempel: pscan"
+#use wml::debian::recent_list
+#use wml::debian::translation-check translation="1.5"
+
+<p>
+	<a href="http://packages.debian.org/pscan">pscan</a>pscan är ett paket som
+	är skapat för att granska C och C++-källkod efter format string-sårbarheter.
+</p>
+
+<p>
+	Det är inte ett generellt granskningsverktyg.
+</p>
+
+<h2>Köra pscan</h2>
+
+<p>
+	Köra pscan gör man helt enkelt genom att starta det med ett namn på en fil, 
+	eller filer, som man vill kontrollera. Exempelvis:
+</p>
+
+<pre>
+	pscan <a href="test.c.html">test.c</a>
+</pre>
+
+<p>
+	Utdatan skrivs direkt till terminalen:
+</p>
+
+<hr />
+<samp>
+test.c:42 SECURITY: printf call should have "%s" as argument 0
+</samp>
+<hr />
+
+
+<h2>Udatan</h2>
+
+<p>
+	Utdatan i detta fall är lätt att förstå. Den har korrekt identifierat att
+	anropet till <tt>printf</tt> inte anger sina argument på ett korrekt sätt.
+</p>
+
+<p>
+	Utdatan visar även vad vi måste göra för att rätta problemet, alltså ändra
+	koden som lyder:
+
+<pre>
+	printf( buff );
+</pre>
+<p>
+	Till att lyda:
+</p>
+
+<pre>
+	printf( "%s", buff );
+</pre>
+
+<p>
+	Om man inte gör detta så kan man tillåta att en angripare som kontrollerar
+	<tt>ls</tt> utdata angriper programmet, genom att skapa en fil med namnet
+	"%s" eller liknande.
+</p>
+
+<p>
+	Formatsträngsangrepp diskuteras i denna <a 
+	href="http://www.securityfocus.com/guest/3342">introduktion i Security 
+	Focus</a>.
+</p>
+
+<p>
+	<a href="http://www.dwheeler.com/secure-programs/">Secure Programming for 
+	Linux and Unix HOWTO</a> förklarar hur man skyddar sig mot dessa angrepp i 
+	vanligt använda funktioner som:
+</p>
+
+<ul>
+<li>printf</li>
+<li>fprintf</li>
+<li>syslog</li>
+</ul>
+<hr />
+<p><a href="..">Tillbaks till granskningsprojektet</a> | <a 
+href="index">Tillbaks till sidan för granskningsexempel</a></p>
