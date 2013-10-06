@@ -1,0 +1,536 @@
+#use wml::debian::template title="System śledzenia błędów - informacje dla deweloperów" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.89"
+
+<h1>Informacje dotyczące systemu obsługi błędów dla opiekunów 
+pakietów i osób zajmujących się obsługą błędów.</h1>
+
+<p>Pierwszym etapem jest nadesłanie zgłoszenia w postaci zwykłej wiadomości
+poczty elektronicznej na adres <code>submit@bugs.debian.org</code>. 
+Zgłoszeniu zostaje nadany numer, zgłaszająca osoba otrzymuje potwierdzenie 
+a zgłoszenie jest przekazywane na listę <code>debian-bugs-dist</code>. 
+Jeżeli zgłaszający dodał nagłówek <code>Package</code> zawierający 
+nazwę pakietu, którego opiekun jest znany, kopia zgłoszenia zostaje 
+wysłana także do opiekuna.</p>
+
+<p>Na początku nagłówka <code>Subject</code> zostaje dodany napis
+<code>Bug#</code><var>nnn</var><code>:</code>, a nagłówek
+<code>Reply-To</code> zostaje ustawiony tak, by zawierał zarówno adres
+zgłaszającego jak i <var>nnn</var><code>@bugs.debian.org</code>.</p>
+
+<ul class="toc">
+  <li><a href="#closing">Zamykanie zgłoszenia błędu</a></li>
+  <li><a href="#followup">Wiadomości e-mail związane ze zgłoszeniem</a></li>
+  <li><a href="#severities">Stopnie ważności błędów</a></li>
+  <li><a href="#tags">Znaczniki przy zgłoszeniach</a></li>
+  <li><a href="#forward">Zaznaczanie faktu przekazania zgłoszenia błędu</a></li>
+  <li><a href="#owner">Zmiana właściciela błędu</a></li>
+  <li><a href="#maintincorrect">Nieprawidłowo przyporządkowani opiekunowie</a></li>
+  <li><a href="#requestserv">Powtórne otwieranie, ponowne przypisywanie i
+  inne manipulacje na zgłoszeniach</a></li>
+  <li><a href="#subscribe">Subskrypcja błędów</a></li>
+  <li><a href="#subjectscan">Częściowo wycofana opcja skanowania tematów</a></li>
+  <li><a href="#x-debian-pr">Wycofana opcja <code>X-Debian-PR: quiet</code></a></li>
+</ul>
+
+<h2><a name="closing">Zamykanie zgłoszenia błędu</a></h2>
+
+<p>Zgłoszenia błędów w Debianie powinny być zamykane w momencie usunięcia
+problemu. Problemy w pakietach można uznać za rozwiązane tylko wtedy, gdy
+pakiet zawierający poprawkę dla danego błędu trafi do archiwum Debiana.</p>
+
+<p>Zazwyczaj jedynymi osobami uprawnionymi do zamykania zgłoszenia są
+zgłaszający ten błąd i opiekun(owie) danego pakietu. Są jednak wyjątki od tej
+reguły, na przykład w przypadku błędów zgłoszonych w nieznanych pakietach lub
+w niektórych pseudo-pakietach. W razie wątpliwości nie należy zamykać
+zgłoszenia - należy poprosić o radę na liście debian-devel.</p>
+
+<p>Zgłoszenia należy zamykać przez wysłanie wiadomości e-mail na adres
+<var>nnn</var><code>-done@bugs.debian.org</code>. Treść wiadomości musi
+zawierać objaśnienie sposobu, w jaki został poprawiony dany błąd.</p>
+
+<p>Dzięki wiadomościom e-mail wysyłanym przez system śledzenia błędów
+zamknięcie zgłoszenia sprowadza się do odpowiedzi na taki list po
+uprzedniej zmianie pola <code>To</code> na
+<var>nnn</var><code>-done@bugs.debian.org</code> zamiast
+<var>nnn</var><code>@bugs.debian.org</code> 
+(adres <var>nnn</var><code>-done</code> ma
+też alias <var>nnn</var><code>-close</code>).</p>
+
+<p>Jeżeli to możliwe, należy dodać linię <code>Version</code> w
+<a href="Reporting#pseudoheader">pseudo-nagłówku</a> wiadomości podczas
+zamykania błędu, by system zarządzania błędami wiedział które wydanie pakietu 
+zawiera poprawkę.</p>
+
+<p>Osoba zamykająca zgłoszenie, osoba która zgłosiła błąd oraz lista
+<code>debian-bugs-closed</code> otrzymają powiadomienie dotyczące zmiany statusu
+danego zgłoszenia. Do zgłaszającego oraz na listę zostanie także wysłana
+wiadomość zawierająca treść wiadomości wysłanej na adres
+<var>nnn</var><code>-done</code>.</p>
+
+
+<h2><a name="followup">Wiadomości e-mail związane ze zgłoszeniem</a></h2>
+
+<p>System śledzenia błędów dodaje do nagłówka <code>Reply-To</code>
+przekazywanej wiadomości adres osoby zgłaszającej błąd oraz adres błędu
+(<var>nnn</var><code>@bugs.debian.org</code>). Należy zwrócić uwagę na fakt, 
+że są to dwa oddzielne adresy.</p>
+
+<p>
+Deweloper który pragnie odpowiedzieć na zgłoszenie, powinien po prostu 
+odpowiedzieć na wiadomość zachowując poprawny nagłówek <code>Reply-To</code>.
+<strong>Nie</strong> spowoduje to zamknięcia błędu.</p>
+
+<p><em>Nie</em> należy używać opcji programu pocztowego <q>odpowiedz wszystkim</q>,
+chyba że mamy zamiar edytować ręcznie listę odbiorców. Należy zwrócić 
+szczególną uwagę aby nie wysyłać wiadomości powiązanych z istniejącymi 
+zgłoszeniami na adres <code>submit@bugs.debian.org</code>.</p>
+
+<p>
+Wiadomości mogą być wysyłane na adresy podane poniżej, wypisane w 
+kolejności, w jakiej są obsługiwane przez system śledzenia błędów.
+</p>
+
+<ul>
+<li>
+<var>nnn</var><code>@bugs.debian.org</code> — takie wiadomości są wysyłane 
+do opiekuna pakietu i przekazywane do <code>debian-bugs-dist</code>,
+ale <strong>nie są wysyłane</strong> do zgłaszającego;
+</li>
+<li>
+<var>nnn</var><code>-submitter@bugs.debian.org</code> — te wiadomości są 
+wysyłane do zgłaszającego i przekazywane do <code>debian-bugs-dist</code>,
+ale <strong>nie są wysyłane</strong> do opiekuna pakietu;
+</li>
+<li>
+<var>nnn</var><code>-maintonly@bugs.debian.org</code> — te wiadomości 
+są wysyłane tylko do opiekuna pakietu, <strong>nie są wysyłane</strong> 
+to zgłaszającego ani do <code>debian-bugs-dist</code>;
+</li>
+<li>
+<var>nnn</var><code>-quiet@bugs.debian.org</code> —  te wiadomości 
+pozostają w systemie śledzenia błędów (jak wszystkie powyżej), 
+<strong>nie są wysyłane</strong> do nikogo innego.
+</li>
+</ul>
+
+<p>Więcej informaji o nagłówkach powstrzymujących wiadomości potwierdzające
+(ACK) oraz o wysyłaniu kopii listów za pomocą Systemu Śledzenia Błędów jest
+dostępnych w <a href="Reporting">instrukcji zgłaszania błędów</a>.</p>
+
+<h2><a name="severities">Stopnie ważności błędów</a></h2>
+
+<p>System śledzenia błędów zapisuje stopień ważności każdego ze zgłoszonych 
+błędów. Jest on domyślnie ustawiony na <q>zwykły</q> (ang. 
+<i><code>normal</code></i>), ale można go zmienić dodając do zgłoszenia 
+pseudo-nagłówek <code>Severity</code> (patrz <a href="Reporting#pseudoheader">
+Jak zgłosić błąd</a>) lub przy pomocy polecenia <code>severity</code> 
+<a href="#requestserv">serwera pocztowego</a>.</p>
+
+<p>Dostępne są następujące stopnie ważności:
+
+<dl>
+<dt><code>krytyczny</code> (ang. <code>critical</code>)</dt>
+<dd>powoduje uszkodzenie niepowiązanego z błędem oprogramowania
+w systemie (lub całego systemu) lub powoduje poważną utratę danych 
+albo wprowadza lukę w bezpieczeństwie systemów, na których 
+zainstalowano dany pakiet.</dd>
+
+<dt><code>bardzo&nbsp;poważny</code> (ang. <code>grave</code>)</dt>
+<dd>uniemożliwia w ogóle lub w większej części korzystanie z danego pakietu
+lub powoduje utratę danych, albo wprowadza lukę w bezpieczeństwie pozwalającą
+na uzyskanie dostępu do kont użytkowników danego pakietu.</dd>
+
+<dt><code>poważny</code> (ang. <code>serious</code>)</dt>
+<dd>jest <a href="$(DOC)/debian-policy/">poważnym naruszeniem polityki 
+Debiana</a> (to znaczy narusza dyrektywę &quot;musi&quot; 
+(ang. <i>&quot;must&quot;</i>) lub &quot;wymagany&quot; (ang.
+<i>&quot;required&quot;</i>)), lub, w opinii opiekuna pakietu bądź menedżera 
+wydania, powoduje, że pakiet nie nadaje się do wydania.</dd>
+
+<dt><code>ważny</code> (ang. <code>important</code>)</dt>
+<dd>błąd mający duży wpływ na użyteczność danego pakietu, nie powodujący
+jednocześnie jego całkowitej bezużyteczności dla użytkowników.</dd>
+
+<dt><code>zwykły</code> (ang. <code>normal</code>)</dt>
+<dd>wartość domyślna, pasująca do większości błędów.</dd>
+ 
+<dt><code>drobny</code> (ang. <code>minor</code>)</dt>
+<dd>problem nie wpływający na przydatność pakietu, prawdopodobnie
+bardzo łatwy do usunięcia.</dd>
+
+<dt><code>życzenie</code> (ang. <code>wishlist</code>)</dt>
+<dd>odpowiedni w przypadku prośby o jakąś funkcję oraz w przypadku błędów,
+które są bardzo trudne do usunięcia z powodu założeń projektowych.</dd>
+</dl>
+
+<p><strong>Uwaga:</strong> przy ustawianiu stopnia ważności błędu należy używać
+angielskich nazw. Serwer obsługujący te żądania nie zna ich polskich (ani
+żadnych innych) tłumaczeń.</p>
+
+<p>Pewne stopnie ważności są traktowane jako 
+<em><a href="http://bugs.debian.org/release-critical/">uniemożliwiające
+wydanie (ang. <i>release-critical</i>)</a></em>, co znaczy, że błąd ten będzie
+miał wpływ na to, czy dany pakiet zostanie wydany w stabilnej edycji Debiana.
+Obecnie status taki mają stopnie <strong>krytyczny</strong>,
+<strong>bardzo&nbsp;poważny</strong> i <strong>poważny</strong>.
+Lista <a href="http://release.debian.org/testing/rc_policy.txt">problemów 
+krytycznych dla następnego wydania</a> zawiera kompletny zestaw reguł 
+określających jakie błędy zasługują na ten status.</p>
+
+<h2><a name="tags">Znaczniki przy zgłoszeniach</a></h2>
+
+<p>Każdy błąd może mieć zero lub więcej znaczników. Są one wyświetlane na 
+liście błędów dla każdego z pakietów oraz na pełnej liście błędów.</p>
+
+<p>Znaczniki można ustawiać dodając do zgłoszenia pseudo-nagłówek
+<code>Tags</code> (patrz <a href="Reporting#pseudoheader">Jak zgłosić
+błąd</a>), lub przy pomocy polecenia <code>tags</code> 
+<a href="#requestserv">serwera pocztowego</a>.
+Znaczniki należy rozdzielać przecinkami lub spacjami.</p>
+
+<p>Dostępne są obecnie następujące znaczniki: <bts_tags>. Poniżej 
+znajdują się dodatkowe informacje na temat poszczególnych znaczników:</p>
+
+<dl>
+
+<dt><code>patch</code> (łata)</dt>
+  <dd>W dzienniku danego błędu dostępna jest łata lub opis łatwej
+  procedury prowadzącej do rozwiązania problemu. Jeśli dostępna łata nie
+  rozwiązuje problemu w odpowiedni sposób lub powoduje inne problemy, nie
+  należy używać tego znacznika.</dd>
+
+<dt><code>wontfix</code> (nie naprawić)</dt>
+  <dd>Ten błąd nie zostanie naprawiony. Może tak być ponieważ jest to jeden z
+  dwóch równorzędnych sposobów na osiągnięcie jakiegoś celu, a opiekun pakietu
+  i zgłaszający błąd preferują odmienne sposoby. Może tak też być gdy zmiana
+  obecnego zachowania spowoduje inne, gorsze problemy dla innych, itp.</dd>
+
+<dt><code>moreinfo</code> (więcej informacji)</dt>
+  <dd>Tym błędem nie można się zająć, dopóki zgłaszający nie dostarczy 
+  więcej informacji. Błąd będzie zamknięty jeżeli zgłaszający nie dostarczy 
+  więcej informacji w rozsądnym czasie (rzędu kilku miesięcy). Stosuje się 
+  go do błędów typu <q>To nie działa</q>. Co nie działa?</dd>
+  
+<dt><code>unreproducible</code> (nie da się powtórzyć)</dt>
+  <dd>Tego błędu nie da się powtórzyć w systemie opiekuna. Do zdiagnozowania
+  przyczyny problemu potrzebna jest pomoc osób trzecich.</dd>
+
+<dt><code>help</code> (pomocy)</dt>
+  <dd>Opiekun prosi o pomoc w rozwiązaniu tego błędu.</dd>
+
+<dt><code>pending</code> (w toku)</dt>
+  <dd>Znaleziono rozwiązanie problemu, wkrótce błąd powinien być poprawiony.</dd>
+
+<dt><code>fixed</code> (poprawiony)</dt>
+  <dd>Ten błąd jest poprawiony całkowicie lub tymczasowo (na przykład przez
+  wersję stworzoną przez osobę nie będącą opiekunem tego pakietu), ale mimo to
+  coś trzeba jeszcze zrobić. Ten znacznik zastępuje stary stopień ważności
+  <q>fixed</q>.</dd>
+
+<dt><code>security</code> (bezpieczńestwo)</dt>
+  <dd>Błąd ten opisuje problem z bezpieczeństwem w danym pakiecie (na przykład
+  nieprawidłowe uprawnienia umożliwiające dostęp do danych, które nie powinny
+  być dostępne; błędy przepełnienia bufora umożliwiające niepożądane przejęcie
+  kontroli nad systemem; błędy umożliwiające ataki powodujące odmowę usługi,
+  itp). Większość błędów z tym znacznikiem powinno także mieć stopień ważności
+  krytyczny lub bardzo poważny.</dd>
+
+<dt><code>upstream</code> (źródło)</dt>
+  <dd>Ten błąd odnosi się do macierzystej części pakietu.</dd>
+
+<dt><code>confirmed</code> (potwierdzony)</dt>
+  <dd>Opiekun sprawdził dane zgłoszenie błędu, rozumie je i generalnie zgadza
+  się ze zgłaszającym, ale nie ma jeszcze sposobu na poprawienie błędu. (Użycie
+  tego znacznika jest opcjonalne; jest on przeznaczony głównie dla opiekunów,
+  którzy muszą radzić sobie z dużą ilością otwartych zgłoszeń.)</dd>
+
+<dt><code>fixed-upstream</code> (poprawiony przez autora programu)</dt>
+  <dd>Błąd został naprawiony przez autora programu, ale poprawiona 
+  wersja nie znajduje się jeszcze w pakiecie (z róznych powodów: 
+  prawdopodobnie zbyt trudno nałożyć poprawki albo zmiany są zbyt małe, 
+  by się nimi zajmować).</dd>
+
+<dt><code>fixed-in-experimental</code> (poprawiony w dystrybucji
+eksperymentalnej)</dt>
+  <dd>Ten błąd został naprawiony w pakiecie znajdującym się w
+  dystrybucji eksperymentalnej, ale jeszcze nie w dystrybucji
+  niestabilnej.</dd>
+
+<dt><code>d-i</code></dt>
+  <dd>Ten błąd odnosi się do rozwoju instalatora Debiana (debian-installer). 
+  Oczekuje się, że będzie on użyty do błędów, które wpływają na rozwój 
+  instalatora, mimo że dotyczą pakietów nie będących bezpośrednio 
+  jego częścią.</dd>
+
+<dt><code>ipv6</code></dt>
+  <dd>Ten błąd wpływa na obsługę protokołu IP w wersji 6.</dd>
+
+<dt><code>lfs</code></dt>
+  <dd>Ten błąd wpływa na obsługę dużych plików (ponad 2 gigabajty).</dd>
+
+<dt><code>l10n</code></dt>
+  <dd>Ten błąd dotyczy lokalizacji pakietu.</dd>
+
+
+<dt><code>potato</code></dt>
+  <dd>Ten błąd odnosi się do wersji znajdującej się w wydaniu Debiana o nazwie
+  kodowej potato.</dd>
+
+<dt><code>woody</code></dt>
+  <dd>Ten błąd odnosi się do wersji znajdującej się w wersji Debiana o nazwie
+  kodowej woody.</dd>
+
+<dt><code>sarge</code></dt>
+  <dd>To jest tag dotyczący dystrybucji, który ma dwa znaczenia. Kiedy 
+  jest ustawiony w zgłoszeniu o błędzie, błąd dotyczy wydania sarge (chociaż 
+  może także dotyczyć innych dystrybucji, jeżeli odpowiednie znaczniki są 
+  ustawione), z drugiej strony obowiązują normalne zasady obsługi błędów, łatek.
+  Błąd nie powinien być zarchiwizowany dopóki nie będzie poprawiony w sarge.</dd>
+
+<dt><code>sarge-ignore</code></dt>
+  <dd>Ten błąd typu release-critical ma być ignorowany na potrzeby wydania
+  sarge. <strong>Ten znacznik powinien być używany tylko przez menedżera
+  wydania. Nie należy ustawiać go samodzielnie bez jego wyraźnej 
+  zgody.</strong></dd>
+
+<dt><code>etch</code></dt>
+  <dd>To jest tag dotyczący dystrybucji, który ma dwa znaczenia. Kiedy 
+  jest ustawiony w zgłoszeniu o błędzie, błąd dotyczy wydania etch (chociaż 
+  może także dotyczyć innych dystrybucji, jeżeli odpowiednie znaczniki są 
+  ustawione), z drugiej strony obowiązują normalne zasady obsługi błędów, łatek.
+  Błąd nie powinien być zarchiwizowany dopóki nie będzie poprawiony w sarge.</dd>
+
+<dt><code>etch-ignore</code></dt>
+  <dd>Ten błąd typu release-critical ma być ignorowany na potrzeby wydania 
+  etch. <strong>Ten znacznik powinien być używany tylko przez menedżera
+  wydania. Nie należy ustawiać go samodzielnie bez jego wyraźnej 
+  zgody.</strong></dd>
+
+<dt><code>lenny</code></dt>
+  <dd>To jest tag dotyczący dystrybucji, który ma dwa znaczenia. Kiedy 
+  jest ustawiony w zgłoszeniu o błędzie, błąd dotyczy wydania lenny (chociaż 
+  może także dotyczyć innych dystrybucji, jeżeli odpowiednie znaczniki są 
+  ustawione), z drugiej strony obowiązują normalne zasady obsługi błędów, łatek. 
+  Błąd nie powinien być zarchiwizowany dopóki nie będzie poprawiony w lenny.</dd>
+
+<dt><code>lenny-ignore</code></dt>
+  <dd>Ten błąd typu release-critical ma być ignorowany na potrzebny wydania 
+  lenny. <strong>Ten znacznik powinien być używany tylko przez menedżera
+  wydania. Nie należy ustawiać go samodzielnie bez jego wyraźnej 
+  zgody.</strong></dd>
+
+<dt><code>squeeze</code></dt>
+  <dd>To jest tag dotyczący dystrybucji, który ma dwa znaczenia. Kiedy 
+  jest ustawiony w zgłoszeniu o błędzie, błąd dotyczy wydania squeezy (chociaż 
+  może także dotyczyć innych dystrybucji, jeżeli odpowiednie znaczniki są 
+  ustawione), z drugiej strony obowiązują normalne zasady obsługi błędów, łatek. 
+  Błąd nie powinien być zarchiwizowany dopóki nie będzie poprawiony w squeezy.</dd>
+
+<dt><code>squeeze-ignore</code></dt>
+  <dd>Ten błąd typu release-critical ma być ignorowany na potrzebny wydania 
+  squeeze. <strong>Ten znacznik powinien być używany tylko przez menedżera
+  wydania. Nie należy ustawiać go samodzielnie bez jego wyraźnej 
+  zgody.</strong></dd>
+
+<dt><code>wheezy</code></dt>
+  <dd>To jest tag dotyczący dystrybucji, który ma dwa znaczenia. Kiedy 
+  jest ustawiony w zgłoszeniu o błędzie, błąd dotyczy wydania wheezy (chociaż 
+  może także dotyczyć innych dystrybucji, jeżeli odpowiednie znaczniki są 
+  ustawione), z drugiej strony obowiązują normalne zasady obsługi błędów, łatek. 
+  Błąd nie powinien być zarchiwizowany dopóki nie będzie poprawiony w wheezy.</dd>
+
+<dt><code>wheezy-ignore</code></dt>
+  <dd>Ten błąd typu release-critical ma być ignorowany na potrzebny wydania 
+  wheezy. <strong>Ten znacznik powinien być używany tylko przez menedżera
+  wydania. Nie należy ustawiać go samodzielnie bez jego wyraźnej 
+  zgody.</strong></dd>
+
+<dt><code>jessie</code></dt>
+  <dd>To jest tag dotyczący dystrybucji, który ma dwa znaczenia. Kiedy 
+  jest ustawiony w zgłoszeniu o błędzie, błąd dotyczy wydania jessie (chociaż 
+  może także dotyczyć innych dystrybucji, jeżeli odpowiednie znaczniki są 
+  ustawione), z drugiej strony obowiązują normalne zasady obsługi błędów, łatek. 
+  Błąd nie powinien być zarchiwizowany dopóki nie będzie poprawiony w jessie.</dd>
+
+<dt><code>jessie-ignore</code></dt>
+  <dd>Ten błąd typu release-critical ma być ignorowany na potrzebny wydania 
+  jessie. <strong>Ten znacznik powinien być używany tylko przez menedżera
+  wydania. Nie należy ustawiać go samodzielnie bez jego wyraźnej 
+  zgody.</strong></dd>
+  
+<dt><code>sid</code></dt>
+  <dd>To jest tag dotyczący dystrybucji, który ma dwa znaczenia. Kiedy 
+  jest ustawiony w zgłoszeniu o błędzie, błąd dotyczy wydania sid (chociaż 
+  może także dotyczyć innych dystrybucji, jeżeli odpowiednie znaczniki są 
+  ustawione), z drugiej strony obowiązują normalne zasady obsługi błędów, łatek. 
+  Błąd nie powinien być zarchiwizowany dopóki nie będzie poprawiony w sid.</dd>
+
+<dt><code>experimental</code>
+  <dd>To jest tag dotyczący dystrybucji, który ma dwa znaczenia. Kiedy 
+  jest ustawiony w zgłoszeniu o błędzie, błąd dotyczy wydania experimental (chociaż 
+  może także dotyczyć innych dystrybucji, jeżeli odpowiednie znaczniki są 
+  ustawione), z drugiej strony obowiązują normalne zasady obsługi błędów, łatek. 
+  Błąd nie powinien być zarchiwizowany dopóki nie będzie poprawiony w experimental.</dd>
+</dl>
+
+<p>Dodatkowa informacja na temat tagów dotyczących dystrybucji:
+  tag -ignore pomija błąd do celów testowych. Tag dotyczący 
+  wydania wskazuje, że błąd w zgłoszeniu nie powinien być archiwizowany 
+  dopóki nie zostanie naprawiony w wydaniach określonych tymi tagami. 
+  Oznacza także, że błąd występuje w określonych tagami wydaniach. 
+  [Innymi słowy, błąd <strong>nie występuje</strong> we wszystkich 
+  wydaniach, których odpowiednie tagi <strong>nie</strong> zostały 
+  dodane, a dodano jakikolwiek tag określający wydanie; poza tym 
+  mają zastosowanie normalne zasady dotyczące szukania i 
+  poprawiania błędów.]
+</p>
+
+<p>
+  Tagi dotyczące wydania <strong>nie</strong> powinny być używane, 
+  jeżeli można osiągnąć zamierzony efekt przy pomocy innego znacznika, 
+  ponieważ wymagają one ręcznego dodawania oraz usuwania. W razie 
+  wątpliwości należy skontaktować się z Administratorami BTS 
+  (<email "owner@bugs.debian.org">) lub zespołem ds. wydania.
+</p>
+
+
+<h2><a name="forward">Zaznaczanie faktu przekazania zgłoszenia błędu</a></h2>
+
+<p>Deweloper, który przekazuje zgłoszenie błędu opiekunowi kodu źródłowego 
+pakietu, z którego powstał pakiet Debiana, powinien zaznaczyć ten fakt 
+w systemie śledzenia błędów w następujący sposób:</p>
+
+<p>W polu <code>To</code> wiadomości e-mail należy umieścić tylko adres(y)
+opiekuna(ów) kodu(ów) źródłowego(ych); w polu <code>CC</code> należy umieścić adres
+osoby, która zgłosiła błąd oraz adres
+<var>nnn</var><code>-forwarded@bugs.debian.org</code> i 
+<var>nnn</var><code>@bugs.debian.org</code>.</p>
+
+<p>Należy poprosić autora kodu aby przy odpowiadaniu zachował w polu 
+<code>CC</code> adres <var>nnn</var><code>-forwarded@bugs.debian.org</code>, 
+aby system śledzenia błędów zapisał odpowiedź razem z resztą zgłoszenia. 
+Taka wiadomość nie będzie wysyłana, zostanie tylko zapisana w systemie; 
+aby wiadomość została wysłana normalnie, należy wysłać ją na adres 
+<var>nnn</var><code>@bugs.debian.org</code>.</p>
+
+<p>Kiedy system śledzenia błędów otrzyma wiadomość wysłaną na adres
+<var>nnn</var><code>-forwarded</code>, zaznaczy dany błąd jako przekazany na
+adres wymieniony w polu <code>To</code> danej wiadomości 
+jeśli błąd nie ma już statusu przekazany.</p>
+
+<p>Można też ustawić informację <q>przekazane do</q> przy pomocy
+odpowiedniej wiadomości wysłanej na adres 
+<a href="server-control"><code>control@bugs.debian.org</code></a>.</p>
+
+<h2><a name="owner">Zmiana właściciela błędu</a></h2>
+
+<p>Zdarza się, że osoba odpowiedzialna za naprawienie błędu nie jest
+opiekunem danego pakietu (np. gdy pakietem zajmuje się grupa opiekunów).
+W takim przypadku warto odnotować to w systemie śledzenia błędów - każdemu
+błędowi można przypisać właściciela.</p>
+
+<p>Właściciel błędu może zostać ustawiony przez dodanie linii <code>Owner</code>
+w pseudo-nagłówku podczas zgłoszenia błędu (więcej w 
+<a href="Reportin#pseudoheader">instrukcji zgłaszania błędu</a>) lub za pomocą
+poleceń <code>owner</code> i <code>noowner</code> 
+<a href="#requestserv">serwera kontroli żądań</a>.</p>
+
+
+<h2><a name="maintincorrect">Nieprawidłowo przyporządkowani opiekunowie</a></h2>
+
+<p>Najczęściej powodem przyporządkowania do pakietu niewłaściwego opiekuna
+jest to, że opiekun niedawno się zmienił, a nowy opiekun jeszcze nie wysłał na
+serwer nowej wersji pakietu ze zmienionym polem kontrolnym
+<code>Maintainer</code>. Opiekun zostanie zmieniony automatycznie, gdy na
+serwer archiwum zostanie wysłana nowa wersja pakietu. Jeśli jednak nowa wersja
+nie jest wkrótce spodziewana, opiekunowie systemu śledzenia błędów mogą
+ręcznie zmienić tą informację. Można się z nimi skontaktować pod
+adresem <code>override-change@debian.org</code>.
+
+
+<h2><a name="requestserv">Powtórne otwieranie, przekierowywanie i inne manipulacje na zgłoszeniach</a></h2>
+
+<p>Możliwa jest zmiana przyporządkowania błędu do pakietu, powtórne otwarcie
+omyłkowo zamkniętego zgłoszenia, modyfikacja informacji mówiącej o tym do
+kogo, o ile w ogóle, zostało przekazane zgłoszenie, zmiana stopnia ważności
+i tytułu błędu, ustalenia właściciela błędu, połączenie i rozdzielenie raportów
+oraz zapis wersji paczek, w których błędy zostały znalezione,
+a także w których zostały poprawione. Można to zrobić wysyłając odpowiednią
+wiadomość na adres <code>control@bugs.debian.org</code>.</p>
+
+<p><a href="server-control">Format tych wiadomości</a> jest opisany w innym
+dokumencie dostępnym na stronie WWW lub w pliku
+<code>bug-maint-mailcontrol.txt</code>. Wersję tekstową tego dokumentu można
+także uzyskać wysyłając słowo <code>help</code> na wymieniony wyżej adres.</p>
+
+<h2><a name="subscribe">Subskrypcja błędów</a></h2>
+
+<p>System śledzenia błędów pozwala także osobom zgłaszającym błedy, deweloperom
+oraz innym zainteresowanym na dołączenie się do subskrypcji pojedynczych błędów.
+Ta opcja może być użyta przez osoby chcące mieć podgląd na dyskusję dotyczącą 
+błędu bez konieczności zapisywania się w <a href="http://packages.qa.debian.org">PTS</a> 
+na listę dotyczącą danego pakietu. Wszystkie wiadomości wysłane na adres 
+<var>nnn</var><code>@debian.org</code> są wysyłane do zapisanych osób.</p>
+
+<p>Subskrybowanie do błędu może być wykonane przez wysłanie wiadomości pod 
+adres <var>nnn</var><code>-subscribe@bugs.debian.org</code>. Temat oraz treść 
+wiadomości są ignorowane przez BTS. Kiedy tylko wiadomość zostanie 
+przetworzona, użytkownikowi jest wysyłana wiadomość potwierdzająca, na którą 
+powinien odpowiedzieć, aby otrzymywać wiadomości powiązane z danym błędem.</p>
+
+<p>Jest także możliwe usunięcie swojego adresu z listy subskrypcji. Można to
+zrobić poprzez wysłanie wiadomości pod adres
+<var>nnn</var><code>-unsubscribe@bugs.debian.org</code>. Temat oraz treść
+tej wiadomości także są ignorowane przez BTS. Użytkownikowi zostanie wysłana wiadomość 
+z potwierdzeniem, na którą musi odpowiedzieć, jeżeli chce się wypisać z listy.</p>
+
+<p>Domyślnie, adres, który ma zostać dołączony do listy zasubskrybowanych
+zostaje pobrany z nagłówka <CODE>From</code>. Aby zapisać inny adres,
+należy zakodować go w wiadomości o subskrypcji. Przybiera to taką postać:
+<var>nnn</var><code>-subscribe-</code>\
+<var>localpart</var><code>=</code>\
+<var>example.com</var><code>@bugs.debian.org</code>.
+Podany przykład wyśle adres <code>localpart@example.com</code> w wiadomości 
+o subskrypcji dla błędu <var>nnn</var>. Znak <code>@</code> musi zostać zakodowany 
+poprzez zmianę na znak <code>=</code>. Podobnie usunięcie adresu z listy ma postać
+<var>nnn</var><code>-unsubscribe-</code><var>localpart</var>\
+<code>=</code><var>example.com</var><code>@bugs.debian.org</code>.
+W obu przypadkach temat oraz treść wiadomości zostaną przekazane na adres podany
+w żądaniu w celu potwierdzenia.</p>
+
+<h2><a name="subjectscan">Częściowo przestarzała opcja skanowania tematów</a></h2>
+
+<p>Wiadomości przychodzące na adres <code>submit</code> lub
+<code>bugs</code>, których temat zaczyna się od <code>Bug#</code><var>nnn</var> 
+będą traktowane tak, jakby były wysłane na adres 
+<var>nnn</var><code>@bugs.debian.org</code>. Dzieje się tak ze względu 
+na wsteczną zgodność jak i na to, aby wyłapywać pocztę wysyłaną na adres
+<code>submit</code> przez pomyłkę (na przykład przez użycie 
+opcji odpowiedzi do wszystkich adresatów).</p>
+
+<p>Podobna zasada obowiązuje dla adresów <code>maintonly</code>,
+<code>done</code>, <code>quiet</code> oraz <code>forwarded</code>,
+która traktuje pocztę nadchodzącą ze znacznikiem w tytule jakby nadeszła na
+odpowiadający adres <var>nnn-cośtam</var><code>@bugs.debian.org</code>.</p>
+
+<p>Wiadomości nadchodzące bezpośrednio na adresy <code>forwarded</code> i
+<code>done</code> &mdash; np. bez numeru błędu w adresie &mdash; i nie 
+zawierające numeru w temacie, zostają zapamiętane przez kilka tygodni jako 
+<q>śmieci</q>, poza tym są ignorowane.</p>
+
+
+<h2><a name="x-debian-pr">Wycofana opcja <code>X-Debian-PR: quiet</code></a></h2>
+
+<p>Kiedyś można było powstrzymać system śledzenia błędów od przekazywania 
+wiadomości, którą otrzymał na adres <code>debian-bugs</code> poprzez dodanie 
+linii <code>X-Debian-PR: quiet</code> w nagłówku wiadomości.</p>
+
+<p>Nagłówek ten jest teraz ignorowany.  Zamiast tego, nalezy używać adresów
+<code>quiet</code> lub <var>nnn</var><code>-quiet</code> (względnie 
+<code>maintonly</code> lub <var>nnn</var><code>-maintonly</code>).</p>
+
+<hr />
+
+#use "otherpages.inc"
+
+#use "$(ENGLISHDIR)/Bugs/footer.inc"
