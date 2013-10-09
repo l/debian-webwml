@@ -1,0 +1,48 @@
+#use wml::debian::translation-check translation="1.1" mindelta="1"
+<define-tag description>utökning av privilegier/överbelastning</define-tag>
+<define-tag moreinfo>
+<p>Flera sårbarheter har upptäckts i FreeBSD-kärnan som kan leda till en
+överbelastning eller utökning av privilegier. Projektet Common Vulnerabilities
+and Exposures identifierar följande problem:</p>
+
+<ul>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-5691">CVE-2013-5691</a>
+
+	<p>
+		Loganaden Velvindron och Gleb Smirnoff upptäckte att ioctl-förfrågningarna
+		SIOCSIFADDR, SIOCSIFBRDADDR, SIOCSIFDSTADDR och SIOCSIFNETMASK 
+		inte utför validering av indata eller verifierar anroparens identitet.
+		Oprivilegierade användare med möjligheten att köra skadlig kod kan orsaka
+		ett nätverksgränssnitt i systemet att utföra länklagrets handlingar
+		som associeras med ovan nämnda ioctl-förfrågan eller trigga en
+		kernelpanic genom att skicka en speciellt skapad adressstruktur som 
+		orsakar en drivrutin för nätverkssgränssnitt att dereferera en
+		ogiltig pekare.
+	</p>
+</li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-5710">CVE-2013-5710</a>
+
+	<p>
+		Konstantin Belousov upptäckte att implementationen av nullfs(5) av
+		VOP_LINK(9) VFS-operation inte kontrollerar om källan och målet av
+		länken båda är i samma nullfs-instans. Det är därför möjligt att
+		skapa en hård länk från en plats i en nullfs-instans till en fil i en
+		annan, så länge som det underliggande (käll-) filsystemet är samma. Om
+		flera nullfs-vyer in i samma filsystem monteras på olika platser kan
+		en användare få skrivåtkomst till filer som nominellt är på ett
+		filsystem med endast läsåtkomst.
+	</p>
+</li>
+ 
+</ul>
+
+<p>För den stabila utgåvan (Wheezy) har dessa problem rättats i
+version 9.0-10+deb70.4.</p>
+
+<p>Vi rekommenderar att ni uppgraderar era kfreebsd-9-paket.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2013/dsa-2769.data"
