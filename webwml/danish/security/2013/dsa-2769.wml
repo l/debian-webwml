@@ -1,0 +1,42 @@
+#use wml::debian::translation-check translation="1.1" mindelta="1"
+<define-tag description>rettighedsforøgelse/lammelsesangreb</define-tag>
+<define-tag moreinfo>
+<p>Flere sårbarheder er opdaget i FreeBSD-kernen, hvilke måske kunne føre til 
+lammelsesangreb (denial of service) eller rettighedsforøgelse.  Projektet Common
+Vulnerabilities and Exposures har registreret følgende problemer:</p>
+
+<ul>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-5691">CVE-2013-5691</a>
+
+    <p>Loganaden Velvindron og Gleb Smirnoff opdagede at ioctl-forespørgslerne 
+    SIOCSIFADDR, SIOCSIFBRDADDR, SIOCSIFDSTADDR og SIOCSIFNETMASK, ikke udførte 
+    validering af inddata eller kontrollerede den kaldendes brugeroplysninger.  
+    En bruger uden rettigheder, med mulighed for at køre vilkårlig kode, kunne 
+    få et vilkårligt netværksinterface på systemet til at udføre link 
+    layer-handlinger i forbindelse med ovennævnte ioctl-forespørgsler eller 
+    udløse kernepanik ved at levere en særligt fremstillet adressestruktur, som 
+    fik en netværksinterfacedriver til at dereferere en ugyldig 
+    pointer.</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-5710">CVE-2013-5710</a>
+
+    <p>Konstantin Belousov opdagede at implementeringen af nullfs(5) i 
+    VOP_LINK(9)'s VFS-operation, ikke kontrollerede hvorvidt linkets kilde og 
+    mål begge er i den samme nullfs-instans.  Det var derfor muligt at oprette 
+    et hårdt link fra en placering i en nullfs-instans, til en fil i en anden, 
+    såfremt det underliggende (kilde)filsystem, var det samme.  Hvis flere 
+    nullfs-views pegende på det samme filsystem er mount'et forskellige steder, 
+    kunne en bruger måske få skriveadgang til filer, der normalt befinder sig 
+    på et kun læsbart filsystem.</p></li>
+
+</ul>
+
+<p>I den stabile distribution (wheezy), er disse problemer rettet i
+version 9.0-10+deb70.4.</p>
+
+<p>Vi anbefaler at du opgraderer dine kfreebsd-9-pakker.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2013/dsa-2769.data"
