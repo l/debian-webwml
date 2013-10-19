@@ -1,6 +1,8 @@
 #use wml::debian::template title="Futuros paquetes o en los que se necesita trabajar"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.36" maintainer="Fernando Cerezal"
+#use wml::debian::translation-check translation="1.39" maintainer="Laura Arjona Reina"
+#include "$(ENGLISHDIR)/devel/wnpp/wnpp.data"
+# $Id$
 
 <define-tag toc-title-formatting endtag=required><h3>%body</h3></define-tag>
 
@@ -16,23 +18,40 @@ Debian (BTS)</a>.</p>
 
 <p><a href="work_needing">Paquetes que necesitan un nuevo responsable</a>:</p>
 <ul>
-  <li><a href="rfa_bypackage">Paquetes listos para adopción</a></li>
-  <li><a href="rfa_bymaint">Paquetes listos para adopción, por responsable</a></li>
-  <li><a href="orphaned">Paquetes huérfanos</a></li>
-  <li><a href="being_adopted">Paquetes en adopción</a></li>
+  <li><a href="rfa_bypackage"><rfa_number> paquetes listos para adopción</a>,
+      organizados <a href="rfa_bymaint">por mantenedor</a>
+      o <a href="rfa_byage">por antigüedad</a>
+</li>
+  <li><a href="orphaned"><orphaned_number> paquetes huérfanos</a>,
+      organizados <a href="orphaned_byage">por antigüedad</a>
+
+</li>
+  <li><a href="being_adopted"><adopted_number> paquetes en adopción</a>,
+      organizados <a href="adopted_byage">por antigüedad</a>
+      o <a href="being_adopted_byactivity">por actividad</a>
+</li>
 </ul>
 
-<p><a href="help_requested">Paquetes que necesitan ayuda</a></p>
+<p><a href="help_requested"><help_number> paquetes necesitan ayuda</a>,
+organizados <a href="help_requested_byage">por antigüedad</a>
+o <a href="help_requested_bypop">por popularidad</a>
+
+</p>
 
 <p><a href="prospective">Futuros paquetes</a>:</p>
 <ul>
-  <li><a href="being_packaged">Paquetes en preparación</a></li>
-  <li><a href="requested">Paquetes solicitados</a></li>
+  <li><a href="being_packaged"><packaged_number> paquetes en preparación</a>,
+organizados <a href="being_packaged_byage">por antigüedad</a>
+o <a href="being_packaged_byactivity">por actividad</a>
+</li>
+  <li><a href="requested"><requested_number> paquetes solicitados</a>,
+      organizados <a href="requested_byage">por antigüedad</a>
+</li>
 </ul>
 
 <p><a href="unable-to-package"><q>Software</q> que no se puede empaquetar</a></p>
 
-<p>Nota: estas listas se actualizan diariamente. Para obtener información más 
+<p>Nota: estas listas se actualizan seis veces al día; para obtener información más 
 actualizada, por favor vaya a la <a href="http://bugs.debian.org/wnpp">página 
 del pseudo-paquete wnpp</a> en el BTS.</p>
 
@@ -44,13 +63,13 @@ del pseudo-paquete wnpp</a> en el BTS.</p>
 
 <p>Dado que se usa el BTS, todos los desarrolladores están 
 familiarizados con los detalles técnicos sobre cómo enviar nueva información, 
-modificarla, o cerrar las solicitudes pendientes. A pesar de esto, para 
+modificarla, o cerrar las solicitudes pendientes. Por otro lado, para 
 poder lograr un alto nivel de automatización, se deben seguir una serie 
 de procedimientos.
 
 <p>Para poder enviar nueva información, se tiene que informar de un error 
 en el <a href="http://bugs.debian.org/wnpp">pseudo paquete wnpp</a> para 
-cada (futuro) paquete que se vaya a preparar. Por favor, dese cuenta de que 
+cada (futuro) paquete afectado. Por favor, tenga en cuenta que 
 sólo debe enviar un informe por cada paquete fuente en vez de un informe 
 por cada paquete binario que se cree a partir de un paquete fuente.</p>
 
@@ -249,9 +268,13 @@ correo electrónico. El formato del envío debería ser:</p>
 
 <p>Los procedimientos para cerrar estos errores son:
 
-<table border=0 cellpadding=3 cellspacing=3>
+<table>
+<colgroup span="2">
+<col width="10%">
+<col width="90%">
+</colgroup>
 <tr>
-  <td valign="top"><a name="howto-o"><b>O</b></a></td>
+  <th valign="top"><a name="howto-o"><b>O</b></a></td>
   <td>Si va a adoptar un paquete, retitule su error
       y reemplace <q>O</q> por <q>ITA</q>, de forma que otras personas puedan
       saber que el paquete está siendo adoptado, y se evite que se 
@@ -281,7 +304,7 @@ correo electrónico. El formato del envío debería ser:</p>
       el paquete, debe subirlo con su nombre en el campo <q>Maintainer:</q> ,
       y cerrar el error una vez que el paquete haya sido instalado.
 
-      <p>Si como responsable decide abandonar el paquete que marcó 
+      <p>Si como mantenedor decide abandonar el paquete que marcó 
       como <q>RFA</q>, por favor, cambie el título del informe de error y 
       sustituya <q>RFA</q> por <q>O</q>. Si retira su petición, cierre el error.</p>
 </td>
@@ -329,7 +352,7 @@ correo electrónico. El formato del envío debería ser:</p>
 <p>Si piensa que la lista de desarrolladores debiera enterarse del ITP,
 RFA o lo que sea, añada la cabecera</p>
 <pre>X-Debbugs-CC: debian-devel@lists.debian.org</pre>
-<p>al mensaje (nota: ésta es una cabecera real, no una pseudocabecera).</p>
+<p>al mensaje.</p>
 
 <p>Por supuesto, la forma más fácil de cerrar estos informes de error es añadiendo una
 entrada en el archivo de cambios (<q>changelog</q>) del paquete,  diciendo qué ha hecho 
@@ -337,16 +360,17 @@ y añadiendo <tt>(closes:&nbsp;bug#nnnnn)</tt> a ella. De esta forma el error se
 cerrará automáticamente cuando el nuevo paquete quede instalado dentro 
 del archivo.</p>
 
-<p><strong>Atención:</strong> Usted <strong>no</strong> puede reasignar,
-retitular o cambiar el dueño de un informe de error enviando un correo al
-número de error@bugs.debian.org, 
-<strong>ni</strong> enviando nuevos informes. Tiene que enviar el mensaje 
-apropiado al robot de control del BTS &mdash; <a
-href="$(HOME)/Bugs/server-control">¡Lea las instrucciones para hacerlo!</a></p>
+<p><strong>Atención:</strong> Si necesita reasignar,
+retitular o cambiar el dueño de un informe de error, debe hacerlo enviando un
+correo electrónico al robot de control del BTS <a
+href="$(HOME)/Bugs/server-control">directamente</a> o a número de informe @bugs.debian.org
+y usando <a href="$(HOME)/Bugs/Reporting#control">pseudo-cabecersas de control</a>,
+pero <strong>no</strong> rellenando nuevos informes.
+</p>
 
 <p>Aviso: Si un paquete permanece huérfano durante un tiempo muy largo, se 
 examinará su situación para determinar si el paquete se necesita &mdash; si 
-no, se pedirá a los mantenedores del FTP que lo eliminen de Sid.</p>
+no, se pedirá a los mantenedores del FTP que lo eliminen de la versión «inestable».</p>
 
 <p>Si por alguna razón necesita contactar con los responsables de WNPP, puede 
 hacerlo en <email wnpp@debian.org>.</p>
