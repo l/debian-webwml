@@ -1235,7 +1235,9 @@ sub compact_list($$) {
       my $id = $our_mirrors{$site};
       my $countryplain = $plain_name_of_country{ $mirror[$id]{country} };
       my $countrycode = $code_of_country{ $mirror[$id]{country} };
-      print "<li>" . $mirror[$id]{site} . " (<".$countrycode."c>): ";
+      print "<li>" . $mirror[$id]{site};
+      if ($countrycode ne ''){print " (<".$countrycode."c>)"}
+      print ": ";
       printhtmlftprsync($mirror[$id]{site},
                         $mirror[$id]{method}{$whichtype.'-http'},
                         $mirror[$id]{method}{$whichtype.'-ftp'},
