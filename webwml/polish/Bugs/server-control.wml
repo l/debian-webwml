@@ -1,0 +1,756 @@
+#use wml::debian::template title="Debian BTS &mdash; serwer kontroli" NOHEADER=yes NOCOPYRIGHT=true
+#include "$(ENGLISHDIR)/Bugs/pkgreport-opts.inc"
+#use wml::debian::translation-check translation="1.102"
+
+<h1>Wprowadzenie do pocztowego serwera kontroli i manipulacji błedów</h1>
+
+<p>
+Tak jak <code>request@bugs.debian.org</code> pozwala <a
+href="server-request"> pobierać dane i dokumentację o błędach przy użyciu 
+poczty elektronicznej</a>, tak <code>control@bugs.debian.org</code> pozwala 
+w różny sposób operować na zgłoszeniach błędów.
+</p>
+
+<p>
+Serwer kontroli pracuje podobnie do serwera żądań z tą różnicą, że 
+posiada kilka dodatkowych poleceń; tak naprawdę to jest to ten sam program.
+Te dwa adresy są rozdzielone jedynie po to, aby zapobiec błędom popełnianym 
+przez użytkowników, które mogą powodować problemy, podczas gdy celem było 
+jedynie żądanie informacji.
+</p>
+
+<p>
+Jako, że polecenia serwera kontroli zmieniają status błędu, opiekun
+pakietu otrzymuje informację o przetworzeniu poleceń. Dodatkowo wiadomość
+przesłana do serwera oraz wywołane przez nią zmiany są zapisywane w 
+zgłoszeniu błędu, tym samym są dostępne poprzez strony WWW.
+</p>
+
+<p>
+Szczegółowe informacje na temat podstaw obsługi serwera i wspólne polecenia 
+dla obu adresów można znaleźć pod adresem 
+<a href="server-request#introduction">wprowadzenie do serwera żądań</a>
+dostępnym na stronach WWW, w pliku <code>bug-log-mailserver.txt</code> lub 
+pobrać je wysyłając polecenie <code>help</code> na adres któregokolwiek serwera.
+</p>
+
+<p>
+<a href="server-refcard">Spis poleceń</a> dla serwerów pocztowych
+dostępny jest na stronach WWW, w pliku <code>bug-mailserver-refcard.txt</code>
+lub do pobrania wysyłając wiadomość z poleceniem <code>refcard</code>.
+</p>
+
+
+<h1>Polecenia dostępne dla pocztowego serwera kontroli</h1>
+
+  <table style="margin-left:auto;margin-right:auto">
+    <tr>
+    <td align="center">Podstawowe</td>
+    <td align="center">Wersjonowanie</td>
+    <td align="center">Duplikaty</td>
+    <td align="center">Różne</td>
+    </tr>
+    <tr>
+      <!-- General -->
+      <td valign="top">
+	<ul class="nodecoration">
+	  <li><a href="#reassign">reassign</a></li>
+	  <li><a href="#severity">severity</a></li>
+	  <li><a href="#tag">tags</a></li>
+	  <li><a href="#retitle">retitle</a></li>
+	  <li><a href="#submitter">submitter</a></li>
+	  <li><a href="#affects">affects</a></li>
+	  <li><a href="#summary">summary</a></li>
+	  <li><a href="#outlook">outlook</a></li>
+	</ul>
+      </td>
+      <!-- Versioning -->
+      <td valign="top">
+	<ul class="nodecoration">
+	  <li><a href="#found">found</a> | <a href="#notfound">notfound</a></li>
+	  <li><a href="#fixed">fixed</a> | <a href="#notfixed">notfixed</a></li>
+	  <li><a href="#reopen">reopen</a></li>
+	  <!-- <dt>(close)</dt> Deprecated -->
+	</ul>
+      </td>
+      <!-- Duplicates -->
+      <td valign="top">
+	<ul class="nodecoration">
+	  <li><a href="#merge">merge</a> | <a href="#unmerge">unmerge</a></li>
+	  <li><a href="#forcemerge">forcemerge</a></li>
+	  <li><a href="#clone">clone</a></li>
+	</ul>
+      </td>
+      <!-- Misc. -->
+      <td valign="top">
+	<ul class="nodecoration">
+	  <li><a href="#thanks">thanks</a></li>
+	  <li><a href="#comment">#</a></li>
+	  <li><a href="#forwarded">forwarded</a> |  <a href="#notforwarded">notforwarded</a></li>
+	  <li><a href="#owner">owner</a> | <a href="#noowner">noowner</a></li>
+	  <li><a href="#block">block</a> | <a href="#unblock">unblock</a></li>
+	  <li><a href="#archive">archive</a> | <a href="#unarchive">unarchive</a></li>
+	  <li><a href="server-request#user">user</a> |
+	    <a href="server-request#usertag">usertag</a> |
+	    <a href="server-request#usercategory">usercategory</a></li>
+	</ul>
+      </td>
+    </tr>
+  </table>
+
+<dl>
+  <dt><a name="reassign"><code>reassign</code> <var>numer_błędu</var>
+    <var>pakiet</var> [ <var>wersja</var> ]</a></dt>
+  <dd>
+    <p>
+    Zapisuje informację, że błąd #<var>numer_błędu</var> dotyczy podanego 
+    <var>pakietu</var>.
+    Przy pomocy tego polecenia można określić pakiet, jeżeli użytkownik 
+    zapomniał zrobić to przy pomocy pseudo-nagłówka lub zmienić 
+    wcześniejsze przypisanie. Nie są wysyłane żadne zawiadomienia 
+    (oprócz zwykłej informacji o przetworzeniu polecenia).
+    </p>
+
+    <p>
+    Jeżeli będzie podana <var>wersja</var> pakietu, system kontroli błędów 
+    odnotuje, że błąd dotyczy tej wersji nowo przypisanego pakietu.
+    </p>
+    <p>
+      Można przypisać błąd do dwóch pakietów jednocześnie poprzez 
+      oddzielenie nazw przecinkiem. <em>Jednakże</em> należy to robić tylko, 
+      jeżeli błąd może być naprawiony przez zmianę <em>jednego</em> 
+      z wymienionych pakietów. W innym przypadku należy 
+      <a href="#clone">skopiować</a> błąd i przypisać go do drugiego pakietu.
+    </p>
+  </dd>
+
+
+  <dt><a name="reopen"><code>reopen</code> <var>numer_błędu</var>
+   [ <var>adres-twórcy</var> | <code>=</code> | <code>!</code> ]</a></dt>
+  <dd>
+    <p>
+    Ponownie otwiera błąd #<var>numer_błędu</var> jeśli jest on zamknięty.
+    </p>
+
+    <p>
+    Domyślnie, lub jeżeli poda się znak <code>=</code>, osoba pierwotnie 
+    zgłaszająca błąd wciąż pozostaje twórcą raportu, więc otrzyma ona 
+    potwierdzenie w momencie ponownego zamknięcia błędu.
+    </p>
+
+    <p>
+    Jeżeli poda się <var>adres-twórcy</var>, twórca zostanie zmieniony 
+    na podany adres. Aby zostać twórcą ponownie otwieranego zgłoszenia, 
+    należy użyć skrótu <code>!</code> lub podać własny adres pocztowy.
+    </p>
+
+    <p>
+    Zwykle dobrym pomysłem jest powiadomienie osoby, która zostanie zapisana
+    jako twórca zgłoszenia, że otwiera się ponownie dany raport o błędzie aby
+    wiedziała by oczekwiać potwierdzenia, które otrzyma kiedy błąd zostanie
+    ponownie zamknięty.
+    </p>
+
+    <p>
+    Jeśli błąd nie jest zamknięty, wtedy polecenie ponownego otwarcia nie da 
+    żadnego efektu, nie zmieni nawet twórcy zgłoszenia. Aby zmienić 
+    twórcę otwartego zgłoszenia należy użyć polecenia <code>submitter</code>; 
+    należy zauważyć, że to polecenie powiadomi o zmianie pierwotnego autora.
+    </p>
+
+    <p>
+    Jeżeli błąd został zarejestrowany jako zamknięty w konkretnej wersji 
+    pakietu ale powtórzył się ponownie w późniejszej, zaleca się użycie polecenia  
+    <code>found</code>. 
+    </p>
+  </dd>
+
+
+  <dt><a name="found"><code>found</code> <var>numer_błędu</var> [
+    <var>wersja</var> ]</a></dt>
+  <dd>
+    <p>
+    Zapisuje informację, że błąd #<var>numer_błędu</var> znaleziono w 
+    podanej <var>wersji</var> pakietu do którego został przypisany. 
+    <var>Wersja</var> może być podana w pełnej postaci wg schematu 
+    <var>nazwa_pakietu/wersja</var>.
+    </p>
+
+    <p>
+    System kontroli błedów używa tych informacji, w połączeniu z poprawioną 
+    wersją zarejestrowaną podczas zamykania błędu, by wyświetlić listę 
+    błędów otwartych w różnych wersjach pakietu. Uzna, że błąd powinien być 
+    otwarty, kiedy nie ma poprawionej wersji lub jeśli błąd został znaleziony 
+    później, niż został poprawiony.
+    </p>
+
+    <p>
+    Jeżeli nie podano <var>wersji</var>, wtedy lista wersji z poprawionym 
+    błędem jest czyszczona. Jest to działanie identyczne do polecenia 
+    <code>reopen</code>.
+    <var>Wersja</var> może być podana w pełnej postaci wg schematu 
+    <var>nazwa_pakietu/wersja</var>.
+    </p>
+
+    <p>
+    To polecenie działa tylko w odniesieniu do błędów oznaczonych jako 
+    niepoprawione (ang. not done) jeżeli nie podano wersji, lub, jeżeli podano
+    <var>wersję</var>, do znalezionych błędów w wersji równej lub większej 
+    niż najwyższa <var>wersja</var> oznaczona jako poprawiona. (Aby oznaczyć 
+    błąd jako niepoprawiony (ang. not done) należy użyć polecenia 
+    <code>reopen</code> w połączeniu z poleceniem <code>found</code>.)
+    </p>
+
+    <p>
+    Komenda została wprowadzona aby zastąpić polecenie <code>reopen</code>, ponieważ 
+    dodanie <var>wersji</var> do składni tego polecenia bez wprowadzania niejasności 
+    byłoby trudnym zadaniem.
+    </p>
+  </dd>
+
+
+  <dt><a name="notfound"><code>notfound</code> <var>numer_błędu</var>
+    <var>wersja</var></a></dt>
+  <dd>
+    <p>
+    Usuwa zapis o tym, że #<var>numer_błędu</var> został zarejestrowany 
+    w podanej <var>wersji</var> pakietu, do którego został dołączony.
+    <var>Wersja</var> może być podana w pełnej postaci wg schematu 
+    <var>nazwa_pakietu/wersja</var>.    
+    </p>
+
+    <p>
+    Różni się to od zamykania błędu w podanej wersji tym, że błąd nie 
+    znajdzie się również na liście błędów poprawionych; nie będzie żadnej 
+    informacji dotyczącej tej wersji. Polecenie jest przeznaczone do 
+    poprawiania błędnych zapisów dotyczących informacji o tym, kiedy dany 
+    błąd został zgłoszony.
+    </p>
+  </dd>
+
+
+  <dt><a name="fixed"><code>fixed</code> <var>numer_błędu</var>
+    <var>wersja</var></a></dt>
+  <dd>
+    <p>
+    Wskazuje, że błąd #<var>numer_błędu</var> został poprawiony 
+    w podanej <var>wersji</var> pakietu, do którego został przypisany. 
+    <var>Wersja</var> może być podana w pełnej postaci wg schematu 
+    <var>nazwa_pakietu/wersja</var>.    
+    </p>
+
+    <p>
+    <em>Nie</em> powoduje to oznaczenia błędu jako zamknięty, jedynie 
+    dopisuje kolejną wersję, w której błąd został poprawiony. Aby zamknąć 
+    błąd i oznaczyć go jako poprawiony w podanej wersji, należy użyć 
+    adresu pocztowego numer_błędu-done. 
+    </p>
+  </dd>
+
+  <dt><a name="notfixed"><code>notfixed</code> <var>numer_błędu</var>
+    <var>wersja</var></a></dt>
+  <dd>
+    <p>
+    Usuwa zapis, że błąd #<var>numer_błędu</var> został poprawiony 
+    w podanej <var>wersji</var>. 
+    <var>Wersja</var> może być podana w pełnej postaci wg schematu 
+    <var>nazwa_pakietu/wersja</var>.
+    </p>
+
+    <p>
+    Polecenie jest równoważne poleceniu <code>found</code>, po którym 
+    wydano polecenie <code>notfound</code> (found usuwa poprawki w 
+    podanej wersji, a notfound usuwa wyniki polecenia found) z tą 
+    różnicą, że zgłoszenie nie jest otwierane ponownie, jeżeli znaleziona 
+    wersja jest większa niż jakakolwiek istniejąca poprawiona wersja. 
+    Polecenie jest przeznaczone do poprawiania pomyłek w zapisach, 
+    kiedy błąd został naprawiony; w większości przypadków należy używać 
+    polecenia <code>found</code>, a nie <code>notfixed</code>.
+    </p>
+  </dd>
+
+
+  <dt><a name="submitter"><code>submitter</code> <var>numer_błędu</var>
+    <var>adres-twórcy</var> | <code>!</code></a></dt>
+  <dd>
+    <p>
+    Zmienia twórcę zgłoszenia #<var>numer_błędu</var> na  
+    <var>adres-twórcy</var>.
+    </p>
+
+    <p>
+    Aby zostać nowym twórcą raportu należy użyć skrótu <code>!</code> 
+    lub podać własny adres pocztowy.
+    </p>
+
+    <p>
+    Podczas gdy polecenie <code>reopen</code> zmienia twórcę innych
+    błędów powiązanych z błędem ponownie otwieranym, <code>submitter</code> 
+    nie ma wpływu na powiązane błędy. 
+    </p>
+  </dd>
+
+
+  <dt><a name="forwarded"><code>forwarded</code> <var>numer_błędu</var>
+    <var>adres</var></a></dt>
+  <dd>
+    <p>
+    Zawiadamia, że błąd <var>numer_błędu</var> został przesłany do 
+    autora kodu źródłowego (upstream maintainer) na podany <var>adres</var>.
+    To polecenie tak naprawdę nie wysyła dalej zgłoszenia. Może być ono 
+    użyte do zmiany istniejącego, nieprawidłowego adresu forwarded-to, lub 
+    do zapisania nowego adresu w zgłoszeniu, które wcześniej nie było oznaczone 
+    jako przesłane dalej. <var>Adres</var> powinien być w postaci URI lub 
+    poprawnego adresu pocztowego. Użycie URI, jeżeli jest to możliwe, 
+    pozwala na odpytywanie zdalnego systemu śledzenia błędów (np. bugzilla) 
+    aby pobrać status danego błędu. 
+    </p>
+
+    <p>
+      Przykład użycia:
+    </p>
+
+    <pre>
+      forwarded 12345 http://bugz.illa.foo/cgi/54321
+    </pre>
+  </dd>
+
+
+  <dt><a name="notforwarded"><code>notforwarded</code>
+    <var>numer_błędu</var></a></dt>
+  <dd>
+    <p>
+    Usuwa informację, że <var>numer_błędu</var> był wysyłany dalej do 
+    jakiegokolwiek autora kodu źródłowego (upstream maintainer). 
+    Jeżeli błąd nie był zaznaczony jako wysłany dalej, to polecenie 
+    nie robi nic.
+    </p>
+  </dd>
+
+
+  <dt><a name="retitle"><code>retitle</code> <var>numer_błędu</var>
+    <var>nowy_tytuł</var></a></dt>
+  <dd>
+    <p>
+    Zmienia tytuł zawiadomienia na podany w poleceniu (domyślnie pobierane 
+    jest pole <code>Subject</code> z nagłówka wiadomości oryginalnego 
+    zgłoszenia). Zmieniane są także tytuły we wszystkich zgłoszeniach 
+    powiązanych ze zgłoszeniem o podanym numerze.
+    </p>
+  </dd>
+
+
+  <dt><a name="severity"><code>severity</code> <var>numer_błędu</var>
+    <var>stopień_ważności</var></a></dt>
+  <dd>
+    <p>
+    Ustawia stopień ważności (severity) dla zgłoszenia #<var>numer_błędu</var> na podany <var>stopień</var>. 
+    Nie jest wysyłane powiadomienie do użytkownika zgłaszającego błąd.
+    </p>
+
+    <p>
+    Stopnie ważności to <bts_severities>.
+    </p>
+
+    <p>
+    Opis <a href="Developer#severities">co oznaczają poszczególne stopnie</a> 
+    znajduje się w podstawowej dokumentacji dla deweloperów dotyczącej 
+    systemu śledzenia błędów.
+    </p>
+  </dd>
+
+  <dt><a name="affects"><code>affects</code> <var>numer_błędu</var>
+      [ <code>+</code> | <code>-</code> | <code>=</code>
+      ] <var>pakiet</var> [ <var>pakiet</var> ... ]</a></dt>
+  <dd>
+    <p>
+      Oznacza, że błąd ma wpływ na inny pakiet. W przypadku, gdy 
+      <var>numer_błędu</var> powoduje problemy w <var>pakiecie</var> 
+      niezależnie od tego, czy błąd rzeczywiście występuje w podanym pakiecie, 
+      polecenie powoduje wyświetlenie błędu na listach dotyczących 
+      podanych <var>pakietów</var>.
+      Polecenie powinno być używane jeżeli błąd jest na tyle poważny, 
+      by być powodem wielu zgłoszeń od użytkowników, którzy przypiszą go 
+      do złego pakietu. Znak <code>=</code> określa, że błąd wpływa 
+      na podaną listę pakietów i jest domyślną akcją jeżeli nie podano 
+      pakietów; znak <code>-</code> usuwa podane pakiety z listy pakietów, 
+      na które ma wpływ dany błąd; znak <code>+</code> dodaje podane pakiety 
+      do listy pakietów i jest domyślną akcją jeżeli podano pakiety.
+    </p>
+  </dd>
+
+  <dt><a name="summary"><code>summary</code> <var>numer_błędu</var>
+      [<var>numer_wiadomości</var> | <var>podsumowanie</var>]</a></dt>
+  <dd>
+    <p>
+      Wybiera wiadomość, która będzie użyta jako podsumowanie błędu. 
+      Pierwszy akapit wiadomości, który nie jest pseudo-nagłówkiem 
+      i sekcją kontrolną jest przetwarzany i ustawiany jako podsumowanie 
+      błędu wyświetlane na początku strony zgłoszenia błędu. 
+      Polecenie może być użyte w sytuacji, kiedy pierwsze zgłoszenie nie 
+      opisuje dokładnie problemu lub błąd posiada wiele wiadomości, co 
+      utrudnia zidentyfikowanie sedna sprawy.
+    </p>
+    <p>
+      Jeżeli nie podano <var>numeru wiadomości</var>, podsumowanie jest 
+      czyszczone. <var>Numer wiadomości</var> jest numerem wyświetlanym 
+      w rapocie o błędzie generowanym przez skrypt cgi; jeżeli poda się 
+      wartość 0, zostanie użyta obecna wiadomość (czyli wiadomość
+      wysłana na adres control@bugs.debian.org zawierająca polecenie 
+      summary).
+    </p>
+    <p>
+      Jeżeli <var>numer wiadomości</var> nie jest liczbą i nie jest pustym 
+      tekstem, przyjmuje się że jest to tekst, który należy ustawić jako 
+      podsumowanie.
+    </p>
+  </dd>
+
+  <dt><a name="outlook"><code>outlook</code> <var>numer_błędu</var>
+      [<var>numer_wiadomości</var> | <var>tekst</var>]</a></dt>
+  <dd>
+    <p>
+      Wybiera wiadomość która będzie użyta jako opis możliwego sposobu 
+      naprawienia błędu (lub jako opis obecnego stanu prac nad poprawieniem 
+      błędu). Pierwszy akapit wiadomości, który nie jest pseudo-nagłówkiem 
+      i sekcją kontrolną jest przetwarzany i ustawiany jako opis sposobu
+      naprawienia błędu wyświetlany na początku strony zgłoszenia błędu. 
+      Polecenie jest używane do koordynowania prac z innymi osobami 
+      nad poprawieniem danego błędu (np. podczas bug squashing party).
+    </p>
+    <p>
+      Jeżeli nie podano <var>numeru wiadomości</var> opis jest 
+      czyszczony. <var>Numer wiadomości</var> jest numerem wyświetlanym 
+      w rapocie o błędzie generowanym przez skrypt cgi; jeżeli poda się 
+      wartość 0, zostanie użyta obecna wiadomość (czyli wiadomość
+      wysłana na adres control@bugs.debian.org zawierająca polecenie 
+      outlook).
+    </p>
+    <p>
+      Jeżeli <var>numer wiadomości</var> nie jest liczbą i nie jest pustym 
+      tekstem, przyjmuje się że jest to tekst, który będzie ustawiony jako 
+      opis sposobu naprawy błędu.    
+    </p>
+  </dd>
+
+  <dt><a name="clone"><code>clone</code> <var>numer_błędu</var> <var>nowy_numer_ID</var>
+    [ <var>nowe_numery_ID</var> ... ]</a></dt>
+  <dd>
+    <p>
+    Polecenie clone pozwala na zduplikowanie raportu o błędzie. Przydaje się 
+    w przypadku, gdy pojedyńcze zawiadomienie wskazuje na pojawienie się 
+    wielu różnych błędów. <q><var>Nowe numery ID</var></q> to liczby ujemne, 
+    oddzielone spacjami, które mogą być użyte w kolejnych poleceniach, w celu 
+    odniesienia się do nowo stworzonych zgłoszeń. Dla każdego numeru ID tworzone 
+    jest nowe zgłoszenie o błędzie.
+    </p>
+
+    <p>
+    Przykład użycia:
+    </p>
+
+    <pre>
+          clone 12345 -1 -2
+          reassign -1 foo
+          retitle -1 foo: foo sucks
+          reassign -2 bar
+          retitle -2 bar: bar sucks when used with foo
+          severity -2 wishlist
+          clone 123456 -3
+          reassign -3 foo
+          retitle -3 foo: foo sucks
+          merge -1 -3
+    </pre>
+  </dd>
+
+
+  <dt><a name="merge"><code>merge</code> <var>numer_błędu</var>
+    <var>numer_błędu</var> ...</a></dt>
+  <dd>
+    <p>
+    Łączy dwa lub więcej zgłoszeń o błędach. Jeśli zgłoszenia są złączone, 
+    wtedy otwarcie, zamknięcie, zaznaczenie lub odznaczenie jako przesłane 
+    dalej, ponowne przypisanie któregokolwiek z błędów do nowego pakietu 
+    będzie miało identyczny efekt dla każdego ze złączonych zgłoszeń.
+    </p>
+
+    <p>
+    Przed złączeniem błędy muszą być w takim samym stanie, to znaczy: 
+    albo wszystkie są otwarte albo zamknięte, z tym samym adresem 
+    autora kodu źródłowego, do którego przesyłane są błędy, albo wszystkie 
+    nie są oznaczone jako przesyłane dalej, wszystkie muszą być przydzielone 
+    do tego samego pakietu lub pakietów (dokonywane jest dokładne porównanie 
+    łańcuchów znaków w nazwie pakietu, do którego błąd jest przydzielony) i 
+    wszystkie muszą mieć ten sam stopień ważności. 
+    Jeśli błędy nie są w tym samym stanie wtedy należy użyć poleceń 
+    <code>reassing</code>, <code>reopen</code> itd., aby mieć pewność, że  
+    wszystkie zgłoszenia mają ustawiony taki sam stan przed użyciem polecenia 
+    <code>merge</code>. Tytuły zgłoszeń nie muszą być takie same, ponieważ 
+    nie są uwzględnianie podczas łączenia. Znaczniki również nie muszą być 
+    takie same - zostaną one połączone.
+    </p>
+
+    <p>
+    Jeśli którykolwiek z błędów wymienionych w poleceniu <code>merge</code> 
+    jest już połączony z innym błędem, wtedy wszystkie zgłoszenia połączone 
+    z którymkolwiek z nich będą także połączone. Funkcja łączenia jest jak 
+    znak równości: zwrotna, przechodnia i symetryczna.    
+    </p>
+
+    <p>
+    Łączenie zgłoszeń powoduje wstawienie informacji w dzienniku (log) każdego 
+    zgłoszenia. Na stronach WWW oznacza to także odnośniki do innych błędów.
+    </p>
+
+    <p>
+    Połączone zgłoszenia przedawniają się razem, a dzieje się tak tylko 
+    wtedy, gdy wszystkie z osobna spełniają kryteria przedawnienia.
+    </p>
+  </dd>
+
+
+  <dt><a name="forcemerge"><code>forcemerge</code> <var>numer_błędu</var>
+    <var>numer_błędu</var> ...</a></dt>
+  <dd>
+    <p>
+    Wymusza łączenie dwóch lub więcej zgłoszeń o błędach. Ustawienia 
+    pierwszego podanego błędu, które muszą odpowiadać ustawieniom innych
+    zgłoszeń przy normalnym połączeniu, są przepisywane do błędów wymienionych 
+    w następnej kolejności. Aby zapobiec błędnym połączeniom zgłoszeń, 
+    muszą one dotyczyć tego samego pakietu. Opis, co umożliwia polecenie 
+    łączenia zgłoszeń znajduje się powyżej. 
+    </p>
+
+    <p>
+    Należy zaznaczyć, że polecenie umożliwia poprzez połączenie zamknięcie 
+    zgłoszenia; użytkownik, który zamyka takie zgłoszenia, musi powiadomić 
+    osoby zgłaszające te błedy poprzez wysłanie odpowiedniej wiadomości.
+    </p>
+  </dd>
+
+
+  <dt><a name="unmerge"><code>unmerge</code> <var>numer_błędu</var></a></dt>
+  <dd>
+    <p>
+    Rozłącza zgłoszenie o błędzie od innych zawiadomień, z którymi było 
+    złączone. Jeśli wypisane zawiadomienie jest złączone z kilkoma innymi, 
+    wtedy wszystkie są pozostawione jako złączone. Tylko bezpośrednie związki 
+    z tym błędem są usuwane. 
+    </p>
+
+    <p>
+    Jeśli wiele zawiadomień o błędach jest złączonych i chcemy podzielić je 
+    na dwie oddzielne grupy, należy rozdzielić osobno każdy raport, który będzie 
+    przypisany do jednej z nowych grup, a następnie połączyć je w nową grupę.
+    </p>
+
+    <p>
+    Jednym poleceniem <code>unmerge</code> można rozdzielić tylko jedno zgłoszenie. 
+    Aby rozdzielić więcej niż jeden błąd, należy po prostu w wiadomości użyć kilku 
+    poleceń <code>unmerge</code>.
+    </p>
+  </dd>
+
+
+  <dt><a name="tags"><!-- match tags too --></a><a name="tag"><code>tags</code> <var>numer_błędu</var> [ <code>+</code> |
+    <code>-</code> | <code>=</code> ] <var>tag</var> [ <var>tag</var>
+    ... ] [ <code>+</code> | <code>-</code>
+    | <code>=</code> <var>tag</var> ... ] ]</a></dt>
+  <dd>
+    <p>
+    Ustawia znaczniki (tags) dla zgłoszenia o błędzie #<var>numer_błędu</var>.
+    Nie jest wysyłane żadne powiadomienie do osoby, która zgłosiła błąd. 
+    Ustawienie akcji na <code>+</code> oznacza dodanie wszystkich znaczników 
+    (<var>tag</var>) podanych po znaku, akcja <code>-</code> oznacza 
+    usunięcie wszystkich znaczników podanych po znaku, akcja <code>=</code> 
+    oznacza ustawienie znaczników na te podane po znaku. Operacja 
+    <code>+</code>, <code>-</code> i <code>=</code> zmienia akcję dla 
+    znaczników podanych po danej operacji. Domyślną akcją jest dodanie 
+    znacznika.
+    </p>
+
+    <p>
+    Przykłady użycia:
+    </p>
+
+    <pre>
+          \# same as 'tags 123456 + patch'
+          tags 123456 patch
+
+          \# same as 'tags 123456 + help security'
+          tags 123456 help security
+
+          \# add 'fixed' and 'pending' tags
+          tags 123456 + fixed pending
+
+          \# remove 'unreproducible' tag
+          tags 123456 - unreproducible
+
+          \# set tags to exactly 'moreinfo' and 'unreproducible'
+          tags 123456 = moreinfo unreproducible
+	  
+	  \# remove the moreinfo tag and add a patch tag
+	  tags 123456 - moreinfo + patch
+    </pre>
+
+    <p>
+    Obecnie są obsługiwane następujące znaczniki <bts_tags>.
+    </p>
+
+    <p>
+    Opis <a href="Developer#tags">znaczenia</a> poszczególnych znaczników 
+    znajduje się w ogólnej dokumentacji dla deweloperów dotyczącej systemu 
+    śledzenia błędów.
+    </p>
+  </dd>
+
+
+  <dt><a name="block"><code>block</code> <var>numer_błędu</var> <code>by</code>
+    <var>błąd</var> ...</a></dt>
+  <dd>
+    Polecenie oznacza, że poprawka do pierwszego błędu jest blokowana przez 
+    podane błędy.    
+  </dd>
+
+
+  <dt><a name="unblock"><code>unblock</code> <var>numer_błędu</var>
+    <code>by</code> <var>błąd</var> ...</a></dt>
+  <dd>
+    Polecenie oznacza, że poprawka do pierwszego błędu nie jest już blokowana 
+    przez podane błędy.
+  </dd>
+
+
+  <dt><a name="close"><code>close</code> <var>numer_błędu</var> [
+    <var>wersja_poprawiona</var> ] (przestarzałe)</a></dt>
+  <dd>
+    <p>
+    Zamyka zgłoszenie o błędzie #<var>numer_błędu</var>.
+    </p>
+
+    <p>
+    Do osoby zgłaszającej błąd jest wysyłana informacja, ale (w odróżnieniu od 
+    wysłania wiadomości na adres <var>numer_błędu</var><code>-done@bugs.debian.org</code>)
+    treść wiadomości, która spowodowała zamknięcie błędu, <strong>nie</strong>
+    jest dołączana do wysyłanej informacji. Opiekun, który zamyka zgłoszenie 
+    musi się upewnić, prawdopodobnie przez wysłanie osobnej wiadomości, że 
+    użytkownik zgłaszający dany błąd wie, dlaczego jest on zamykany. 
+    Z tego powodu używanie tego polecenia jest przestarzałe. Informacje, 
+    <a href="Developer#closing">jak prawidłowo zamknąć błąd</a> znajdują się 
+    w dokumentacji dla deweloperów.
+    </p>
+
+    <p>
+    Jeżeli będzie podany parametr <var>wersja_poprawiona</var>, 
+    system śledzenia błędów zapisze, że błąd poprawiono w podanej 
+    wersji pakietu.
+    </p>
+  </dd>
+
+
+  <dt><a name="package"><code>package</code> [ <var>nazwa_pakietu</var> ...
+    ]</a></dt>
+  <dd>
+    <p>
+    Ogranicza dalsze polecenia tak, aby działały wyłącznie na błędach 
+    dotyczących wymienionych pakietów. Można podać jeden lub więcej pakietów. 
+    Jeżeli nie poda się żadnego pakietu, dalsze polecenia będą dotyczyły 
+    wszystkich błędów. Zachęcamy do używania tego polecenia jako zabezpieczenia 
+    na wypadek, gdyby podano złe numery błędów. 
+    </p>
+
+    <p>
+    Przykładowe użycie:
+    </p>
+
+    <pre>
+          package foo
+          reassign 123456 bar 1.0-1
+
+          package bar
+          retitle 123456 bar: bar sucks
+          severity 123456 normal
+
+          package
+          severity 234567 wishlist
+    </pre>
+  </dd>
+
+
+  <dt><a name="owner"><code>owner</code> <var>numer_błędu</var>
+    <var>adres</var> | <code>!</code></a></dt>
+  <dd>
+    <p>
+    Ustawia <var>adres</var> jako <q>właściciela</q> błędu #<var>numer_błędu</var>. 
+    Właściciel przejmuje odpowiedzialność za
+    naprawienie podanego błędu. Polecenie jest przydatne do dzielenia się 
+    pracą w przypadku, gdy pakietem zajmuje się grupa opiekunów.
+    </p>
+
+    <p>
+    Aby zostać właścicielem podanego błędu, można użyć skrótu 
+    <code>!</code> lub podać własny adres email.
+    </p>
+  </dd>
+
+
+  <dt><a name="noowner"><code>noowner</code> <var>numer_błędu</var></a></dt>
+  <dd>
+    Usuwa wszelkie informacje, że podany błąd miał innych właścicieli oprócz 
+    opiekuna. Jeżeli zgłoszenia nie miało właściciela, polecenie nic nie zrobi.
+  </dd>
+
+
+  <dt><a name="archive"><code>archive</code> <var>numer_błędu</var></a></dt>
+  <dd>
+    Archiwizuje błąd, który już kiedyś był zarchiwizowany (ale obecnie nie jest) 
+    jeżeli błąd spełnia wymagania potrzebne do archiwizacji, czas jest ignorowany. 
+  </dd>
+
+
+  <dt><a name="unarchive"><code>unarchive</code> <var>numer_błędu</var></a></dt>
+    <dd>
+    Usuwa znacznik archiwum dla błędu, który wcześniej został zarchiwizowany. 
+    Akcja powinna być połączona z odpowiednim poleceniem reopen i found/fixed. 
+    Błąd, który został odarchiwizowany może zostać zarchiwizowany zakładając, 
+    że spełniono podstawowe wymagania dotyczące archiwizacji (oprócz tych 
+    związanych z datą). Nie powinno się używać tej opcji do prostych zmian 
+    w zarchiwizowanych błędach, np. zmiany osoby zgłaszającej. Głównym celem 
+    polecenia jest umożliwienie ponownego otwarcia błędu, który został 
+    zarchiwizowany, bez interwencji ze strony administratorów BTS.
+  </dd>
+
+
+  <dt><a name="comment"><code>#</code>...</a></dt>
+    <dd>
+    Jednoliniowy komentarz. <code>#</code> musi znajdować się na początku 
+    linii. Treść komentarzy będzie dołączana w potwierdzeniu wysłanym do 
+    zgłaszającego oraz do odpowiednich opiekunów, więc można ich używać do 
+    wyjaśniania powodów dla wydanych poleceń.
+  </dd>
+
+
+  <dt><a name="thanks"><code>quit</code></a></dt>
+  <dt><code>stop</code></dt>
+  <dt><code>thank</code></dt>
+  <dt><code>thanks</code></dt>
+  <dt><code>thankyou</code></dt>
+  <dt><code>thank you</code></dt>
+  <dt><code>--</code></dt>
+  <!-- #366093, I blame you! -->
+  <!-- <dt><code>kthxbye</code></dt> -->
+  <!-- See... I documented it! -->
+  <dd>
+    W osobnej linii, w każdym przypadku, może być z następującymi 
+    po tych znakach białymi znakami, zatrzymuje przetwarzanie wiadomości 
+    przez serwer kontroli; pozostała część wiadomości może zawierać wyjaśnienie, 
+    podpis lub cokolwiek innego, żaden tekst  nie będzie wykrywany przez 
+    serwer kontroli.
+  </dd>
+</dl>
+
+<hr />
+
+#use "otherpages.inc"
+
+#use "$(ENGLISHDIR)/Bugs/footer.inc"
