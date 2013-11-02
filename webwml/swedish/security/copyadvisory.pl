@@ -107,6 +107,7 @@ while (<SRC>)
 	s/format string vulnerability/formatsträngssårbarhet/;
 	s/format string vulnerabilities/formatsträngssårbarheter/;
 	s/arbitrary script execution/opålitlig skriptkörning/;
+	s/uninitialized memory read/läsning av oinitierat minne/;
 	s/insecure temporary files/osäkra temporära filer/;
 	s/cross-site request forgery/serveröverskridande anropsförfalskning/;
 	s/>insecure temporary file creation</>osäkra temporära filer</;
