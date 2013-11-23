@@ -307,6 +307,15 @@ sub init_translators {
 		        file            => 0,
 		        compress        => 'none',
 		 },
+		'Baptiste Jammet' => {
+        		email           => 'baptiste@mailoo.org',
+		        summary         => 3,
+		        logs            => 3,
+		        diff            => 3,
+		        tdiff           => 0,
+		        file            => 0,
+		        compress        => 'none',
+		 },
                 'DFS Task Force' =>  {
                         email       => 'spaillard@debian.org',
                         summary     => 2,
