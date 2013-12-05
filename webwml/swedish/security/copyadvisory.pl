@@ -125,6 +125,7 @@ while (<SRC>)
 	s/(several|multiple) vulnerabilities/flera sårbarheter/;
 	s/>several</>flera</;
 	s/>unsanitised input</>städar ej indata</;
+	s/The Common Vulnerabilities and Exposures project/Projektet Common Vulnerabilities and Exposures/;
 	s/\bidentifies the following problems:/identifierar följande problem:/;
 	s/The following matrix explains which kernel version for which architecture/Följande tabell beskriver vilka versioner av kärnan för vilka arkitekturer som/;
 	s/fix the problems mentioned above:/rättar problemen som beskrivs ovan:/;
