@@ -1,0 +1,308 @@
+#use wml::debian::cdimage title="Utworzenie serwera lustrzanego dla obrazów płyt Debiana" BARETITLE=true
+#use wml::debian::translation-check translation="1.18"
+#use wml::debian::toc
+
+<p>Aby utworzyć serwer lustrzany dla obrazów płyt Debiana potrzebny jest 
+Linuks lub inna unikso-podobna maszyna ze stałym, solidnym łączem do 
+internetu. Serwery lustrzane Debiana przechowują różnych rozmiarów obrazy 
+<tt>.iso</tt> płyt CD i DVD, pliki dla programu  
+<a href="http://atterer.org/jigdo/">jigdo</a> (<tt>.jigdo</tt> oraz
+<tt>.template</tt>), pliki dla programu
+<a href="http://en.wikipedia.org/wiki/BitTorrent">BitTorrent</a> 
+(<tt>.torrent</tt>) oraz sumy MD5 obrazów (<tt>MD5SUMS*</tt>).</p>
+
+<toc-display/>
+
+#______________________________________________________________________
+
+<toc-add-entry name="master">Serwer główny</toc-add-entry>
+
+<p><!-- There are two locations for mirroring, one for stable images and
+one for beta/unstable/testing images. -->Poniżej są podane URLe serwerów 
+głównych - <strong>prosimy</strong> jednak o rozważenie możliwości pobierania 
+plików z innego, pobliskiego serwera lustrzanego (ich lista:  <a
+href="../http-ftp/">HTTP/FTP</a>, <a href="rsync-mirrors">rsync</a>)
+jeśli to tylko jest możliwe. Dostęp do serwera głównego może być ograniczony 
+w trakcie wydawania kolejnej wersji dystrybucji.</p>
+
+<p>Należy być świadomym tego, że w podanych katalogach znajduje się 
+<strong>bardzo</strong> dużo danych - <a href="#exclude">sekcja poniżej</a> 
+zawiera informacje jak ograniczyć ich rozmiar poprzez 
+wyłączenie pobierania niektórych plików.</p>
+
+<ul>
+
+  <li>Obrazy edycji stabilnej (aktualizowane wraz z każdym wydaniem):<br>
+
+    <a href="http://cdimage.debian.org/debian-cd/"
+    ><tt>http://cdimage.debian.org/debian-cd/</tt></a><br>
+
+    <a href="ftp://cdimage.debian.org/debian-cd/"
+    ><tt>ftp://cdimage.debian.org/debian-cd/</tt></a><br>
+
+    <tt>rsync://cdimage.debian.org/debian-cd/</tt>
+
+  </li>
+
+  <li>Obrazy tygodniowe:<br>
+
+    <a href="http://cdimage.debian.org/cdimage/weekly-builds/"
+    ><tt>http://cdimage.debian.org/cdimage/weekly-builds/</tt></a><br>
+
+    <a href="ftp://cdimage.debian.org/cdimage/weekly-builds/"
+    ><tt>ftp://cdimage.debian.org/cdimage/weekly-builds/</tt></a><br>
+
+    <tt>rsync://cdimage.debian.org/cdimage/weekly-builds/</tt>
+
+  </li>
+
+  <li>Obrazy codzienne:<br>
+
+    <a href="http://cdimage.debian.org/cdimage/daily-builds/"
+    ><tt>http://cdimage.debian.org/cdimage/daily-builds/</tt></a><br>
+
+    <a href="ftp://cdimage.debian.org/cdimage/daily-builds/"
+    ><tt>ftp://cdimage.debian.org/cdimage/daily-builds/</tt></a><br>
+
+    <tt>rsync://cdimage.debian.org/cdimage/daily-builds/</tt>
+
+  </li>
+
+<!--
+  <li>Beta/unstable/testing images:<br>
+
+    <a href="http://cdimage.debian.org/pub/cdimage-testing/"
+    ><tt>http://cdimage.debian.org/pub/cdimage-testing/</tt></a><br>
+
+    <a href="ftp://cdimage.debian.org/pub/cdimage-testing/"
+    ><tt>ftp://cdimage.debian.org/pub/cdimage-testing/</tt></a><br>
+
+    <tt>rsync://cdimage.debian.org/cdimage-testing/</tt>
+
+  </li>
+-->
+
+</ul>
+#______________________________________________________________________
+
+<toc-add-entry name="httpftp">Pobieranie przy użyciu HTTP/FTP jest 
+odradzane</toc-add-entry>
+
+<p>Nie powinno się używać FTP i HTTP do aktualizacji serwera lustrzanego. 
+Te metody przesyłania obarczone są wysokim ryzykiem niepowodzenia z uwagi 
+na ogromny rozmiar plików.</p>
+
+<p>Ponadto, HTTP oraz FTP nie obsługują sprawdzania integralności 
+pobranych danych, przez co prawdopodobieństwo niezauważenia przerwania 
+pobierania lub uszkodzenia pliku jest znacznie większe.</p>
+#______________________________________________________________________
+
+<toc-add-entry name="rsync">Pobieranie przy pomocy rsync jest dopuszczalne
+</toc-add-entry>
+
+<p>Program <a href="http://rsync.samba.org/"><kbd>rsync</kbd></a> jest 
+dobrym rozwiązaniem problemu aktualizacji serwerów lustrzanych. Metoda ta 
+jest mniej wydajna niż inna, specyficzna dla Debiana opisana poniżej, 
+ale może być łatwiejsza do konfiguracji. Ponadto daje ona pewność, że 
+wszystkie pliki zostały przesłane poprawnie oraz że metadane (np. czas 
+utworzenia) są synchronizowane tak jak pliki z danymi.</p>
+
+<p>Sekcja <a href="#exclude">Wyłączenie plików z pobierania</a> zawiera 
+przykłady przełączników <kbd>--include</kbd> oraz <kbd>--exclude</kbd>. 
+<a href="rsync-mirrors">Lista serwerów rsync</a> jest dostępna na oddzielnej 
+stronie.</p>
+
+<p>Powinno używać się przynajmniej następujących opcji:
+<strong><kbd>--times --links --hard-links --partial
+--block-size=8192</kbd></strong>. Dzięki nim będzie zachowany czas 
+modyfikacji, dowiązania symboliczne i trwałe oraz będzie użyty blok o 
+rozmiarze 8192 bajtów, (najbardziej efektywny dla obrazów płyt). Kiedy czas 
+modyfikacji i rozmiar są identyczne, <kbd>rsync</kbd> pominie taki plik, 
+dlatego <kbd>--times</kbd> jest naprawdę konieczny.</p>
+
+#______________________________________________________________________
+
+<toc-add-entry name="jigdolite">Pobieranie przy pomocy jigdo-lite jest 
+odradzane</toc-add-entry>
+
+<p>Ostatnie wersje programu 
+<a href="http://atterer.org/jigdo/"><kbd>jigdo-lite</kbd></a> 
+obsługują wsadowe pobieranie wielu obrazów. Nie zalecamy jednak używania tego 
+programu do obsługi serwera lustrzanego Debiana - zamiast tego należy użyć 
+<kbd>jigdo-mirror</kbd>.</p>
+
+#______________________________________________________________________
+
+<toc-add-entry name="jigdomirror">Pobieranie przy użyciu jigdo-mirror jest 
+zalecane</toc-add-entry>
+
+<p>Tak naprawdę oznacza to: udostępnianie plików <tt>.iso</tt> przy użyciu 
+<a href="http://atterer.org/jigdo/"><kbd>jigdo-mirror</kbd></a>, następnie 
+(jeśli chcemy udostępniać także inne typy plików, np. <tt>.jigdo</tt> i 
+<tt>.template</tt>) uruchomienie rsync w danym katalogu aby pobrać resztę 
+plików. Skrypty 
+<a href="http://www.acc.umu.se/~maswan/debian-push/cdimage/">z tej strony</a> 
+mogą okazać się pomocne w tych działaniach.</p>
+
+<p>Wielu ludzi zarządza "zwykłymi" serwerami lustrzanymi Debiana 
+(<kbd>debian/</kbd>) lub ma tego typu serwery w pobliżu. Oznacza to, że mają 
+już pliki <tt>.deb</tt>, które wchodzą w skład obrazów płyt. Oczywistym 
+pytaniem jest więc: dlaczego by nie użyć tych plików do tworzenia obrazów 
+płyt?</p>
+
+<p><kbd>jigdo-mirror</kbd> to program, który umożiwia tworzenie obrazów płyt 
+Debiana z użyciem plików z "normalnej" kopii lustrzanej oraz kilku dodatkowych 
+plików szablonów jigdo.</p>
+ 
+<p>Po pierwsze, potrzebne są pliki szablonów jigdo. 
+<a href="../jigdo-cd">Strona z informacjami o jigdo</a> zawiera odpowiednie 
+linki. Należy pobrać pliki dla każdej architektury, dla której chcemy 
+zbudować obrazy.</p>
+
+<p>Należy utworzyć plik <kbd>~/.jigdo-mirror</kbd> aby skonfigurować program. 
+Oto przykład:</p> 
+
+<pre>
+jigdoDir="/where/you/keep/mirrors/debian-cd/current/jigdo"
+imageDir="/where/you/keep/mirrors/debian-cd/current/images"
+tmpDir="/where/you/keep/mirrors/debian-cd/current/images"
+debianMirror="file:/where/you/keep/mirrors/debian"
+include='i386/|sparc/|powerpc/|source/'; exclude='-1\.'
+</pre>
+
+<p>Zmienne <i>include</i> oraz <i>exclude</i> zawierają listę (a raczej 
+wyrażenia regularne ją opisujące) architektur dla których mają powstać 
+obrazy. Więcej informacji na ten temat można znaleźć na stronach podręcznika 
+<kbd>jigdo-mirror</kbd> oraz w jego źródłach (to skrypt powłoki systemowej 
+z dużą ilością komentarzy).</p>
+
+<p>Po konfiguracji wystarczy po prostu uruchomić <kbd>jigdo-mirror</kbd> a 
+wszystko zostanie wykonane automatycznie. Proces ten zajmie trochę czasu 
+oraz wyświetli wiele komunikatów, dlatego sugerujemy wykonanie pewnych 
+kroków do sprawnego przeprowadzenia tego procesu (uruchomienie w nowej 
+sesji ekranu, przekierowanie wyjścia do pliku itp).</p>
+
+#______________________________________________________________________
+
+<toc-add-entry name="pushmirror">Jak uruchomić serwer lustrzany typu push
+</toc-add-entry>
+
+<p>Gdy tylko nowe obrazy staną się dostępne, serwer główny może wysłać 
+wiadomość do swoich serwerów lustrzanych i zmusić je do natychmiastowego 
+rozpoczęcia aktualizacji. W ten sposób nowe dane są "wypychane" (ang. push) 
+a nie "pobierane" (ang. pulled) przez serwery lustrzane podczas swoich 
+codziennych aktualizacji, co pozwala na szybszą propagację obrazów nowych 
+wydań.</p>
+
+<p>Więcej informacji o tym, jak dodać serwer lustrzany do tego systemu 
+aktualizacji, znajduje się na tej 
+<a href="http://www.acc.umu.se/~maswan/debian-push/cdimage/">stronie</a>.</p>
+#______________________________________________________________________
+
+<toc-add-entry name="exclude">Wyłączanie plików z kopii lustrzanej
+</toc-add-entry>
+
+<p>Aby zmniejszyć wymaganą przez serwer lustrzany Debiana przestrzeń dyskową, 
+można wykluczyć pewne pliki z kopii lustrzanej. Poniższe instrukcje zawierają 
+opcje programu <kbd>rsync</kbd>, ale mogą się też przydać w przypadku 
+korzystania z innego narzędzia. W programie <kbd>rsync</kbd> opcje 
+<kbd>--include</kbd> i <kbd>--exclude</kbd> są przetwarzane w kolejności 
+występowania, czyli pierwsza opcja, której wzorzec pasuje do pliku 
+określa, czy dany plik zostanie wyłączony czy też dołączony.</p>
+
+<ul>
+
+  <li><strong>Wykluczenie kodu źródłowego:</strong>
+  <kbd>--exclude=source/</kbd><br>
+
+  Opcja zapobiega pobraniu obrazów zawierających kody źródłowe. 
+  Należy zauważyć, że niektóre osoby uważają za niewłaściwe udostępnianie 
+  na serwerze tylko plików binarnych programów na licencji GPL bez 
+  udostępnienia <em>na tym samym serwerze</em> także kodów źródłowych tych 
+  programów.</li>
+
+  <li><strong>Wykluczenie pełnych obrazów:</strong>
+  <kbd>--include='*businesscard*.iso' --include='*netinst*.iso'
+  --exclude='*.iso'</kbd><br>
+
+  Opcja wyklucza wszystkie pełne zestawy obrazów CD/DVD dla wszystkich 
+  architektur, <em>ale</em> dołączy obrazy <tt>.iso</tt> business-card 
+  i net-install. Zalecamy pobieranie tych obrazów w każdym przypadku: 
+  z uwagi na niewielki rozmiar, są one wysoce przydatne!</li>
+
+  <li><strong>Wykluczenie pełnych obrazów dla architektur innych niż i386:</strong>
+  <kbd>--include='*businesscard*.iso' --include='*netinst*.iso'
+  --include='i386/**.iso' --exclude='*.iso'</kbd><br>
+
+  Jak wyżej, ale <em>dołącza</em> wszystkie obrazy CD/DVD dla architektury 
+  i386.</li>
+
+  <li><strong>Wykluczenie pełnych obrazów, poza płytami od 1 do 3 dla 
+  architektury i386:</strong>
+  <kbd>--include='*netinst*.iso' --include='i386/**-[1-3].iso'
+  --exclude='*.iso'</kbd><br>
+
+  Pełny zestaw obrazów na architekturę i386 nadal może zajmować za dużo
+  miejsca, jeśli znajdują się w nim obrazy DVD i obrazy dwuwarstwowych płyt DVD.
+  Powyższa opcja wyłączy wszystkie obrazy <tt>.iso</tt> poza obrazem 
+  net-install i trzema pierwszymi płytami CD na architekturę i386.</li>
+
+  <li><strong>Wykluczenie wszystkich architektur poza i386:</strong>
+  <kbd>--exclude=alpha/ --exclude=arm/ --exclude=hppa/ --exclude=hurd/
+  --exclude=ia64/ --exclude=m68k/ --exclude=mips/ --exclude=mipsel/
+  --exclude=powerpc/ --exclude=s390/ --exclude=sh/
+  --exclude=sparc/</kbd><br>
+
+  Powyższe opcje dołączą pełny zestaw plików tylko na architekturę i386, 
+  bez plików <tt>.jigdo</tt>, <tt>.iso</tt> itp. innych na inne architektury.</li> 
+
+</ul>
+#______________________________________________________________________
+
+<toc-add-entry name="names">Reguły dotyczące nazewnictwa oraz wymagania 
+dotyczące rozmiarów dla obrazów <tt>.iso</tt></toc-add-entry>
+
+<p>Różne odmiany obrazów <tt>.iso</tt> są rozróżnialne dzięki ich nazwom, 
+dzięki czemu można dokładnie określić typy obrazów, które będą pobierane:</p>
+
+<ul>
+
+  <li><strong><tt>*-netinst.iso</tt></strong>: jeden obraz dla każdej 
+  architektury, rozmiar do 280&nbsp;MB</li>
+
+  <li><strong><tt>*-dvd.iso</tt></strong> (jednowarstwowa płyta DVD):
+  Wiele obrazów tylko na architekturę i386, każdy z nich o rozmiarze do 
+  4482&nbsp;MB. Dla edycji sarge - zsumowany rozmiar obrazów i386 wynosi 
+  około 9000&nbsp;MB.</li>
+
+  <li><strong><tt>*-dldvd.iso</tt></strong> (dwuwarstwowa płyta DVD): Jak wyżej, 
+  tylko poszczególne obrazy zajmują do 8106&nbsp;MB. Dla edycji sarge nie 
+  są dostępne obrazy <tt>.iso</tt> - jedynie pliki jigdo.</li>
+
+  <li><strong><tt>*.iso</tt></strong>: Wszystkie pozostałe pliki <tt>.iso</tt>, 
+  które nie mieszczą się w powyższych kategoriach, są obrazami CD. Istnieje 
+  wiele obrazów na każdą architekturę, każdy z nich zajmuje do 650&nbsp;MB. 
+  Całkowity rozmiar wszystkich obrazów dla wszystkich architektur jest równy 
+  <a href="/mirror/size">rozmiarowi całego serwera lustrzanego Debiana</a> 
+  (w trakcie pisania było to 100&nbsp;GB).</li>
+
+</ul>
+#______________________________________________________________________
+
+<toc-add-entry name="register">Rejestrowanie kopii lustrzanej</toc-add-entry>
+
+<p>Aby uczynić kopię dostępną dla szerszej publiczności, można zarejestrować ją 
+   na naszej liście serwerów lustrzanych, np. 
+   <a href="../http-ftp/">tutaj</a> albo <a href="rsync-mirrors">tutaj</a>.
+   Należy jednak pamiętać, że pełne obrazy są dużymi plikami, co może 
+   spowodować ruch sieciowy sięgający wielu gigabajtów dziennie.</p>
+
+<p>Serwer lustrzany można zarejestrować także poprzez wypełnienie 
+<a href="$(HOME)/mirror/submit">formularza o zgłoszeniu serwera lustrzanego</a>
+(należy pamiętać, że pola CDImage-* są bardzo ważne), lub poprzez wysłanie 
+wiadomości na adres
+<a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;debian-cd&#64;lists.debian.org">\
+debian-cd&#64;lists.debian.org</a>.</p>
+
+<p>Doceniamy wszystkie nowe kopie lustrzane obrazów płyt Debiana. 
+   Z góry dziękujemy!</p>
