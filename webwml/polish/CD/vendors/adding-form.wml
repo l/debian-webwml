@@ -1,0 +1,98 @@
+#use wml::debian::template title="Wysyłanie informacji o sprzedawcach płyt"
+#use wml::debian::countries
+#use wml::debian::translation-check translation="1.21"
+
+<p>Aby wysłać informacje o sprzedawcy płyt Debiana, można skorzystać 
+z formularza poniżej.</p>
+
+<p>Jeśli zastanawiasz się nad byciem sprzedawcą płyt Debiana, należy 
+wcześniej przestudiować stronę z 
+<a href="info">informacjami dla sprzedawców</a>.</p>
+
+<p>Większość wysłanych informacji będzie wyświetlonych na naszej liście 
+sprzedawców. Na liście będzie podany zwłaszcza adres e-mail, który będzie 
+dostępny dla wszystkich użytkowników.</p>
+
+<p>Ważne jest, aby aktualizować te dane. Staramy się od czasu do czasu 
+sprawdzać listę sprzedawców i jeśli np. strona internetowa nie jest dłużej 
+dostępna lub nie dochodzą wiadomości, wtedy usuwami taki wpis.</p> 
+
+<form method=post action="http://cgi.debian.org/cgi-bin/submit_cdvendor.pl">
+
+<h2>Informacje o sprzedawcy płyt</h2>
+
+<p>
+<input type="radio" name="submissiontype" value="new" checked>
+Nowy sprzedawca
+&nbsp; &nbsp; &nbsp;
+<input type="radio" name="submissiontype" value="update">
+Aktualizacja istniejących danych
+</p>
+
+<p>Nazwa sprzedawcy:
+<input type="text" name="vendor" size="50"></p>
+
+<p>Adres URL:
+<input type="text" name="url" size="50"></p>
+
+<p>Przekazywanie części dochodu ze sprzedaży jako darowizny dla Debiana:
+<input type="radio" name="donates" value="yes"> tak
+<input type="radio" name="donates" value="no"> nie
+</p>
+
+<p>Rodzaje sprzedawanych płyt: <br />
+<label> &nbsp; <input type="checkbox" name="offerscd" value="yes">CD</label> <br />
+<label> &nbsp; <input type="checkbox" name="offersdvd" value="yes">DVD</label> <br />
+</p>
+
+<p>Kraj pochodzenia:
+<select name="country">
+  <: country_list() :>
+</select>
+</p>
+
+<p>Wysyłka za granicę:
+<select name="shipping">
+  <option value="yes">tak</option>
+  <option value="no">nie</option>
+  <option value="some">niektóre regiony</option>
+  <option value="europe">na terenie Europy</option>
+</select>
+</p>
+
+<p>Adres URL strony z informacją o sprzedaży płyt Debiana:
+<input type="text" name="urldebcd" size="50"></p>
+
+<p>Adres email dla pytań związanych ze sprzedażą:
+<input type="text" name="email" size="50"></p>
+
+<p>Na jakie architektury będą sprzedawane płyty:</p>
+<table border="0"><tr><td>
+<label><input type=checkbox name=architectures value="ALL">&nbsp;<em>wszystkie</em></label><br />
+<label><input type=checkbox name=architectures value="multi-arch">&nbsp;Multi-arch</label><br />
+#include "$(ENGLISHDIR)/releases/$(TESTING)/release.data"
+#include "$(ENGLISHDIR)/releases/arches.data"
+<:
+my $na = scalar @arches; $na = int($na / 3 + .5);
+foreach my $a (@arches) {
+  $i++;
+  my $aname = $arches{$a}; $aname =~ s, ,\&nbsp\;,g;
+  print "<br />\n" if ($i % $na == 0);
+  print "<label><input type=checkbox name=architectures value=".$a.">&nbsp;".$aname."&nbsp;[".$a."]</label> &nbsp;\n";
+}
+:>
+</td></tr></table>
+
+<table><tr>
+<td valign="top">Komentarz (opcjonalny, <em>w języku angielskim</em>):</td>
+<td><textarea name="comment" cols=40 rows=7></textarea></td>
+</tr></table>
+
+# <p>Note: ...</p>
+
+<p><input type="submit" value="Wyślij"></p>
+</form>
+
+<p>Podane dane powinny pojawić się na liście w ciągu tygodnia, jak tylko 
+właściwa osoba zweryfikuje podane informacje i je dołączy do listy. 
+W przypadku napotkania błędów w przesłanych danych wyślemy wiadomość.</p>
