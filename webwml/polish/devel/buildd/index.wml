@@ -1,0 +1,163 @@
+#use wml::debian::template title="Sieć Autobuilder"
+#use wml::debian::translation-check translation="1.25"
+
+<p>Sieć autobuilder to narzędzie Debiana, które zarządza kompilacją 
+pakietów dla wszystkich architektur 
+<a href="$(HOME)/ports/">wspieranych obecnie przez Debiana</a>. Tworzy je 
+kilka maszyn, które używają oprogramowania nazwanego 
+<em>buildd</em>, aby pobierać pakiety z archiwum Debiana i przebudować je 
+na określoną architekturę.</p>
+
+<h2>Dlaczego taka sieć jest potrzebna?</h2>
+
+<p>Dystrybucja Debian wspiera <a href="$(HOME)/ports/">sporo architektur</a>, 
+ale opiekunowie pakietów zazwyczaj kompilują wersje binarne dla jednej 
+z nich, do której mają dostęp (zazwyczaj i386 lub amd64). Kompilację 
+dla pozostałych architektur przeprowadza się automatycznie upewniając się, 
+że każdy z pakietów został zbudowany tylko raz. Błędy są zapisywane 
+w bazie autobuildera.</p> 
+
+<p>
+Kiedy wystartował port Debian/m68k (pierwszy nie-intelowski port), 
+jego deweloperzy musieli śledzić nowe wersje pakietów i rekompilować je, 
+jeżeli chcieli być na bieżąco z dystrybucją intelowską. Wszystkie te 
+operacje były wykonywane ręcznie: deweloperzy śledzili listy dyskusyjne pod 
+kątem informacji o nowych pakietach, niektóre z nich były brane do 
+zbudowania pakietu na architekturę m68k. Koordynacja prac, aby dany pakiet 
+nie był budowany jednocześnie przez różne osoby, odbywała się poprzez 
+ogłoszenia na liście dyskusyjnej. Oczywistym jest, że taki sposób prac 
+był podatny na błędy i zajmował dużo czasu. Przez długi okres był to jednak 
+standardowy sposób na utrzymanie aktualnej dystrybucji dla architektur 
+innych niż i386.
+</p>
+
+<p>
+System usług budowania zautomatyzował większość tego procesu. Składa się 
+on ze zbioru skryptów (napisanych w Perlu i Pythonie), ciągle rozwijanych, 
+które pomagają osobom zajmującym się innymi architekturami w różnych 
+zadaniach. Skrypty te ostatecznie utworzyły system, który jest w stanie 
+prawie automatycznie utrzymać zaktualizowane różne dystrybucje Debiana. 
+Aktualizacje dotyczące bezpieczeństwa są budowane na tych samych maszynach 
+aby zapewnić ich dostępność w odpowiednim czasie.
+</p>
+
+<h2>Jak działa buildd?</h2>
+
+<p>Nazwą <em>buildd</em> określa się potocznie oprogramowanie używane przez 
+sieć autobuilder, ale w rzeczywistości składa się ono z kilku elementów:</p>
+
+<dl>
+
+<dt>wanna-build</dt>
+<dd>
+narzędzie, które pomaga koordynować (prze)budowanie pakietu dzięki bazie 
+danych, która zawiera listę pakietów i ich statusy. Dla każdej architektury 
+istnieje jedna centralna baza danych, która przechowuje informacje o stanie 
+pakietu, wersji oraz inne informacje. Jest zasilana plikami Sources i 
+Packages pobieranymi z różnych archiwów pakietów, które posiada Debian 
+(np. ftp-master czy security-master).
+</dd>
+
+<dt><a href="http://packages.debian.org/buildd">buildd</a></dt>
+<dd>
+usługa, która okresowo sprawdza bazy danych zarządzane przez 
+<em>wanna-build</em> i wywołuje <em>sbuild</em> w celu zbudowania pakietów. 
+Po zaakceptowaniu przez administratora buildd wygenerowaneg logu, zbudowane 
+pakiety są wysyłane do odpowiedniego archiwum.
+</dd>
+
+<dt><a href="http://packages.debian.org/sbuild">sbuild</a></dt>
+<dd>
+odpowiada za właściwą kompilację pakietów w izolowanym środowisku chroot. 
+Zapewnia, że wszystkie wymagane zależności są zainstalowane w środowisku 
+chroot przed rozpoczęciem budowania a następnie uruchamia standardowe 
+narzędzia Debiana aby rozpocząć proces budowania. Log z tego procesu 
+jest zapisywany w <a href="http://buildd.debian.org">bazie logu budowania</a>.
+</dd>
+
+</dl>
+
+<p>Wszystkie wymienione elementy <a href="operation">współpracują</a> 
+razem, aby sieć builder mogła wykonywać swoje zadania.</p>
+
+<h2>Co musi zrobić deweloper Debiana?</h2>
+
+<p>Tak naprawdę, typowy deweloper Debiana nie musi bezpośrednio używać 
+sieci buildd. Za każdym razem, gdy wyśle pakiet do archiwum (wersję 
+binarną dla podanej architektury), jest on dodawany do bazy danych dla 
+wszystkich architektur (stan jest ustawiany na <em>Needs-Build</em>). 
+Właściwa maszyna wyszukuje w bazie pakiety w tym stanie a następnie, 
+cyklicznie, pobiera je z utworzonej listy. Kolejność listy jest 
+ustalana na podstawie poprzedniego stany kompilacji (w tym 
+<em>out-of-date</em> lub <em>uncompiled</em>), priorytetu, nazwy sekcji 
+oraz pakietu. Ponadto priorytety są dynamicznie korygowane uwzględniając 
+rosnący czas oczekiwania pakietu w kolejce, aby zapobiec sytuacji, w której 
+jakiś pakiet będzie ciągle spychany na koniec kolejki.</p>
+
+<p>Czasami zbudowanie pakietu dla danej architektury może zająć dłuższą 
+chwilę i może spowodować wstrzymanie wejścia pakietu do edycji 
+<a href="$(HOME)/devel/testing">\testing</a>. Jeśli pakiet wstrzymuje  
+przejście dystrybucji, zazwyczaj, na żądanie Grupy ds. Wydania, korygowana 
+jest wartość priorytetu budowania. Inne tego typu żądania nie są akceptowane, 
+ponieważ rosnący czas oczekiwania w kolejce automatycznie powoduje 
+podniesienie priorytetu.</p>
+
+<p>Można sprawdzić stan budowania poszczególnych pakietów, które należą do 
+określonego opiekuna, przeglądając 
+<a href="https://buildd.debian.org/status/">logi buildd</a>. Są one dostępne 
+także ze strony Opiekuna Pakietu.</p>
+
+<p>Więcej informacji na temat stanów, w jakich może znaleźć się pakiet, 
+znajduje się na stronie 
+<a href="wanna-build-states">wanna-build-states</a>.</p>
+
+<h2>Gdzie znaleźć dodatkowe informacje?</h2>
+
+<p>Najlepsze źródło informacji o tym, jak działa sieć buildd, 
+to oczywiście dokumentacja oraz kody źródłowe dostępne dla narzędzi 
+wchodzących w skład tego systemu. Dodatkowo, sekcja 
+<a href="$(HOME)/doc/manuals/developers-reference/pkgs#porting">\
+Portowanie i bycie portującym</a> z 
+<a href="$(HOME)/doc/manuals/developers-reference/">Podręcznika Deweloperów 
+Debiana</a> dostarcza wyczerpujących informacji o tym jak działa ten 
+system oraz o 
+<a href="$(HOME)/doc/manuals/developers-reference/tools#tools-builders">\
+pakiecie builders</a> i 
+<a href="$(HOME)/doc/manuals/developers-reference/tools#tools-porting">\
+narzędziach do portowania</a> które są zaangażowane zarówno w procesie 
+ustawiania oraz zarządzania siecią buildd.</p>
+
+<p>Na <a href="http://buildd.debian.org/stats/">stronie statystyk buildd</a>
+dostępne są także niektóre dane dla sieci autobuilder.</p>
+
+<h2>Jak uruchomić własny węzeł auto-builder?</h2>
+
+<p>Istnieje kilka powodów, dla których deweloper (lub użytkownik)
+może chcieć skonfigurować i uruchomić własną sieć autobuilder:</p>
+
+<ul>
+<li>Aby pomóc w rozwoju portu na daną architekturę (kiedy potrzebne są 
+dodatkowe zasoby).</li>
+<li>Aby oszacować wpływ wprowadzonej optymalizacji kompilatora lub wgrania 
+poprawki a potrzebna jest do tego rekompilacja dużego zestawu pakietów.</li>
+<li>Aby uruchomić narzędzia do analizy pakietów pod kątem znanych błędów,
+a narzędzia te muszą być uruchomione na skompilowanych pakietach. Przydaje 
+się także podczas analizy kodu źródłowego, na przykład, jako obejście dla 
+pakietów używających <tt>dpatch</tt>.</li>
+</ul>
+
+<p>Więcej informacji jak ustawić autobuilder znajduje się na 
+<a href="http://buildd.debian.org/docs/buildd-setup.txt">tej stronie</a>.</p>
+
+<h2>Kontakt z administratorami buildd</h2>
+
+<p>Administratorzy odpowiedzialni za buildd-a dla poszczególnych architektur 
+są dostępni pod adresem  <email arch@buildd.debian.org>, na przykład 
+<email i386@buildd.debian.org>.</p>
+
+<hrline />
+<p><small>To wprowadzenie do sieci autobuilder zostało napisane 
+z uwzględnieniem uwag dostarczonych przez: Roman Hodek, 
+Christian T. Steigies, Wouter Verhelst, Andreas Barth, 
+Francesco Paolo Lovergine, Javier Fern&aacute;ndez-Sanguino,
+Philipp Kern.</small></p>
