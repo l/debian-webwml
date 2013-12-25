@@ -40,8 +40,7 @@ newsevents_FILES = $(addprefix $(TEMPLDIR)/, \
   $(ENGLISHDIR)/News/weekly/dwn-to-rdf.pl 
 organization_FILES = $(ENGLISHDIR)/intro/organization.data
 ports_FILES     = $(ENGLISHDIR)/ports/menu.defs \
-  $(shell export LC_COLLATE=C; echo $(ENGLISHDIR)/ports/*/menu.inc) \
-  $(ENGLISHDIR)/misc/laptops/menu.inc
+  $(shell export LC_COLLATE=C; echo $(ENGLISHDIR)/ports/*/menu.inc)
 security_FILES  = $(TEMPLDIR)/security.wml \
   $(TEMPLDIR)/securityreferences.wml \
   $(ENGLISHDIR)/security/faq.inc \
