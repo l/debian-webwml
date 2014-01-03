@@ -1,0 +1,53 @@
+#use wml::debian::translation-check translation="1.1"
+<define-tag description>特権の昇格/情報漏洩</define-tag>
+<define-tag moreinfo>
+<p>複数の欠陥が FreeBSD カーネルに発見されました。
+特権の昇格や情報漏洩につながる可能性があります。The Common
+Vulnerabilities and Exposures project は以下の問題を認識しています:</p>
+
+<ul>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-3077">CVE-2013-3077</a>
+
+    <p>Google セキュリティチームの Clement Lecigne さんが、IP
+    マルチキャストコードの一時バッファのサイズ計算に整数オーバーフローを報告しています。
+    それにより、要求された操作に必要な量と比べて少なすぎる量のバッファを
+    確保することになります。カーネルに属するメモリのページに対して
+    権限のないプロセスから読み書きできます。
+    機密情報の公開や特権の昇格につながる可能性があります。</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-4851">CVE-2013-4851</a>
+
+    <p>Rick Macklem さんと Christopher Key さんと Tim Zingelman さんが、FreeBSD
+    カーネルが NFS エクスポート向けの匿名の資格情報収集時や、-network や
+    -host による制限を同時に利用している場合に exports(5) での設定ではなく
+    クライアントから提供された資格情報を誤って利用していることを報告しています。
+    リモートのクライアントが NFS 共有下のファイルにアクセスする際に権限のある (例えば
+    root ユーザの) 資格情報を提供した場合に通常のアクセス確認を迂回します。</p></li>
+
+<li><a href="http://security-tracker.debian.org/tracker/CVE-2013-5209">CVE-2013-5209</a>
+
+    <p>Julian Seward さんと Michael Tuexen さんが、INIT-ACK
+    chunks で送られる SCTP state クッキーの初期化の際に
+    カーネルスタックから割り当てられるバッファが全く初期化されておらず、
+    カーネルメモリを公開することを報告しています。カーネルメモリの断片が SCTP
+    パケットに収録されてネットワーク越しに転送される可能性があります。各 SCTP
+    セッションで、4バイトの断片が独立して2件、転送される可能性があります。</p>
+
+    <p>このメモリにはファイルキャッシュやターミナルバッファ等の機密情報が
+    含まれている可能性があります。この情報はそのまま、あるいは
+    昇格した権限をなんらかの方法で取得するのに有用である可能性があります。
+    例えばターミナルバッファにはユーザが入力したパスワードが
+    含まれている可能性があります。</p></li>
+
+</ul>
+
+<p>安定版 (stable) ディストリビューション (wheezy)
+では、この問題はバージョン 9.0-10+deb70.3 で修正されています。</p>
+
+<p>直ちに kfreebsd-9 パッケージをアップグレードすることを勧めます。</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2013/dsa-2743.data"
+
