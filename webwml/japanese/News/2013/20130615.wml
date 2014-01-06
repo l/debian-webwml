@@ -1,0 +1,218 @@
+#use wml::debian::translation-check translation="1.2"
+<define-tag pagetitle>Debian 7 更新: 7.1 リリース</define-tag>
+<define-tag release_date>2013-06-15</define-tag>
+#use wml::debian::news
+
+<define-tag release>7</define-tag>
+<define-tag codename>wheezy</define-tag>
+<define-tag revision>7.1</define-tag>
+
+<define-tag dsa>
+    <tr><td align="center"><a href="$(HOME)/security/%0/dsa-%1">DSA-%1</a></td>
+        <td align="center"><:
+    my @p = ();
+    for my $p (split (/,\s*/, "%2")) {
+	push (@p, sprintf ('<a href="http://packages.debian.org/src:%s">%s</a>', $p, $p));
+    }
+    print join (", ", @p);
+:></td><td align="left">%3</td></tr>
+</define-tag>
+
+<define-tag correction>
+    <tr><td><a href="http://packages.debian.org/src:%0">%0</a></td>              <td>%1</td></tr>
+</define-tag>
+
+<define-tag srcpkg><a href="http://packages.debian.org/src:%0">%0</a></define-tag>
+
+<p>Debian プロジェクトは Debian <release> (コード名 <q><codename></q>) の安定版
+(stable) ディストリビューションの最初の更新を発表できることを嬉しく思います。
+この更新は主にセキュリティ問題の修正を安定版 (stable)
+リリースに加えるもので、重大な問題に対する若干の調整への対応を追加しています。
+セキュリティ勧告はすでに個別に発表されており、利用可能なものは参照されています。</p>
+
+<p>この更新は Debian <release> の新しいバージョンを構成するといった性質のものではなく、
+収録されているパッケージの一部を更新するだけであることに注意してください。<release>
+の CD や DVD を投げ捨てる必要はなく、インストール後に最新の Debian
+ミラーから更新を取得して古くなったパッケージを更新するだけです。</p>
+
+<p>頻繁に security.debian.org
+から更新をインストールしている人は大量のパッケージ更新をする必要はありません。
+security.debian.org での更新のほとんどが今回のアップデートに含まれています。</p>
+
+<p>新規のインストールメディアや CD、DVD イメージには更新されたパッケージが含まれ、
+いつもの場所で間もなく入手可能になります。</p>
+
+<p>オンラインからの今回のリビジョンへのアップグレードは、通常
+aptitude (または apt) パッケージツールで Debian の FTP/HTTP
+ミラーの多くのうちの一つを指定することで実施されます
+(sources.list(5) マニュアルページを参照してください)。
+ ミラーの完全なリストは以下から入手出来ます:</p>
+
+<div class="center">
+  <a href="$(HOME)/mirror/list">http://www.debian.org/mirror/list</a>
+</div>
+
+<h2>様々なバグ修正</h2>
+
+<p>この安定版 (stable) の更新では以下のパッケージに重要な修正が加えられています:</p>
+<table border=0>
+<tr><th>パッケージ</th>               <th>理由</th></tr>
+<correction alsa-base                 "設定に /etc/default/alsa ではなく /etc/default/alsa-base を正しく利用">
+<correction apt                       "逆依存からの負のスコアを広めないように。if-modified-since を libcurl/https で適切に処理">
+<correction assaultcube-data          "squeeze からの更新を修正。欠けている破壊 (Breaks)/置換 (Replaces) を追加">
+<correction base-files                "ポイントリリース用に更新">
+<correction brltty                    "アクセシビリティがインストーラで有効化されていた場合にインストールしたシステムで確実に有効化。gdm バナーで音声イベントを有効化">
+<correction clutter-gst               "multiarch の相互インストール性を復旧">
+<correction cyrus-imapd-2.4           "アップグレード時のデータ消失と付属文書内のリンクを修正">
+<correction cyrus-sasl2               "saslauthd で CPU を使いすぎるのを修正。auth_rimap で接続を閉じる前に LOGOUT を送信するように。canonuser_plugin: ldapdb の利用時の出力バッファにゴミが出ないように">
+<correction debian-history            "wheezy リリース用に更新">
+<correction debian-installer          "バージョンを <q>7</q> に。proposed-updates に対するビルドを有効化">
+<correction debootstrap               "jessie サポートを追加">
+<correction dh-make-drupal            "drupal.org への接続に HTTPS を利用">
+<correction distro-info-data          "Debian のデータを wheezy リリース向けに更新。Ubuntu のデータに saucy を追加と一部の日付を修正">
+<correction empathy                   "Google Talk vCard の読み取り専用の URL フィールドを処理">
+<correction freebsd-utils             "pidファイルを作成しないデーモンの開始/停止で --pidfile を使わないように。正常なシグナルで nfsd を停止">
+<correction gcc-msp430                "MSP430FR5xxx ターゲットの中断テーブル生成に誤りがあるためにセキュリティ fuse に打撃を与えていたのを修正">
+<correction get-iplayer               "BBC により変更された後に SWF 検証 URL を更新">
+<correction gitg                      "実行時のクラッシュとドラッグ&amp;ドロップを修正">
+<correction gnome-settings-daemon     "mipsel でのセグメンテーション違反を修正。<q>タイピング中にタッチパッドを無効にする</q>オプションが有効になっている場合のクラッシュを修正">
+<correction gpsd                      "クラッシュと潜在的な DoS を修正">
+<correction isc-dhcp                  "CVE-2013-2494 を修正。--with-ldapcrypto をセットして openssl サポートを復旧">
+<correction isdnutils                 "debian/{ipppd,isdnlog}.config を壊さないように。isdnctrl のシンボリックリンクを /dev/isdnctrl に作成し、/isdnctrl の位置を誤ったシンボリックリンクがあれば削除">
+<correction keystone                  "CVE-2013-2059 を修正">
+<correction lapack                    "マルチスレッド環境で誤った結果を出すいくつかのルーチンを修正">
+<correction libdatetime-timezone-perl "2013c のタイムゾーンデータに更新">
+<correction libiodbc2                 "odbc ドライバをシステムディレクトリから検索し、使い勝手と multiarch odbc ドライバとの相互インストール性を修正">
+<correction libnss-myhostname         "link-local アドレスを無視">
+<correction libpam-mklocaluser        "runcmd() を修正">
+<correction libquvi-scripts           "新しい上流リリース">
+<correction libreoffice               "ビルドに失敗するのを修正。lib/servlet.jar を削除。--view を修正。oosplash に InternalIPC::ProcessingDone を待たせるように。python3-uno 依存を削除">
+<correction libvirt                   "virStorageBackendLogicalMakeVol での漏洩を修正。xen toolstack がバイナリを探せるように">
+<correction linux                     "上流の新しい安定版の更新を取り込み。drm/agp を 3.4.47 に更新">
+<correction lsb                       "新しい X.Y 形式の安定版バージョンに更新。jessie を追加">
+<correction modsecurity-apache        "NULL ポインタ参照をを修正。CVE-2013-2765">
+<correction mozc                      "mozc サーバに root で接続した場合のエラーを修正。fcitx-mozc の依存を修正">
+<correction munin                     "複数の制限確認とクラッシュを修正。df プラグインで devtmpfs を無視">
+<correction nbd                       "nbd-client の初期化スクリプトによる NBD_NAME の処理を修正。安定性に関する複数の修正">
+<correction nfs-utils                 "CVE-2013-1923、-R の getopt 処理、mountd でのハングを修正">
+<correction nvidia-graphics-drivers   "欠けていた nvidia-support への依存を追加">
+<correction octave                    "rcond 関数を修正">
+<correction openblas                  "クラッシュと未初期化データの利用を修正。Power7 アーキテクチャの powerpc マシンでの FTBFS を修正">
+<correction openvpn                   "HMAC 比較での実行時間が一定でない memcmp の利用を修正。CVE-2013-2061">
+<correction pcsc-lite                 "squeeze からのアップグレードと実行している systemd の確認を修正">
+<correction php5                      "CVE-2013-1643 のパッチ、ガベージコレクションでのクラッシュ、FastCGI で FPM (FastCGI Process Manager) が受け取ったデータを破棄。libmagic の Microsoft Office 文書と mssql の Azure SQL とのコネクター検出を修正。フィルター SAPI の $_SERVER[REQUEST_TIME] を修正。php5-suhosin への破壊 (Breaks) にバージョンを指定して suhosin のバックポートを可能に">
+<correction pristine-tar              "許可済みパラメータ一覧を wheezy 向けに更新して、もっと新しいバージョンで作成されたファイルに対応">
+<correction profnet                   "fortran 実行時エラーを修正">
+<correction psqlodbc                  "破壊 (Breaks) にバージョンを指定: libiodbc2 (<= 3.52.7-2)。multiarch-aware となりました。KDE との相互インストール性を修正">
+<correction py3dns                    "AAAA クエリーの結果の型についてのリグレッションを修正">
+<correction readline5                 "multiarch のパスを修正">
+<correction rhash                     "一部のメッセージの SHA-512 ハッシュが誤っていたのと一部のアーキテクチャでの誤った GOST ハッシュを修正">
+<correction ruby-tmail                "添付ファイルの引用符のないファイル名の解析を修正">
+<correction schleuder                 "-sendkey、プラグインディレクトリの設定、メンバー一覧を修正">
+<correction sl-modem                  "ダミーで空の prerm スクリプトを追加して squeeze からのアップグレード失敗周辺の問題に対処">
+<correction smcroute                  "インターフェイスのベクトル初期化での NULL ポインタ参照を修正">
+<correction systemtap                 "0700 でマウントされた /sys/kernel/debug をサポートして linux 3.2.29-1 で導入された新しい debugfs の権限に対処">
+<correction tasksel                   "デスクトップマシンでの ssh-server タスクの意図しない自動選択を修正">
+<correction tzdata                    "新しい上流バージョン">
+<correction wdm                       "モジュールが存在しない (例えば非 Linux アーキテクチャ) 場合の pam_selinux.so の失敗を無視">
+<correction win32-loader              "再ビルドして埋め込まれている依存を更新">
+<correction xorg                      "i386 と amd64 で -all に xserver-xorg-input-vmmouse を追加">
+</table>
+
+<h2>セキュリティ更新</h2>
+
+<p>この改訂では安定版 (stable) リリースに以下のセキュリティ更新が追加されます。
+セキュリティチームはこれらの更新それぞれについての勧告をすでに発表しています:</p>
+
+<table border=0>
+<tr><th>勧告 ID</th>  <th>パッケージ</th>    <th>修正内容</th></tr>
+
+<dsa 2013 2666 xen                           "複数の問題">
+<dsa 2013 2667 mysql-5.5                     "複数の問題">
+<dsa 2013 2669 linux                         "複数の問題">
+<dsa 2013 2669 user-mode-linux               "複数の問題">
+<dsa 2013 2671 request-tracker4              "複数の問題">
+<dsa 2013 2672 kfreebsd-9                    "解釈の衝突">
+<dsa 2013 2673 libdmx                        "複数の問題">
+<dsa 2013 2674 libxv                         "複数の問題">
+<dsa 2013 2675 libxvmc                       "複数の問題">
+<dsa 2013 2676 libxfixes                     "複数の問題">
+<dsa 2013 2677 libxrender                    "複数の問題">
+<dsa 2013 2678 mesa                          "複数の問題">
+<dsa 2013 2679 xserver-xorg-video-openchrome "複数の問題">
+<dsa 2013 2680 libxt                         "複数の問題">
+<dsa 2013 2681 libxcursor                    "複数の問題">
+<dsa 2013 2682 libxext                       "複数の問題">
+<dsa 2013 2683 libxi                         "複数の問題">
+<dsa 2013 2684 libxrandr                     "複数の問題">
+<dsa 2013 2685 libxp                         "複数の問題">
+<dsa 2013 2686 libxcb                        "複数の問題">
+<dsa 2013 2687 libfs                         "複数の問題">
+<dsa 2013 2688 libxres                       "複数の問題">
+<dsa 2013 2689 libxtst                       "複数の問題">
+<dsa 2013 2690 libxxf86dga                   "複数の問題">
+<dsa 2013 2691 libxinerama                   "複数の問題">
+<dsa 2013 2692 libxxf86vm                    "複数の問題">
+<dsa 2013 2693 libx11                        "複数の問題">
+<dsa 2013 2694 spip                          "特権の昇格">
+<dsa 2013 2695 chromium-browser              "複数の問題">
+<dsa 2013 2696 otrs2                         "特権の昇格">
+<dsa 2013 2697 gnutls26                      "範囲外配列読み取り">
+<dsa 2013 2702 telepathy-gabble              "TLS 検証の迂回">
+<dsa 2013 2703 subversion                    "複数の問題">
+
+</table>
+
+<h2>Debian インストーラ</h2>
+
+<p>
+インストーラが再ビルドされ、
+このポイントリリースまでに安定版に組み込まれた修正が取り込まれています。
+</p>
+
+<h2>URL</h2>
+
+<p>このリリースで変更されたパッケージの完全なリスト:</p>
+
+<div class="center">
+  <url "http://ftp.debian.org/debian/dists/<downcase <codename>>/ChangeLog">
+</div>
+
+<p>現在の安定版 (stable) ディストリビューション:</p>
+
+<div class="center">
+  <url "http://ftp.debian.org/debian/dists/stable/">
+</div>
+
+<p>安定版 (stable) ディストリビューションへの更新提案中のパッケージ
+(Proposed updates):</p>
+
+<div class="center">
+  <url "http://ftp.debian.org/debian/dists/proposed-updates">
+</div>
+
+<p>安定版 (stable) ディストリビューション情報 (リリースノート、正誤表など):</p>
+
+<div class="center">
+  <a
+  href="$(HOME)/releases/stable/">http://www.debian.org/releases/stable/</a>
+</div>
+
+<p>セキュリティ関連のアナウンスと情報について:</p>
+
+<div class="center">
+  <a href="$(HOME)/security/">http://security.debian.org/</a>
+</div>
+
+<h2>Debian について</h2>
+
+<p>Debian プロジェクトはインターネットを介し、
+時間と労力を費やして完全にフリーなオペレーティングシステムである
+Debian を開発しているフリーソフトウェア開発者らによる団体です。</p>
+
+<h2>連絡先について</h2>
+
+<p>より詳細な情報については、Debian のウェブページ <a
+href="$(HOME)/">http://www.debian.org/</a> を訪れるか、&lt;press@debian.org&gt;
+宛にメールする、もしくは &lt;debian-release@lists.debian.org&gt;
+から安定版リリースチームに問い合わせを行ってください。.</p>
