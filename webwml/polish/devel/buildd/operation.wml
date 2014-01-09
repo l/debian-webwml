@@ -1,0 +1,80 @@
+#use wml::debian::template title="Zarys działania sieci autobuilder" BARETITLE="true"
+#use wml::debian::translation-check translation="1.9"
+
+<P>
+Sercem systemu jest baza <tt>wanna-build</tt>, która zawiera informacje 
+o wersjach oraz stanach pakietów. <tt>quinn-diff</tt> porównuje listę 
+pakietów dla docelowej architektury z listą pakietów źródłowych po każdej 
+aktualizacji archiwum i dodaje do bazy listę pakietów, które wymagają 
+ponownej kompilacji, ze stanem ustawionym na <tt>Needs-Build</tt>.
+
+<P>
+Wszystkie usługi build (może być więcej niż jedna) regularnie odpytują 
+bazę w poszukiwaniu takich pakietów, pobierają część z nich zmieniając 
+jednocześnie ich stan na <tt>Building</tt>. Oczywiście człowiek także może 
+pobrać taki pakiet np. gdy z jakiegoś powodu automatyczna kompilacja 
+nie jest możliwa. Pokazuje to także drugi cel bazy <tt>wanna-build</tt>: 
+zapewnia ona, że ta sama wersja pakietu nie będzie budowana ponownie.
+
+<DIV class="center"><A name="autobuilder34"></A>
+<IMG SRC="scheme.png" alt="Schemat sieci Autobuilder">
+<p><STRONG>Rysunek:</STRONG>
+Stany oraz przejścia pakietu</p>
+</DIV>
+
+<P>
+Jeśli wszystko pójdzie dobrze, ukończony pakiet może być następnie 
+wysłany, co oznaczane jest kolejnym stanem <tt>Uploaded</tt>. Po tej 
+operacji pakiet może być ostatecznie zainstalowany w archiwum Debiana, 
+dzięki czemu pojawi się na liście pakietów do aktualizacji dla danej 
+architektury. Lista ta jest dodawana do bazy a występującym
+na niej pakietom nadawany jest stan <tt>Installed</tt> w którym pozostają  
+do czasu pojawienia się następnej wersji pakietu źródłowego.
+
+<P>
+Istnieje jeszcze kilka innych stanów, m.in:
+stan <tt>Failed</tt> oznacza, że nie powiodło się zbudowanie pakietu 
+z powodu błędów w źródle i oczekuje się poprawienia tych błedów 
+w następnej wersji (oczywiście po zgłoszeniu błędu). Nowa wersja 
+od razu otrzymuje status <tt>Needs-Build</tt> ale z ostrzeżeniem, 
+że coś poszło nie tak w poprzedniej wersji. Razem ze stanem zapisywany 
+jest także opis błedu. Stan <tt>Dep-Wait</tt> jest używany, kiedy pakiet 
+wymaga do kompilacji innych pakietów, ale te nie są jeszcze dostępne i 
+muszą być wcześniej zbudowane. Ten stan zawiera listę wymaganych pakietów, 
+może zwierać wersję tych pakietów, i kiedy wszystkie z nich są 
+już zbudowane, stan danego pakietu jest ponownie zmieniany 
+na <tt>Needs-Build</tt>.
+
+<P>
+Jak już wspomniano, usługa build pobiera pakiety do kompilacji 
+z listy. Teraz przyjrzymy się temu bliżej. Jeżeli są jakieś 
+pakiety do zbudowania, używany jest program <tt>sbuild</tt> do wykonania 
+tej operacji a dla każdej z operacji tworzony jest log, który jest 
+wysyłany do opiekuna usługi. Przegląda on logi i decyduje, co zrobić z 
+pakietem: wysłać, ustawić mu status na <tt>Failed</tt> lub 
+<tt>Dep-Wait</tt>, ponowić próbę itp. Jeżeli opiekun wyśle pozytywne 
+potwierdzenie (podpisany plik <tt>.changes</tt>) usługa przeniesie 
+pakiet do katalogu upload, skąd wszystkie pakiety są wysyłane przez 
+zadanie ustawione w cron.
+
+<P>
+Przeglądanie plików logu jest jedynym zadaniem dla człowieka w całym 
+procesie, o ile nie wystąpią żadne błędy. Istnieją dwa ważne powody, 
+dla których do tej pory nie zautomatyzowano tego etapu. Po pierwsze, 
+czasami budowanie kończy się wynikiem ``OK``, mimo że faktycznie 
+nie zostało poprawnie ukończone z powodów, które nie są widoczne 
+dla maszyny. Po drugie, bezpośrednie wysyłanie skompilowanych programów  
+wymagałoby na maszynie, na której budowano pakiety, automatycznego 
+podpisywania utworzonych plików kluczem bez ustawionego hasła. Uznano, 
+że jest to poważna luka w bezpieczeństwie, której nie można zaakceptować. 
+
+<P>
+Skrypt <tt>sbuild</tt> wywołuje standardowe narzędzia Debiana do 
+kompilacji kodów źródłowych. Jest pomocny również w najczęstszych 
+zadaniach, księgowaniu oraz automatycznym instalowaniu zależności 
+wymaganych przez budowany pakiet. 
+
+<hrline />
+<p><small>Treść utworzona przez Roman Hodek na potrzeby 6th International 
+Linux-Kongress 1999, delikatnie zaktualizowana przez Philipp Kern w roku 
+2009, aby dokładniej odzwierciedlić aktualny stan.</small></p>
