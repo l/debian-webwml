@@ -316,6 +316,15 @@ sub init_translators {
 		        file            => 0,
 		        compress        => 'none',
 		 },
+                'Jean-Pierre Giraud' => {
+		        email           => 'jean-pierregiraud@neuf.fr',
+		        summary         => 3,
+		        logs            => 3,
+		        diff            => 3,
+		        tdiff           => 0,
+		        file            => 0,
+		        compress        => 'none'
+                },
                 'DFS Task Force' =>  {
                         email       => 'spaillard@debian.org',
                         summary     => 2,
