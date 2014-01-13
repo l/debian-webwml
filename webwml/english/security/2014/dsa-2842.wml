@@ -1,0 +1,50 @@
+<define-tag description>denial of service</define-tag>
+<define-tag moreinfo>
+<p>Alvaro Munoz discovered a XML External Entity (XXE) injection in the
+Spring Framework which can be used for conducting CSRF and DoS attacks
+on other sites.</p>
+
+<p>The Spring OXM wrapper did not expose any property for disabling entity
+resolution when using the JAXB unmarshaller. There are four possible
+source implementations passed to the unmarshaller:</p>
+
+<ul>
+<li>DOMSource</li>
+<li>StAXSource</li>
+<li>SAXSource</li>
+<li>StreamSource</li>
+</ul>
+
+<p>For a DOMSource, the XML has already been parsed by user code
+and that code is responsible for protecting against XXE.</p>
+
+<p>For a StAXSource, the XMLStreamReader has already been created
+by user code and that code is responsible for protecting
+against XXE.</p>
+
+<p>For SAXSource and StreamSource instances, Spring processed
+external entities by default thereby creating this
+vulnerability.</p>
+
+<p>The issue was resolved by disabling external entity processing
+by default and adding an option to enable it for those users
+that need to use this feature when processing XML from a
+trusted source.</p>
+
+<p>It was also identified that Spring MVC processed user provided
+XML with JAXB in combination with a StAX XMLInputFactory
+without disabling external entity resolution. External entity
+resolution has been disabled in this case.</p>
+
+<p>For the stable distribution (wheezy), this problem has been fixed in
+version 3.0.6.RELEASE-6+deb7u1.</p>
+
+<p>For the unstable distribution (sid), this problem has been fixed in
+version 3.0.6.RELEASE-10.</p>
+
+<p>We recommend that you upgrade your libspring-java packages.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2014/dsa-2842.data"
+# $Id$
