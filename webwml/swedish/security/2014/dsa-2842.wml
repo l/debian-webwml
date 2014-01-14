@@ -1,0 +1,49 @@
+#use wml::debian::translation-check translation="1.1" mindelta="1"
+<define-tag description>överbelastning</define-tag>
+<define-tag moreinfo>
+<p>Alvaro Munoz upptäckte en injektion av externa XML-enheter (XXE) i 
+ramverket spring som kan användas för att genomföra CSRF och DoS-angrepp på
+andra webbplatser.</p>
+
+<p>Spring OXM-wrappern exponerade inte någon egenskap för att inaktivera
+enhetsresolution vid användning av JAXB-unmarshaller. Det finns fyra möjliga
+källkodsimplementationer som kan skickas till unmarshallern:</p>
+
+<ul>
+<li>DOMSource</li>
+<li>StAXSource</li>
+<li>SAXSource</li>
+<li>StreamSource</li>
+</ul>
+
+<p>För en DOMSource har XMLen redan tolkats av användarkod
+och denna kod är ansvarig för att skydda mot XXE.</p>
+
+<p>För en StAXSource, har en XMLStreamReader redan skapats av
+användarkod och denna kod är ansvarig för att skydda mot
+XXE.</p>
+
+<p>För SAXSource och StreamSource-instanser, behandlade Spring 
+externa enheter som standard och skapade därmed denna sårbarhet.</p>
+
+<p>Problemet löstes genom att inaktivera behandling av externa enheter
+som standard och genom att lägga till ett alternativ för att aktivera
+dessa för dom användare som behöver använda denna funktion vid behandling
+av XML från en känd källa.</p>
+
+<p>Det har även identifierats att Spring MVC behandlade användartillhandahållen
+XML med JAXB i kombination med StAX XMLInputFactory utan att
+inaktivera resolution av externa enheter. Resolution av externa
+enheter har inaktiverats i detta fall.</p>
+
+<p>För den stabila utgåvan (Wheezy) har detta problem rättats i
+version 3.0.6.RELEASE-6+deb7u1.</p>
+
+<p>För den instabila utgåvan (Sid) har detta problem rättats i
+version 3.0.6.RELEASE-10.</p>
+
+<p>Vi rekommenderar att ni uppgraderar era libspring-java-paket.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2014/dsa-2842.data"
