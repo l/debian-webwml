@@ -1,0 +1,48 @@
+#use wml::debian::translation-check translation="1.1" mindelta="1"
+<define-tag description>lammelsesangreb</define-tag>
+<define-tag moreinfo>
+<p>Alvaro Munoz opdagede en XML External Entity-indsprøjtning (XXE) i Spring 
+Framework, hvilket kunne anvendes til at iværksætte CSRF- og DoS-angreb mod 
+andre websteder.</p>
+
+<p>Spring OXM-wrapper'en udstillede ingen property til deaktivering af 
+entitetsopløsning, når JAXB-unmarshaller'en benyttes.  Der er fire mulige 
+kildeimplementeringer, som kan overføres til unmarshaller'en:</p>
+
+<ul>
+<li>DOMSource</li>
+<li>StAXSource</li>
+<li>SAXSource</li>
+<li>StreamSource</li>
+</ul>
+
+<p>Ved en DOMSource er XML'et allerede fortolket af brugerkode, og den kode er 
+ansvarlig for at beskytte mod XXE.</p>
+
+<p>Ved en StAXSource er XMLStreamReader'en allerede blevet oprettet af 
+brugerkode, og den kode er ansvarlig for at beskytte mod XXE.</p>
+
+<p>Ved SAXSource- og StreamSource-instancerne, behandler Spring eksterne 
+entiteter som standard, og dermed opstår sårbarheden.</p>
+
+<p>Problemet blev løst ved at deaktivere behandling af eksterne entiteter som 
+standard, samt tilføje en indstillingsmulighed, som kan aktivere det for de 
+brugere, der har behov for  funktionen, når der behandles XML fra en kilde, der 
+er tillid til.</p>
+
+<p>Man har også fundet ud af, at Spring MVC behandlede brugerleveret XML med 
+JAXB i kombination med en StAX-XMLInputFactory, uden at deaktivere ekstern 
+entitetsopløsning.  Ekstern entitetsopløsning er blevet deaktiveret i denne 
+situation.</p>
+
+<p>I den stabile distribution (wheezy), er dette problem rettet i
+version 3.0.6.RELEASE-6+deb7u1.</p>
+
+<p>I den ustabile distribution (sid), er dette problem rettet i
+version 3.0.6.RELEASE-10.</p>
+
+<p>Vi anbefaler at du opgraderer dine libspring-java-pakker.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2014/dsa-2842.data"
