@@ -1,0 +1,302 @@
+#use wml::debian::template title="Opis stanów wanna-build" BARETITLE="true"
+#use wml::debian::translation-check translation="1.23"
+
+    <p>Na tej stronie znajdują się opisy poszczególnych stanów 
+       wanna-build oraz to, co dzieje się z pakietem, kiedy zostaje mu 
+       nadany określony stan. Opis ten kierowany jest do opiekunów 
+       pakietów Debiana, którzy chcą zrozumieć dlaczego ich pakiet 
+       został (lub nie) zbudowany dla określonej architektury. Na 
+       stronie znajduje się także opis różnych wyników, jakie 
+       mogą znaleźć się w logu.</p>
+
+    <p>Na końcu dostępny jest <a href="#graphlink">wykres</a> 
+       przedstawiający stany wanna-build, ale należy pamiętać
+       że nie zawiera on wszystkiego, o czym jest mowa w 
+       tym dokumencie.</p>
+
+<h2>Stany wanna-build</h2>
+<p>Dla każdej wspieranej przez Debiana architektury istnieje 
+baza wanna-build zainstalowana na buildd.debian.org, która 
+zawiera informacje o wszystkich pakietach i ich obecnym stanie 
+kompilacji. Istnieje 8 stanów: <em>needs-build</em>,
+<em>building</em>, <em>uploaded</em>, <em>dep-wait</em>,
+<em>BD-Uninstallable</em>, <em>failed</em>, <em>not-for-us</em> oraz
+<em>installed</em>.</p>
+
+<p>Ich znaczenie jest następujące:</p>
+    <dl>
+      <dt><a name="needs-build">needs-build</a></dt>
+      <dd>Pakiet oznaczony <em>needs-build</em> to pakiet, którego 
+        nowa wersja, przeznaczona na inną architekturę, niż 
+        obsługiwana przez daną bazę wanna-build, została wgrana przez opiekuna;
+        pakiet taki wymaga ponownej kompilacji. Pakiet 
+        o tym stanie nie jest od razu pobierany przez autobuilder, 
+        ale będzie, kiedy znajdzie się na początku listy z pakietami 
+        do zbudowania. Zazwyczaj mówi się o pakiecie w stanie 
+        <em>needs-build</em> że <q>czeka on w kolejce do zbudowania</q>.
+        Warto wspomnieć, że kolejka <em>needs-build</em> nie jest kolejką 
+        FIFO, kolejność w niej jest wyznaczana według 
+        reguł w następującej kolejności:
+	<ol>
+	  <li>Poprzedni stan kompilacji pakietu - pakiety, które były 
+              już budowane mają pierwszeństwo przed nowymi pakietami.
+          </li>
+	  <li>priorytety - pakiety z priorytetem <em>required</em>
+              są budowane przed pakietami z priorytetem <em>extra</em>.
+          </li>
+	  <li>Sekcja, w jakiej znajduje się pakiet. Kolejność jest ustawiana 
+              wg ważności, np. sekcja <em>games</em> jest budowana po 
+              sekcji <em>base</em>, a sekcja <em>libs</em> jest budowana 
+              przed <em>devel</em>.
+	  </li>
+	  <li>kolejność alfabetyczna wg nazw pakietów.</li>
+	</ol>
+
+	Ponadto, w pewnych okolicznościach, może się zdażyć, że buildd 
+        nie obsłuży pakietu z początku kolejki, np. kiedy buildd 
+        nie może znaleźć źródeł danego pakietu, wtedy odkłada go z powrotem 
+        do kolejki (na zajmowaną wcześniej pozycję, np. na początku kolejki), 
+        ale będzie ignorował taki pakiet przez kilka godzin. Inna sytuacja, 
+        w której może to się stać, to kiedy osoba portująca na daną 
+        architekturę zechce zbudować większy pakiet na swojej szybszej 
+        maszynie a mniejsze pakiety zostawi w kolejce na wolniejszej maszynie. 
+        Teoretycznie buildd może wprost zażądać innej kolejności sekcji, 
+        ale nie jest to często robione.<br />
+        Mogą wystąpić także inne sytuacje, w których kolejność kolejki 
+        zostanie zignorowana, ale należy zauważyć, że są to wyjątki.
+      </dd>
+      <dt><a name="building">building</a></dt>
+      <dd>Pakiet jest oznaczony jako <em>building</em> od momentu pobrania 
+        go z początku kolejki wanna-build do momentu wysłania przez
+        administratora odpowiedzi na log. Ponieważ pakiety nie są pobierane 
+        z kolejki jeden za drugim, pakiet może być (i zazwyczaj jest) 
+        oznaczony jako <em>building</em> przed faktycznym rozpoczęciem 
+        budowania, jednakże, ponieważ buildd buduje pakiety wg własnej 
+        lokalnej kolejki FIFO, nie trwa to długo. Należy zaznaczyć również, 
+        że status pakietu <strong>nie</strong> jest modyfikowany z chwilą 
+        zakończenia budowania, tylko w momencie nadesłania przez 
+        administratora odpowiedzi na wygenerowany log.</dd>
+      <dt><a name="uploaded">uploaded</a></dt>
+      <dd>Kiedy próba budowania powiedzie się, log z tej operacji 
+        jest wysyłany do administratora autobuildera oraz do 
+        buildd.debian.org. Następnie opiekun autobuildera podpisuje 
+        plik .changes dołączony do logu i odsyła go do autobuildera. 
+        Po otrzymaniu takiej odpowiedzi autobuilder wysyła pakiet 
+        i ustawia jego status na <em>uploaded</em>. Jako taki pakiet 
+        w tym stanie można znaleźć w kolejce przychodzącej (gdzieś).<br />
+        Autobuilder nie dotknie więcej pakietu, któremu nadano status 
+        <em>uploaded</em>, dopóki nie pojawi się następna wersja kodu 
+        lub dopóki osoba portująca nie zmieni stanu pakietu ręcznie.
+      </dd>
+      <dt><a name="dep-wait">dep-wait</a></dt>
+      <dd>Kiedy budowanie pakietu nie powiedzie się z powodu brakujących 
+        w czasie budowania zależności, opiekun autobuildera wysyła wiadomość 
+        do autobuildera z poleceniem usunięcia źródeł pakietu i oznaczenia 
+        pakietu jako <em>dep-wait</em> z powodu brakujących zależności. 
+        Pakiet w tym stanie zostanie automatycznie, bez ludzkiej interwencji, 
+        oznaczony jako needs-build, kiedy tylko wymienione zależności 
+        będą spełnione.<br />
+	Początkowo musiała być podjęta próba zbudowania pakietu, zanim 
+        opiekun ręcznie umieszczał go w stanie <em>dep-wait</em>.  
+        Jednakże w sierpniu 2005 roku dodano do wanna-build kod, który 
+        przenosił pakiet ze stanu <em><a href='#installed'>installed</a></em> 
+        bezpośrednio do stanu <em>dep-wait</em> jeśli było to konieczne.<br />
+	Istnieją dwa szczególne przypadki, w których pakiet zostanie oznaczony 
+	na zawsze jako dep-wait: pierwszy z nich, to błąd przy opisywaniu 
+        zależności <em>dep-wait</em> (czyli oznaczenie pakietu jako dep-wait 
+        z powodu pakietu, którego nie ma i nigdy nie będzie), drugi to 
+        kiedy w zależnościach podano pakiet, który jest oznaczony jako 
+        <em>not-for-us</em>, lub który jest na liście 
+        <em>packages-arch-specific</em>.<br />
+	Jako przykład rozważmy trzy pakiety: pakiet <tt>foo</tt>, 
+        który istnieje tylko dla <tt>i386</tt>; pakiet <tt>bar</tt>, który 
+        istnieje tylko dla <tt>m68k</tt> (i który w przybliżeniu dostarcza 
+        tych samych funkcji); oraz pakiet <tt>baz</tt>, który może być budowany 
+        zarówno z <tt>foo</tt> jak i <tt>bar</tt>. Zakładamy, że opiekun pakietu 
+        <tt>baz</tt> zapomniał dodać <tt>bar</tt> do Build-Depends, zakładamy 
+        także, że on lub ona dodał(a) go kiedy pojawił się komunikat, że 
+        <tt>baz</tt> przeszedł do stanu <em>dep-wait</em> z powodu 
+	nieistniejącego <tt>foo</tt> dla <tt>m68k</tt>, wtedy <em>dep-wait</em> 
+        dla <tt>m68k</tt> musi być ręcznie zdjęty przez osobę portującą 
+        dla <tt>m68k</tt>.
+      </dd>
+      <dt><a name="bd-uninstallable">BD-Uninstallable</a></dt>
+      <dd>Podczas debconf9, <a
+	href='http://lists.debian.org/debian-wb-team/2009/07/msg00089.html'>Joachim
+	Breitner przedstawił pomysł</a> użycia edos-debcheck do weryfikacji 
+        możliwości instalacji wymaganych pakietów, które w przeciwnym razie 
+        przejdą do stanu Needs-Build. W tym momencie, wanna-build posiada 
+        możliwość sprawdzenia bezpośredniej dostępności pakietów wymienionych 
+        w build-dependencies, ale jeśli pakiet nie może być zainstalowany, 
+        ponieważ zależy on od pakietu a, który zależy od pakietu b, który 
+        zależy od pakietu c (&gt;=1.2.3) a pakiet c wciąż jest w wersji 1.2.2, 
+        taka sytuacja nie będzie wykryta a budowanie nie powiedzie się na 
+        wczesnym etapie z powodu niedostępnych zależności. Obsłużenie takiej 
+        sytuacji było zadaniem administratora buildd, i zazwyczaj zadaniem 
+        długotrwałym. Po zastosowaniu łatki BD-Uninstallable nie jest to już 
+        problemem. Kiedy pakiet jest w stanie BD-Uninstallable oznacza to, 
+        że jeden z wymaganych pakietów nie jest dostępny do instalacji 
+        (zarówno natychmiastowej, lub z powodu niedostępności zależności 
+        dla wymaganego pakietu). Niestety, wspomniana łatka nie dostarcza 
+        informacji, którego dokładnie pakietu brakuje, należy użyć 
+        edos-debcheck aby otrzymać takie informacje. Problem budowania będzie
+        jednakże rozwiązany samoistnie, kiedy tylko brakujące zależności 
+        będą rzeczywiście dostępne - w tym momencie pakiet zostanie 
+        automatycznie przeniesiony ponownie do Needs-Build.
+      </dd>
+      <dt><a name="wanna-build-state-failed">failed</a></dt>
+      <dd>Jeżeli próba budowania nie powiodła się, a opiekun autobuildera 
+        zadecyduje, że jest to prawdziwy błąd i nie należy ponawiać 
+	operacji, pakiet zostaje oznaczony jako <em>failed</em>. Pozostaje 
+        on w tym stanie dopóki osoba portująca nie zadecyduje inaczej lub 
+        do czasu pojawienia się nowej wersji. Jednakże, kiedy pojawia się 
+        nowa wersja pakietu, który w poprzedniej wersji został oznaczony 
+        jako <em>failed</em>, autobuilder zapyta administratora czy powinna 
+        być ponowiona próba zbudowania danego pakietu; takie działanie 
+        podyktowane jest tym, aby pakiet, którego budowanie najpewniej 
+        ponownie nie powiedzie się, nie marnował czasu systemu buildd. 
+	Pomimo, że ustawienie stanu pakietu na failed przed próbą zbudowania 
+        pakietu prawie nigdy nie jest właściwym działaniem, taka opcja jest 
+        dostępna dla administratora autobuildera.<br />
+        Należy zaznaczyć, że pakiet <strong>nigdy</strong> nie będzie 
+        oznaczony jako <em>failed</em> bez interwencji człowieka. 
+      </dd>
+      <dt><a name="not-for-us">not-for-us</a></dt>
+      <dd>Niektóre pakiety są specyficzne dla danej architektury, np. 
+        <tt>lilo</tt>, program ładujący dla i386, nie powiniem być 
+        budowany dla architektury alpha, m68k lub s390. Jednakże 
+        <em>wanna-build</em> nie sprawdza pliku kontrolnego pakietu kiedy 
+        tworzy swoją bazę; sprawdzane są: nazwa pakietu i sekcja w jakiej 
+        się znajduje, poprzedni stan budowania oraz jego priorytet. 
+        Z tego powodu, przy pierwszym załadowaniu pakietu dedykowanego 
+        dla konkretnej architektury, który nie powinien być budowany 
+        na innych architekturach, buildd podejmie jednak próbę, która 
+        oczywiście zakończy się niepowodzeniem jeszcze przed pobraniem 
+        i/lub zainstalowaniem zależności wymaganych podczas budowania.<br/>
+        Ponieważ autobuilder nie powinien marnować czasu próbując budować 
+        pakiety, które nie są potrzebne dla danej architektury, istniała 
+        potrzeba utworzenia listy pakietów, dla których nie powinna być 
+        nawet podejmowana próba budowania. Pierwszym rozwiązaniem tego 
+        problemu było zastosowanie statusu <em>not-for-us</em>, jednakże, 
+        z uwagi na problemy w zarządzaniu, status ten nie jest teraz 
+        używany. Opiekunowie autobuildera powinni używać 
+        <em>packages-arch-specific</em>, który jest listą pakietów 
+        specyficznych dla jednej lub kilku architektur, zamiast 
+        korzystać ze statusów wanna-build.<br />
+        Pakiety w <em>not-for-us</em> lub <em>packages-arch-specific</em>
+        <strong>nie</strong> pozbędą się tego statusu automatycznie. Jeżeli 
+        pakiet wykluczał konkretne architektury poprzez swój plik kontrolny, 
+        ale teraz obsługuje więcej architektur, należy 
+        <strong>ręcznie</strong> dodać go do właściwej kolejki.<br />
+        W przypadku konieczności wprowadzenia takiej zmiany w stosunku 
+        do naszego pakietu, należy poinformować o tym odpowiedniego 
+        opiekuna buildd. Można się z nimi skontaktować poprzes adres  
+        $arch@buildd.debian.org.
+      </dd>
+      <dt><a name="installed">installed</a></dt>
+      <dd>Jak sama nazwa sugeruje, pakiet oznaczony jako <em>installed</em> 
+        został skompilowany dla architektury, która jest obsługiwana przez 
+        daną bazę wanna-build. Przed wydaniem dystrybucji Woody, zmiana 
+        stanu pakietu z <em>uploaded</em> na <em>installed</em> następowała 
+        po codziennym uruchamianiu katie. Jednakże po zaimplementowaniu  
+<a href="http://lists.debian.org/debian-devel-announce/2002/debian-devel-announce-200206/msg00002.html">Accepted-autobuild</a>, 
+        zostało to zmienione. Teraz pakiet przechodzi ze stanu 
+        <em>uploaded</em> do <em>installed</em> kiedy zostanie zaakceptowany 
+        do przejścia do archiwum. Oznacza to, że pakiet zazwyczaj zostanie 
+        oznaczony jako <em>installed</em> średnio po około 15 minutach. 
+       </dd>
+    </dl>
+    <p>Dodatkowo, poza wymienionymi ośmioma statusami, <em>wanna-build</em> 
+    obsługuje także dwa statusy -removed: <em>dep-wait-removed</em> oraz 
+    <em>failed-removed</em>. Są one powiązane z odpowiadającymi <q>zwykłymi</q> 
+    statusami w następujący sposób: kiedy pakiet w stanie <em>failed</em> 
+    lub <em>dep-wait</em> nie pojawia się się w nowym pliku Packages, który
+    zasila bazę <em>wanna-build</em> &ndash; kiedy wydaje się, że pakiet 
+    został usunięty &ndash; informacje o takim pakiecie nie są usuwane, 
+    ponieważ może być tak, że brak pakietu w pliku Packages jest tymczasowym 
+    błędem, lub że pakiet został tymczasowo usunięty z jakiegoś powodu 
+    (ale kwestią czasu jest jego ponowne pojawienie się w archiwum).
+    W takim przypadku zamiast naprawdę usuwać pakiet, jest on przenoszony 
+    do stanu <em>-removed</em>, aby utrzymać informację dlaczego nie udała 
+    się próba budowania albo czego jeszcze brakuje. Kiedy pakiet ponownie 
+    pojawi się w pliku Packages, który zasila bazę wanna-build, zostanie on 
+    przeniesiony z <em>failed-removed</em> do <em>failed</em> lub z 
+    <em>dep-wait-removed</em> do <em>dep-wait</em> przed wykonaniem 
+    jakichkolwiek operacji.</p>
+
+    <p>
+      Nie jest możliwy bezpośredni dostęp do bazy wanna-build. Baza 
+      jest zainstalowana na ftp-master-debian.org, który jest hostem 
+      z ograniczonym dostępem i tylko sieci autobuilder mają klucze SSH, 
+      które pozwalają im na dostęp do bazy wanna-build dla obsługiwanych 
+      przez nich architektur. Przed ograniczeniem 
+      dostępu do ftp-master zdarzało się, że wanna-build zakładało blokadę 
+      na bazę przy dostępie do niej (nawet podczas odczytu danych), i żeby 
+      uzyskać bezpośredni dostęp do bazy należało być we właściwej grupie 
+      (wb-&lt;arch&gt;).
+    </p>
+    <p>Jak wspomniano, można obejrzeć jaki status posiada pakiet 
+      poprzez stronę <a href="http://buildd.debian.org/stats/">statystyk 
+      buildd</a>. Wyjątkiem są pakiety, które posiadają status 
+      <em>installed</em> (chyba że nie przeszkadza nam przekopanie się 
+       przez wielomegabajtowy plik "&lt;arch&gt;-all.txt").
+    </p>
+    <h2>Log z wynikiem budowania</h2>
+    <p>
+      Kiedy pakiet zostanie zbudowany przez sbuild (element składowy buildd, 
+      który wykonuje właściwe budowanie), wysyłana jest wiadomość, która zawiera 
+      log z wynikami przeprowadzonej operacji, do administratora autobuildera oraz 
+      na adres logs@buildd.debian.org (może się to zakończyć na 
+      http://buildd.debian.org). Wynik budowania może być jednym z następujący:
+      <em>successful</em>, <em>attempted</em> (poprzednio znany jako 
+      <em>failed</em>), <em>given-back</em> lub <em>skipped</em>.
+      Należy zauważyć, że na <a 
+      href="http://buildd.debian.org/">stronie z opisem logów buildd</a>
+      został dodany prefiks <em>maybe-</em>, miedzy innymi dlatego, że 
+      status operacji może być oznaczony jako <em>failed</em>, mimo że 
+      <em>naprawdę</em> nie zakończył się błedem, co w przeszłości 
+      wprowadzało zamieszanie (lub, innymi słowy, czasami pakiet, który 
+      na pozór został zbudowany poprawnie, w rzeczywistości był uszkodzony 
+      i wymagał zbudowania na nowo).</p>
+    <p>Znaczenie poszczególnych wyników w logu:</p>
+    <dl>
+      <dt><a name="successful">successful</a></dt>
+      <dd>Budowanie powiodło się. Kiedy opiekun autobuildera otrzyma 
+        taki log, wyodrębnia zawarty plik <code>.changes</code>, podpisuje go 
+        i odsyła z powrotem do autobuildera, co powoduje wysłanie pakietu 
+        na serwer.</dd>
+      <dt><a name="failed">attempted</a> (poprzednio: failed)</dt>
+      <dd>Proces budowania zwrócił niezerową wartość, co może oznaczać 
+        błąd. Ponieważ może być wiele powodów, dlaczego proces budowania 
+        się nie powiódł, a wymienianie ich wszystkich byłoby nudne, 
+        nie podjęto takiej próby w tym miejscu. Jeżeli pakiet został
+        oznaczony jako <em>(maybe-)failed</em>, należy zapoznać się z 
+        dołączonym opisem i sprawdzić jego obecny status w wanna-build.
+      </dd>
+      <dt><a name="given-back">given-back</a></dt>
+      <dd>Proces budowania nie powiódł się z powodu przejściowego problemu 
+        z autobuilderem, np. problemy z siecią, niedostępność źródeł pakietu 
+        z aktualnego pliku sources.list, brak miejsca na dysku itp.<br />
+        Pakiet oznaczony jako <em>given-back</em> jest jednocześnie ponownie 
+        oznaczany jako <em><a href="#needs-build">needs-build</a></em>, 
+        dlatego będzie automatycznie obsłużony przez autobilder, kiedy ten 
+        będzie gotowy.
+      </dd>
+      <dt><a name="skipped">skipped</a></dt>
+      <dd>Miedzy tym, jak pakiet zostanie pobrany przez autobuilder i 
+          i oznaczony jako <em><a href="#building">building</a></em> a 
+          próbą budowania pojawia się nowa wersja pakietu, lub osoba portująca 
+          z innego powodu ręcznie zmieni status wanna-build. W takim przypadku 
+          wysyłana jest wiadomość do autobuildera, który oznacza pakiet jako 
+          nie do budowania; sbuild widzi to i pomija budowanie (pomimo tego, 
+          wysyłany jest log z tym wynikiem, który opisuje zaistniałą
+          sytuację).
+      </dd>
+    </dl>
+
+<h2><a name="graphlink">Wersja graficzna</a></h2>
+<p>Aby zilustrować powyższe, utworzyliśmy <a
+href="wanna-build.png">schemat blokowy</a> opisanej procedury. Ponownie 
+zwracamy uwagę, że nie zawiera on wszystkich rzeczy opisanych w tym 
+dokumencie. 
+</p>
