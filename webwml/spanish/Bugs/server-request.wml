@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - servidor de peticiones" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.25"
+#use wml::debian::translation-check translation="1.29"
 
 <h1><a name="introduction">Introducción al servidor de peticiones del sistema de fallos</a></h1>
 
@@ -131,9 +131,121 @@ Pedir que se envíe la tarjeta de referencia de los servidores de correo
 como texto plano.
 </dd>
 
+<dt><a name="user"><code>user</code> <var>dirección</var></a></dt>
+<dd>
+Establece que <var>dirección</var> sea el <q>usuario</q> de todas las órdenes <code>usertag</code>
+que sigan.
+</dd>
+
+<dt><a name="usertag"><code>usertag</code> <var>númerodeinformedeerror</var>
+    [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>etiqueta</var>
+    [ <var>etiqueta</var> ... ]</a></dt>
+<dd>
+Permite definir etiquetas basadas en el usuario. La orden <code>usertag</code>
+funciona como la orden normal <code>tag</code>, excepto
+que le permite crear las etiquetas que desee. De manera predeterminada, 
+la dirección que aparece en la cabecera <code>From:</code> o <code>Reply-To:</code>
+de su correo será usada para establecer el usuario de <code>usertag</code>.
+</dd>
+
+<dt><a name="usercategory"><code>usercategory</code>
+     <var>nombre-categoría</var> [ <code>[hidden]</code> ]</a></dt>
+<dd>
+<p>
+Añade, actualiza o elimina una <code>usercategory</code> (categoría de usuario). 
+De manera predeterminada la categoría de usuario es visible; si el argumento opcional
+<code>[hidden]</code> se especifica, entonces no será visible, pero seguirá estando
+disponible para ser referenciada desde otras definiciones de categoría de usuario.
+</p>
+
+<p>
+Esta orden es algo especial, pues cuando se añade o actualiza una categoría
+de usuario se requiere un cuerpo siguiendo inmediatamente a la orden.
+Si el cuerpo está vacío, se borrará la categoría de usuario. El cuerpo
+se compone de líneas comenzando con un número cualquiera de espacios. Cada
+categoría debería comenzar con una línea con <code>*</code>, y opcionalmente
+puede estar seguida de varias líneas de selección que comienzan por <code>+</code>. 
+El formato completo es como sigue:
+</p>
+
+<div>
+* <var>nombre-categoría-1</var><br />
+* <var>Título de categoría 2</var>
+  [ <code>[</code><var>prefijo-de-selección</var><code>]</code> ]<br />
+&nbsp;+ <var>Título de selección 1</var> <code>[</code>
+        [ <var>orden</var><code>:</code> ]
+        <var>selección-1</var> <code>]</code><br />
+&nbsp;+ <var>Título de selección 2</var> <code>[</code>
+        [ <var>orden</var><code>:</code> ]
+        <var>selección-2</var> <code>]</code><br />
+&nbsp;+ <var>Título de selección predeterminado</var> <code>[</code>
+        [ <var>orden</var>: ] <code>]</code><br />
+* <var>nombre-categoría-3</var><br />
+</div>
+
+<p>
+Los <var>nombres-categoría</var> que aparecen en la orden y en el cuerpo
+se usan para hacerse referencias entre ellos, para evitar extenderse innecesariamente.
+Los <var>Títulos de Categoría</var> se usan en el resumen del informe del paquete.
+</p>
+
+<p>
+El <var>prefijo-de-selección</var> opcional se antepone a cada
+<var>selección</var> en cada entrada de la sección de categoría. La primera
+<var>selección</var> que coincide muestra el informe de fallo bajo ella.
+El parámetro opcional de <var>orden</var> especifica la posición al mostrar
+las entradas seleccionadas, esto es útil cuando se usa un patrón que selecciona
+un conjunto mayor que los anteriores pero que necesita mostrarse antes que ellos.
+</p>
+
+<p>
+El <var>nombre-categoría</var> <code>normal</code> tiene el significado especial
+de ser la vista predeterminada, así que reemplazándolo con una categoría de usuario
+diferente de <var>nombrepaquete</var>@packages.debian.org el usuario puede cambiar
+la clasificación predeterminada para un paquete.
+</p>
+
+<p>
+Ejemplo de uso:
+</p>
+
+<pre>
+    usercategory dpkg-program [hidden]
+     * Program
+       + dpkg-deb [tag=dpkg-deb]
+       + dpkg-query [tag=dpkg-query]
+       + dselect [package=dselect]
+
+    usercategory new-status [hidden]
+     * Status [pending=]
+       + Outstanding with Patch Available [0:pending+tag=patch]
+       + Outstanding and Confirmed [1:pending+tag=confirmed]
+       + Outstanding and More Information Needed [pending+tag=moreinfo]
+       + Outstanding and Forwarded [pending+tag=forwarded]
+       + Outstanding but Will Not Fix [pending+tag=wontfix]
+       + Outstanding and Unclassified [2:pending]
+       + From other Branch [absent]
+       + Pending Upload [pending-fixed]
+       + Fixed in NMU [fixed]
+       + Resolved [done]
+       + Unknown Pending Status []
+
+    \# Change default view
+    usercategory normal
+      * new-status
+      * severity
+
+    usercategory old-normal
+      * status
+      * severity
+      * classification
+</pre>
+</dd>
+
+
 <dt><code>help</code></dt>
 <dd>
-Pedir que se envíe este documento de ayuda por correo como texto plano.
+Pedir que se envíe este documento de ayuda por correo como texto sencillo.
 </dd>
 
 <dt><a name="stopprocessing"></a><code>quit</code></dt>
