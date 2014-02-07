@@ -64,7 +64,7 @@
 # NOTE defined as 'inddpcvs' although now the repo is SVN
 # kept to minimise the number of changes in the pages
 <define-tag inddpcvs whitespace=delete>
-  <preserve name index baselink langs formats path loc txt version cvsname naming />
+  <preserve name index baselink langs formats path loc txt version cvsname naming srctype vcstype vcsweb vcsrepo />
   <set-var %attributes />
   <if <get-var name /> "" <exit message="you must pass a name to the inddpcvs tag" /> />
   #   Default values
@@ -103,7 +103,6 @@
     </when>
     :
     <foreach format formats>
-     <when <not <match <get-var format /> "nosvn" action=report />>>
       <set-var extlang=<get-var lang /> />
       <when <match <get-var naming /> "locale" />>
       	<when <match <get-var format /> "(dvi|epub|txt|pdf|ps)" />>
@@ -136,22 +135,47 @@
 #      <if <match <get-var format /> "(html|txt|pdf|ps)" action=report /> ""
 #        <exit message="you must pass a valid format to the inddpcvs tag" />
 #      />
-     </when>
     </foreach>
     </li>
   </foreach>
 
   </ul>
  </when>
-
- <when <not <match <get-var format /> "nosvn" action=report />>>
-  <p>
-  <set-var ddp_pkg_loc="<a href="http://anonscm.debian.org/viewvc/ddp/manuals/trunk/<get-var cvsname />/"><get-var cvsname /></a>" />
-  #   The ddp_pkg_loc variable contains 
-  #      <a href="http://anonscm.debian.org/viewvc/ddp/manuals/trunk/manuals.sgml/[package]/">[package]</a>
-  <gettext domain="doc">Use <a href="cvs">SVN</a> to download the SGML source text for <get-var ddp_pkg_loc />.</gettext>
+# DDP Subversion repo access (used)
+ <when <match <get-var vcstype /> "ddp" action=report />>
+  <set-var vcsweb="http://anonscm.debian.org/viewvc/ddp/manuals/trunk/<get-var cvsname />/" />
+  <set-var vcsrepo="svn://svn.debian.org/svn/ddp/manuals/trunk/<get-var cvsname /> <get-var cvsname />" />
+  <p><gettext domain="doc">The latest <get-var srctype /> source is available through the <a href="http://www.debian.org/doc/cvs">Subversion</a> repository.</gettext>
+  <ul>
+    <li><gettext domain="doc">Web interface: </gettext><a href="<get-var vcsweb />"><get-var vcsweb /></a></li>
+    <li><gettext domain="doc">VCS interface: </gettext><tt>svn co <get-var vcsrepo /></tt></li>
+  </ul></p>
  </when>
-  <restore name index baselink langs formats path loc txt version cvsname naming />
+# Generic CVS repo access (unused)
+ <when <match <get-var vcstype /> "cvs" action=report />>
+  <p><gettext domain="doc">The latest <get-var srctype /> source is available through the <a href="http://packages.debian.org/cvs">Cvs</a> repository.</gettext>
+  <ul>
+    <li><gettext domain="doc">Web interface: </gettext><a href="<get-var vcsweb />"><get-var vcsweb /></a></li>
+    <li><gettext domain="doc">VCS interface: </gettext><tt>cvs -d <get-var vcsrepo /></tt></li>
+  </ul></p>
+ </when>
+# Generic Subversion repo access (unused)
+ <when <match <get-var vcstype /> "svn" action=report />>
+  <p><gettext domain="doc">The latest <get-var srctype /> source is available through the <a href="http://packages.debian.org/subversion">Subversion</a> repository.</gettext>
+  <ul>
+    <li><gettext domain="doc">Web interface: </gettext><a href="<get-var vcsweb />"><get-var vcsweb /></a></li>
+    <li><gettext domain="doc">VCS interface: </gettext><tt>svn co <get-var vcsrepo /></tt></li>
+  </ul></p>
+ </when>
+# Generic Git repo access (used)
+ <when <match <get-var vcstype /> "git" action=report />>
+  <p><gettext domain="doc">The latest <get-var srctype /> source is available through the <a href="http://packages.debian.org/git">Git</a> repository.</gettext>
+  <ul>
+    <li><gettext domain="doc">Web interface: </gettext><a href="<get-var vcsweb />"><get-var vcsweb /></a></li>
+    <li><gettext domain="doc">VCS interface: </gettext><tt>git clone <get-var vcsrepo /></tt></li>
+  </ul></p>
+ </when>
+  <restore name index baselink langs formats path loc txt version cvsname naming srctype vcstype vcsweb vcsrepo />
 </define-tag>
 
 <define-tag inbfdcvs>
