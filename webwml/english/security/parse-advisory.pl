@@ -112,7 +112,7 @@ foreach $l (<ADV>) {
       $mi++;
     }
   }
-  $headersnearingend++ if ($l =~ /^Debian-specific:/);
+  $headersnearingend++ if ($l =~ /^Vulnerability  :/);
   if ($headersnearingend && $l =~ /^\s*$/) {
     $mi++;
     $headersnearingend = 0;
