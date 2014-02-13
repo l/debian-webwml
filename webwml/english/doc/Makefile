@@ -22,7 +22,8 @@ user-manuals.$(LANGUAGE).html: user-manuals.wml $(TEMPLDIR)/ddp.wml \
   $(ENGLISHSRCDIR)/doc/manuals.defs $(ENGLISHSRCDIR)/doc/user-manuals.defs
 devel-manuals.$(LANGUAGE).html: devel-manuals.wml $(TEMPLDIR)/ddp.wml \
   $(ENGLISHSRCDIR)/doc/manuals.defs $(ENGLISHSRCDIR)/doc/devel-manuals.defs
-misc-manuals.$(LANGUAGE).html: misc-manuals.wml $(TEMPLDIR)/ddp.wml $(ENGLISHSRCDIR)/doc/manuals.defs
+misc-manuals.$(LANGUAGE).html: misc-manuals.wml $(TEMPLDIR)/ddp.wml \
+  $(ENGLISHSRCDIR)/doc/manuals.defs $(ENGLISHSRCDIR)/doc/misc-manuals.defs
 
 ifeq "$(LANGUAGE)" "en"
 
