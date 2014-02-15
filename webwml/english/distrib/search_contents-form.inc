@@ -3,7 +3,7 @@
 
 <bind-gettext-domain domain="distrib" />
 
-<form method="GET" action="http://packages.debian.org/search">
+<form method="GET" action="//packages.debian.org/search">
 <p>
 <input type="hidden" name="searchon" value="contents" />
 <label for="keyword"><gettext domain="distrib">Keyword</gettext>:</label>
