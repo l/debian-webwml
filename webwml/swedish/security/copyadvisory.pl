@@ -202,6 +202,7 @@ while (<SRC>)
 	s/\bSeveral vulnerabilities have been discovered in /Man har upptäckt flera sårbarheter i /;
 	s/an unbranded version of the Firefox browser/en varumärkesfri version av webbläsaren Firefox/;
 	s/an unbranded version of the /en varumärkesfri version av /;
+	s/directory traversal/katalogtraversering/;
 	
 	print DST $_;
 }
