@@ -1,0 +1,48 @@
+#use wml::debian::translation-check translation="1.1"
+<define-tag description>サービス拒否</define-tag>
+<define-tag moreinfo>
+<p>Alvaro Munoz さんが、Spring フレームワークに XML 外部エンティティ
+(XXE) インジェクションを発見しました。これを利用して他のサイトでの
+CSRF や DoS 攻撃を実施することが可能です。</p>
+
+<p>Spring OXM ラッパーは JAXB unmarshaller
+利用時にエンティティ解決を無効化する属性を何も用意していませんでした。
+unmarshaller に渡す可能性のあるソースの実装は4つあります:</p>
+
+<ul>
+<li>DOMSource</li>
+<li>StAXSource</li>
+<li>SAXSource</li>
+<li>StreamSource</li>
+</ul>
+
+<p>DOMSourceでは XML はユーザコードにより既に解析され、そのコードが
+XXE に対する防護を担当します。</p>
+
+<p>StAXSource では XMLStreamReader がユーザコードにより既に作成され、そのコードが
+XXE に対する防護を担当します。</p>
+
+<p>SAXSource と StreamSource では Spring
+がデフォルトで外部エンティティを処理していたために結果としてこの脆弱性が発生しました。</p>
+
+<p>この問題は外部エンティティ処理をデフォルトで無効化し、
+その機能を必要とするユーザには信頼できるソースから提供された
+XML を処理できるオプションを追加することで解決しています。</p>
+
+<p>さらに、ユーザにより提供された XML を Spring MVC
+が外部エンティティ解決を無効化せずに JAXB と StAX XMLInputFactory
+を組み合わせて処理していることが確認されています。
+この場合外部エンティティ解決は無効化されます。</p>
+
+<p>安定版 (stable) ディストリビューション (wheezy)
+では、この問題はバージョン 3.0.6.RELEASE-6+deb7u1 で修正されています。</p>
+
+<p>不安定版 (unstable) ディストリビューション (sid)
+では、この問題はバージョン 3.0.6.RELEASE-10 で修正されています。</p>
+
+<p>直ちに libspring-java パッケージをアップグレードすることを勧めます。</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2014/dsa-2842.data"
+
