@@ -1,0 +1,109 @@
+#use wml::debian::translation-check translation="1.2" mindelta="1"
+<define-tag description>flere sårbarheder</define-tag>
+<define-tag moreinfo>
+<p>Forskellige sårbarheder blev opdaget i PostgreSQL:</p>
+
+<ul>
+ <li><a href="http://security-tracker.debian.org/tracker/CVE-2014-0060">CVE-2014-0060</a> 
+    Shore up GRANT ... WITH ADMIN OPTION-begrænsinger (Noah Misch)
+
+    <p>At grant'e en rolle uden ADMIN OPTION har til formål at forhindre 
+    grant'eren i at tilføje eller fjerne medlemmer fra den grantede rolle, men 
+    begrænsningen kunne let omgås ved først at foretage en SET ROLE.  
+    Sikkerhedspåvirkningen gælder primært det faktum, at et rollemedlem kunne 
+    tilbagetrække andres adgang, imodsætning til grant'erens ønsker.  
+    Uautoriseret tilføjelse af rollemedlemmer er en mindre bekymring, da et 
+    ikke-samarbejdende rollemedlem allerede kunne tildele de fleste af sine 
+    rettigheder ved at oprette views eller SECURITY 
+    DEFINER-funktioner.</p></li>
+
+ <li><a href="http://security-tracker.debian.org/tracker/CVE-2014-0061">CVE-2014-0061</a> 
+    Forhindrer rettighedsforøgelse vha. manuelle kald til 
+    PL-valideringsfunktioner (Andres Freund)
+
+    <p>PL-valideringsfunktionernes primære rolle er at blive kaldt implicit 
+    under CREATE FUNCTION, men de er også almindelige SQL-funktioner, som en 
+    bruger kan kalde eksplicit.  Der blev ikke kontrollet for kald til en 
+    valideringsfunktion faktisk skrevet i et andet sprog, og kunne dermed 
+    udnyttes til rettighedsforøgelsesformål.  Rettelsen involverer tilføjelse af 
+    et kald til en rettighedskontrolfunktion i hver valideringsfunktion.  
+    Ikke-grundlæggede procedurale sprog skal også foretage denne ændring af 
+    deres egne valideringsfunktioner, om nogen.</p></li>
+
+ <li><a href="http://security-tracker.debian.org/tracker/CVE-2014-0062">CVE-2014-0062</a> 
+    Undgår flere navneopslag under tabel- og indeks-DDL 
+    (Robert Haas, Andres Freund)
+
+    <p>Hvis navneopslagene drager forskellige konklussioner på grund af 
+    sideløbende aktivitet, udfører vi måske nogle dele af DDL'en på en anden 
+    tabel end de øvrige dele.  I hvert fald i tilfælde af CREATE INDEX, kunne 
+    det udnyttes til at medføre rettighedskontroller mod en anden tabel, end 
+    indeksoprettelsen, hvilket muliggjorde et 
+    rettighedsforøgelsesangreb.</p></li>
+
+ <li><a href="http://security-tracker.debian.org/tracker/CVE-2014-0063">CVE-2014-0063</a>
+    Forhindrer bufferoverløb med lange datetime-strenge (Noah Misch)
+
+    <p>Konstanten MAXDATELEN var for lille til den længst mulige værdi i 
+    typeintervallet, hvilket muliggjorde et bufferoverløb i interval_out().  
+    Selv om datatime-inddatafunktioner mere omhyggeligt prøvede at forhindre 
+    bufferoverløb, var begrænsningen kort nok til at medføre at de afviste 
+    nogle gyldige inddata, så som inddata indeholdende et meget langt 
+    tidszonenavn.  Biblioteket ecpg indeholdt disse tre sårbarheder, samt 
+    nogle af sine egne.</p></li>
+
+ <li><a href="http://security-tracker.debian.org/tracker/CVE-2014-0064">CVE-2014-0064</a>
+    Forhindrer bufferoverløb på grund af heltalsoverløb i størrelsesberegninger 
+    (Noah Misch, Heikki Linnakangas)
+
+    <p>Flere funktioner, primært typeinddatafunktioner, begrengede en 
+    allokeringsstørrelse uden at kontrollere for overløb.  Hvis et overløb 
+    opstod, blev en for lille buffer allokeret og skrevet ud over.</p></li>
+
+ <li><a href="http://security-tracker.debian.org/tracker/CVE-2014-0065">CVE-2014-0065</a>
+    Forhindrer overløb af buffere med faste størrelser 
+    (Peter Eisentraut, Jozef Mlich)
+
+    <p>Brug strlcpy() og beslægtede funktioner til at levere en klar garanti for 
+    at buffere med faste størrelser ikke overløbes.  I modsætning til de 
+    foregående punkter, er det uklart hvorvidt der her er tale om aktuelle 
+    problemstillinger, da de i de fleste tilfælde lader til at være tidligere 
+    begrænsninger på inddatastrenges størrelser.  Ikke desto mindre forekommer 
+    det fornuftigt at få alle denne types Coverity-advarsler til at 
+    forstumme.</p></li>
+
+ <li><a href="http://security-tracker.debian.org/tracker/CVE-2014-0066">CVE-2014-0066</a>
+    Undgår nedbrud hvis crypt() returnerer NULL (Honza Horak, Bruce Momjian)
+
+    <p>Der er relativt få situationer hvor crypt() kan returnere NULL, men 
+    contrib/chkpass gik ned i disse tilfælde.  Et tilfælde, hvor det i praksis 
+    kunne være et problem, er hvis libc er opsat til at nægte at udføre 
+    ikke-godkendte hashing-algoritmer (fx <q>FIPS mode</q>).</p></li>
+
+ <li><a href="http://security-tracker.debian.org/tracker/CVE-2014-0067">CVE-2014-0067</a>
+    Dokumenterer risici ved make-check i regressionstestvejledningen 
+    (Noah Misch, Tom Lane)
+
+    <p>De den midlertidige server, der startes af make-check, anvender 
+    <q>trust</q>-autentifikation, kunne en anden bruger på denne samme maskine 
+    forbinde sig med den som databasesuperbruger, og dermed potentielt udnytte 
+    rettighederne hørende til styresystemsbrugeren, som iværksatte testene. 
+    I en fremtidig udgivelse vil der formentlig blive indført ændringer til 
+    testprocedurerne, for at forhindre denne risiko, men først er det nødvendigt 
+    med noget offentlig debat derom.  Så i øjeblikket advares man mod at 
+    anvende make-check, når der på samme maskine er brugere, som man ikke 
+    har tillid til.</p></li>
+
+</ul>
+
+<p>I den stabile distribution (wheezy), er disse problemer rettet i
+version 9.1_9.1.12-0wheezy1.</p>
+
+<p>I den ustabile distribution (sid), er disse problemer rettet i
+version 9.3.3-1 of the postgresql-9.3 package.</p>
+
+<p>Vi anbefaler at du opgraderer dine postgresql-9.1-pakker.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2014/dsa-2865.data"
