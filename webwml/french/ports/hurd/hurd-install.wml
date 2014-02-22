@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd&nbsp;&ndash;&nbsp;Configuration" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.114" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.117" maintainer="David Prévot"
 
 # Translators:
 # Jérome Abela, 1999.
@@ -45,7 +45,7 @@ avec la permission appropriée par une autorité, ou être détruits.
 <p>
 Être familiarisé avec l'environnement Unix (et en particulier l'espace
 utilisateur GNU, que l'on trouve dans des variantes populaires telles que
-GNU/Linux) est un impératif pour se sentir à l'aise avec GNU. Avoir de
+GNU/Linux), est un impératif pour se sentir à l'aise avec GNU. Avoir de
 l'expérience avec les outils Debian sera un atout inestimable pour la
 configuration et la maintenance d'une machine sous GNU/Hurd.
 </p>
@@ -513,10 +513,10 @@ Ici, <code>settrans</code> reçoit plusieurs options. Les deux premières,
 <var>fg</var>, forcent tous les traducteurs existants à disparaître. Les deux
 suivantes, <var>ap</var>, créent les traducteurs actifs et passifs. En
 rendant un traducteur actif, nous verrons immédiatement tous les messages
-d'erreur sur <tt>stderr</tt>. Ce dernier sauvegarde le traducteur et ses
-paramètres dans le nœud de façon à pouvoir le relancer plus tard de manière
+d'erreur sur <tt>stderr</tt>. La dernière option sauvegarde le traducteur et
+ses paramètres dans le nœud de façon à pouvoir le relancer plus tard de manière
 transparente (c'est-à-dire en ayant des paramètres persistants même après un
-réamorçage). Les options sont suivies d'un nœud auquel le traducteur sera
+réamorçage). Les options sont suivies du nœud auquel le traducteur sera
 attaché, puis du programme (c'est-à-dire le traducteur) à lancer et de tous les
 paramètres à lui passer. L'option <var>-i</var> est l'interface sur laquelle
 <code>pfinet</code> écoutera, <var>-a</var> est l'adresse IP, <var>-g</var>
@@ -524,7 +524,7 @@ la passerelle et <var>-m</var> le masque de sous-réseau.
 </p>
 
 <p>
-Veillez à ajouter des serveurs de nom de domaines à votre fichier
+Veillez à ajouter des serveurs de noms de domaine à votre fichier
 <tt>/etc/resolv.conf</tt>&nbsp;:
 </p>
 
@@ -681,7 +681,7 @@ href="hurd-doc-translator">documentation sur les traducteurs</a>.
 <p>
 Pour monter un système de fichiers NFS, le traducteur <code>/hurd/nfs</code> est
 utilisé. Quand il n'est pas lancé par le superutilisateur, le traducteur se
-connecte au serveur en utilisant un port au-dessus de&nbsp;1023. Par défaut,
+connecte au serveur en utilisant un numéro de port supérieur à 1023. Par défaut,
 GNU/Linux rejettera cela. Pour dire à GNU/Linux d'accepter les connexions
 provenant d'un port non réservé, veuillez ajouter l'option
 <var>insecure</var> à la ligne d'export. Voici un exemple de fichier
@@ -724,7 +724,7 @@ settrans ~/mnt /hurd/iso9660fs CD_image.iso
 
 <p>
 Et c'est tout à fait sûr : le traducteur <code>iso9660fs</code> est
-exécuté sous l'identité du l'utilisateur, et non du superutilisateur.
+exécuté sous l’identité du l’utilisateur et non du superutilisateur.
 
 Vous pouvez même mettre en place votre propre traducteur
 pour n'importe quel type de système de fichier.
@@ -919,7 +919,7 @@ et <code>/dev/cons/mouse</code> existent.
 <p>
 Vous devez exécuter <tt>dpkg-reconfigure x11-common</tt> pour
 permettre aux utilisateurs de démarrer Xorg, parce que
-l'enveloppe de X ne connait rien sur les consoles Hurd et Mach.
+l'enveloppe de X ne connait rien des consoles Hurd et Mach.
 </p>
 
 <p>
@@ -937,14 +937,11 @@ EndSection
 
 <p>
 Vous aurez besoin de plusieurs paquets de X. Vous pouvez commencer par
-<code>xorg</code> et un gestionnaire de fenêtres : <code>rxvt</code>, <code>twm</code>,
-<code>fvwm</code> ou <code>wmaker</code>.
-</p>
-
-<p>
-X.Org devrait fonctionner sans configuration directement après l'installation.
-
-Vous risquez néanmoins de devoir utiliser le pilote VESA dans certains cas.
+<code>xorg</code>, <code>rxvt</code> et un gestionnaire de fenêtres : <code>twm</code>,
+<code>fvwm</code>, <code>wmaker</code>,<code>icewm</code>,
+<code>openbox</code>, etc. Si vous voulez que X se lance au démarrage, vous
+devez installer un gestionnaire de sessions. <code>xdm</code> fonctionne très
+bien.
 </p>
 
 <p>
@@ -954,8 +951,14 @@ Enfin, exécutez <code>startx /usr/bin/votre_gestionnaire_de_fenêtres</code>.
 <h3>Le mot de la fin</h3>
 
 <p>
-Le <q>System V</q> rc n'est pas encore utilisé.
-
-Pour éteindre la machine,
+Le <q>System V</q> rc n'est pas utilisé par défaut. Pour éteindre votre machine, 
 utilisez simplement <code>halt</code> ou <code>reboot</code>.
+<p>
+
+<p>
+Pour utiliser le <q>System V</q> standard, veillez à mettre à niveau votre
+sysvinit à la version 2.88dsf-48 ou supérieure, puis exécutez
+<code>update-alternatives --config runsystem</code>, choisissez
+<code>runsystem.sysv</code>, et redémarrez avec <code>reboot-hurd</code> pour
+terminer le passage à <q>System V</q>.
 </p>
