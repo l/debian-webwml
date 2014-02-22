@@ -120,6 +120,7 @@ while (<SRC>)
 	s/>insufficient input sanitising</>otillräcklig städning av indata</;
 	s/>insufficient input validation</>otillräcklig validering av indata</;
 	s/>programming error</>programmeringsfel</;
+	s/>certificate verification flaw</>problem vid kontroll av certifikat</;
 	s/cross-site scripting vulnerability/serveröverskridande skriptsårbarhet/;
 	s/>various</>diverse</;
 	s/(Several|Multiple) vulnerabilities/Flera sårbarheter/;
