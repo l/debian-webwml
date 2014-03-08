@@ -1,0 +1,438 @@
+#use wml::debian::template title="Używanie CVS z pakietami Debiana"2
+#use wml::debian::translation-check translation="1.8"
+
+<p>Celem tego krótkiego dokumentu jest dostarczenie zwięzłej
+pomocy w konwersji pakietów, aby można było nimi zarządzać 
+przy pomocy CVS. Przedstawione tutaj zagadnienia prawdopodobnie będą 
+interesujące tylko dla nielicznej grupy osób, które nie są zaznajomione 
+z CVS i zarządzaniem wersjami. Istnieje również skrypt w 
+<code>/usr/share/doc/cvs-buildpackage</code> nazwany 
+<code>cvs-pkginit</code> (zarówno skryp jak i podręcznik są 
+spakowane), który wyświetla streszczenie tego dokumentu.
+
+<p>Na przykład, aby dokonać konwersji pakietu foo, wersja bar1, 
+Debian rewizja 3, należy wykonać:
+<pre>
+% cvs-pkginit foo bar1 3
+</pre>
+i spojrzeć na streszczenie.
+
+<pre>
+Oldenburg, 6/2/97                           Joey (joey@debian.org)
+                                            / Martin Schulze   /
+Mobile,                                     Manoj Srivastava
+                                            srivasta@debian.org
+</pre>
+
+<p>Uwaga: w poniższym opisie wyrazy w nawiasach trójkątnych &lt;&gt;
+oznaczają miejsca, które muszą być zmieniane dla każdego przypadku, 
+pozostałe opisy muszą być brane dosłownie. Przykładowo, mówiąc o 
+pakiecie ze źródłem w wersji 2.1.82,  &lt;$version&gt; oznacza 
+2.1.82, a upstream_version_&lt;$version | tr  . _&gt; oznacza 
+upstream_version_2_1_82.
+
+<ol>
+<li>Konfiguracja CVS
+
+<pre>
+   $ CVSROOT=/where/your/repository/will/be
+   $ export CVSROOT
+   $ cvs init
+   $ mkdir $CVSROOT/debian
+</pre>
+
+   <p>Powyższa konfiguracja pozwala na oddzielenie pakietów Debiana od 
+   innych danych w repozytorium, zarówno obecnie jak i w przyszłości. 
+   Nawet jeśli teraz wydaje się, że nie będziemy potrzebować CVS, 
+   lepiej na początku określić repozytorium, niż żałować w przyszłości 
+   (późniejsze przenoszenie rzeczy w repozytorium to koszmar).
+
+   <p>Jeżeli z repozytorium będzie korzystało więcej osób, należy się 
+   upewnić czy będą oni mogli modyfikować zawartość repozytorium 
+   przy użyciu CVS. Należy wybrać grupę (lub zestaw grup), która 
+   ma dostęp do tej części repozytorium i ustawić odpowiednie 
+   uprawnienia:
+
+<pre>
+   \# chgrp &lt;archive&gt; $CVSROOT/debian
+   \# chmod g+ws    $CVSROOT/debian
+</pre>
+
+   <p>Daje do pewność, że członkowie grupy archive mogą 
+   skonfigurować repozytorium. Należy się jeszcze upewnić, 
+   że odpowiednie grupy ludzi mogą modyfikować odpowiednie 
+   części repozytorium.
+
+<pre>
+   \# mkdir $CVSROOT/debian/&lt;package1&gt;
+   \# chgrp &lt;group1&gt; $CVSROOT/debian/&lt;package1&gt;
+   \# chmod g+ws     $CVSROOT/debian/&lt;package1&gt;
+   \# mkdir $CVSROOT/debian/&lt;package2&gt;
+   \# chgrp &lt;group2&gt; $CVSROOT/debian/&lt;package2&gt;
+   \# chmod g+ws     $CVSROOT/debian/&lt;package2&gt;
+</pre>
+
+   <p>Jako zwykły użytkownik należy ustawić swoje repozytorium CVS 
+   jako publiczne przy użyciu 
+   <kbd>"-d /where/your/repository/will/be"</kbd> albo 
+   dodając następujący fragment do swojego profilu.
+
+<pre>
+   $ CVSROOT=/where/your/repository/will/be
+   $ export CVSROOT
+</pre>
+
+
+<li>Używanie modułów
+
+<pre>
+   \# cvs checkout CVSROOT
+   \# cd CVSROOT
+   \# vi modules
+</pre>
+
+   <p>W poniższych poleceniach &lt;package&gt; oznacza nazwę pakietu 
+   taką, jaka jest w pliku debian/changelog. 
+
+   <p>Należy dodać następujące linie, pierwsza jest niezbędna, 
+   druga może być powielana a jej znaczenie wynika z opisu:
+
+<pre>
+   modules   CVSROOT modules
+   &lt;package&gt; debian/&lt;package&gt;
+</pre>
+
+<pre>
+   \# cvs commit -m 'Define first modules'
+</pre>
+
+
+<li>Przygotowania do korzystania z CVS
+
+   <p>Należy dołączyć gałąź ze źródłem przy użyciu poniższych
+   poleceń (zakładamy że źródło jest już zdebianizowane i 
+   znajduje się w pliku orig.tar.gz). Należy pamiętać, aby zaimportować 
+   źródła z przełącznikiem -ko (take care of binary files) ale nie 
+   dokonywać w nich zmian. Ponadto numery epoch (numer przed dwukropkiem 
+   w numerze wersji pakietu, jeżeli nie podano przyjmowana jest wartość 0) 
+   są ignorowane podczas określania tagu CVS z nazwą (numery te są 
+   zazwyczaj stosowane do zmiany opinii dpkg na temat kolejności pakietu 
+   i na ogół nie są istotne dla tagów CVS).
+
+   <p>Należy przejść do katalogu, gdzie znajduje się rozpakowane, 
+   zdebianizowane, deweloperskie drzewo ze źródłami, które będzie 
+   dodane do CVS (zazwyczaj nie jest to katalog CVSROOT).
+
+   <p>POWTÓRZMY: Poniżej &lt;package&gt; oznacza nazwę pakietu zgodną z 
+   nazwą zapisaną w pliku debian/changelog.
+
+<pre>
+   $ cd /where/your/source/tree/resides/
+   $ tar zvfx &lt;package&gt;_&lt;version&gt;.orig.tar.gz
+   $ cd &lt;package&gt;_&lt;version&gt;.orig
+   $ cvs import -ko -m 'Import of bare source' \
+       debian/&lt;package&gt; source-dist upstream_version_&lt;version|tr . _&gt;
+</pre>
+
+   <p>Można zmienić tag gałęzi źródła na dowolny. (opiekun 
+   cvs-buildpackage zwykle używa tagu źródła (który jest 
+   analizowany w nadmiarze ;-))).
+
+   <p>Jeżeli CVS był ustawiany z poziomu konta root i nie został
+   ustawiony zapis dla grupy, należy utworzyć $CVSROOT/debian/&lt;package&gt;
+   jako root i zmienić w repozytorium ustawienia grupy lub użytkownika
+   na odpowiednią grupę lub użytkownika. Podczas importu CVS wyświetli 
+   ostrzeżenie, że nie można utworzyć katalogu debian/&lt;package&gt;, 
+   ale jest to prawidłowe działanie.
+
+   <p>Następny krok to sprawdzenie całego drzewa i wdrożenie wszystkich 
+   zmian. 
+
+<pre>
+   $ cd /where/your/source/tree/will/reside
+   $ cvs checkout &lt;package&gt;
+</pre>
+
+   <p>Jeżeli już utworzono zdebianizowaną wersją ale wcześniej nie 
+   używano CVS, może się przydać uruchomienie następujących 
+   poleceń aby wdrożyć wprowadzone zmiany. Po wykonaniu poleceń 
+   należy opisać to wydanie, aby w przyszłości można było sprawdzić
+   co zostało zmienione.
+
+<pre>
+   $ cd /where/your/source/tree/resides/&lt;package&gt;-&lt;version&gt;
+   $ diff -qrBbw . /where/your/source/tree/will/reside/&lt;package&gt;/ | grep -v CVS
+   $ FILES_CHANGED_LOCALLY="&lt;output from above&gt;"
+   $ tar cf - $FILES_CHANGED_LOCALLY | \
+       tar -C /where/your/source/tree/will/reside/&lt;package&gt; -xvpf -
+   $ cd /where/your/source/tree/will/reside/&lt;package&gt;
+</pre>
+
+   <p>Należy się upewnić, że plik debian/rules ma ustawiony 
+   atrybut wykonalności, ponieważ dzięki temu po eksporcie jest on 
+   plikiem wykonywalnym i nie będzie problemów z uruchomieniem 
+   dpkg-buildpackage na wyeksportowanym źródle. Ogólnie rzecz 
+   biorąc, przed dodaniem plików do repozytorium CVS, należy się 
+   upewnić że <b>wszystkie</b> mają ustawione odpowiednie prawa. 
+
+<pre>
+   $ cd /where/your/source/tree/will/reside/&lt;package&gt;
+   $ cvs add debian &lt;any other files added as well&gt;
+</pre>
+
+   <p>Ponadto należy pamiętać, aby ręcznie dodać wszystkie dodatkowe 
+   pliki, które powinny być umieszczone w repozytorium, zwłaszcza 
+   wszystkie pliki w podkatalogu debian. Dodatkowo należy zauważyć, 
+   że polecenie add w cvs <i>nie</i> działa rekurencyjnie, dlatego 
+   należy ręcznie dodać wszystkie istniejące katalogi 
+   (cd debian; cvs add *)
+
+   <p>Fajną rzeczą jest, że uruchomione polecenie cvs update 
+   pokaże status wszystkich plików w katalogu.
+
+<pre>
+   $ cd /where/your/source/tree/will/reside/&lt;package&gt;
+   $ cvs update
+</pre>
+
+   <p>Wynik może wyglądać następująco:
+<pre>
+       cvs update: Updating .
+       M Makefile
+       cvs update: Updating debian
+       A rules
+       ? example1
+</pre>
+   M oznacza, że plik został zmodyfikowany (musi być wysłany). 
+   A oznacza plik Dodany (musi być wysłany). ? oznacza, że CVS 
+   nic nie wie o danym pliku (może musi być dodany?). Po upewnieniu 
+   się, że niczego nie brakuje i że wszystkie pliki mają ustawione 
+   odpowiednie uprawnienia, pliki są gotowe do wysłania.
+
+<pre>
+   $ cd /where/your/source/tree/will/reside/&lt;package&gt;
+   $ cvs commit -m 'Made all debian changes'
+   $ cvs tag debian_version_&lt;version|tr . _&gt;-&lt;debian-revision|tr . _&gt; .
+</pre>
+
+   <p>Nowe drzewo źródła będzie znajdować się w katalogu, który nie 
+   zawiera numer wersji. Ale jako zobaczymy później, nie jest to 
+   problemem. 
+
+   <p>Jeśli zamiast tego katalog debian będzie tworzony od zera 
+   (może to być prostsze, choć mniej zautomatyzowane) należy:
+
+<pre>
+   $ mkdir debian
+</pre>
+
+   <p>Utworzyć wszystkie wymagane pliki debiana i dodać 
+   je do kontroli źródła.
+
+<pre>
+   $ cvs add debian
+   $ cd debian
+   $ cvs add *
+</pre>
+
+   <p>Po tych poleceniach następne sprawdzenia będą obejmowały 
+   wszystkie pliki.
+
+<pre>
+   $ cd /where/your/source/tree/will/reside/&lt;package&gt;
+   $ cvs commit -m &lt;some message&gt;
+</pre>
+
+<li>Przygotowanie wydania
+
+   <p>Zanim będzie można uruchomić niektóre polecenia Debiana, 
+   które zbudują pakiet, należy sprawdzić moduł bez podkatalogów
+   CVS. Wykonuje się to poleceniem `<kbd>export</kbd>'. Przede 
+   wszystkim jednak należy sprawdzić wszystkie modyfikacje i 
+   oznaczyć je numerem wydania. 
+
+<pre>
+   $ cvs commit -m &lt;message&gt;
+   $ cvs tag debian_version_&lt;version|tr . _&gt;-&lt;debian-revision|tr . _&gt;
+</pre>
+
+
+<li>Utworzenie wydania
+
+   <p>Można użyć mechanizmu cvs-buildpackage (opcja preferowana) albo 
+   ręcznie wykonać export. Potem pierwszym krokiem powinno być 
+   przetestowanie materiału cvs-buildpackage na sucho (należy 
+   się upewnić, że tagi pasują) w następujący sposób (należy 
+   mieć skonfigurowany /etc/cvsdeb.conf):
+
+<pre>
+   $ cvs-buildpackage -d -n -rsudo
+</pre>
+
+   <p>Następnie należy wykonać prawdziwe uruchomienie, pamiętając 
+   że program sudo może dać dostęp do uprawnień roota.
+
+<pre>
+   $ cvs-buildpackage -rsudo
+</pre>
+
+   <p>Lub wykonać to ręcznie:
+
+   <p>Sprawdzenie pakietu.
+
+<pre>
+   $ cvs export -d &lt;package&gt;-&lt;version&gt; \
+         -r debian_version_&lt;version|tr . _&gt;-&lt;debian-revision|tr . _&gt; \
+             &lt;package&gt;
+</pre>
+
+   <p>Teraz można przejść do normalnego mechanizmu eksportu wydania.
+
+
+<hr>
+
+   <p>Gotowe! Gratulacje! Oto kilka zadań, które można wykonać 
+   na drzewie ze źródłem:
+
+<hr>
+
+<li>Usuwanie pliku lub zmiana nazwy
+
+   <p>Normalny sposób aby przenieść plik, to skopiowanie starego pliku
+   (OLD) do nowego (NEW) a następnie wydać normalne polecenia CVS 
+   do usunięcia starego pliku (OLD) z repozytorium i dodania do niego 
+   nowego (NEW) (zarówno OLD jak i NEW powinny zawierać względną ścieżkę, 
+   np. `<kbd>foo/bar.c</kbd>').
+
+<pre>
+   $ mv OLD NEW
+   $ cvs remove OLD
+   $ cvs add NEW
+   $ cvs commit -m "Renamed OLD to NEW" OLD NEW
+</pre>
+
+   <p>To najprostszy sposób na przeniesienie pliku, nie jest 
+   podatny na błędy i zachowuje historię tego, co zostało 
+   zrobione. Należy podkreślić, że aby uzyskać dostęp do 
+   historii pliku należy określić starą lub nową nazwę, zależnie 
+   od tego do jakiej części historii chcemy mieć dostęp. 
+   Przykładowo, `<kbd>cvs log OLD</kbd>' zwraca log do czasu 
+   zmiany nazwy. 
+
+
+<li>Aktualizacja modułu poleceniem import
+
+   <p>Kiedy pojawi się nowa wersja źródła, należy ją zaimportować 
+   do repozytorium tym samym poleceniem `import', które było 
+   użyte do utworzenia repozytorium w pierwszym kroku. Jedyna 
+   różnica to taka, że należy ustawić inny tag dotyczący wydania 
+   oraz inną wiadomość.
+
+<pre>
+   $ cd /where/your/source/tree/will/reside/&lt;new source directory&gt;
+   $ cvs import -m 'Import new release' debian/&lt;package&gt; source-dist \
+         upstream_version_&lt;version|tr . _&gt;
+</pre>
+
+   <p>Teraz należy uwzględnić zmiany jakie zostały wprowadzone 
+   w nowej wersji. Najlepszy sposób, to przenieść kopię  
+   roboczą (opartą na starszej wersji źródła) i sprawdzić nową 
+   kopię pakietu <b>zawierającą</b> zmiany wprowadzone w 
+   kodzie źródłowym. Wykonuje się to następująco:
+
+<pre>
+   $ cd /where/your/source/tree/will/reside
+   $ mv &lt;package&gt; &lt;package&gt;.old
+   $ cvs checkout -jsource-dist:yesterday -jsource-dist &lt;package&gt;
+   $ cd /where/your/source/tree/will/reside/&lt;package&gt;
+</pre>
+
+   <p>Powyższe polecenie sprawdzi ostatnią rewizję &lt;package&gt;,
+   dołączając do kopii roboczej zmiany wprowadzone od wczoraj na gałęzi 
+   dostawcy `source-dist'. Jeżeli podczas łączenia pojawią się jakiekolwiek 
+   konflikty, powinny one zostać rozwiązane w normalny sposób. Następnie 
+   zmodyfikowane pliki mogą być przesłane.
+
+   <p>Używając daty, jak sugerowano wcześniej, zakładamy, że nie 
+   będziemy importować więcej niż jedno wydanie produktu dziennie. 
+   Jeżeli jednak będzie taka konieczność, można użyć zamiast daty 
+   czegoś takiego:
+
+<pre>
+   $ cvs checkout -jupstream_version_&lt;oldversion|tr . _&gt; \
+                  -jupstream_version_&lt;newversion|tr . _&gt; &lt;package&gt;
+</pre>
+
+   <p>W tym przypadku, oba powyższe polecenia są równoważne.
+
+   <p>Dla plików, które nie zostały zmodyfikowane lokalnie, nowo 
+   utworzona rewizja staje się rewizją główną.
+
+   <p>Tak więc należy sprawdzić czy wszystkie pliki zostały 
+   prawidłowo zaktualizowane. W szczególności należy pamiętać, aby 
+   zmienić plik debian/changelog!
+
+   <p>Jeżeli wszystko jest w porządku, można usunąć starą wersję 
+   katalogu roboczego. Należy się upewnić, że usuwany jest 
+   właściwy katalog!
+   
+<pre>
+   $ rm -rf ../&lt;package&gt;.old
+</pre>
+
+   <p>Teraz można przygotować wydanie.
+
+<li>Usuwanie drzewa źródłowego w celu zaoszczędzenia miejsca na dysku.
+
+   <p>Aby usunąć aktualne drzewo źródła zaleca się nie używać 
+   <kbd>rm -rf</kbd> tylko wykorzystać polecenie CVS, które dodatkowo 
+   sprawdzi, czy są jakieś lokalne zmiany, które jeszcze nie zostały 
+   wysłane. 
+
+<pre>
+   $ cd /where/your/source/tree/will/reside/
+   $ cvs release -d &lt;package&gt; 
+</pre>
+
+
+<li>Słownik
+
+<pre>
+   Tags		symboliczna nazwa wersji
+   Repository	Archiwum z plikami źródłowymi
+</pre>
+
+<li>Dodatek:
+
+ <p>A: KONWENCJE TAGÓW CVS
+
+<pre>
+ |=======================================================================|
+ |Wersja źródła        | &lt;version&gt;                                       |
+ |Wersja w Debianie    | &lt;revision&gt;                                      |
+ |Oryg.nazwa pliku tar | package_&lt;version&gt;.orig.tar.gz                   |
+ |Nazwa pakietu Debiana| package_&lt;version&gt;-&lt;revision&gt;_&lt;arch&gt;.deb         |
+ |Tag CVS Wydawcy      | upstream_version_&lt;version  | tr . _&gt;            |
+ |Aktualny tag CVS     | debian_version_&lt;revision | tr . _&gt;              |
+ |=======================================================================|
+</pre>
+
+ <p>Przykłady:
+<pre>
+ |=======================================================================|
+ |                     | upstream sources       | Debian only package    |
+ |=======================================================================|
+ |Wersja źródła        | 2.76                   | 3.38                   |
+ |Wersja w Debianie    | 1.2                    |                        |
+ |Oryg.nazwa pliku tar | make_2.76.orig.tar.gz  |                        |
+ |Nazwa pakietu Debiana| make_2.76-1.2_i386.deb | kpkg_3.38_i386.deb     |
+ |Tag CVS Wydawcy      | upstream_version_2_76  | upstream_version_3_38  |
+ |Aktualny tag CVS     | debian_version_2_76-1_2| debian_version_3_38    |
+ |=======================================================================|
+</pre>
+
+ <p>Należy pamiętać, że numer epoch jest ignorowany podczas określania 
+ tagu CVS z nazwą (numery te są zazwyczaj stosowane do zmiany opinii dpkg 
+ na temat kolejności pakietu i na ogół nie są istotne dla tagów CVS).
+
+</ol>
