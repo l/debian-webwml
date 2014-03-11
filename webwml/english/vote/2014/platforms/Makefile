@@ -2,7 +2,7 @@
 # please contact debian-www.
 
 WMLBASE=../../..
-CUR_DIR=vote/2013/platforms
+CUR_DIR=vote/2014/platforms
 SUBS=
 
 include $(WMLBASE)/Make.lang
