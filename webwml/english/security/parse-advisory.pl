@@ -79,6 +79,7 @@ foreach $l (<ADV>) {
     $desc = $2;
     $desc .= ' vulnerabilities' if $desc =~ /(several|multiple)\s*$/;
   }
+  if ($desc eq "") { $desc = "security update"; }
   if ($l =~ /^(Debian Bug\(?s?\)?)\s*: (.+)/i) {
       for $id (split (/,? /, $2)) {
 	  push @dbids, "Bug#".$id if ($id ne "none");
