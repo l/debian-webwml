@@ -112,7 +112,7 @@ foreach $l (<ADV>) {
       $mi++;
     }
   }
-  $headersnearingend++ if ($l =~ /^Vulnerability  :/);
+  $headersnearingend++ if ($l =~ /^Package        :/);
   if ($headersnearingend && $l =~ /^\s*$/) {
     $mi++;
     $headersnearingend = 0;
