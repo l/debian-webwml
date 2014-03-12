@@ -106,6 +106,7 @@ while (<SRC>)
 	s/missing input validation/manglende fornuftighedskontrol af inddata/;
 	s/Several vulnerabilities/Flere sårbarheder/;
 	s/several vulnerabilities/flere sårbarheder/;
+	s/security update/sikkerhedsopdatering/;
 	s/>several</>flere</;
 	s/This has been fixed in version/Dette er rettet i version/;
 	s/this problem has been fixed in/er dette problem rettet i/;
