@@ -97,6 +97,7 @@ while (<SRC>)
 	s/We recommend that you update your (.*) packages immediately/Vi rekommenderar att ni uppgraderar era $1-paket omedelbart/;
 	s/We recommend that you update your (.*) packages/Vi rekommenderar att ni uppgraderar era $1-paket/;
 	s/We recommend that you update your (.*) package/Vi rekommenderar att ni uppgraderar ert $1-paket/;
+	s/security update/säkerhetsuppdatering/;
 	s/exposure of sensitive information/exponering av känslig information/;
 	s/buffer overflows?/buffertspill/;
 	s/integer overflow/heltalsspill/;
