@@ -2,7 +2,7 @@
 #use wml::debian::recent_list
 #include "$(ENGLISHDIR)/devel/debian-installer/images.data"
 
-<h1 id="wheezy-rc3">Errata for <humanversion /></h1>
+<h1>Errata for <humanversion /></h1>
 
 <p>
 This is a list of known problems in the <humanversion /> release of the Debian
@@ -13,27 +13,26 @@ report</a> describing the problem.
 
 <dl class="gloss">
 
-	<dt>Installation of GRUB bootloader may fail if more than one disk device is available.</dt>
-	<dd>When there is more than one disk available during installation
-	(for example one hard disk and one USB stick, as it is commonly the case when
-	booting the installer from a USB stick), <code>grub-install</code> may run into
-	problems: it was reported several times, that the GRUB bootloader was
-	installed onto the USB stick instead of the hard disk containing the newly-installed system.
-	<br />
-	To avoid running into this, make sure to answer <q>No</q> when the following question
-	is asked during the installation process: <q>Install the GRUB boot loader to the
-	master boot record?</q>; it should be possible to specify the right device at the
-	next step: <q>Device for boot loader installation</q>.
-	<br />
-	If the installation finished successfully despite a wrong GRUB configuration, it should be
-	possible to recover using the rescue mode of the installer: chroot into the root filesystem,
-	mount any additional boot partition if applicable (like <code>/boot</code> and/or
-	<code>/boot/efi</code> for an EFI system, see <code>/etc/fstab</code>), and
-	run <code>grub-install</code> with the proper device as parameter.
-	<br />
-	<b>Status:</b> This issue will hopefully be fixed in the second Wheezy point release.
+	<dt>Firmware handling</dt>
+
+	<dd>The udev component no longer reports missing firmware (<a
+	href="http://bugs.debian.org/725714">#725714</a>), and patches for
+	the kernel need polishing before we are able to restore
+	support for loading missing firmware.
 	</dd>
 
+	<dt>Accessibility of the installed system</dt>
+	<dd>Even if accessibility technologies are used during the
+	installation process, they might not be automatically enabled
+	within the installed system.
+	</dd>
+
+	<dt>Shell in graphical mode</dt>
+	<dd>A fontconfig-udeb bug leads to broken fonts in the
+	installer's graphical shell (<a
+	href="http://bugs.debian.org/739011">#739011</a>).
+
+<!-- leaving this in for possible future use...
 	<dt>Desktop installations on i386 do not work using CD#1 alone</dt>
 	<dd>Due to space constraints on the first CD, not all of the expected GNOME desktop
 	packages fit on CD#1. For a successful installation, use extra package sources (e.g.
@@ -41,7 +40,9 @@ report</a> describing the problem.
 	<br />
 	<b>Status:</b> It is unlikely more efforts can be made to fit more packages on CD#1.
 	</dd>
+-->
 
+<!-- ditto...
 	<dt>Potential issues with UEFI booting on amd64</dt>
 	<dd>There have been some reports of issues booting the Debian Installer in UEFI mode
 	on amd64 systems. Some systems apparently do not boot reliably using <code>grub-efi</code>, and some
@@ -55,28 +56,9 @@ report</a> describing the problem.
 	<br />
 	<b>Status:</b> More bug fixes might appear in the various Wheezy point releases.
 	</dd>
+-->
 
-	<dt>Erroneous firmware prompt with some Intel Wireless cards</dt>
-
-	<dd>If you have an Intel Wireless 6005 or 6205 card then the installer will
-	prompt for the firmware file <code>iwlwifi-6000g2a-6.ucode</code>.
-	This file is not included in the <code>firmware-iwlwifi</code> package and is not actually
-	needed.  You must answer <code>no</code> to continue with installation.
-	<br />
-	<b>Status:</b> This issue is fixed in the first Wheezy point release.
-	</dd>
-
-	<dt>Missing beep at installer startup</dt>
-
-	<dd>For accessibility reasons, a beep should be emitted when
-	the installer’s bootloader is waiting for input. Unfortunately,
-	a bug made it disappear in the first Wheezy Alpha release, and that
-	was only reported right before the third Wheezy Release Candidate.
-	<br />
-	<b>Status:</b> This issue is fixed in the first Wheezy point release.
-	</dd>
-
-<!-- leaving this in for possible future use...
+<!-- ditto...
 	<dt>i386: more than 32 mb of memory is needed to install</dt>
 	<dd>
 	The minimum amount of memory needed to successfully install on i386
