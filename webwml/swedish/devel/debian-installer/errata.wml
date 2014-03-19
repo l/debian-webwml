@@ -1,42 +1,44 @@
 #use wml::debian::template title="Debian-Installer errata"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.196"
+#use wml::debian::translation-check translation="1.199"
+#include "$(ENGLISHDIR)/devel/debian-installer/images.data"
 
-<h1 id="wheezy-rc3">Kända problem i Wheezy-utgåvans Utgåvekandidat 3</h1>
+<h1>Kända problem i <humanversion /></h1>
 
 <p>
-Detta är en lista på kända problem i Utgivningskandidat 3 av Wheezy-utgåvan av 
+Detta är en lista på kända problem i utgåvan <humanversion /> av 
 Debian Installer. Om du inte ser ditt problem i listan här, vänligen sänd in en 
-<a href="$(HOME)/releases/stable/i386/ch05s04.html#submit-bug">installationsrapport</a>
+<a href="$(HOME)/releases/stable/amd64/ch05s04.html#submit-bug">installationsrapport</a>
 som beskriver problemet.
 </p>
 
 <dl class="gloss">
 
-	<dt>Installationen av starthanteraren GRUB kan mysslyckas om mer än en diskenhet
-		finns tillgänglig.</dt>
-	<dd>När det finns mer än en disk tillgänglig under installation (t.ex. en
-		hårddisk och ett USB-minne, som ofta är fallet när man startar installeraren
-		från ett USB-minne), så kan <code>grub-install</code> få problem: Det har
-		rapporterats flera gånger att GRUB-bootloadern installerades på USB-minnet
-		istället för på hårddisken som innehöll det nya systemet.
-	<br />
-		För att undvika detta problem, säkerställ att du väljer <q>Nej</q> när
-		frågan <q>Installera GRUB i master boot record (MBR)?</q> kommer; Det bör
-		vara möjligt att ange den rätta enheten i nästa steg: <q>Enhet för 
-		installation av uppstartsladdare</q>.
-	<br />
-		Om installationen avslutades framgångsrikt trots felaktig inställning av 
-		GRUB, så borde det vara möjligt att återställa med hjälp av räddningsläget 
-		av installeraren: chroota in i root-filsystemet, montera ytterligare 
-		boot-partitioner som krävs (som <code>/boot</code> och/eller 
-		<code>/boot/efi</code> för ett EFI-system, se <code>/etc/fstab</code>), 
-		och kör <code>grub-install</code> med den rätta enheten som parameter.
-	<br />
-		<b>Status:</b>Detta problem kommer förhoppningsvis att rättas i den andra
-		punktutgåvan.
+	<dt>Hantering av firmware</dt>
+	
+	<dd>
+		udev-komponenten rapporterar inte längre saknad firmware (<a
+		href="http://bugs.debian.org/725714">#725714</a>), och patchar för kärnan
+		behöver polering innan vi kan kan återställa stödet för add ladda saknad
+		firmware.
 	</dd>
 	
+	<dt>Tillgänglighet i det installerade systemet</dt>
+	
+	<dd>
+		Även om funktionalitet för tillgänglighet används i under 
+		installationsprocessen, så kanske detta inte automatiskt är aktiverat i
+		det installerade systemet.
+	</dd>
+	
+	<dt>Skal i grafiskt läge</dt>
+	
+	<dd>
+		Ett fel i fontconfig-udeb resulterar i trasiga typsnitt i installerarens
+		grafiska skal (<a href="http://bugs.debian.org/739011">#739011</a>).
+	</dd>
+	
+<!-- leaving this in for possible future use...
 	<dt>Skrivbordsinstallationer på i386 fungerar inte med hjälp av endast CD#1</dt>
 	<dd>
 		Tack var utrymmesbrist på den första CDn, så får inte alla väntade delar
@@ -46,7 +48,9 @@ som beskriver problemet.
 		<b>Status:</b>Det är osannolikt att fler insatser kommer göras för att få
 		fler paket att få plats på CD#1.
 	</dd>
+-->
 
+<!--
 	<dt>Potentiella problem med UEFI-uppstart på amd64</dt>
 	<dd>Det har rapporterats problem vid uppstart av Debian Installer i UEFI-läge
 		på amd64-system. Vissa system startar inte säkert med hjälp av
@@ -62,30 +66,7 @@ som beskriver problemet.
 		<b>Status:</b>Fler felrättningar kan komma i de olika punkt-utgåvorna av
 		Wheezy.
 	</dd>
-	
-	<dt>Felaktig förfrågan efter firmware med vissa Intel Wireless-kort</dt>
-	
-	<dd>
-		Om du har ett Intel Wireless 6005 eller 6205-kort så kommer installeraren
-		fråga efter en firmware-fil <code>iwlwifi-6000g2a-6.ucode</code>. Denna
-		fil behövs inte och inkluderas inte i 
-		<code>firmware-iwlwifi</code>-paketet. Du måste svara <code>nej</code>
-		för att fortsätta installationen.
-		
-	<br />
-		<b>Status:</b>Detta problem är rättat i första punktutgåvan av Wheezy.
-	</dd>
-	
-	<dt>Det saknas en ljudsignal vis uppstart av installeraren</dt>
-	<dd>
-		Av tillgänglighetsorsaker så skall en ljudsignal ljuda när installerarens
-		bootladdare väntar på indata. Olyckligtvis har ett fel gjort att 
-		ljudsignalen saknas i första Wheezy Alpha-utgåvan, och detta rapporterades
-		endast precis före tredje utgåvekandidaten av Wheezy.
-	<br />
-		<b>Status:</b>Detta fel är rättat i första punktutgåvan av Wheezy.
-	</dd>
-	
+-->
 
 <!-- leaving this in for possible future use...
 	<dt>i386: more than 32 mb of memory is needed to install</dt>
