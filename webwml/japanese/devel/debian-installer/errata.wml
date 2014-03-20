@@ -1,42 +1,36 @@
 #use wml::debian::template title="Debian-Installer 正誤表"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.196"
+#include "$(ENGLISHDIR)/devel/debian-installer/images.data"
+#use wml::debian::translation-check translation="1.199"
 
-<h1 id="wheezy-rc3">Wheezy リリース候補 (Release Candidate) 3 リリースの正誤表</h1>
+<h1><humanversion /> の正誤表</h1>
 
-<p>これは Debian Installer の wheezy リリース候補 (Release Candidate) 3
+<p>これは Debian Installer の <humanversion />
 リリースでの既知の問題のリストです。ここに挙げていない問題を見つけた場合、問題を記述した<a
-href="$(HOME)/releases/stable/i386/ch05s04.html#submit-bug">\
+href="$(HOME)/releases/stable/amd64/ch05s04.html#submit-bug">\
 インストールレポート</a>を送ってください。</p>
 
 <dl class="gloss">
 
-	<dt>利用可能なディスクデバイスが複数ある場合に GRUB
-	ブートローダのインストールに失敗することがある。</dt>
-	<dd>インストール中に利用可能なディスクが複数ある
-	(例えばハードディスクと USB メモリ等、これは USB
-	メモリからインストーラをブートする場合の一般的な例です)、<code>grub-install</code> 
-	で問題が起きることがあります: これは複数回報告されていて、
-	新しくインストールしたシステムのあるハードディスクではなく
-	USB メモリ に GRUB ブートローダがインストールされていました。
-	<br />
-	これを避けるには、インストールプロセスで<q>マスターブートレコードに 
-	GRUB ブートローダをインストールしますか?</q> 
-	と聞かれたときに必ず<q>いいえ</q>と答えるようにしてください。
-	次の段階<q>ブートローダをインストールするデバイス</q>
-	で正しいデバイスを指定することができるはずです。GRUB
-	設定が誤っているのにインストール作業を完了してしまった場合は、
-	インストーラのレスキューモードにより復旧できるはずです。root
-	ファイルシステムに chroot
-	して必要に応じて追加のブートパーティションをマウントしてから (EFI システムでは 
-	<code>/boot</code> や <code>/boot/efi</code> 等、<code>/etc/fstab</code> 
-	参照) 適切なデバイスをパラメータで指示し、<code>grub-install</code>
-	を再び実行します。
-	<br />
-	<b>現状:</b> Wheezy
-	の2回目のポイントリリースでこの問題が修正されていることを期待します。
+	<dt>ファームウェアの処理</dt>
+	<dd>欠けているファームウェアについて、udev 側で報告しなくなっていて
+	(<a href="http://bugs.debian.org/725714">#725714</a>)
+	欠けているファームウェアの読み込みを再びサポートするためには
+	カーネル用パッチの精査が必要です。
 	</dd>
 
+	<dt>インストールしたシステムのアクセシビリティ</dt>
+	<dd>インストールの過程でアクセシビリティ技術を利用した場合でも
+	インストールしたシステムでそれが自動的に有効化されないことがあります。
+	</dd>
+
+	<dt>グラフィカルモードでのシェル</dt>
+	<dd>fontconfig-udeb
+	のバグのためにインストーラのグラフィカルシェルでフォントが壊れます
+	(<a href="http://bugs.debian.org/739011">#739011</a>)。
+	</dd>
+
+<!-- leaving this in for possible future use...
 	<dt>i386 で、CD#1 だけを使用してデスクトップをインストールすることができない</dt>
 	<dd>1 枚目の CD 容量には制限があるため、要求される GNOME
 	デスクトップ用パッケージが CD#1 に収まりません。他のパッケージソース
@@ -44,7 +38,9 @@ href="$(HOME)/releases/stable/i386/ch05s04.html#submit-bug">\
 	<br />
 	<b>現状:</b> 1 枚目の CD にこれ以上パッケージを収録することは期待できません。
 	</dd>
-
+-->
+ 
+<!-- ditto...
 	<dt>amd64で UEFI ブートする場合に問題が起きる可能性</dt>
 	<dd>amd64 システムで Debian Installer を UEFI
 	モードでブートした場合の問題が何件か報告されています。
@@ -59,27 +55,9 @@ href="$(HOME)/releases/stable/i386/ch05s04.html#submit-bug">\
 	<br />
 	<b>現状:</b> Wheezy ポイントリリースではもっとバグの修正ができるかもしれません。
 	</dd>
+-->
 
-	<dt>Intel 製無線カードの一部でファームウェアを誤って要求する</dt>
-	<dd>Intel Wireless 6005 または 6205
-	カードを使っている場合、インストーラはファームウェアファイル
-	<code>iwlwifi-6000g2a-6.ucode</code>
-	の場所を聞いてきます。このファイルは <code>firmware-iwlwifi</code>
-	パッケージには収録されておらず、実際は不要です。インストール作業を続けるには
-	<code>no</code> と答える必要があります。
-	<b>現状:</b> Wheezy の最初のポイントリリースでこの問題は修正されています。
-	</dd>
-
-	<dt>インストーラ起動時にビープ音が鳴らない</dt>
-	<dd>アクセシビリティの理由により、
-	インストーラのブートローダが入力を待っているときにはビープ音を鳴らすべきです。
-	残念ながら最初の Wheezy アルファリリースでバグにより鳴らなくなり、
-	それが報告されたのは 3 回目の Wheezy リリース候補の直前でした。
-	<br />
-	<b>現状:</b> Wheezy の最初のポイントリリースでこの問題は修正されています。
-	</dd>
-
-<!-- leaving this in for possible future use...
+<!-- ditto...
 	<dt>i386: more than 32 mb of memory is needed to install</dt>
 	<dd>
 	The minimum amount of memory needed to successfully install on i386
