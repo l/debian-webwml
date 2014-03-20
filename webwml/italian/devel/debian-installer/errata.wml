@@ -1,45 +1,42 @@
 #use wml::debian::template title="Errata corrige dell'Installatore Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.196" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.199" maintainer="Luca Monducci"
+#include "$(ENGLISHDIR)/devel/debian-installer/images.data"
 
 
-<h1 id="wheezy-rc3">Errata per il rilascio Wheezy Release Candidate 3</h1>
+
+<h1>Errata per <humanversion /></h1>
 
 
 <p>
-Questo è l'elenco dei problemi conosciuti presenti nella versione Wheezy Release Candidate 3
+Questo è l'elenco dei problemi conosciuti presenti nella versione <humanversion />
 dell'Installatore Debian. Chi riscontra un problema non ancora presente
-in questa pagina è invitato a inviare un <a href="$(HOME)/releases/stable/i386/ch05s04.html#submit-bug">resoconto
+in questa pagina è invitato a inviare un <a href="$(HOME)/releases/stable/amd64/ch05s04.html#submit-bug">resoconto
 dell'installazione</a> in cui viene descritto il problema.
 </p>
 
 <dl class="gloss">
 
-	<dt>L'installazione del bootloader GRUB può fallire se sono presenti più dischi.</dt>
-	<dd>Se durante l'installazione sono presenti più dischi (per esempio
-	un disco fisso e una chiavetta USB, questo è il caso quando si usa una
-	chiavetta USB per avviare l'installatore), <code>grub-install</code>
-	potrebbe avere dei problemi: infatti è stato segnalato più volte che
-	il bootloader GRUB era installato sulla chiavetta USB anziché sul
-	disco fisso su cui era stato appena installato il sistema operativo.
-	<br />
-	Per evitare che questo problema si verifichi, rispondere <q>No</q> quando
-	durante il processo d'installazione viene chiesto: <q>Installare il boot
-	loader GRUB nel master boot record?</q>; sarà possibile specificare il
-	device corretto al passaggio successivo: <q>Device per l'installazione
-	del boot loader</q>.
-	<br />
-	Se l'installazione finisce nonostante la configurazione sbagliata di GRUB,
-	è possibile correggerla usando l'installatore in modalità di ripristino:
-	eseguire il chroot nel filesystem di root, se necessario montare la
-	partizione boot aggiuntiva (<code>/boot</code> e/o <code>/boot/efi</code>
-	su un sistema EFI, consultare <code>/etc/fstab</code>), ed eseguire
-	<code>grub-install</code> specificando come parametro il device corretto.
-	<br />
-	<b>Stato:</b> Si spera che questo problema verrà risolto nel secondo
-	rilascio minore di Wheezy.
+	<dt>Gestione dei firmware</dt>
+	<dd>Il componente udev ha smesso di segnalare la mancanza dei firmware
+	(<a href="http://bugs.debian.org/725714">#725714</a>) e le patch per
+	il kernel hanno bisogno di una revisione prima di poter riattivare il
+	supporto per caricare i firmware mancanti.
+	</dd>
+ 
+	<dt>Accessibilità del sistema installato</dt>
+	<dd>Le tecnologie per l'accessibilità potrebbero non essere
+	automaticamente attive sul sistema installato nonostante siano state
+	utilizzate durante l'installazione.
 	</dd>
 
+	<dt>Shell in modalità grafica</dt>
+	<dd>Un bug in fontconfig-udeb comporta l'uso di font corrotti nella
+	shell dell'installatore grafico (<a
+	href="http://bugs.debian.org/739011">#739011</a>).
+	</dd>
+
+<!-- leaving this in for possible future use...
 	<dt>Le installazioni desktop su i386 non funzionano con il solo CD#1.</dt>
 	<dd>A causa dei limiti di spazio sul primo CD, non è possibile inserire
 	tutti i pacchetti necessari al desktop GNOME nel CD#1. Per completare
@@ -49,7 +46,9 @@ dell'installazione</a> in cui viene descritto il problema.
 	<b>Stato:</b> È improbabile che siano fatti ulteriori sforzi per far
 	entrare ancora più pacchetti nel CD#1.
 	</dd>
+-->
 
+<!-- ditto...
 	<dt>Potenziali problemi con l'avvio UEFI su amd64.</dt>
 	<dd>Sono stati segnalati di problemi nell'avviare il Debian Installer
 	in modalità UEFI su sistemi amd64. Su alcuni sistemi l'avvio usando
@@ -65,30 +64,9 @@ dell'installazione</a> in cui viene descritto il problema.
 	<b>Stato:</b> Le correzioni ad altri bug potrebbero essere aggiunte nei
 	vari rilasci moniri di Wheezy.
 	</dd>
+-->
 
-	<dt>Richiesta errata di firmware per alcune schede wireless Intel.</dt>
-	<dd>Se è presente una scheda wireless Intel 6005 o 6205, l'installatore
-	richiederà il file con il firmware <code>iwlwifi-6000g2a-6.ucode</code>.
-	Quel file non è contenuto nel pacchetto <code>firmware-iwlwifi</code>
-	e, di fatto, non è nemmeno necessario. Rispondere <code>no</code> e
-	continuare con l'installazione.
-	<br />
-	<b>Stato:</b> Questo problema è stato risolto nel primo rilascio
-	minore di Wheezy.
-	</dd>
-
-	<dt>Manca il bip all'avvio dell'installatore.</dt>
-	<dd>Per motivi legati all'accessibilità, è opportuno emettere un bip
-	quando il bootloader dell'installatore è in attesa dell'inserimento
-	di un valore. Sfortunatamente, un bug l'ha fatto sparire nel primo
-	rilascio Alpha di Whezzy ma questo problema è stato segnalato solo
-	prima della terza Release Candidate di Wheezy.
-	<br />
-	<b>Stato:</b> Questo problema è stato risolto nel primo rilascio
-	minore di Wheezy.
-	</dd>
-
-<!-- leaving this in for possible future use...
+<!-- ditto...
     <dt>i386: sono richiesti più di 32&nbsp;MB per l'installazione</dt>
     <dd>
     La quantità minima di memoria necessaria per eseguire correttamente
