@@ -1,5 +1,5 @@
 #use wml::debian::template title="Configurar un servidor push"
-#use wml::debian::translation-check translation="1.17"
+#use wml::debian::translation-check translation="1.21"
 #use wml::debian::toc
 
 <p>Configurar un servidor <q>push</q> consiste en dos tareas básicas: configurar
@@ -77,56 +77,27 @@ ssh-keygen -f ~/.ssh/identidad.misitio
 </pre>
 
 <p>Asegúrese de que la nueva clave pública (~/.ssh/identidad.misitio.pub)
-contiene esto al inicio:</p>
+contiene esto al inicio, siendo DIRECCIONIP la IP de su réplica de origen:</p>
 
 <pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/sync &amp;"
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="DIRECCIONIP"
 </pre>
 
 <p>Necesita configurar un script que contacte con los sitios de réplica
-de flujo de bajada. Cree un archivo llamado <code>signal</code> que
-contenga esto:</p>
-
-<protect>
-<pre>
-#!/bin/sh
-
-# This script is called to signal the remote host that it is time to
-# mirror the archive.
-
-echo Signalling $1
-ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
-</pre>
-</protect>
-
-<p>Este script entrará a una máquina remota usando la clave ssh especial que
-creó antes, proporcionada para que cada operador de réplica la añada a su
-propio ~/.ssh/authorized_keys (reemplazando también <q>sync</q> por <q>anonftpsync</q> o como se llame su script para iniciar la replicación). El script por sí mismo no hará nada útil remotamente, la única orden que se ejecutará es la que se ha especificado en la configuración de la clave.</p>
-
-<p>Realmente, para señalizar a las réplicas, necesita añadir las líneas
-<code>./signal &lt;sitio&gt; &lt;usuario&gt;</code> tras la ejecución de rsync.
-Así, en cuanto su sitio haya terminado de replicarse del sitio fuente, 
-empezará a lanzar la replicación de los que repliquen de usted.
+de flujo de bajada. El archivo comprimido ftpsync contien el script <code>runmirrors</code> 
+que gestiona por usted todas las tareas necesarias. Simplemente cambie su ftpsync.conf
+para incluir la opción <code>HUB=true</code>, copie el <code>runmirrors.conf.sample</code> a
+<code>runmirrors.conf</code> y <code>runmirrors.mirror.sample</code> a
+<code>runmirrors.mirror</code> y configure el fichero de configuración para ajustarse a su sistema.
+Entonces, liste todas las réplicas de flujo de bajada dentro de runmirrors.mirror y el dúo ftpsync/runmirror hará por usted todo el trabajo pesado.
 </p>
 
-<p>Puede incluir estas órdenes o al final de su script <code>anonftpsync</code>
-o, si lo cree más conveniente, en otro script y ejecutar este desde
-<code>anonftpsync</code>, por ejemplo:</p>
-
-<protect>
-<pre>
-#!/bin/sh
-
-# websync llama a este script para señalizar las réplicas de bajada.
-
-./signal some.other.site archvsync
-./signal and.another.site othersiteaccount
-</pre>
-</protect>
-
-<p>Hecho ésto, tan pronto como su sitio haya finalizado de replicar desde el
-sitio del flujo de subida, iniciará el proceso de <q>push</q> a aquellos flujos
-de bajada que tenga.
+<p>El efecto será que su sistema intentará hacer ssh a sus sitios de réplica de flujo de bajada
+después de que su propia réplica se actualice, para que puedan iniciar sus propias actualizaciones.
+Esto asume que usted dio a los operadores de las réplicas de flujo de bajada la clave ssh que le dijo
+a runmirrors que usara, y que ellos la añadieron a sus propios ficheros ~/.ssh/authorized_keys tal y como
+se describió arriba.
+</p>
 
 <p>Si tiene algún problema con esto,
 <a href="mailto:mirrors@debian.org">póngase en contacto con nosotros</a>.</p>
