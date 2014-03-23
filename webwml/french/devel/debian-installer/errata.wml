@@ -1,6 +1,8 @@
 #use wml::debian::template title="Errata pour l'installateur Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.196" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.199" maintainer="David Prévot"
+#include "$(ENGLISHDIR)/devel/debian-installer/images.data"
+
 
 # Translators:
 # Nicolas Bertolissio, 2003-2008
@@ -10,120 +12,83 @@
 # Jean-Pierre Giraud, 2013
 
 
-<h1 id="wheezy-rc3"><i>Errata</i> de la troisième version candidate
-pour Wheezy</h1>
+<h1><i>Errata</i> de la version <humanversion /></h1>
 
 <p>
-Voici une liste des problèmes connus dans la troisième version candidate
-de l'installateur Debian pour Wheezy.
+Voici une liste des problèmes connus dans la version <humanversion />
+de l'installateur Debian.
 Si le problème rencontré n'y est pas recensé, veuillez envoyer un <a
-href="$(HOME)/releases/stable/i386/ch05s04.html#submit-bug">compte-rendu d'installation</a> (en anglais) décrivant
-le problème.
+href="$(HOME)/releases/stable/amd64/ch05s04.html#submit-bug">compte-rendu d'installation</a> 
+(en anglais) décrivant le problème.
 </p>
 
 <dl class="gloss">
 
-<dt>
-Possibilité d'échec de l'installation du programme de démarrage
-GRUB si plus d'un périphérique disque est disponible
-</dt>
-<dd>
-Quand plus d'un disque est disponible lors de l'installation (par
-exemple un disque dur et une clef USB, comme c'est souvent le cas
-lors de l'amorçage de l'installateur à partir d'une clef USB),
-<code>grub-install</code> pourrait être victime de problèmes : plusieurs
-rapports mentionnent que le programme de démarrage GRUB a été installé sur
-la clef USB au lieu du disque dur contenant le système nouvellement installé.
-<br />
-Pour y remédier, veillez à répondre <q>non</q> à la question
-suivante, posée pendant le processus d'installation : <q>Installer
-le programme de démarrage GRUB sur le secteur d'amorçage ?</q> ;
-le périphérique adéquat pourra être indiqué à l'étape suivante :
-<q>Périphérique où sera installé le programme de démarrage</q>.
-<br />
-Si l'installation s'est bien déroulée malgré une configuration erronée de
-GRUB, il devrait être possible de corriger la situation en utilisant le mode
-de récupération de l'installateur : faites un chroot dans le système de
-fichiers racine, montez toutes les partitions d’amorçage nécessaires
-(comme <code>/boot</code> ou <code>/boot/efi</code> pour un système
-EFI, consultez <code>/etc/fstab</code>) s’il y en a, puis
-exécutez <code>grub-install</code> avec le périphérique adéquat en paramètre.
-<br />
-<b>État :</b> ce problème devrait être normalement
-corrigé dans la deuxième mise à jour de Wheezy.
+<dt>Gestion des microprogrammes (<q>firmware</q>)</dt>
+
+<dd>Le composant udev ne reporte plus l'absence de microprogramme (<a
+href="http://bugs.debian.org/725714">#725714</a>), et les correctifs pour le
+noyau ont besoin d'être affinés avant d'être capable de prendre en charge à nouveau
+le chargement des microprogrammes manquants.
 </dd>
 
-<dt>Installations de bureau non fonctionnelles sur i386 à partir du premier CD seul</dt>
-<dd>
-À cause de contraintes de place, tous les paquets nécessaires
-au bureau GNOME ne peuvent pas tenir sur le premier CD.
-
-Pour réussir l'installation, utilisez des sources de
-paquets supplémentaires (par exemple un deuxième CD ou
-un miroir sur le réseau) ou utilisez plutôt un DVD.
-<br />
-<b>État :</b> aucune ressource ne pourra probablement être consacrée
-à l'inclusion de paquets supplémentaires sur le premier CD.
+<dt>Accessibilité sur le système installé</dt>
+<dd>Même si les technologies d'accessibilité sont utilisées pendant l'installation, 
+elles pourraient ne pas être activées automatiquement dans le système installé.
 </dd>
 
-<dt>Problèmes possibles avec l'amorçage UEFI sur amd64</dt>
-<dd>
-Des problèmes ont été signalés lors de l'amorçage de
-l'installateur Debian en mode UEFI sur des systèmes amd64.
-
-Certains systèmes ne démarrent apparemment pas de façon fiable avec
-<code>grub-efi</code> et d'autres montrent des problèmes de
-corruption graphique de l'affichage d'écran initial d'installation.
-<br />
-Si vous rencontrez un de ces deux problèmes, veuillez soumettre un
-rapport de bogue aussi précis que possible, à la fois sur les symptômes
-et sur le matériel — cela devrait aider l'équipe à corriger ces problèmes.
-
-En attendant, il est possible de contourner le problème en désactivant l'UEFI et en
-poursuivant l'installation avec l'<q>ancien BIOS</q> ou en <q>mode de secours</q>.
-<br />
-<b>État :</b> d'autres corrections de bogues pourraient
-apparaître dans les diverses mises à jour de Wheezy.
-</dd>
-
-<dt>Invite de microprogramme (<q>firmware</q>) erronée avec certaines cartes Intel sans fil</dt>
-<dd>
-Si une carte Intel sans fil 6005 ou 6205 est présente,
-l’installateur proposera une invite pour le fichier de
-microprogramme <code>iwlwifi-6000g2a-6.ucode</code>.
-
-Ce fichier n’est pas inclus dans le paquet
-<code>firmware-iwlwifi</code> et n’est en fait pas nécessaire.
-
-Vous devez répondre <code>non</code> pour poursuivre l’installation.
-<br />
-<b>État :</b> ce problème a été
-corrigé dans la première mise à jour de Wheezy.
-</dd>
-
-<dt>Bip manquant au démarrage de l’installateur</dt>
-
-<dd>
-Par souci d’accessibilité, un bip devrait être émis lorsque
-le chargeur d’amorçage de l’installateur attend une entrée.
-
-Malheureusement, un bogue l’a fait disparaître
-de la première version alpha de Wheezy.
-Il n’a été signalé que juste avant la troisième version candidate de Wheezy.
-<br />
-<b>État :</b> ce problème a été corrigé dans la première mise à jour de Wheezy.
-</dd>
+<dt>Interpréteur de commande de l'installateur graphique</dt>
+<dd>Un bogue dans le paquet fontconfig-udeb pourrait mener à 
+un problème dans les polices de l'interpréteur de commande intégré à
+l'installateur graphique (<a href="http://bugs.debian.org/739011">#739011</a>).
 
 <!-- conservé pour une possible utilisation ultérieure...
-  <dt>Architecture i386&nbsp;: plus de 32&nbsp;Mo requis pour
-    l'installation</dt>
-    <dd>
-    La quantité minimale de mémoire requise pour une installation sur
-    une architecture i386 est de 48&nbsp;Mo, au lieu de 32&nbsp;Mo précédemment.
-    Nous espérons un retour au besoin initial de 32&nbsp;Mo dans une version
-    ultérieure. Le besoin de mémoire peut aussi avoir changé pour d'autres
-    architectures&nbsp;;
-    </dd>
+	<dt>Installations de bureau non fonctionnelles sur i386 à partir du premier CD seul</dt>
+	<dd>
+	À cause de contraintes de place, tous les paquets nécessaires
+	au bureau GNOME ne peuvent pas tenir sur le premier CD.
+
+	Pour réussir l'installation, utilisez des sources de
+	paquets supplémentaires (par exemple un deuxième CD ou
+	un miroir sur le réseau) ou utilisez plutôt un DVD.
+	<br />
+	<b>État :</b> aucune ressource ne pourra probablement être consacrée
+	à l'inclusion de paquets supplémentaires sur le premier CD.
+	</dd>
+-->
+
+<!-- idem
+	<dt>Problèmes possibles avec l'amorçage UEFI sur amd64</dt>
+	<dd>
+	Des problèmes ont été signalés lors de l'amorçage de
+	l'installateur Debian en mode UEFI sur des systèmes amd64.
+
+	Certains systèmes ne démarrent apparemment pas de façon fiable avec
+	<code>grub-efi</code> et d'autres montrent des problèmes de
+	corruption graphique de l'affichage d'écran initial d'installation.
+	<br />
+	Si vous rencontrez un de ces deux problèmes, veuillez soumettre un
+	rapport de bogue aussi précis que possible, à la fois sur les symptômes
+	et sur le matériel — cela devrait aider l'équipe à corriger ces problèmes.
+
+	En attendant, il est possible de contourner le problème en désactivant l'UEFI et en
+	poursuivant l'installation avec l'<q>ancien BIOS</q> ou en <q>mode de secours</q>.
+	<br />
+	<b>État :</b> d'autres corrections de bogues pourraient
+	apparaître dans les diverses mises à jour de Wheezy.
+	</dd>
+-->
+
+<!-- conservé pour une possible utilisation ultérieure...
+	<dt>Architecture i386&nbsp;: plus de 32&nbsp;Mo requis pour
+	l'installation</dt>
+	<dd>
+	La quantité minimale de mémoire requise pour une installation sur
+	une architecture i386 est de 48&nbsp;Mo, au lieu de 32&nbsp;Mo précédemment.
+	Nous espérons un retour au besoin initial de 32&nbsp;Mo dans une version
+	ultérieure. Le besoin de mémoire peut aussi avoir changé pour d'autres
+	architectures&nbsp;;
+	</dd>
 -->
 
 </dl>
