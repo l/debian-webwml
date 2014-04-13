@@ -124,9 +124,6 @@ while (<SRC>)
 	s/>certificate verification flaw</>problem vid kontroll av certifikat</;
 	s/cross-site scripting vulnerability/serveröverskridande skriptsårbarhet/;
 	s/>various</>diverse</;
-	s/(Several|Multiple) vulnerabilities/Flera sårbarheter/;
-	s/(several|multiple) vulnerabilities/flera sårbarheter/;
-	s/>several</>flera</;
 	s/>unsanitised input</>städar ej indata</;
 	s/The Common Vulnerabilities and Exposures project/Projektet Common Vulnerabilities and Exposures/;
 	s/\bidentifies the following problems:/identifierar följande problem:/;
@@ -203,7 +200,10 @@ while (<SRC>)
 	s/ö/ö/g;
 	s/\bSeveral remote vulnerabilities have been discovered in /Man har upptäckt flera utifrån nåbara sårbarheter i /;
 	s/\bSeveral local\/remote vulnerabilities have been discovered in /Man har upptäckt flera lokala och utifrån nåbara sårbarheter i /;
-	s/\bSeveral vulnerabilities have been discovered in /Man har upptäckt flera sårbarheter i /;
+	s/\bSeveral vulnerabilities (were|have been) discovered in /Flera sårbarheter har upptäckts i /;
+	s/(Several|Multiple) vulnerabilities/Flera sårbarheter/;
+	s/(several|multiple) vulnerabilities/flera sårbarheter/;
+	s/>several</>flera</;
 	s/an unbranded version of the Firefox browser/en varumärkesfri version av webbläsaren Firefox/;
 	s/an unbranded version of the /en varumärkesfri version av /;
 	s/directory traversal/katalogtraversering/;
