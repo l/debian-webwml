@@ -79,6 +79,7 @@ $translation = {
 		'denial of service/privilege escalation'	=>	'Déni de service et augmentation de droits',
 		'<p>We recommend that you upgrade your <package> package.</p>'	=>      '<p>Nous vous recommandons de mettre à jour votre paquet <package>.</p>',
 		'<p>We recommend that you upgrade your <package> packages.</p>'	=>      '<p>Nous vous recommandons de mettre à jour vos paquets <package>.</p>',
+		'security update'	=>'Mise à jour de sécurité',
 	},
 };
 
