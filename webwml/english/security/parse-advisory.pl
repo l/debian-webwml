@@ -136,7 +136,7 @@ $moreinfo =~ s|\n+(<p>(CAN\|CVE)-\d+-\d+[\:]*)\s?(\s*)(\S+)|\n\n$1\n$3$4|g;
 $moreinfo =~ s/\n\n/<\/p>\n\n/sg;
 $moreinfo =~ s|\n<p>((CAN\|CVE)-\d+-\d+[^\n]*)</p>\n|\n<li>$1\n|g;
 $moreinfo =~ s|\n<p>((CAN\|CVE)-\d+-\d+[^\n]*)\n|\n<li>$1\n<p>\n|g;
-$moreinfo =~ s|((CAN\|CVE)-\d+-\d+)|<a href="http://security-tracker.debian.org/tracker/$1">$1</a>|g;
+$moreinfo =~ s|((CAN\|CVE)-\d+-\d+)|<a href="https://security-tracker.debian.org/tracker/$1">$1</a>|g;
 $moreinfo =~ s|</p>\n\n<p>\n<p>(\w* \w* stable)|</p></li>\n\n</ul>\n\n<p>$1|; 
 $moreinfo =~ s|<p>(\s+)|$1<p>|g;
 $moreinfo =~ s|<p><p>|<p>|g;
