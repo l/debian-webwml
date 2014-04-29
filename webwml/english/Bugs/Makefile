@@ -32,7 +32,7 @@ pseudo-packages.$(LANGUAGE).html: $(ENGLISHDIR)/Bugs/pseudo-packages.description
 .PHONY: $(ENGLISHDIR)/Bugs/pseudo-packages.description
 
 $(ENGLISHDIR)/Bugs/pseudo-packages.description:
-	wget -O $(ENGLISHDIR)/Bugs/pseudo-packages.description http://bugs.debian.org/pseudopackages/pseudo-packages.description
+	wget -O $(ENGLISHDIR)/Bugs/pseudo-packages.description https://bugs.debian.org/pseudopackages/pseudo-packages.description
 
 ifeq "$(LANGUAGE)" "en"
 $(HTMLDIR)/hashbug_redirect.js: hashbug_redirect.js

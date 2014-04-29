@@ -139,7 +139,7 @@ sub linklist {
 	    and $status_db{$lang}->has_status($pkg)) {
 		foreach my $statusline (@{$status_db{$lang}->status($pkg)}) {
 			my ($type, $file, $date, $status, $translator, $list, $url, $bug_nb) = @{$statusline};
-			my $bug_link = (defined $bug_nb) ? "<a href=\"http://bugs.debian.org/$bug_nb\">$bug_nb</a>" : "";
+			my $bug_link = (defined $bug_nb) ? "<a href=\"https://bugs.debian.org/$bug_nb\">$bug_nb</a>" : "";
 			if ($type eq $typo and ($pkg ne 'manpages-fr-extra' or $file eq $trufile)) {
 				# Only keep the last status (most recent)
 				# Assume there is only one $typo file
@@ -301,7 +301,7 @@ sub get_stats {
 			}
 		      }
 
-		        $str .= (percent_stat($stat) eq "100%" ? $pkg : "<a href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>");
+		        $str .= (percent_stat($stat) eq "100%" ? $pkg : "<a href=\"https://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>");
 		        $str .= "</td><td>".show_stat($stat)."</td><td><a ";
 			if (! $ref{"$lang:$pkg"}){
 				$str .= "name=\"$pkgid\" ";
@@ -338,7 +338,7 @@ sub get_stats {
 				$todo{$lang} = ($todo{$lang} || '') . $str . "</tr>\n" if ($type eq 'po-debconf' or !length $add);
 			}
                 }
-                $orig .= "<li><a name=\"$pkgid\" href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>$addorig</li>\n"
+                $orig .= "<li><a name=\"$pkgid\" href=\"https://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>$addorig</li>\n"
                         if $addorig;
                 foreach $lang (@langs) {
                         my $l = uc($lang) || 'UNKNOWN';

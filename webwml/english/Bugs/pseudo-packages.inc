@@ -29,10 +29,10 @@ close I or die "Can't close descriptions file $file: $!\n";
 %pseudos || die "%pseudos is not set -- empty $file file?\n";
 foreach $a (sort keys %pseudos) {
   if ($a ne "spam" && $a ne "slink-cd" && $a ne "wnpp") {
-    print "<p><code><a href=\"http://bugs.debian.org/$a\">$a</a></code> &mdash; $pseudos{$a}\n";
+    print "<p><code><a href=\"https://bugs.debian.org/$a\">$a</a></code> &mdash; $pseudos{$a}\n";
   }
   elsif ($a eq "wnpp") {
-    print "<p><code><a href=\"http://bugs.debian.org/$a\">$a</a></code> &mdash; <a href=\"../devel/wnpp/\">$pseudos{$a}</a>\n";
+    print "<p><code><a href=\"https://bugs.debian.org/$a\">$a</a></code> &mdash; <a href=\"../devel/wnpp/\">$pseudos{$a}</a>\n";
   }
 }
 :>
