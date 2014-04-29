@@ -131,7 +131,7 @@ sub linklist {
 			if ($file eq $statfile) {
 				$date =~ s/\s*\+0000$//;
 				$list =~ /^(\d\d\d\d)-(\d\d)-(\d\d\d\d\d)$/;
-				$add = "<a href=\"http://lists.debian.org/debian-l10n-$lang/$1/debian-l10n-$lang-$1$2/msg$3.html\">$status</a>";
+				$add = "<a href=\"https://lists.debian.org/debian-l10n-$lang/$1/debian-l10n-$lang-$1$2/msg$3.html\">$status</a>";
 				$add = "<td>$add</td><td>$translator</td><td>$date</td>";
 			}
 		}
