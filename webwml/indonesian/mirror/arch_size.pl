@@ -6,7 +6,7 @@ use strict;
 use LWP::UserAgent;
 
 # Parameters
-my $inputfile="http://ftp-master.debian.org/arch-space";
+my $inputfile="https://ftp-master.debian.org/arch-space";
 
 my $ua = LWP::UserAgent->new;
 my $req = HTTP::Request->new(GET => $inputfile);
