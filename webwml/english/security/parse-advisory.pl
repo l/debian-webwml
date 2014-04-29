@@ -256,7 +256,7 @@ sub make_wml{
 sub make_index{
   return if (-f "$curyear/index.wml");
   print "$curyear/index.wml does not exist! Creating...";
-  my $ldo = '<a href="http://lists.debian.org/';
+  my $ldo = '<a href="https://lists.debian.org/';
   my $dsan = 'debian-security-announce';
   my $index = "<define-tag pagetitle>Security Advisories from $curyear</define-tag>\n";
   $index .= qq|#use wml::debian::template title="<pagetitle>" GEN_TIME="yes"\n|;
