@@ -160,7 +160,7 @@ while (<SRC>)
         {
         	$_ .= $next;
         	$next = <SRC>;
-        	if ($next eq "href=\"http://packages.debian.org/unstable/newpkg_main\">recently</a> or contain\n")
+        	if ($next eq "href=\"https://packages.debian.org/unstable/newpkg_main\">recently</a> or contain\n")
         	{
         		$_ .= $next;
         		$next = <SRC>;
@@ -168,7 +168,7 @@ while (<SRC>)
         		{
 					$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong>\n";
 					$_ .= "Följande paket har\n";
-					$_ .= "<a href=\"http://packages.debian.org/unstable/newpkg_main\">nyligen</a>\n";
+					$_ .= "<a href=\"https://packages.debian.org/unstable/newpkg_main\">nyligen</a>\n";
 					$_ .= "lagts till det instabila Debianarkivet eller innehåller viktiga uppdateringar.\n";
 					$_ .= "</p>\n";
 				}
