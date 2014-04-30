@@ -276,7 +276,7 @@ while (<SRC>)
 	    s#The proposal needs simple majority.#Der Vorschlag benötigt eine einfache Mehrheit#;
 	    s#Since this proposal and amendment would require modification of#Da dieser Vorschlag und Änderung die Anpassung eines Gründungsdokuments#;
 	    s#a foundation document, namely, the#verlangen würde, genauer gesagt der <a#;
-	    s#<a href="http://www.debian.org/devel/constitution">constitution</a>#href="http://www.debian.org/devel/constitution">Verfassung</a>,#;
+	    s#<a href="https://www.debian.org/devel/constitution">constitution</a>#href="https://www.debian.org/devel/constitution">Verfassung</a>,#;
 	    s#it requires a 3:1 majority to pass.#benötigt er eine 3:1-Mehrheit, um angenommen zu werden.#;
 	    s#Not determined yet#Noch nicht bestimmt#;
 	    s#Debian Project Secretary#Debian-Projekt-Schriftführer#;

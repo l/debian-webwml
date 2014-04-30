@@ -42,10 +42,9 @@ $to = 'spanish'; # And this would be better used in the command line
 $from_abr = 'en';
 $to_abr = 'es' ;
 $CVSWEB = 'http://cvs.debian.org/webwml' ; 
-$DDPWEB = 'http://www.debian.org/~elphick/manuals.html' ;
+$DDPWEB = 'https://www.debian.org/doc/manuals/' ;
 # The place were translation documents are kept while working on them
-$TRANSWEB = 'http://www.debian.org/international/spanish/translations';
-#$TRANSWEB = 'http://www.debian.org/~clebars/f2dp/docs/'
+$TRANSWEB = 'https://www.debian.org/international/spanish/translations';
 
 # This matrix has all the values for the $status
 # This way we do not have to put it in the %translation database
@@ -102,7 +101,7 @@ $types = {
 	'name'			=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
 					"$k.en.html" },
 	'url'			=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
-					"http://www.debian.org/$k.en.html" },
+					"https://www.debian.org/$k.en.html" },
 	'cvs_url'		=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
 					"$CVSWEB/$from/$k.wml?cvsroot=webwml" },
 	'source_url'		=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
@@ -110,7 +109,7 @@ $types = {
 	'translation_name'	=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
 					"$k.$to_abr.html" },
 	'translation_url'	=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
-					"http://www.debian.org/$k.$to_abr.html" },
+					"https://www.debian.org/$k.$to_abr.html" },
 	'translation_cvs_url'	=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
 					"$CVSWEB/$to/$k.wml?cvsroot=webwml" },
 	'translation_source_url'=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :

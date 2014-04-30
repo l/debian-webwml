@@ -4,7 +4,7 @@
 #  in the Debian web site Subversion repository.
 #
 ## For information about translation revisions please see
-## http://www.debian.org/devel/website/uptodate
+## https://www.debian.org/devel/website/uptodate
 #
 #  Copyright (C) 2008 Bas Zoetekouw <bas@debian.org>
 #  Based on on code from:

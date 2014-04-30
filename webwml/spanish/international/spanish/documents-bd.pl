@@ -73,7 +73,7 @@ $translations = {
 	'revision'		=> '1.1.1',
 	'status'		=> 1,
 	'lines'			=> 336,
-	'url'			=> 'http://www.debian.org/~elphick/ddp/manuals.html/project-history/',
+	'url'			=> 'https://www.debian.org/doc/manuals/project-history/',
 	'cvs-url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/project-history/?cvsroot=debian-doc'
 
 },
@@ -82,7 +82,7 @@ $translations = {
 	'type'			=> 'DDP',
 	'author'		=> 'Josip Rodin',
 	'name'			=> 'Debian GNU/Linux FAQ',
-	'url'			=> 'http://www.debian.org/~elphick/ddp/manuals.html/faq/',
+	'url'			=> 'https://www.debian.org/doc/manuals/debian-faq/',
 	'cvs-url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/faq/?cvsroot=debian-doc',
 	'package'		=> 'doc-debian',
 },
@@ -133,7 +133,7 @@ $translations = {
 	'type'			=> 'DDP',
 	'name'			=> 'Debian GNU/Linux Book Suggestions',
 	'status'		=> 1,
-	'url'			=> 'http://www.debian.org/~elphick/ddp/manuals.html/book-suggestions/',
+	'url'			=> 'https://www.debian.org/doc/manuals/book-suggestions/',
 	'cvs-url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/book-suggestions/?cvsroot=debian-doc'
 },
 
@@ -143,7 +143,7 @@ $translations = {
 	'author'		=> 'Ardo van Rangelrooij',
 	'status'		=> 1,
 	'lines'			=> 398,
-	'url'			=> 'http://www.debian.org/~elphick/ddp/manuals.html/meta/',
+	'url'			=> 'https://www.debian.org/doc/manuals/meta/',
 	'cvs-url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/meta/?cvsroot=debian-doc',
 	'lines'			=> 407
 },
@@ -153,7 +153,7 @@ $translations = {
 	'name'			=> 'Debian GNU/Linux Dictionary',
 	'status'		=> 1,
 	'lines'			=> 346,
-	'url'                   => 'http://www.debian.org/~elphick/ddp/manuals.html/dictionary/',
+	'url'                   => 'https://www.debian.org/doc/manuals/dictionary/',
 	'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/dictionary/?cvsroot=debian-doc'
 },
 
@@ -162,7 +162,7 @@ $translations = {
 	'name'			=> 'Debian Tutorial',
 	'revision'		=> '2.1',
 	'lines'			=>  6131,
-	'url'			=> 'http://www.debian.org/~hp/tutorial/debian-tutorial.html',
+	'url'			=> 'https://www.debian.org/doc/manuals/debian-tutorial/',
 	'cvs_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/tutorial/?cvsroot=debian-doc',
 	'package'		=> '',
 },
@@ -171,7 +171,7 @@ $translations = {
 	'type'			=> 'DDP',
 	'name'			=> 'Debian User Reference Manual',
 	'status'		=> 1,
-	'url'                   => 'http://www.debian.org/~elphick/ddp/manuals.html/users_manual/',
+	'url'                   => 'https://www.debian.org/doc/manuals/user/',
 	'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/users_manual/?cvsroot=debian-doc'
 },
 
@@ -180,7 +180,7 @@ $translations = {
 	'name'			=> 'Debian GNU/Linux System Administrator\'s Manual',
 	'status'		=> 1,
 	'lines'			=> 2322,
-'url'                   => 'http://www.debian.org/~elphick/ddp/manuals.html/system-administrator/',
+'url'                   => 'https://www.debian.org/doc/manuals/system-administrator/',
 'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/system-administrator/?cvsroot=debian-doc'
 },
 
@@ -189,7 +189,7 @@ $translations = {
 	'name'			=> 'Debian GNU/Linux Network Administrator\'s Manual',
 	'status'		=> 1,
 	'lines'			=> 2086,
-'url'                   => 'http://www.debian.org/~elphick/ddp/manuals.html/network-administrator/',
+'url'                   => 'https://www.debian.org/doc/manuals/network-administrator/',
 'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/network-administrator/?cvsroot=debian-doc'
 },
 
@@ -201,7 +201,7 @@ $translations = {
 	'type'			=> 'boot',
 	'name'			=> 'Debian Installation Manual',
 	'revision'		=> '2.1',
-	'url'			=> 'http://www.debian.org/releases/slink/i386/install.en.html',
+	'url'			=> 'https://www.debian.org/releases/slink/i386/install.en.html',
 	'cvs_url'		=> 'http://cvs.debian.org/debian-boot/boot-floppies/documentation/install.sgml?cvsroot=debian-boot',
 	'package'		=> 'boot-floppies',
 },
@@ -210,7 +210,7 @@ $translations = {
 	'type'			=> 'boot',
 	'name'			=> 'Dselect beginner guide',
 	'revision'		=> '2.1',
-	'url'			=> 'http://www.debian.org/releases/slink/i386/dselect-beginner.en.html',
+	'url'			=> 'https://www.debian.org/releases/slink/i386/dselect-beginner.en.html',
 	'cvs_url'		=> 'http://cvs.debian.org/debian-boot/boot-floppies/documentation/dselect-beginner.sgml?cvsroot=debian-boot',
 	'package'		=> 'boot-floppies',
 },
@@ -219,7 +219,7 @@ $translations = {
 	'type'			=> 'boot',
 	'name'			=> 'Release Notes',
 	'revision'		=> '2.1',
-	'url'			=> 'http://www.debian.org/releases/slink/i386/release-notes/',
+	'url'			=> 'https://www.debian.org/releases/slink/i386/release-notes/',
 	'cvs_url'		=> 'http://cvs.debian.org/debian-boot/boot-floppies/documentation/release-notes.sgml?cvsroot=debian-boot',
 	'package'		=> 'boot-floppies',
 },
@@ -230,7 +230,7 @@ $translations = {
 	'type'			=> 'DDP',
 	'name'			=> 'Debian Policy Manual',
 	'revision'		=> '2.5.0.0',
-	'url'			=> 'http://www.debian.org/oc/debian-policy/',
+	'url'			=> 'httpd://www.debian.org/doc/debian-policy/',
 	'cvs_url'		=> 'http://cvs.debian.org/ddp/debian-policy/debian-policy/debian-policy.sgml?cvsroot=debian-doc',
 	'package'		=> 'debian-policy',
 },
@@ -250,7 +250,7 @@ $translations = {
 	'revision'		=> '2.5.0',
 	'lines'			=> 1951,
 	'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/developers-reference/?cvsroot=debian-doc',
-	'url'			=> 'http://www.debian.org/~elphick/ddp/manuals.html/packaging-manuals/developers-reference/',
+	'url'			=> 'https://www.debian.org/doc/manuals/developers-reference/',
 	'package'		=> 'developers-reference',
 },
 
@@ -258,7 +258,7 @@ $translations = {
 	'type'			=> 'DDP',
 	'name'			=> 'Debian New Maintainer\'s Guide',
 	'lines'			=> 1448,
-	'url'			=> 'http://www.debian.org/~elphick/ddp/manuals.html/maint-guide/',
+	'url'			=> 'https://www.debian.org/doc/manuals/maint-guide/',
 	'cvs_url'		=> 'http://cvs.debian.org/ddp/manuals.html/maint-guide/?cvsroot=debian-doc',
 },
 
@@ -266,7 +266,7 @@ $translations = {
 	'type'			=> 'DDP',
 	'name'			=> 'dpkg Internals Manual',
 	'revision'		=> '1.2',
-	'url'			=> 'http://www.debian.org/~elphick/ddp/manuals.html/packaging-manuals/dpkg-internals/',
+	'url'			=> 'https://www.debian.org/doc/packaging-manuals/dpkg-internals/',
 	'cvs_url'		=> 'http://cvs.debian.org/dpkg/dpkg/doc/internals.sgml?cvsroot=dpkg',
 	'package'		=> 'dpkg-dev',
 },
@@ -275,7 +275,7 @@ $translations = {
 	'type'			=> 'DDP',
 	'name'			=> 'Debian Menu System',
 	'revision'		=> '',
-	'url'			=> 'http://www.debian.org/~elphick/ddp/manuals.html/packaging-manuals/menu.html',
+	'url'			=> 'https://www.debian.org/doc/packaging-manuals/menu.html/',
 	'cvs_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/menu/?cvsroot=debian-doc',
 	'package'		=> 'menu',
 	'status'		=> 7,
@@ -298,7 +298,7 @@ $translations = {
 	'name'			=> 'Debian Packaging HOWTO',
 	'status'		=> 1,
 	'lines'			=> 368,
-	'url'                   => 'http://www.debian.org/~elphick/ddp/manuals.html/programmer/',
+	'url'                   => 'https://www.debian.org/doc/manuals/programmer/',
 	'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/programmer/?cvsroot=debian-doc'
 },
 
@@ -307,7 +307,7 @@ $translations = {
 	'name'			=> 'Introduction to internationalization',
 	'status'		=> 1,
 	'lines'			=> 1974,
-	'url'                   => 'http://www.debian.org/~elphick/ddp/manuals.html/intro-i18n/',
+	'url'                   => 'https://www.debian.org/doc/manuals/intro-i18n/',
 	'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/intro-i18n/?cvsroot=debian-doc'
 },
 
@@ -320,16 +320,16 @@ $translations = {
 	'name'			=> 'Debiandoc-SGML Markup Manual',
 	'revision'		=> '',
 	'package'		=> 'debiandoc-sgml',
-	'url'                   => 'http://www.debian.org/~elphick/ddp/manuals.html/debiandoc-sgml-doc/',
+	'url'                   => 'https://www.debian.org/doc/misc-manuals#markup',
 	'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/debiandoc-sgml-doc/?cvsroot=debian-doc'
 
 },
 
 'docstartup' => {
         'type'                  => 'DDP',
-        'name'                  => 'Debiandoc Starup',
+        'name'                  => 'Debiandoc Startup',
         'revision'              => '',
-        'url'                   => 'http://www.debian.org/~elphick/ddp/manuals.html/debiandoc-startup/',
+        'url'                   => 'https://www.debian.org/~elphick/ddp/manuals.html/debiandoc-startup/',
         'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/debiandoc-startup/?cvsroot=debian-doc'
 
 },
@@ -346,7 +346,7 @@ $translations = {
 	'type'			=> 'DDP',
 	'name'			=> 'Documentation for new users',
 	'lines'			=> 3803,
-	'url'                   => 'http://www.debian.org/~elphick/ddp/manuals.html/newbie-doc/',
+	'url'                   => 'https://www.debian.org/~elphick/ddp/manuals.html/newbie-doc/',
 	'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/newbie-doc/?cvsroot=debian-doc'
 
 },
@@ -356,7 +356,7 @@ $translations = {
 	'revision'		=> '0.2',
 	'package'		=> 'doc-debian',
 	'lines'			=> 900,
-	'url'                   => 'http://www.debian.org/~elphick/ddp/manuals.html/debian-bugs/',
+	'url'                   => 'https://www.debian.org/doc/manuals/debian-bugs/',
 	'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/debian-bugs/?cvsroot=debian-doc'
 
 },

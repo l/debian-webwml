@@ -65,7 +65,7 @@ uses Debian.
 
 EOT
 
-$mail .= "   1: http://www.debian.org/users/$fullname\n\n";
+$mail .= "   1: https://www.debian.org/users/$fullname\n\n";
 $mail .= $text;
 
 $mail .= <<'EOT';

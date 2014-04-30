@@ -475,8 +475,8 @@ determining which machine will serve you best.
 END
   print "<p>" if $html;
   print "The authoritative copy of the following list can always be found at:\n";
-  print "<a href=\"http://www.debian.org/mirror/list\">" if $html;
-  print "                      http://www.debian.org/mirror/list";
+  print "<a href=\"https://www.debian.org/mirror/list\">" if $html;
+  print "                      https://www.debian.org/mirror/list";
   print "</a>.<br>" if $html;
   print "\n";
 
@@ -484,16 +484,16 @@ END
 If you know of any mirrors that are missing from this list,
 please have the site maintainer fill out the form at:
 END
-  print "<a href=\"http://www.debian.org/mirror/submit\">" if $html;
-  print "                     http://www.debian.org/mirror/submit";
+  print "<a href=\"https://www.debian.org/mirror/submit\">" if $html;
+  print "                     https://www.debian.org/mirror/submit";
   print "</a>.<br>" if $html;
   print "\n";
 
   print <<END;
 Everything else you want to know about Debian mirrors:
 END
-  print "<a href=\"http://www.debian.org/mirror/\">" if $html;
-  print "                        http://www.debian.org/mirror/";
+  print "<a href=\"https://www.debian.org/mirror/\">" if $html;
+  print "                        https://www.debian.org/mirror/";
   print "</a>.<br>" if $html;
   print "\n";
 }
@@ -807,7 +807,7 @@ access method for each type.
   <dd>The Debian package pool.
 <dt><strong>CD Images</strong>
   <dd>Official Debian CD Images. See
-  <a href="http://www.debian.org/CD/">http://www.debian.org/CD/</a> for details.
+  <a href="https://www.debian.org/CD/">https://www.debian.org/CD/</a> for details.
 <dt><strong>Old releases</strong>
   <dd>The archive of old released versions of Debian.<br>
   Some of the old releases also included the so-called debian-non-US
@@ -816,7 +816,7 @@ access method for each type.
   The debian-non-US updates were discontinued with Debian 3.1.
 <dt><strong>Volatile packages</strong>
   <dd>Packages from the debian-volatile project. See
-  <a href="http://www.debian.org/volatile/">http://www.debian.org/volatile/</a> for details.
+  <a href="https://www.debian.org/volatile/">https://www.debian.org/volatile/</a> for details.
 </dl>
 
 <p>The following access methods are possible:
@@ -842,15 +842,15 @@ access method for each type.
   <dd>These sites mirror directly from the master archive site (which
   is not publicly accessible), using push mirroring.
 </dl>
-(See <a href="http://www.debian.org/mirror/push_mirroring">the page about push
+(See <a href="https://www.debian.org/mirror/push_mirroring">the page about push
 mirroring</a> for details on that.)
 
 <p>The authoritative copy of the following list can always be found at:
-<a href="http://www.debian.org/mirror/list-full">
-http://www.debian.org/mirror/list-full</a>.
+<a href="https://www.debian.org/mirror/list-full">
+https://www.debian.org/mirror/list-full</a>.
 <br>
 Everything else you want to know about Debian mirrors:
-<a href="http://www.debian.org/mirror/">http://www.debian.org/mirror/</a>.
+<a href="https://www.debian.org/mirror/">https://www.debian.org/mirror/</a>.
 <br>
 END
 }
@@ -1116,9 +1116,9 @@ END
   print <<END;
 The authoritative copy of the following mirror list can always be found at:
 END
-  print "<a href=\"http://www.debian.org/mirror/list-non-US\">" if $html;
+  print "<a href=\"https://www.debian.org/mirror/list-non-US\">" if $html;
   print <<END;
-                  http://www.debian.org/mirror/list-non-US
+                  https://www.debian.org/mirror/list-non-US
 END
   print "</a>" if $html;
 
@@ -1127,9 +1127,9 @@ END
 
 Everything else you want to know about Debian mirrors:
 END
-  print "<a href=\"http://www.debian.org/mirror/\">" if $html;
+  print "<a href=\"https://www.debian.org/mirror/\">" if $html;
   print <<END;
-                        http://www.debian.org/mirror/
+                        https://www.debian.org/mirror/
 END
   print "</a>" if $html;
 }
