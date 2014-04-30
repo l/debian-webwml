@@ -4,7 +4,7 @@
 # CVS repository.
 
 # It use information about translation revisions please see
-# http://www.debian.org/devel/website/uptodate
+# https://www.debian.org/devel/website/uptodate
 # it also need informations about the maintainer. Just add
 #   maintainer="Name"
 # at the end of the wml::debian::translation-check template invocation

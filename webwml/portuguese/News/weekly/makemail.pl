@@ -7,7 +7,7 @@ use locale;
 
 my $current_issue=`cat ../../../english/News/weekly/CURRENT-ISSUE-IS`;
 chomp $current_issue;
-my $url=shift || "http://www.debian.org/News/weekly/$current_issue/";
+my $url=shift || "https://www.debian.org/News/weekly/$current_issue/";
 
 my $tmpfile;
 my $tmpdir;
@@ -57,7 +57,7 @@ my $lastlinecontainsstar=0;
 open (IN, "lynx -dump $tmpfile |") or die "Can't open $tmpfile or no lynx in path: $!\n";
 if ($url =~ m,\d\d\d\d/\d\d?/,) {
      # This is a local URL - fix the output
-     $url =~ s,^,http://www.debian.org/News/weekly/,;
+     $url =~ s,^,https://www.debian.org/News/weekly/,;
      $url =~ s/index\.\w\w\.html$//;
 }
 
@@ -136,7 +136,7 @@ while (<IN>) {
 			s/^(\d+)/$1 - $skippedlinks/e;
 
 			# Fix local links
-			s,file://localhost/.*/webwml/[^/]*/,http://www.debian.org/,g;
+			s,file://localhost/.*/webwml/[^/]*/,https://www.debian.org/,g;
 			push @links, " $_";
 
 		}

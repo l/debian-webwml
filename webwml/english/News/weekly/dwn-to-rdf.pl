@@ -86,7 +86,7 @@ sub pubdate
 my $current = current_issue;
 my $pubdate = pubdate ($current) . "T00:00:00Z";
 my $rdf = 'dwn.' . $ENV{LANGUAGE} . '.rdf';
-my $url = 'http://www.debian.org/News/project/' . $current . '/index.' . $ENV{LANGUAGE} . '.html';
+my $url = 'https://www.debian.org/News/project/' . $current . '/index.' . $ENV{LANGUAGE} . '.html';
 
 sub rdf_add
 {
@@ -95,7 +95,7 @@ sub rdf_add
     my $headline = shift;
     my $body = shift;
 
-    $body =~ s~\$\(HOME\)~http://www.debian.org~g;
+    $body =~ s~\$\(HOME\)~https://www.debian.org~g;
     $body =~ s/\\\n//g;
 
     # Conversion for the content

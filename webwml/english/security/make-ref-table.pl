@@ -182,7 +182,7 @@ sub printrefs {
 				print  gmctime($dsaref{$dsa}{'date'})."\n" ;
 			} else {
 				print "<tr VALIGN=\"TOP\"><td>";
-				print "<a href=\"http://www.debian.org/security/".$dsaref{$dsa}{'location'}."\">";
+				print "<a href=\"https://www.debian.org/security/".$dsaref{$dsa}{'location'}."\">";
 				print "DSA-" if  $dsa !~ /\d{6,}/ ;
 				print "$dsa</a>";
 				print "</td>$dsaref{$dsa}{'printtext'} </tr>\n";

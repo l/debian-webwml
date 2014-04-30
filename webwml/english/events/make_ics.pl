@@ -180,7 +180,7 @@ $endstring   = sprintf("%04d%02d%02dT240000", split(/-/, $enddate));
 $filebase = $wmlfile;
 $filebase =~ s(^.*/([^/]+)$)($1);
 $filebase =~ s(^([^/].*)\.wml)($1);
-$url = 'http://www.debian.org/events/' . $year . '/' . $filebase . '.' .
+$url = 'https://www.debian.org/events/' . $year . '/' . $filebase . '.' .
        $language . '.ics';
 
 # Write output

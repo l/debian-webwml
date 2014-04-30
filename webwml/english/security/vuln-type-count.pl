@@ -91,7 +91,7 @@ sub printtable {
 			next if not length( $vuln );
 
 			$vuln = lc($vuln);
-			print "<a href=\"http://www.debian.org/security/2005/$vuln\">$vuln</a> ";
+			print "<a href=\"https://www.debian.org/security/2005/$vuln\">$vuln</a> ";
 		}
 		print "</td></tr>\n";
 	}
