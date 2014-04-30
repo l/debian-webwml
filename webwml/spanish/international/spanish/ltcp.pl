@@ -353,13 +353,13 @@ foreach $k (sort keys %$translations) {
 	print "<BR>$tag{'translation_revision'}: $t->{'translation_revision'}" if ($t->{'translation_revision'});
 	print "<BR>$tag{'base_revision'} : $t->{'base_revision'}" if ($t->{'base_revision'});
 	print "<BR>$tag{'diff'}: <A HREF=\"$t->{'diff'}\">$tag{'diff'}</A>" if ($t->{'diff'});
-	print "<BR>$tag{'available'} <A HREF=\"http://packages.debian.org/$t->{'translation_package'}\">$t->{'translation_package'}</A>" if ($t->{'translation_package'});
+	print "<BR>$tag{'available'} <A HREF=\"https://packages.debian.org/$t->{'translation_package'}\">$t->{'translation_package'}</A>" if ($t->{'translation_package'});
 	if ($t->{'translation_name'} !~ /original/) {
 	print "<BR>$tag{'originaldoc'} : <A HREF=\"$t->{'url'}\"> <I>$t->{'name'}</I> $t->{'sub_name'}</A>";
 	}
 
 	print " ( $tag{'revision'} $t->{'revision'} ) " if ($t->{'revision'});
-	print " ( $tag{'included'} <A HREF=\"http://packages.debian.org/$t->{'package'}\">$t->{'package'}</A> ) " if ($t->{'package'});
+	print " ( $tag{'included'} <A HREF=\"https://packages.debian.org/$t->{'package'}\">$t->{'package'}</A> ) " if ($t->{'package'});
 	print " ( <A HREF=\"$t->{'source_url'}\">$tag{'Source'}</A> ) " if ($t->{'source_url'} && $t->{'source_url'} ne '?'); # Why this? && uc $type ne "DDP");
 	print " ( <A HREF=\"$t->{'cvs_url'}\">$tag{'CVSpage'}</A> ) " if ($t->{'cvs_url'} && $t->{'cvs_url'} ne '?'); # Why this?  && uc $type ne "DDP");
 	print "<BR>$tag{'lines'} : $t->{'lines'} " if ($t->{'lines'});

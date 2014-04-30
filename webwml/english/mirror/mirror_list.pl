@@ -451,7 +451,7 @@ END
   if ($html) {
           print "
 a primary or secondary site. The program
-<a href=\"http://packages.debian.org/stable/net/netselect\">
+<a href=\"https://packages.debian.org/stable/net/netselect\">
 <em>netselect</em></a> can be used to\n";
   } else {
     print "a primary or secondary site. The program `netselect' can be used to\n";
@@ -461,9 +461,9 @@ determine the site with the least latency; use a download program such as
 END
   if ($html) {
           print "
-<a href=\"http://packages.debian.org/stable/web/wget\">
+<a href=\"https://packages.debian.org/stable/web/wget\">
 <em>wget</em></a> or
-<a href=\"http://packages.debian.org/stable/net/rsync\">
+<a href=\"https://packages.debian.org/stable/net/rsync\">
 <em>rsync</em></a> for determining the site with the most throughput.\n";
   } else {
     print "`wget' or `rsync' for determining the site with the most throughput.\n";

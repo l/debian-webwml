@@ -4,7 +4,7 @@
 
 <bind-gettext-domain domain="distrib" />
 
-<form method="GET" action="http://packages.debian.org/cgi-bin/search_contents.pl">
+<form method="GET" action="https://packages.debian.org/cgi-bin/search_contents.pl">
 <p>
 <label for="keyword"><gettext domain="distrib">Ключова дума</gettext>:</label>
 <input type="text" size="30" name="word" id="keyword" /> &nbsp;
