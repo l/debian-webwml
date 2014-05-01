@@ -1,0 +1,264 @@
+#use wml::debian::translation-check translation="1.4"
+<define-tag pagetitle>Debian 6.0 更新: 6.0.2 リリース</define-tag>
+<define-tag release_date>2011-06-25</define-tag>
+#use wml::debian::news
+
+<define-tag release>6.0</define-tag>
+<define-tag codename>squeeze</define-tag>
+<define-tag revision>6.0.2</define-tag>
+
+<define-tag dsa>
+    <tr><td align="center"><a href="$(HOME)/security/%0/dsa-%1">DSA-%1</a></td>
+        <td align="center"><:
+    my @p = ();
+    for my $p (split (/,\s*/, "%2")) {
+	push (@p, sprintf ('<a href="https://packages.debian.org/src:%s">%s</a>', $p, $p));
+    }
+    print join (", ", @p);
+:></td><td align="left">%3</td></tr>
+</define-tag>
+
+<define-tag correction>
+    <tr><td><a href="https://packages.debian.org/src:%0">%0</a></td><td>%1</td></tr>
+</define-tag>
+
+<define-tag srcpkg><a href="https://packages.debian.org/src:%0">%0</a></define-tag>
+
+<p>Debian プロジェクトは安定版 (stable) ディストリビューション Debian 6.0
+(コード名 <q><codename></q>) の2回目の更新を発表できることを嬉しく思います。
+この更新は主にセキュリティ問題の修正を安定版 (stable)
+リリースに加えるもので、重大な問題に対する若干の調整への対応を追加しています。
+セキュリティ勧告はすでに個別に発表されており、利用可能なものは参照されています。</p>
+
+<p>この更新は Debian 6.0 の新しいバージョンを構成するといった性質のものではなく、
+収録されているパッケージの一部を更新するだけであることに注意してください。
+6.0のCDやDVDを投げ捨てる必要はなく、インストール後に最新の Debian
+ミラーから更新を取得して古くなったパッケージを更新するだけです。</p>
+
+<p>頻繁に security.debian.org
+から更新をインストールしている人は大量のパッケージ更新をする必要はありません。
+security.debian.org での更新のほとんどが今回のアップデートに含まれています。</p>
+
+<p>新規のインストールメディアや CD、DVD イメージには更新されたパッケージが含まれ、
+いつもの場所で間もなく入手可能になります。</p>
+
+<p>オンラインからの今回のリビジョンへのアップグレードは、通常
+aptitude (または apt) パッケージツールで Debian の FTP/HTTP
+ミラーの多くのうちの一つを指定することで実施されます
+(sources.list(5) マニュアルページを参照してください)。
+ミラーの完全なリストは以下から入手出来ます:</p>
+
+<div class="center">
+  <a href="$(HOME)/mirror/list">https://www.debian.org/mirror/list</a>
+</div>
+
+<h2>様々なバグ修正</h2>
+
+<p>この安定版の更新では、以下のパッケージに重要な修正が加えられています:</p>
+<table border=0>
+<tr><th>パッケージ</th>                 <th>理由</th></tr>
+<correction aide                        "32ビットシステムで巨大なファイルを適切にサポート。bind9 ログファイルのグループを修正">
+<correction approx                      "InRelease や .gz ではない圧縮ファイルをキャッシュしないように">
+<correction apr                         "kfreebsd-* で apr_ino_t が -D_FILE_OFFSET_BITS によりサイズを変えるのを修正">
+<correction apt                         "ビッグエンディアンのアーキテクチャでのファイルサイズ計算を修正。<q>apt-get update</q>時にCDを要求しないように。XZサポートの追加">
+<correction apt-listchanges             "NEWS ファイルに項目が1件しか収録されていない場合に正しく処理するように">
+<correction base-files                  "/etc/debian_version を更新">
+<correction clive                       "liveleak.com の変更に追従">
+<correction dbus                        "システムサービスへのローカルサービス拒否を修正 (CVE-2011-2200)">
+<correction deborphan                   "--guess-section の出力から libreoffice を除外。POSIX 流の方法で WINCH を捕捉。翻訳の些細な修正">
+<correction dokuwiki                    "XMLRPC インターフェイスでのACL迂回の問題を修正">
+<correction dpkg                        "「dpkg-divert --rename」でのリグレッションを修正。dpkg-split: 32ビットシステムでメタ情報を壊さないように。vsnprintf() の互換宣言を修正">
+<correction e2fsprogs                   "様々なバグ修正">
+<correction fakechroot                  "「debootstrap --variant=fakechroot」を修正">
+<correction fcgiwrap                    "init スクリプトの「stop」ターゲットを修正">
+<correction gdm3                        "セッション開始前に SIGPIPE ハンドラをリセット。GDMが kill またはシャットダウンされた場合でも PostSession スクリプトを実行">
+<correction git                         "gitlog ユーザの削除前に git-daemon/log サービスを終了させることで削除や完全削除を一手でできるように">
+<correction gnome-settings-daemon       "Xsettings マネージャ開始時の競合状態の可能性にとりあえず対処">
+<correction ia32-libs                   "安定版や proposed-updates からパッケージを更新">
+<correction iceowl                      "セキュリティ更新">
+<correction im-config                   "im-config が削除されたが完全削除されてはいない場合にGDM経由でログインできなくなるのを回避">
+<correction inn                         "履歴生成に「sort +1n」を使わないように。古くなった CHECK_INCLUDED_TEXT オプションをデフォルトで無効化">
+<correction josm                        "新しいOSMライセンスに同意していないユーザに対して、よりうるさく説明するように">
+<correction kde4libs                    "ワイルドカードSSL証明書とクロスサイトスクリプティングのセキュリティ修正。ktar のチェックサムとマルチバイトの UTF-8 の扱いを修正">
+<correction kdenetwork                  "CVE-2010-1000 ディレクトリトラバーサル問題の修正を改善">
+<correction kernel-wedge                "scsi-extra-modules に hpsa と pm8001 を追加。nic-extra-modules にbnaを追加">
+<correction kerneltop                   "行バッファのサイズを 1024 バイトに増加">
+<correction klibc                       "ipconfig: DHCP オプションをエスケープ、ネットワークデバイスが複数接続されている場合に正しく処理 (CVE-2011-1930)">
+<correction krb5                        "サービス拒否を修正。w2k8r2 KDC との相互運用性を修正。不正な開放と二重解放を修正。PAC検証が失敗した場合に認証を失敗させないように">
+<correction kupfer                      "正しいパラメータの種類を使い、キーバインドが再び機能するように">
+<correction libapache2-mod-perl2        "kFreeBSD で apr 1.4.2-6+squeeze3 に対して再ビルドして apr_ino_t サイズの修正を適用">
+<correction libburn                     "権限を過剰に制限したイメージを作成しないように">
+<correction libfinance-quotehist-perl   "ウェブサイトの変更により壊れているテストスイートを無効化">
+<correction libmms                      "arm での配置の問題を修正">
+<correction linux-2.6                   "新しいハードウェアをサポート。長期版 2.6.32.41 を追加。破損したパーティションテーブルによる oops を修正。">
+<correction linux-kernel-di-amd64-2.6   "kernel-wedge 2.74+squeeze3 に対して再ビルド">
+<correction linux-kernel-di-armel-2.6   "kernel-wedge 2.74+squeeze3 に対して再ビルド">
+<correction linux-kernel-di-i386-2.6    "kernel-wedge 2.74+squeeze3 に対して再ビルド">
+<correction linux-kernel-di-ia64-2.6    "kernel-wedge 2.74+squeeze3 に対して再ビルド">
+<correction linux-kernel-di-mips-2.6    "kernel-wedge 2.74+squeeze3 に対して再ビルド">
+<correction linux-kernel-di-mipsel-2.6  "kernel-wedge 2.74+squeeze3 に対して再ビルド">
+<correction linux-kernel-di-powerpc-2.6 "kernel-wedge 2.74+squeeze3 に対して再ビルド">
+<correction linux-kernel-di-s390-2.6    "kernel-wedge 2.74+squeeze3 に対して再ビルド">
+<correction linux-kernel-di-sparc-2.6   "kernel-wedge 2.74+squeeze3 に対して再ビルド">
+<correction lua-expat                   "「billion laughs」サービス拒否攻撃を修正">
+<correction monkeysphere                "monkeysphere-host revoke-key を修正">
+<correction nagios-plugins              "ping 対象の全ホストのIPを処理するのに十分なバッファを割り当て">
+<correction nsd3                        "パッケージのユーザ削除前に statoverride を削除">
+<correction openldap                    "データベース破損の可能性がある問題、複数のセキュリティ問題、dpkg-reconfigure を修正">
+<correction php-svn                     "kFreeBSD で apr 1.4.2-6+squeeze3 に対して再ビルドして apr_ino_t サイズの修正を適用">
+<correction php5                        "kFreeBSD で apr 1.4.2-6+squeeze3 に対して再ビルドして apr_ino_t サイズの修正を適用">
+<correction pianobar                    "APIキーを XMLRPC v30 向けに更新">
+<correction postgresql-8.4              "新しい上流のバグ修正リリース。TOAST テーブルでの pg_upgrade の利用を修正">
+<correction prosody                     "「billion laughs」サービス拒否攻撃を修正">
+<correction puppet                      "サービスプロバイダを修正して update-rc.d の無効化 API を適切に利用するように">
+<correction python-apt                  "RealParseDepends でデフォルトで multiarch を除外。XZのサポートを追加">
+<correction python-gudev                "欠けている python-gobject への依存を追加">
+<correction q4wine                      "lib64 にあるライブラリを同梱しないように">
+<correction qemu                        "mips(el) で binfmt に qemu-mips(el) を登録しないように">
+<correction qemu-kvm                    "一部のゲストでゼロ除算が起きるのを修正。vncの zlib でのオーバーフローを修正。ユーザハードウェアのエラーで中断しないように。32ビットでの移行を修正">
+<correction qt4-x11                     "一部の不正なSSL証明書をブラックリストに追加。ワイルドカード証明書検証の弱点を修正">
+<correction rapidsvn                    "kFreeBSD で apr 1.4.2-6+squeeze3 に対して再ビルドして apr_ino_t サイズの修正を適用">
+<correction refpolicy                   "様々な権限修正">
+<correction reprepro                    "md5sums を収録していない Release ファイルを処理">
+<correction ruby1.8                     "libruby1.8 を irb1.8 と rdoc1.8 に対して競合 (conflict)/置換 (replace) とすることで lenny からのアップグレードを修正">
+<correction samba                       "tdb2.so からのシンボルが定義されていないエラーを修正。印刷関連の複数のバグと winbind / idmap でのgid漏洩を修正。新しく潜在的に破壊的な「map untrusted to domain」パラメータに言及">
+<correction schroot                     "dchroot.conf のロードを修正">
+<correction softhsm                     "パッケージのユーザ削除前に statoverride の項目を削除">
+<correction sun-java6                   "新しい上流のセキュリティ更新">
+<correction tzdata                      "新しい上流バージョン">
+<correction vimperator                  "iceweasel との互換性の問題を解決">
+<correction widelands                   "インターネットゲームでの潜在的なセキュリティ問題を修正">
+<correction xenomai                     "squeeze のカーネルに対してきれいに適用できるようにカーネルパッチを調整">
+<correction xserver-xorg-video-tseng    "ドライバの初期化を修正">
+</table>
+
+<h2>Debian インストーラ</h2>
+
+<p>インストーラで利用するカーネルイメージが更新され、重要な修正やセキュリティ関連の修正、
+追加のハードウェアサポートが盛り込まれています。</p>
+
+<h2>セキュリティ更新</h2>
+
+<p>この改訂では安定版 (stable) リリースに以下のセキュリティ更新が追加されます。
+セキュリティチームはこれらの更新それぞれについての勧告をすでに発表しています:</p>
+
+<table border=0>
+<tr><th>勧告ID</th><th>パッケージ</th><th>修正内容</th></tr>
+
+<dsa 2011 2161 openjdk-6              "サービス拒否">
+<dsa 2011 2193 libcgroup              "複数の問題">
+<dsa 2011 2194 libvirt                "特権の昇格">
+<dsa 2011 2195 php5                   "複数の問題">
+<dsa 2011 2197 quagga                 "サービス拒否">
+<dsa 2011 2198 tex-common             "入力の不十分なサニタイズ">
+<dsa 2011 2199 iceape                 "HTTPS 証明書ブラックリストの更新">
+<dsa 2011 2200 iceweasel              "HTTPS 証明書ブラックリストの更新">
+<dsa 2011 2201 wireshark              "複数の問題">
+<dsa 2011 2202 apache2                "root 権限を落とすのに失敗">
+<dsa 2011 2203 nss                    "HTTPS 証明書ブラックリストの更新">
+<dsa 2011 2205 gdm3                   "特権の昇格">
+<dsa 2011 2206 mahara                 "複数の問題">
+<dsa 2011 2208 bind9                  "サービス拒否">
+<dsa 2011 2209 tgt                    "二重解放">
+<dsa 2011 2211 vlc                    "入力のサニタイジング欠落">
+<dsa 2011 2212 tmux                   "特権の昇格">
+<dsa 2011 2213 x11-xserver-utils      "入力のサニタイジング欠落">
+<dsa 2011 2214 ikiwiki                "入力検証の欠落">
+<dsa 2011 2215 gitolite               "ディレクトリトラバーサル">
+<dsa 2011 2216 isc-dhcp               "入力のサニタイジング欠落">
+<dsa 2011 2218 vlc                    "ヒープベースのバッファオーバーフロー">
+<dsa 2011 2219 xmlsec1                "ファイルの上書き">
+<dsa 2011 2220 request-tracker3.8     "複数の問題">
+<dsa 2011 2221 libmojolicious-perl    "ディレクトリトラバーサル">
+<dsa 2011 2222 tinyproxy              "誤ったACL処理">
+<dsa 2011 2223 doctrine               "SQLインジェクション">
+<dsa 2011 2224 openjdk-6              "複数の問題">
+<dsa 2011 2225 asterisk               "複数の問題">
+<dsa 2011 2226 libmodplug             "バッファオーバーフロー">
+<dsa 2011 2227 iceape                 "複数の問題">
+<dsa 2011 2229 spip                   "サービス拒否">
+<dsa 2011 2230 qemu-kvm               "複数の問題">
+<dsa 2011 2231 otrs2                  "クロスサイトスクリプティング">
+<dsa 2011 2232 exim4                  "フォーマット文字列の脆弱性">
+<dsa 2011 2233 postfix                "複数の問題">
+<dsa 2011 2235 icedove                "複数の問題">
+<dsa 2011 2236 exim4                  "コマンドインジェクション">
+<dsa 2011 2237 apr                    "サービス拒否">
+<dsa 2011 2238 vino                   "サービス拒否">
+<dsa 2011 2239 libmojolicious-perl    "複数の問題">
+<dsa 2011 2240 user-mode-linux        "複数の問題">
+<dsa 2011 2240 linux-2.6              "複数の問題">
+<dsa 2011 2241 qemu-kvm               "実装の誤り">
+<dsa 2011 2242 cyrus-imapd-2.2        "実装の誤り">
+<dsa 2011 2244 bind9                  "境界条件の不具合">
+<dsa 2011 2245 chromium-browser       "複数の脆弱性">
+<dsa 2011 2246 mahara                 "複数の脆弱性">
+<dsa 2011 2247 rails                  "複数の脆弱性">
+<dsa 2011 2249 jabberd14              "サービス拒否">
+<dsa 2011 2250 citadel                "サービス拒否">
+<dsa 2011 2254 oprofile               "コマンドインジェクション">
+<dsa 2011 2255 libxml2                "バッファオーバーフロー">
+<dsa 2011 2257 vlc                    "バッファオーバーフロー">
+<dsa 2011 2259 fex                    "認証の迂回">
+<dsa 2011 2261 redmine                "複数の問題">
+<dsa 2011 2262 moodle                 "複数の問題">
+<dsa 2011 2263 movabletype-opensource "複数の問題">
+<dsa 2011 2265 perl                   "taint チェックの欠落">
+
+</table>
+
+<h2>削除されたパッケージ</h2>
+
+<p>以下のパッケージが私たちの力の及ばない事情により削除されました:</p>
+
+<table border=0>
+<tr><th>パッケージ</th><th>理由</th></tr>
+<correction ktsuss     "セキュリティ問題、保守されていない">
+</table>
+
+<h2>URL</h2>
+
+<p>このリリースで変更されたパッケージの完全なリスト:</p>
+
+<div class="center">
+  <url "http://ftp.debian.org/debian/dists/<downcase <codename>>/ChangeLog">
+</div>
+
+<p>現在の安定版 (stable) ディストリビューション:</p>
+
+<div class="center">
+  <url "http://ftp.debian.org/debian/dists/stable/">
+</div>
+
+<p>安定版 (stable) ディストリビューションへの更新提案中のパッケージ
+(Proposed updates):</p>
+
+<div class="center">
+  <url "http://ftp.debian.org/debian/dists/proposed-updates">
+</div>
+
+<p>安定版 (stable) ディストリビューション情報 (リリースノート、正誤表など):</p>
+
+<div class="center">
+  <a
+  href="$(HOME)/releases/stable/">https://www.debian.org/releases/stable/</a>
+</div>
+
+<p>セキュリティ関連のアナウンスと情報について:</p>
+
+<div class="center">
+  <a href="$(HOME)/security/">http://security.debian.org/</a>
+</div>
+
+<h2>Debian について</h2>
+
+<p>Debian プロジェクトはインターネットを介し、
+時間と労力を費やして完全にフリーなオペレーティングシステムである
+Debian を開発しているフリーソフトウェア開発者らによる団体です。</p>
+
+<h2>連絡先について</h2>
+
+<p>より詳細な情報については、Debian のウェブページ <a
+href="$(HOME)/">https://www.debian.org/</a> を訪れるか、&lt;press@debian.org&gt;
+宛にメールする、もしくは &lt;debian-release@lists.debian.org&gt;
+から安定版リリースチームに問い合わせを行ってください。</p>
