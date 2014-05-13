@@ -20,13 +20,13 @@ do 'check_trans.status';
 #                      'unknown'                       8
 # In french:
 #                       'non-disponible'                0
-#                       'à traduire'                    1
+#                       'Ã  traduire'                    1
 #                       'en cours de traduction'        2
-#                       'à relire'                      3
-#                       'traduction à jour'             4
-#                       'à reviser'                     5
-#                       'en cours de révision'          6
-#                       'obsolète'                      7
+#                       'Ã  relire'                      3
+#                       'traduction Ã  jour'             4
+#                       'Ã  reviser'                     5
+#                       'en cours de rÃ©vision'          6
+#                       'obsolÃ¨te'                      7
 #                       'inconnu'                       8
 #
 #       'since'                 => '',
@@ -55,7 +55,7 @@ do 'check_trans.status';
 #        'international/French' => {
 #	        'type'			=> 'Web',
 #	        'status'		=> 4,
-#	        'note'			=> 'Version originale en français',
+#	        'note'			=> 'Version originale en franÃ§ais',
 #	        'translation_maintainer'=> ['Christian Couder'],
 #        },
 #};

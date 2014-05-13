@@ -28,7 +28,7 @@
 
 sub init_translators {
         my $translators = {
-                'Mohammed Adnène Trojette' => {
+                'Mohammed AdnÃ¨ne Trojette' => {
                        email           => 'adn+deb@diwi.org',
                        summary         => 3,
                        logs            => 3,
@@ -76,5 +76,3 @@ sub init_translators {
 }
 
 1;
-
-
