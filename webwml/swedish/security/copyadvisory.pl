@@ -207,7 +207,13 @@ while (<SRC>)
 	s/an unbranded version of the Firefox browser/en varumärkesfri version av webbläsaren Firefox/;
 	s/an unbranded version of the /en varumärkesfri version av /;
 	s/directory traversal/katalogtraversering/;
-	
+	s/<p><b>Note<\/b>\: Debian carefully tracks all known security issues across every/<p><b>Observera<\/b>\: Debian spårar försiktigt alla kända säkerhetsproblem i alla/;
+	s/linux kernel package in all releases under active security support./paket för linuxkärnan i alla utgåvor som är under aktivt säkerhetsstöd./;
+	s/However\, given the high frequency at which low-severity security/Dock\, givet den höga frekvensen som säkehetsproblem med låg allvarlighetsgrad/;
+	s/issues are discovered in the kernel and the resource requirements of/upptäcks i kärnan och resurserna som krävs för att göra en uppdatering/;
+	s/doing an update, updates for lower priority issues will normally not/så kommer uppdateringar för problem med lägre prioritet inte släppas/;
+	s/be released for all kernels at the same time. Rather, they will be/samtidigt för alla kärnor på samma gång. Istället kommer dom att släppas/;
+	s/released in a staggered or "leap-frog" fashion.<\/p>/i större klumpar.<\/p>/;
 	print DST $_;
 }
 
