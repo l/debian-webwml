@@ -55,16 +55,7 @@ sub init_translators {
 			file		=> 0,
 			compress	=> 'none'
 		},
-		'skizzhg' => {
-			email		=> 'skizzhg@gmx.com',
-			summary		=> 2,
-			logs		=> 0,
-			diff		=> 0,
-			tdiff		=> 0,
-			file		=> 0,
-			compress	=> 'none'
-		},
-		'Luca Monducci' => {
+		Luca Monducci' => {
 			email		=> 'luca.mo@tiscali.it',
 			summary		=> 3,
 			logs		=> 0,
