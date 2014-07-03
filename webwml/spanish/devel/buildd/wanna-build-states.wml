@@ -1,5 +1,5 @@
 #use wml::debian::template title="Estados de Wanna-build: una explicación" BARETITLE="true"
-#use wml::debian::translation-check translation="1.19" 
+#use wml::debian::translation-check translation="1.25" 
 
     <p>Esta página intenta explicar lo que significa cada estado de 
       wanna-build y qué le pasará al paquete cuando esté en ese estado.
@@ -15,9 +15,9 @@
 <h2>Estados de wanna-build</h2>
 <p>Para cada arquitectura a la que Debian da soporte, hay una base de datos de 
 wanna-build instalada en buildd.debian.org, con todos los paquetes y su 
-estado de compilación actual. Hay 7 estados: <em>needs-build</em>,
+estado de compilación actual. Hay 8 estados: <em>needs-build</em>,
 <em>building</em>, <em>uploaded</em>, <em>dep-wait</em>,
-<em>failed</em>, <em>not-for-us</em>, y
+<em>BD-Uninstallable</em>, <em>failed</em>, <em>not-for-us</em>, e
 <em>installed</em>.</p>
 
 <p>Sus significados son los siguientes:</p>
@@ -128,6 +128,27 @@ estado de compilación actual. Hay 7 estados: <em>needs-build</em>,
 	<em>dep-wait</em> para <tt>m68k</tt> lo tendrán que cambiar 
 	manualmente los responsables de <tt>m68k</tt>.
       </dd>
+
+ .....<dt><a name="bd-uninstallable">BD-Uninstallable</a></dt>
+	<dd>Durante la debconf9, <a
+	href='https://lists.debian.org/debian-wb-team/2009/07/msg00089.html'>Joachim
+	Breitner tuvo la idea</a> de usar edos-debcheck para verificar si los paquetes
+	eran instalables respecto a dependencias de construcción, pues de otra manera
+	irían al estado Needs-Build. En ese punto, wanna-build ya tenía la capacidad
+	de comprobar la disponibilidad inmediata de las dependencias de construcción;
+	pero si el paquete «a» no podía instalarse porque dependía de otro «b» que dependía
+	de otro «c» (&gt;=1.2.3) y «c» aún está en versión 1.2.2, esto no sería detectado,
+	y la construcción fallaría tempranamente por la no disponibilidad de dependencias de
+	construcción. Averiguar esto era un proceso manual del administrador buildd, y usualmente,
+	un proceso largo. Con el parche BD-Uninstallable, esto ya no era un problema. Cuando su paquete
+	está en BD-Uninstallable, significa que una de las dependencias para construirlo no es instalable 
+	(ya sea inmediatamente, o porque parte de su árbol de dependencia no está disponible). 
+	Desafortunadamente, el parche BD-Uninstallable no proporciona información sobre qué paquete
+	falta exactamente; por favor use edos-debcheck para averiguarlo. Este problema, no obstante,
+	se resuelve por sí mismo una vez que las dependencias que faltan están ya disponibles, 
+	y en algún punto su paquete se moverá automáticamente otra vez a Needs-Build.
+       </dd>
+
       <dt><a name="wanna-build-state-failed">failed</a></dt>
       <dd>Si un intento de compilación falló, el responsable del 
         autocompilador decide si realmente es un fallo que no se 
@@ -187,7 +208,7 @@ estado de compilación actual. Hay 7 estados: <em>needs-build</em>,
 	como <em>installed</em> tras una media de 15 minutos.
       </dd>
     </dl>
-    <p>Además de estos siete estados, <em>wanna-build</em> también 
+    <p>Además de estos ocho estados, <em>wanna-build</em> también 
     reconoce dos -estados eliminados, que en realidad son casos excepcionales.
     Estos dos estados son <em>dep-wait-removed</em> y
     <em>failed-removed</em>. Están relacionados con sus estados simples
@@ -229,7 +250,8 @@ estado de compilación actual. Hay 7 estados: <em>needs-build</em>,
       autocompilador y a logs@buildd.debian.org
       (así que puede terminar en https://buildd.debian.org). El registro
       que resulta de la compilación puede ser <em>successful</em>,
-      <em>failed</em>, <em>given-back</em>, o <em>skipped</em>. 
+      <em>attempted</em> (antes conocido como <em>failed</em>),
+      <em>given-back</em>, o <em>skipped</em>. 
       Dese cuenta que, en <a href="https://buildd.debian.org/">la página
        que muestra el registro de buildd</a>, el prefijo <em>maybe-</em> 
        se añade, porque entre otras cosas, el hecho de que una compilación
@@ -244,8 +266,9 @@ estado de compilación actual. Hay 7 estados: <em>needs-build</em>,
         del autocompilador recibe este registro, extraerá el archivo 
 	<code>.changes</code> incluido, lo firma, y lo envía de vuelta
 	al autocompilador, lo que hará que se envíe el paquete.</dd>
-      <dt><a name="failed">failed</a></dt>
-      <dd>La compilación falló. Como puede haber un gran número de razones por 
+      <dt><a name="failed">attempted (antes, failed)</a></dt>
+      <dd>La compilación terminó con un estado de salida distinto de cero,
+	indicando que probablemente falló. Como puede haber un gran número de razones por 
         las que falle, enumerarlos todos sería tedioso, así que no se
 	intentará hacer aquí. Si un paquete suyo se marca 
 	<em>(maybe-)failed</em>, querrá leer lo de más arriba, y comprobar
@@ -280,3 +303,4 @@ estado de compilación actual. Hay 7 estados: <em>needs-build</em>,
 href="wanna-build.png">versión de diagrama de flujo</a> de este procedimiento.
 De nuevo, tenga en cuenta que no contiene todo lo mencionado en este documento.
 </p>
+
