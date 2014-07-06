@@ -1,0 +1,147 @@
+#use wml::debian::template title="Säkerhetsgranskningsverktyg"
+#use wml::debian::recent_list
+#use wml::debian::translation-check translation="1.24"
+
+<p>Det finns flera paket tillgängliga i Debianarkivet som är designade för att
+hjälpa vid källkodsgranskning. Dessa inkluderar:</p>
+
+<ul>
+<li><a href="https://packages.debian.org/flawfinder">Flawfinder</a>
+<ul>
+<li><a href="examples/flawfinder">Exempel på användning av flawfinder</a></li>
+</ul></li>
+<li><a href="http://archive.debian.net/woody/its4">ITS4</a>
+<ul>
+<li>Det finns inget exempel för ITS4, eftersom verktyget har tagits bort från
+den instabila distributionen.</li>
+</ul></li>
+<li><a href="https://packages.debian.org/rats">RATS</a>
+<ul>
+<li><a href="examples/RATS">Exempel på användning av RATS</a></li>
+</ul></li>
+<li><a href="https://packages.debian.org/pscan">pscan</a>
+<ul>
+<li><a href="examples/pscan">Exempel på användning av pscan</a></li>
+</ul></li>
+</ul>
+
+<p>Notera även att det finns andra verktyg som är specifika för en uppsättning
+säkerhetssårbarheter och som kanske inte har paketerats för Debian ännu, men
+som kan var användbara för en granskning. Dessa inkluderar:</p>
+
+<ul>
+<li>Verktyg specifika för XSS-fel:
+<ul>
+<li><a href="http://freecode.com/projects/xsslint/">Xsslint</a></li>
+<li><a href="http://www.devitry.com/screamingCSS.html">ScreamingCSS</a></li>
+</ul></li>
+<li>Verktyg för att testa webbläsare:
+<ul>
+<li><a href="http://www.securityfocus.com/archive/1/378632">MangleMe</a></li>
+</ul></li>
+</ul>
+
+<p>Inget av dessa verktyg är perfekt och kan endast användas som riktlinjer
+för vidare granskning, men med tanke på hur enkla de är att använda så är det
+värt att ta sig tid att testa dem.</p>
+
+<p>Var och ett av dessa verktyg har olika styrkor och svagheter så det
+rekommenderas att använda fler än ett.</p>
+
+
+<h2>Flawfinder</h2>
+
+<p>flawfinder är ett Pythonverktyg som är designat för att analysera C och C++-
+källkod och söka efter potentiella säkerhetsbrister.</p>
+
+<p>När man kör det mot en mapp som innehåller källkod kommer det att mata ut
+en rapport med de potentiella problem som det har detekterat, sorterat efter
+risk (där <i>risk</i> är ett heltal 1&ndash;5). För att filtrera bort små
+risker är det möjligt att säga till programmet att inte rapportera brister
+under en viss risknivå. Som standard kommer utdatan som ren text, men en
+HTML-rapport är också tillgänglig.</p>
+
+<p>Programmet arbetar genom att scanna koden efter användning av funktioner
+som finns i en databas av funktioner som ofta används felaktigt.</p>
+
+<p>För att hjälpa till vid läsning av rapporten är det möjligt att få den
+utmatade rapporten att innehålla raden som innehåller den använda funktionen,
+vilket kan hjälpa för att direkt upptäcka ett problem, eller på samma sätt
+utesluta det.</p>
+
+<p>Du kan se ett exempel på hur flawfinder används, och dess utdata i 
+<a href="examples/">sektionen för granskningsexempel</a>.</p>
+
+
+<h2>ITS4</h2>
+
+<p>ITS4 är ett verktyg som finns i icke-fria delen av Debianarkivet,
+och är endast tillgängligt för utgåvan <q>woody</q>.</p>
+
+<p>ITS4 kan användas både för att scanna C och C++-kod för potentiella
+säkerhetshål, likt flawfinder.</p>
+
+<p>Utdatan som produceras försöker vara intelligent, genom att utesluta
+en del av fallen där anrop till farliga funktioner har gjorts försiktigt.</p>
+
+
+<h2>RATS</h2>
+
+<p>RATS liknar verktygen som listats ovan, med skillnaden att det kommer
+med ett stöd för en större mängd språk. För närvarande stödjer det
+C, C++, Perl, PHP och Python.</p>
+
+<p>Verktyget använder sig av en enkel XML-fil för att läsa in sina sårbarheter
+från vilket gör det till ett av de enklaste av de tillgängliga verktygen att
+modifiera. Nya funktioner kan enkelt läggas till för varje språk.</p>
+
+<p>Du kan se ett exempel på hur man använder RATS, och dess utdata i
+<a href="examples/">sektionen för granskningsexempel</a>.</p>
+
+
+<h2>pscan</h2>
+
+<p>pscan skiljer sig från de tidigare beskrivna verktygen i det att det inte
+är en scanner för allmänna ändamål. Istället är det ett program specifikt med
+målet att upptäckta fel i formatsträngar.</p>
+
+<p>Verktyget kommer att försöka upptäcka potentiella problem i användningen av
+variabla funktioner från C och C++-källkod, så som
+<tt>printf</tt>, <tt>fprintf</tt> och <tt>syslog</tt>.</p>
+
+<p>Fel i formatsträngar är relativt enkla att upptäcka och rätta, även om
+de är den nyaste klassen av mjukvaruattacker och antagligen har majoriteten av 
+dem redan upptäckts och reparerats.</p>
+
+<p>Du kan se ett exempel på hur pscan används, och dess utdata i
+<a href="examples/">sektionen för granskningsexempel</a>.</p>
+
+
+<h2>Att förstå utdatan från en granskning</h2>
+
+<p>Var och ett av de allmänna verktygen kommer att inkludera utdata som
+beskriver den detekterade nristen, och möjligen ge råd angående hur koden
+kan rättas.</p>
+
+<p>Exempelvis är följande taget från utdatan från RATS, och beskriver
+riskerna med <tt>getenv</tt>:</p>
+
+<p>&quot;Miljövariabler är högst opålitlig indata. De kan ha
+vilken längd som, och innehålla vilket data som helst. Gör inte några
+antaganden rörande längd eller innehåll. Om det är möjligt, undvik att
+använda dem, och om det är möjligt, rengör dem och trunkera dem till en
+lämplig längd.&quot;</p>
+
+<p>Om du behöver vidare råd om hur man rättar ett hål som har rapporterats
+så bör du studera en bok om hur man programmerar säkert, så som
+<a href="http://www.dwheeler.com/secure-programs/">Secure
+Programming for Linux and Unix HOWTO</a> av David A. Wheeler.</p>
+
+<p>(Kom ihåg att när du rapporterar säkerhetsproblem så är en patch som rättar 
+hålet mycket uppskattat)</p>
+
+<p>Diskussioner relaterade till att stänga en särskilt problemetisk bit
+kod kan även hållas på <a href="https://lists.debian.org/debian-security/">sändlistan
+debian-security</a>, men eftersom det är en publik lista med publika arkiv,
+var vänlig och gör det inte övertydligt vilket program som innehåller bristen.</p>
+
