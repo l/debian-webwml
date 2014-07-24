@@ -1,0 +1,38 @@
+#use wml::debian::translation-check translation="1.9" maintainer="Lev Lamberov"
+<define-tag moreinfo>
+<p>Изначально о пробеме сообщил Олаф Кирх &lt;okir@lst.de&gt;
+
+<p>Уязвимость может использоваться в случае, если вы позволяете metamail запускать showext для сообщений,
+имеющих тип message/external-body. По меньшей мере tcsh (возможно и некоторые другие варианты csh)
+выполняет что-то странное при выполнении раскрытия шаблонов аргументов командной строки. Если вы
+передаёте сценарию аргументы вида "foo FTP=/tmp/evilcmd", и имеется
+
+<pre>
+	set var=$1
+</pre>
+
+<p>это приведёт к присваиванию foo переменной $var и /tmp/evilcmd переменной $FTP. К сожалению,
+metamail выполняет в командной строке showext с атрибутами MIME,
+поэтому вы просто посылаете её заголовки вида
+
+<pre>
+   Content-type:  message/external-body;
+	   access-type="anon-ftp";
+	   name="passwd";
+	   site="monad.swb.de";
+	   directory="/etc";
+	   mode="image FTP=/tmp/evilcmd"
+</pre>
+
+<p>Более того, сценарий запустит $FTP для инициализации FTP-соединения.
+Пока я не смог передать аргументы этой команде, но
+это не означает, что с описанным выше нельзя сделать чего-нибудь интересного.
+
+<p>[Заплата удалена из-за её возраста.]
+
+</define-tag>
+<define-tag description>можно сделать так, что metamail выполняла произвольные команды</define-tag>
+
+# do not modify the following line
+#include '$(ENGLISHDIR)/security/1997/19970409.data'
+
