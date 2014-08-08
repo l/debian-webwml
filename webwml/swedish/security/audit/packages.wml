@@ -1,0 +1,103 @@
+#use wml::debian::template title="Riktlinjer rörande prioritering av granskning av paket"
+#use wml::debian::recent_list
+#use wml::debian::translation-check translation="1.14"
+
+<p>När man utför en granskning av Debiandistributionen så är ett av de
+första problemen att bestämma vilka paket man skall granska.</p>
+
+<p>Idealet vore att undersöka alla, men på grund av arkivets storlek så
+måste det finnas ett enklare sätt att prioritera sitt arbete.</p>
+
+<p>Som en enkel uppsättning av riktlinjer är paketen som bör undersökas
+först följande:</p>
+
+<ol>
+	<li>Alla binärer som installeras setuid eller setgid.</li>
+	
+	<li>Allt som tillhandahåller en tjänst över ett nätverk.</li>
+	
+	<li>Alla CGI/PHP-skript med fjärråtkomst.</li>
+	
+	<li>Allt som tillhandahåller ett cronjob eller annat automatiserat
+	skript som körs med root-rättigheter.</li>
+	
+</ol>
+
+<p>Populära paket skall i allmänhet få en högre prioritet, eftersom
+eventuella problem i dessa påverkar en större mängd användare.</p>
+
+<p><a href="http://popcon.debian.org/">Debian Popularity Contest</a> \
+håller en löpande undersökning för att visa vilka paket som är mest
+populära bland de frivilliga i undersökningen.</p>
+
+<p>Ta speciellt en titt på <a
+href="http://popcon.debian.org/by_vote">paket sorterade efter röster</a>.
+<q>Efter röster</q> listar paket efter hur ofta de används av personerna
+som deltar i undersökningen.</p>
+
+<p>Om ett paket är viktigt rörande säkerhet, speciellt om det möter något
+av kriterierna ovan, och är populärt (enligt en undersökning som denna),
+så är det <em>definitivt</em> en kandidat för granskning.</p>
+
+
+<h2><tt>setuid</tt>- och <tt>setgid</tt>-binärer</h2>
+
+<p><tt>setuid</tt>- och <tt>setgid</tt>-binärer är traditionella mål
+för säkerhetsgranskningar, eftersom att komprommettera en sårbar binär med 
+någon av dessa rättigheter kan leda till att en lokal användare får 
+åtkomsträttigheter som dom annars inte skulle ha.</p>
+
+<p>För att hjälpa sökningen finns det en lista på alla setuid och setgid-binärer
+som innefattas i den aktuella stabila utgåvan.</p>
+
+<ul>
+
+<li><a href="http://lintian.debian.org/tags/setuid-binary.html">Lintianrapport
+över Setuid-binärer i Debian</a></li>
+
+<li><a href="http://lintian.debian.org/tags/setgid-binary.html">Lintianrapport
+över Setgid-binärer i Debian</a></li>
+
+</ul>
+
+# TODO (jfs): the above does not provide the same information as was available at
+# http://shellcode.org/Setuid/
+# ask Steve Kemp to move this feature to a Debian-administered machine?
+# (or to the Alioth project)
+#
+
+<p>När det kommer till att välja dessa binärer är det viktigt att komma ihåg
+att några av dessa binärer är mer säkerhetskänsliga än andra.
+setuid(root)-binärer bör exempelvis undersökas före setgid(games) och 
+setuid(bugs).</p>
+
+
+<h2>Nätverksservrar</h2>
+
+<p>Nätverksservrar är en annan uppenbar insprirationskälla när det kommer
+till att utföra säkerhetsgranskningar, eftersom ett exploaterbart problem
+i dessa kan leda till att attackerare äventyrar maskiner på avstånd.</p>
+
+<p>Säkerhetsproblem på distans är vanligvis mycket mer allvarligt än
+lokala brister.</p>
+
+<h2>Onlineskript</h2>
+
+<p>Onlineskript, speciellt CGI-skript, är verkligen i samma klass
+som nätverksservrar &mdash; även om din webbserver kan vara säker så
+är skripten som kör på servern lika viktiga.</p>
+
+<p>Ett fel i ett skript som är tillgängligt via nätverket är ett lika
+allvarligt fel som ett fel i server som lyssnar efter anslutningar &mdash;
+båda kan tillåta din maskin att äventyras lika mycket.</p>
+
+<h2>Cronjob och systemtjänster</h2>
+
+<p>Medan det inte finns så många av dessa så kan det vara värt att se på
+automatiska skript, cronjob, osv, som inkluderas i paket.</p>
+
+<p>En hel del supportsaker kör som root som standard för att rensa loggfiler,
+osv.</p>
+
+<p>Framgångsrik exploatering av en symlänkattack kunde resultera i en lokal
+brist.</p>
