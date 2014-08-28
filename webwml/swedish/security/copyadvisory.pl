@@ -127,11 +127,11 @@ while (<SRC>)
 	s/>unsanitised input</>städar ej indata</;
 	s/The Common Vulnerabilities and Exposures project/Projektet Common Vulnerabilities and Exposures/;
 	s/The Common Vulnerabilities and/Projektet Common Vulnerabilities and/;
-	s/Exposures projekt/Exposures/;
+	s/Exposures project/Exposures/;
 	s/The Common Vulnerabilities and Exposures/Projektet Common Vulnerabilities and/;
 	s/projekt/Exposures/;
 	s/The Common Vulnerabilities/Projektet Common Vulnerabilities/;
-	s/and Exposures projekt/and Exposures/;
+	s/and Exposures project/and Exposures/;
 	s/The Common/Projektet Common/;
 	s/Vulnerabilities and Exposures project/Vulnerabilities and Exposures/;
 	s/\bidentifies the following problems:/identifierar följande problem:/;
