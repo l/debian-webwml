@@ -162,6 +162,7 @@ while (<SRC>)
 	s/\bin version\b/i version/;
 	s/of the Debian package/av Debianpaketet/;
 	s/upstream version/uppströmsversion/;
+	s/The testing distribution \(wheezy\), and the unstable distribution \(sid\)/Uttestningsutgåvan (Wheezy) och den instabila utgåvan (Sid)/;
 	s/([Ff])or the old ?stable distribution/$1ör den gamla stabila utgåvan/;
 	s/([Ff])or the old ?stable/$1ör den gamla stabila/;
 	s/([Ff])or the current stable distribution/$1ör den nuvarande stabila utgåvan/;
@@ -179,6 +180,7 @@ while (<SRC>)
 	s/([Ff])or the Debian unstable distribution/$1ör Debians instabila utgåva/;
 	s/([Ff])or the unstable distribution/$1ör den instabila utgåvan/;
 	s/([Ff])or the unstable/$1ör den instabila/;
+	s/no longer contain this package./innehåller inte längre detta paket./;
 	s/current stable distribution/nuvarande stabila utgåvan/;
 	s/unstable distribution/instabila utgåvan/;
 	s/The old stable distribution/Den gamla stabila utgåvan/;
