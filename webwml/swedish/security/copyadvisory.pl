@@ -102,7 +102,7 @@ while (<SRC>)
 	s/buffer overflows?/buffertspill/;
 	s/integer overflow/heltalsspill/;
 	s/heap overflow/heapbaserat bufferspill/;
-	s/denial of service/överbelastning/;
+	s/([Dd])enial of ([Ss])ervice/överbelastning/;
 	s/information disclosure/utlämnande av information/;
 	s/information leak/informationsläckage/;
 	s/interpretation conflict/tolkningskonflikt/;
