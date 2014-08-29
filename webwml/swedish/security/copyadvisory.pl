@@ -134,7 +134,7 @@ while (<SRC>)
 	s/and Exposures project/and Exposures/;
 	s/The Common/Projektet Common/;
 	s/Vulnerabilities and Exposures project/Vulnerabilities and Exposures/;
-	s/\bidentifies the following problems:/identifierar följande problem:/;
+	s/\bidentifies the following (?:problems|issues):/identifierar följande problem:/;
 	s/The following matrix explains which kernel version for which architecture/Följande tabell beskriver vilka versioner av kärnan för vilka arkitekturer som/;
 	s/fix the problems mentioned above:/rättar problemen som beskrivs ovan:/;
 	s/fix the problem mentioned above:/rättar problemet som beskrivs ovan:/;
