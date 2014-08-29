@@ -176,7 +176,7 @@ while (<SRC>)
 	s/([Ff])or the testing (wheezy) and the unstable distribution/$1ör uttestningsutgåvan (Wheezy) och den instabila utgåvan/;
 	s/([Ff])or the testing \(([Ww])heezy\) and unstable distribution/$1ör uttestningsutgåvan (Wheezy) och den instabila utgåvan/;
 	s/([Ff])or the testing distribution \(jessie\) and the unstable distribution/$1ör uttestningsutgåvan \(Jessie\) och den instabila utgåvan/;
-	s/([Ff])or the testing distribution \(([Ww])heezy\)\, and the unstable distribution/$1ör uttestningsutgåvan \(Wheezy\) och den instabila utgåvan/;
+	s/([Ff])or the testing distribution \(([Ww])heezy\)(?:,)?( )and (?:the )?unstable distribution/$1ör uttestningsutgåvan \(Wheezy\) och den instabila utgåvan/;
 	s/([Ff])or the testing distribution/$1ör uttestningsutgåvan/;
 	s/([Ff])or the Debian unstable distribution/$1ör Debians instabila utgåva/;
 	s/([Ff])or the unstable distribution/$1ör den instabila utgåvan/;
