@@ -129,7 +129,6 @@ while (<SRC>)
 	s/The Common Vulnerabilities and/Projektet Common Vulnerabilities and/;
 	s/Exposures project/Exposures/;
 	s/The Common Vulnerabilities and Exposures/Projektet Common Vulnerabilities and/;
-	s/projekt/Exposures/;
 	s/The Common Vulnerabilities/Projektet Common Vulnerabilities/;
 	s/and Exposures project/and Exposures/;
 	s/The Common/Projektet Common/;
