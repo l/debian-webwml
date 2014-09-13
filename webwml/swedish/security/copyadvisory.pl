@@ -138,6 +138,7 @@ while (<SRC>)
 	s/fix the problems mentioned above:/rättar problemen som beskrivs ovan:/;
 	s/fix the problem mentioned above:/rättar problemet som beskrivs ovan:/;
 	s/This has been fixed in version/Detta har rättats i version/;
+	s/([Ff])or the testing distribution \(wheezy\)\, this problem will be fixed soon./För uttestningsutgåvan \(Wheezy\) kommer detta problem att rättas inom kort/;
 	s/(<td>.*) architecture/$1-arkitekturen/;
 	s/The following matrix lists additional packages that were rebuilt for/Följande tabell beskriver ytterligare paket som byggts om för kompatibilitet/;
 	s/The following matrix lists additional source packages that were rebuilt for/Följande tabell beskriver ytterligare källkodspaket som byggts om för kompatibilitet/;
