@@ -198,6 +198,8 @@ while (<SRC>)
 	s/does not contain a(?:ny)? ([[:word:]]*) packages/innehåller inte några $1-paket/;
 	s/does not contain a(?:ny)? ([[:word:]]*) package/innehåller inte något $1-paket/;
 	s/this problem will be fixed soon/kommer detta problem rättas inom kort/;
+	s/\, this problem will be fixed/\, kommer detta problem att rättas/;
+	s/soon\.\<\/p\>/inom kort\.\<\/p\>/;
 	s/\(potato\)/(Potato)/;
 	s/\(woody\)/(Woody)/;
 	s/\(sarge\)/(Sarge)/;
