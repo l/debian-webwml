@@ -142,6 +142,7 @@ while (<SRC>)
 	s/The following matrix lists additional packages that were rebuilt for/Följande tabell beskriver ytterligare paket som byggts om för kompatibilitet/;
 	s/The following matrix lists additional source packages that were rebuilt for/Följande tabell beskriver ytterligare källkodspaket som byggts om för kompatibilitet/;
 	s/compatibility with or to take advantage of this update:/med, eller för att dra nytta av, denna uppdatering:/;
+	s/For the unstable distribution \(sid\)\, this problem will be fixed soon./För den instabila utgåvan (Sid) kommer detta problem att rättas inom kort./;
 	s/(?:,)?( )?th(?:is|e) problem (?:has been|was) fixed in/$1har detta problem rättats i/;
 	s/(?:,)?( )?th(?:is|e) problem (?:has been|was) fixed$/$1har detta problem rättats/;
 	s/(?:,)?( )?th(?:is|e) problem has(?: been)?$/$1har detta problem/;
