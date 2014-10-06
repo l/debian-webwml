@@ -1,0 +1,193 @@
+#use wml::debian::translation-check translation="1.2"
+<define-tag pagetitle>Beta 2 av utgåvan av Debian Jessie-installeraren</define-tag>
+<define-tag release_date>2014-10-05</define-tag>
+#use wml::debian::news
+
+<p>
+Debian Installer-<a
+href="https://wiki.debian.org/DebianInstaller/Team">gruppen</a> är stolta att
+kunna tillkännage den andra betautgåvan av installeraren för Debian 8
+<q>Jessie</q>.
+</p>
+
+
+<h2>Viktiga förändringar i denna utgåva av installeraren</h2>
+
+<ul>
+	<li>Gnome är nu åter igen standardalternativet gällande
+	skrivbordsmiljö.</li>
+
+	<li>En lista på skrivbordsmiljöer visas i tasksel,
+		vilket gör det enkelt att installera ytterligare en skrivbordsmiljö
+		(eller flera av dem). Tyvärr är detta lite odokumenterat för närvarande
+		(<a href="https://bugs.debian.org/764026">#764026</a>).</li>
+		
+
+	<li>Preliminärt stöd för arkitekturerna arm64 och ppc64el har 
+	lagts till.</li>
+
+</ul>
+
+
+<h2>Andra förändringar i denna utgåva av installeraren</h2>
+
+<ul>
+	<li>brltty: Lägg till konfigurationen som ärvts från d-i till slutet
+		av brltty.conf istället för att skriva över den (vilket resulterade
+		i att dokumentationen för användaren skrevs över).</li>
+
+	<li>brltty: Aktivera tillgänglighet även i XFCE, LXDE och MATE-sessioner.</li>
+
+	<li>busybox: Lägg till stöd för /32-subnet i udhcpc-skript
+		(<a href="https://bugs.debian.org/652573">#652573</a>).</li>
+
+	<li>choose-mirror: Strippa bort alla scheme-delar som hittas i början av
+		mirror/*/hostname
+		(<a href="https://bugs.debian.org/706191">#706191</a>).</li>
+
+	<li>console-setup: Rätta standardalternativet för keymap för Sydkorea
+		(<a href="https://bugs.debian.org/756052">#756052</a>).</li>
+
+	>console-setup: Använd nepali keymap för Nepali och Tharu som 
+		standard.</li>
+
+	<li>debian-installer:
+		<ul>
+			<li>Rätta bootavbildningar för PXE för kfreebsd, hurd
+			(<a href="https://bugs.debian.org/759686">#759686</a>).</li>
+
+			<li>Lägg till fonts-lohit-guru-udeb till gtk-avbildningar, rätta
+			rendering av Punjabi
+			(<a href="https://bugs.debian.org/761573">#761573</a>).</li>
+
+			<li>Ta bort skrivbordsval från syslinux; nu tillgängligt i
+			tasksel.</li>
+
+			<li>Behåll Linux modules.builtin-filen i initrd.</li>
+
+			<li>Rätta placering av bibliotek och sökväg för syslinux &gt;= 5
+			(<a href="https://bugs.debian.org/756275">#756275</a>).</li>
+		</ul>
+	</li>
+
+	<li>fontconfig: Lägg till mappen conf.avail till udeb, vilket rättar
+		trasig Monospace-typsnitt i den grafiska installeraren
+		(<a href="https://bugs.debian.org/739011">#739011</a>).</li>
+
+	<li>hw-detect: Förbättra diskstöd för drivrutinsinjicering.</li>
+
+	<li>hw-detect: Flytta installationskod för firmware till pre-pkgsel.d</li>
+
+		<li>hw-detect: Korrigera detektering av Macar som behöver blacklista
+		snd-aoa-moduler
+		(<a href="https://bugs.debian.org/650588">#650588</a>).</li>
+
+	<li>iso-scan: Avbryt inte på grund av fel vid sökning i mappar med 
+		skal-specifika tecken i deras namn
+		(<a href="https://bugs.debian.org/640789">#640789</a>).</li>
+
+	<li>lowmem: Uppdatera lowmem-begränsningar för linux-x86.</li>
+
+	<li>lowmem: Gör att /-ramfs fyller hela minnet igen
+		(<a href="https://bugs.debian.org/759336">#759336</a>).</li>
+
+	<li>netcfg: Använd inte kill_dhcp_client efter att ha satt
+		hostname och domän, annars kommer Linux udhcpc att sluta förnya sin
+		lease, på andra platformar kommer dhclient att de-konfigurera
+		nätverksgränssnittet
+		(<a href="https://bugs.debian.org/757711">#757711</a>, <a href="https://bugs.debian.org/757988">#757988</a>).</li>
+
+	<li>netcfg: Kopiera inte /etc/network/interfaces till /target om
+		netcfg/target_network_config=ifupdown
+		(<a href="https://bugs.debian.org/709017">#709017</a>).</li>
+
+	<li>netcfg: Rätta stöd för att mata in ESSID manuellt, tidigare
+		ignorerades detta
+		(<a href="https://bugs.debian.org/757478">#757478</a>).</li>
+
+	<li>preseed: Uppdatera auto-install/defaultroot för jessie.</li>
+
+	<li>preseed: Inaktivera alltid locale &amp; tangentbords-frågan när
+		auto är aktiverat, även om ingen preseed-fil var given vid boot, i
+		de fall som dhcp-servern tillhandahåller dessa
+		(<a href="https://bugs.debian.org/759290">#759290</a>).</li>
+
+	<li>rootskel: Uppdatera lowmem-begränsningar för gtk på linux-x86.</li>
+
+	<li>rootskel: Använd en tmpfs för vissa mappar för att undvika att få slut
+		på utrymme i initrd med fast storlek på kfreebsd-*
+		(<a href="https://bugs.debian.org/757985">#757985</a>).</li>
+
+	<li>rootskel-gtk: Uppdatera gtk-set-font för att lära den om ny mappning
+		(Lohit Punjabi).</li>
+</ul>
+
+
+<h2>Förändringar i hårdvarustöd</h2>
+
+<ul>
+	<li>libdebian-installer: arm64: Detektera UEFI-baserade system som "efi"
+		subarch.</li>
+
+	<li>libdebian-installer: Lägg till stöd för ppc64 och ppc64el.</li>
+
+	<li>linux:
+		<ul>
+			<li>Inkludera preliminärt stöd för arm64 och ppc64el.</li>
+			
+			<li>udeb: Lägg till ccm, ctr till crypto-modules
+			(<a href="https://bugs.debian.org/761902">#761902</a>).</li>
+			
+			<li>[armhf] udeb: Lägg till ehci-platform, ohci-platform och
+			phy-sun4i-usb till usb-modules
+			(<a href="https://bugs.debian.org/761591">#761591</a>).</li>
+			
+			<li>udeb: Lägg till rsi_usb till nic-wireless-modules</li>
+			
+			<li>udeb: Lägg till ath6kl_sdio, libertas_cs, libertas_sdio,
+			mwifiex_sdio, r8192u_usb, r8723au, rtl8188eu, rtl818x_pci,
+			rtl8723be, rtl8821ae, spectrum_cs till
+			nic-wireless-modules.</li>
+			
+			<li>[armel/orion5x] udeb: Inkludera mvmdio i nic-modules
+			udeb.</li>
+			
+			<li>udeb: Lägg till nya ljuddrivrutiner till sound-modules
+			(<a href="https://bugs.debian.org/756998">#756998</a>).</li>
+		</ul>
+	</li>
+</ul>
+
+
+<h2>Lokaliseringsstatus</h2>
+
+<ul>
+	<li>75 språk stöds i denna utgåva.</li>
+	<li>Komplett översättning för 8 av dessa.</li>
+</ul>
+
+
+<h2>Kända problem i denna utgåva</h2>
+
+<p>
+	Se <a href="$(DEVEL)/debian-installer/errata">errata</a> för detaljer och en
+	komplett lista på kända problem.
+</p>
+
+
+<h2>Återkoppling för denna utgåva</h2>
+
+<p>
+	Vi behöver din hjälp för att hitta fel och ytterligare förbättringar av
+	installeraren, så var vänlig att testa den. Installations-CDs, annan media
+	och allt annat du kan tänkas behöva finns tillgängligt på våran <a
+	href="$(DEVEL)/debian-installer">webbsida</a>.
+</p>
+
+
+<h2>Tack</h2>
+
+<p>
+	Debian Installer-gruppen tackar alla som har bidragit till denna
+	utgåva.
+</p>
