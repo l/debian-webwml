@@ -1,0 +1,34 @@
+#!/usr/bin/perl
+# extract mail addresses from consultant.data
+#
+# provided by Raphael Hertzog, thanks!
+
+use HTML::Entities;
+use open ':encoding(utf8)';
+
+$filename	= 'consultant.data';
+$comment	= '^#\s*Consultant:\s*(.*)\s*$';
+
+# Read in file
+open( FILE, "<$filename" ) || die "$filename: $!\n";
+binmode STDOUT, ":encoding(utf8)";
+
+# Count consultants/countries
+while ( <FILE> ) {
+	chomp;
+	if(/^\s*$/) {
+	    if ($email) {
+		$name //= $company;
+		print STDOUT "$name <$email>\n";
+	    }
+	    $name = $email = $company = undef;
+	}
+	$name = decode_entities($1) if (/^<name\s+(.*)>/);
+	$company = decode_entities($1) if (/^<company\s+(.*)>/);
+	if (/^<email\s*(\S+)(\s+scramble=["']?yes["']?)?>/) {
+	    $email = $1;
+	    $email = decode_entities($email);
+	    $email =~ s/"//g;
+	}
+}
+
