@@ -115,8 +115,6 @@ function diffstat_pretty(diff_or_error) {
 function setDiffstat(path, r1, r2, element) {
 	// does not send CORS:
 	// var base = "http://anonscm.debian.org/viewvc/webwml/webwml/";
-	// does not allow ExecCGI:
-	// var base = "http://people.debian.org/~porridge/cgi-bin/webwml.cgi/";
 	var base = "http://webwml.alioth.debian.org/cgi-bin/anoncvs-cors/";
 	var lang = "english";
 	var url = base + lang + "/" + path + "?r1=" + r1 + "&r2=" + r2 + "&view=patch";
