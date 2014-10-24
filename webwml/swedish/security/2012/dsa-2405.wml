@@ -1,0 +1,80 @@
+#use wml::debian::translation-check translation="1.2" mindelta="1"
+<define-tag description>multiple issues</define-tag>
+<define-tag moreinfo>
+
+<p>Flera sårbarheter har upptäckts i Apache HTTPD-server:</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2011-3607">CVE-2011-3607</a>:
+	
+	<p>Ett heltalsspill i ap_pregsub() kunde tillåta lokala angripare att
+	köra godtycklig kod med  utökade rättigheter via skapade
+	.htaccess-filer.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2011-3368">CVE-2011-3368</a> <a href="https://security-tracker.debian.org/tracker/CVE-2011-3639">CVE-2011-3639</a> <a href="https://security-tracker.debian.org/tracker/CVE-2011-4317">CVE-2011-4317</a>:
+
+	<p>Apache HTTP-servern validerade inte förfråge-URIer ordentligt för
+	proxade förfrågningar. I vissa reverseproxykonfigurationer som använder
+	ProxyPassMatch-direktivet eller som använder RewriteRule-direktivet som
+	[P]-flaggan kunde en fjärrangripare få proxyn att ansluta till en
+	godtycklig server. Detta kunde tillåta angripare att få åtkomst till
+	interna servrar som inte annars skulle vara åtkomliga från utsidan.</p>
+
+	<p>Dessa tre CVE-ids anger tre aningens olika varianter på samma problem.</p>
+
+	<p>Notera att, även med denna sårbarhet rättat, är det administratörens
+	ansvar att säkerställa att det reguljära uttrycket för utbytesmönstret
+	för mål-URIn inte tillåter en klient att lägga till godtyckliga strängar
+	till host eller port-delarna av mål-URIn. Exempelvis så är konfigurationen</p>
+
+<pre>
+  ProxyPassMatch ^/mail(.*)  http://internal-host$1
+</pre>
+
+	<p>fortfarande osäker och bör ersättas med en av följande konfigurationer:</p>
+
+<pre>
+  ProxyPassMatch ^/mail(/.*)  http://internal-host$1
+  ProxyPassMatch ^/mail/(.*)  http://internal-host/$1
+</pre>
+</li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2012-0031">CVE-2012-0031</a>:
+
+	<p>En barnprocess från apache2 kunde orsaka föräldraprocessen att krascha
+	under nedstängning. Detta är en kränkning av rättighetsseparationen mellan
+	apache2-processen och kunde potentiellt användas för att försämra effekterna
+	av en annan sårbarhet.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2012-0053">CVE-2012-0053</a>:
+
+	<p>Svarmeddelandet för felkod 400 (felaktig förfrågan) kunde användas för
+	att avslöja <q>httpOnly</q>-kakor. Detta kunde tillåta en fjärrangripare som
+	använder serveröverskridande skriptning av stjäla autentiseringskakor.</p></li>
+
+</ul>
+
+<p>För den gamla stabila utgåvan (Lenny) har dessa problem rättats i
+version apache2 2.2.9-10+lenny12.</p>
+
+<p>För den stabila utgåvan (Squeeze) har dessa problem rättats i
+version apache2 2.2.16-6+squeeze6</p>
+
+<p>För uttestningsutgåvan (Wheezy) kommer dessa problem att rättas i
+version 2.2.22-1.</p>
+
+<p>För den instabila utgåvan (Sid) har dessa problem rättats i
+version 2.2.22-1.</p>
+
+<p>Vi rekommenderar att ni uppgraderar era apache2-paket.</p>
+
+	<p>Denna uppdatering innehåller även ett uppdaterat apache2-mpm-itk-paket som
+	har kompilerats om mot det uppdaterade apache2-paketen. Det nya versionsnumret
+	för den gamla stabila utgåvan är 2.2.6-02-1+lenny7. I den
+	stabila utgåvan, har apache2-mpm-itk samm versionsnummer som
+	apache2.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2012/dsa-2405.data"
