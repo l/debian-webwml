@@ -1,0 +1,92 @@
+#use wml::debian::translation-check translation="1.2" mindelta="1"
+<define-tag description>sikkerhedsopdatering</define-tag>
+<define-tag moreinfo>
+<p>Flere sårbarheder er opdaget i Linux-kernen, hvilke måske kunne føre til 
+lammelsesangreb (denial of service):</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3610">CVE-2014-3610</a>
+
+    <p>Lars Bull fra Google og Nadav Amit rapporterede om en fejl i den måde 
+    KVM håndterer ikke-kanoniske skrivninger til visse MSR-registre.  En 
+    priviligeret gæstebruger kunne udnytte fejlen til at forårsagge et 
+    lammelsesangreb (kernepanik) på værtsmaskinen.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3611">CVE-2014-3611</a>
+
+    <p>Lars Bull fra Google rapporterede om en kapløbstilstand i 
+    PIT-emuleringskoden i KVM.  En lokal gæstebruger med adgang til PIT's 
+    I/O-porte kunne udnytte fejlen til at forårsage et lammelsesangreb (nedbrud) 
+    på værtsmaskinen.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3645">CVE-2014-3645</a>
+/ <a href="https://security-tracker.debian.org/tracker/CVE-2014-3646">CVE-2014-3646</a>
+
+    <p>Advanced Threat Research Team hos Intel Security opdagede at 
+    KVM-undersystemet ikke håndterede VM-exit'erne på en pæn måde hvad angår 
+    invept- (Invalidate Translations afledt af EPT) og invvpid-instruktioner 
+    (Invalidate Translations baseret på VPID).  På værtsmaskiner med en 
+    Intel-processor og understøttelse af invept-/invppid-VM-exit, kunne en 
+    ikke-priviligeret gæstebruger anvende instruktionerne til at få gæsten til 
+    at gå ned.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3647">CVE-2014-3647</a>
+
+    <p>Nadav Amit rapporterede at KVM fejlhåndterede ikke-kanoniske adresser, 
+    når der blev emuleret instruktioner, som ændrer RIP, hvilket potentielt 
+    kunne forårsage en fejlet VM-registrering.  En gæstebruger med adgang til 
+    I/O eller MMIO'en, kunne udnytte fejlen til at forårage et lammelsesangreb 
+    (systemnedbrud) i gæsten.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3673">CVE-2014-3673</a>
+
+    <p>Liu Wei fra Red Hat opdagede en fejl i net/core/skbuff.c førende til en 
+    kernepanik, når der blev modtaget misdannede ASCONF-chunks.  En 
+    fjernangriber kunne udnytte fejlen til at få systemet til at gå 
+    ned.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3687">CVE-2014-3687</a>
+
+    <p>En fejl i sctp-stakken blev opdaget, hvilket kunne føre til en kernepanik 
+    når der blev modtaget duplikerede ASCONF-chunks.  En fjernangriber kunne 
+    udnytte fejlen til at få systemet til at gå ned.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3688">CVE-2014-3688</a>
+
+    <p>Man opdagede at sctp-stakken var udsat for et problem med fjernudløsbart 
+    hukommelsespres, forårsaget af overdrevet ikøsættelse.  En fjernangriber 
+    kunne udnytte fejlen til at forårsage lammelsesangrebstilstande på 
+    systemet.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3690">CVE-2014-3690</a>
+
+    <p>Andy Lutomirski opdagede at ukorrekt registerhåndtering i KVM kunne føre 
+    til lammelsesangreb.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-7207">CVE-2014-7207</a>
+
+    <p>Flere Debian-udviklere rapporterede om et problem i 
+    IPv6-netværksundersystemet.  En lokal bruger med adgang til tun- eller 
+    macvtap-enheder, eller en virtuel maskine forbundet til en sådan enhed, 
+    kunne forårsage et lammelsesangreb (systemnedbrud).</p></li>
+
+</ul>
+
+<p>Opdateringen indeholder en fejlrettelse med relation til 
+<a href="https://security-tracker.debian.org/tracker/CVE-2014-7207">\
+CVE-2014-7207</a>, som deaktiverer UFO (UDP Fragmentation Offload) i driverne 
+til macvtap, tun og virtio_net.  Det vil medføre, at migrering af en kørende VM 
+fra en vært, der anvender en tidligere kerneversion, til en vært, der anvender 
+denne kerneversion, fejler, hvis VM'en er blevet tildelt en 
+virtio-netværksenhed.  For at migrere en sådan VM, skal den først 
+lukkes.</p>
+
+<p>I den stabile distribution (wheezy), er disse problemer rettet i
+version 3.2.63-2+deb7u1.</p>
+
+<p>Vi anbefaler at du opgraderer dine linux-pakker.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2014/dsa-3060.data"
