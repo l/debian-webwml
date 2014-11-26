@@ -39,11 +39,11 @@ textfiles :=  vote_001_quorum.err  vote_001_quorum.log  \
 		vote_002_vote_detailed.png                \
 		vote_002_quorum.txt  vote_002_quorum.log  \
                 vote_002_quorum.err				\
-              vote_003_quorum.log  vote_003_quorum.txt
-             # vote_003_tally.txt   vote_003_voters.txt  \ #
-             # vote_003_vote.png    vote_003_results.png \ #
-             # vote_003_results.dot vote_003_results.txt \ #
-             # vote_003_vote_detailed.png                \ #
+              vote_003_quorum.log  vote_003_quorum.txt  \
+             vote_003_tally.txt   vote_003_voters.txt  \
+             vote_003_vote.png    vote_003_results.png \
+             vote_003_results.dot vote_003_results.txt \
+             vote_003_vote_detailed.png               
              # vote_004_quorum.err  vote_004_quorum.log  \ #
              # vote_004_tally.txt   vote_004_voters.txt  \ #
              # vote_004_vote.png    vote_004_results.png \ #
