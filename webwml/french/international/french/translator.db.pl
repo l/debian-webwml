@@ -255,7 +255,7 @@ sub init_translators {
                  },
                 'David Prévot' => {
                        email           => 'david@tilapin.org',
-                       summary         => 3,
+                       summary         => 0,
                        logs            => 0,
                        diff            => 0,
                        tdiff           => 0,
