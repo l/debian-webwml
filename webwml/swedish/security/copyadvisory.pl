@@ -159,6 +159,8 @@ while (<SRC>)
 	s/(?:,)?( )?these problems will be fixed soon/$1kommer dessa problem att rättas inom kort/;
 	s/(?:,)?( )?these problems will be fixed in/$1kommer dessa problem att rättas i/;
 	s/this problem will be fixed soon/kommer detta problem att rättas inom kort/;
+	s/this problem will be/kommer detta problem att/;
+	s/fixed soon/rättas inom kort/;
 	s/For the unstable (sid) and testing (wheezy) distribution, this problem/För den instabila utgåvan (Sid) och uttestningsutgåvan (Wheezy) kommer detta problem/;
 	s/will be fixed soon/att rättas inom kort./;
 	s/(?:been )?fixed in version/rättats i version/;
