@@ -58,7 +58,6 @@ others_FILES    = $(ENGLISHDIR)/banners/index.tags \
   $(ENGLISHDIR)/logos/index.data \
   $(ENGLISHDIR)/misc/merchandise.def $(ENGLISHDIR)/y2k/l10n.data \
   $(ENGLISHDIR)/devel/join/nm-steps.inc \
-  $(ENGLISHDIR)/misc/hardware.def \
   $(ENGLISHDIR)/mirror/submit.inc \
   $(ENGLISHDIR)/women/profiles/profiles.def
 templates_FILES = $(addprefix $(TEMPLDIR)/, \
