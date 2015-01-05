@@ -1,0 +1,36 @@
+<define-tag description>security update</define-tag>
+<define-tag moreinfo>
+<p>Mike Daskalakis reported a denial of service vulnerability in charon,
+the IKEv2 daemon for strongSwan, an IKE/IPsec suite used to establish
+IPsec protected links.</p>
+
+<p>The bug can be triggered by an IKEv2 Key Exchange (KE) payload that
+contains the Diffie-Hellman (DH) group 1025. This identifier is from the
+private-use range and only used internally by libtls for DH groups with
+custom generator and prime (MODP_CUSTOM). As such the instantiated
+method expects that these two values are passed to the constructor. This
+is not the case when a DH object is created based on the group in the KE
+payload. Therefore, an invalid pointer is dereferenced later, which
+causes a segmentation fault.</p>
+
+<p>This means that the charon daemon can be crashed with a single
+IKE_SA_INIT message containing such a KE payload. The starter process
+should restart the daemon after that, but this might increase load on
+the system. Remote code execution is not possible due to this issue, nor
+is IKEv1 affected in charon or pluto.</p>
+
+<p>For the stable distribution (wheezy), this problem has been fixed in
+version 4.5.2-1.5+deb7u6.</p>
+
+<p>For the upcoming stable distribution (jessie), this problem has been
+fixed in version 5.2.1-5.</p>
+
+<p>For the unstable distribution (sid), this problem has been fixed in
+version 5.2.1-5.</p>
+
+<p>We recommend that you upgrade your strongswan packages.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2015/dsa-3118.data"
+# $Id$
