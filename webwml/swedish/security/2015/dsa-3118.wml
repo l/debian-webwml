@@ -1,0 +1,36 @@
+#use wml::debian::translation-check translation="1.1" mindelta="1"
+<define-tag description>säkerhetsuppdatering</define-tag>
+<define-tag moreinfo>
+<p>Mike Daskalakis rapporterade en överbelastningssårbarhet i charon,
+IKEv2-daemonen för strongSwan, en IKE/IPSec-uppsättning som används för att
+etablera IPsec-skyddade länkar.</p>
+
+<p>Felet kan triggas av en IKEv2 Key Exchange (KE)-last som innehåller
+Diffie-Hellman (DH)-gruppen 1025. Identifieraren är från
+private-use-uppsättningen och används endast internt av libtls för DH-grupper
+med anpassad generator och prime (MODP_CUSTOM). Som sådan förväntar den
+instantierade metoden att dessa två värden skickas till konstruktorn. Detta
+är inte fallet när ett DH-objekt skapas baserat på gruppen i KE-lasten.
+Därför derefereras en ogiltig pekare senare, vilket orsakar ett
+segmenteringsfel.</p>
+
+<p>Detta betyder att charon-daemonen kan kraschas med hjälp av ett enda
+IKE_SA_INIT-meddelande som innehåler en sådan KE-last. Startprocessen
+skall starta om daemonen efter detta, men detta kan orsaka ökad last
+på systemet. Körning av fjärrkod är inte möjligt på grund av detta problem,
+och IKEv1 i charon eller pluto påverkas inte heller.</p>
+
+<p>För den stabila utgåvan (Wheezy) har detta problem rättats i
+version 4.5.2-1.5+deb7u6.</p>
+
+<p>För den kommande stabila utgåvan (Jessie) har detta problem
+rättats i version 5.2.1-5.</p>
+
+<p>För den instabila utgåvan (Sid) har detta problem rättats i
+version 5.2.1-5.</p>
+
+<p>Vi rekommenderar att ni uppgraderar era strongswan-paket.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2015/dsa-3118.data"
