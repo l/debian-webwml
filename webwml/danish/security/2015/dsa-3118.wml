@@ -1,0 +1,36 @@
+#use wml::debian::translation-check translation="1.1" mindelta="1"
+<define-tag description>sikkerhedsopdatering</define-tag>
+<define-tag moreinfo>
+<p>Mike Daskalakis rapporterede om en lammelsesangrebssårbarhed (denial of 
+service) i charon, IKEv2-dæmonen til strongSwan, en IKE/IPsec-programsamling, 
+der anvendes til at etablere IPsec-beskyttede links.</p>
+
+<p>Fejlen kan udløses af en IKEv2 Key Exchange-payload (KE), som indeholder 
+Diffie-Hellman (DH) gruppe 1025.  Identifikatoren er fra et intervel, der er 
+beregnet til privat anvendelse, og kun anvendes internt af libtls til DH-grupper 
+med skræddersyet generator og prime (MODP_CUSTOM).  Den instantierede metode 
+forventer, at disse to værder overføres til constructoren.  Det er ikke 
+tilfældet, når et DH-objekt oprettes og det er baseret på gruppen i 
+KE-payload'en.  Derfpr derefereres senere en ugyldig pointer, hvilket medfører 
+en segmenteringsfejl.</p>
+
+<p>Det betyder, at charon-dæmonen kan bringes til at gå ned med en enkelt 
+IKE_SA_INIT-meddelelse, indeholdende en sådan KE-payload.  Starterprocessen 
+skulle dernæst genstarte dæmonen, men det kan forøge belastningen på systemet.  
+Fjernudførelse af kode er ikke muligt på grund af problemet, desuden er IKEv1 
+ikke påvirket i hverken charon eller pluto.</p>
+
+<p>I den stabile distribution (wheezy), er dette problem rettet i
+version 4.5.2-1.5+deb7u6.</p>
+
+<p>I den kommende stabile distribution (jessie), er dette problem
+rettet i version 5.2.1-5.</p>
+
+<p>I den ustabile distribution (sid), er dette problem rettet i
+version 5.2.1-5.</p>
+
+<p>Vi anbefaler at du opgraderer dine strongswan-pakker.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2015/dsa-3118.data"
