@@ -158,6 +158,7 @@ while (<SRC>)
 	s/(?:,)?( )?these problem are fixed/$1rättas dessa problem/;
 	s/(?:,)?( )?these problems will be fixed soon/$1kommer dessa problem att rättas inom kort/;
 	s/(?:,)?( )?these problems will be fixed in/$1kommer dessa problem att rättas i/;
+	s/(?:,)?( )?these problems will be/$1kommer dessa problem att/;
 	s/this problem will be fixed soon/kommer detta problem att rättas inom kort/;
 	s/this problem will be/kommer detta problem att/;
 	s/fixed soon/rättas inom kort/;
