@@ -1,0 +1,188 @@
+#use wml::debian::translation-check translation="1.2"
+<define-tag pagetitle>RC 1 av Jessie-utgåvan av Debian Installer</define-tag>
+<define-tag release_date>2015-01-26</define-tag>
+#use wml::debian::news
+
+<p>
+Debian Installer-<a
+href="https://wiki.debian.org/DebianInstaller/Team">gruppen</a> tillkännager
+stolt den första utgåvekandidaten av installeraren för Debian 8
+<q>Jessie</q>.
+</p>
+
+
+<h2>Viktiga förändringar i denna utgåvan av installeraren</h2>
+
+<ul>
+	<li>
+		check-missing-firmware (i hw-detect) har uppdaterats för att 
+		kontrollera i kärnloggar för att avgöra vilken firmware som
+		möjligen saknas. Detta rättar den långvariga regressionen i detta
+		område jämfört med Wheezy-utgåvan (<a 
+		href="https://bugs.debian.org/725714">#725714</a>).</li>
+	<li>
+		Artwork har uppdaterats för att använda det nya
+		<q>Lines</q>-temat av Juliette Belin.</li>
+	<li>
+		På grund av en förändring i linuxkärnan används nu
+		"---"-separatorn istället för det historiska "--" för att separera
+		kärnparametrar frå userlandparametrar. Detta gör det möjligt
+		för user-params att utföra sitt jobb, och kopiera t.ex.
+		console="..."-inställningar dit där dom förväntas i det installerade
+		systemet.</li>
+	<li>
+		På i386-arkitekturen har 486-kärnan döpts om till 586 eftersom
+		det har bestämts att 486 inte har haft stöd på länge.</li>
+</ul>
+
+
+<h2>Andra förändringar i denna utgåvan av installeraren</h2>
+
+<ul>
+  <li>brltty:
+    <ul>
+      <li>Uppdatera autostart-regler med nya enheter.</li>
+      <li>Fixa auto-startande at-spi och orca i XFCE och LXDE.</li>
+    </ul>
+  </li>
+  <li>choose-mirror: Uppdatera speglingslistan (detta inkluderar att 
+	ta bort cdn.debian.net).</li>
+  <li>debootstrap: Lägg till stöd för Debian Stretch och Ubuntu
+    Vivid.</li>
+  <li>debian-installer: Uppdatera dokumentationen över krävet på miminum
+	diskstorlek.</li>
+  <li>efibootmgr: Hantera oläsbara bootvariabler bättre
+    (<a href="https://bugs.debian.org/768880">#768880</a>).</li>
+  <li>espeakup:
+    <ul>
+      <li>Rätta uttal av tangenttryck och eko vid tecken-för-tecken
+        (<a href="https://bugs.debian.org/767595">#767595</a>).</li>
+      <li>Rätta uttal av stora bokstäver (<a href="https://bugs.debian.org/770753">#770753</a>).</li>
+    </ul>
+  </li>
+  <li>grub2: Lägg till stöd för att tvinga en extra kopia av grub-efi till
+    sökvägen för borttagbar media /boot/efi/EFI/BOOT/BOOT$ARCH.EFI (<a href="https://bugs.debian.org/767037">#767037</a>,
+    <a href="https://bugs.debian.org/773092">#773092</a>, <a href="https://bugs.debian.org/773004">#773004</a>).</li>
+  <li>grub-installer:
+    <ul>
+		<li>Känn igen den nya ignore_uefi-flaggan från partman-efi.</li>
+		<li>Lägg till extra stöd för att tvinga installation till den EFI-borttagbara
+			medasökvägen (<a href="https://bugs.debian.org/767037">#767037</a>).</li>
+      <li>Lägg till stöd för grub-installer/bootdev=default (<a href="https://bugs.debian.org/759737">#759737</a>). Används med
+        försiktighet!</li>
+    </ul>
+  </li>
+  <li>libdebian-installer: Känn igen den nya ignore_uefi-flaggan från
+    partman-efi.</li>
+  <li>linux: Lägg till ".0" till kärnversionsträngen (<a href="https://bugs.debian.org/742226">#742226</a>,
+    <a href="https://bugs.debian.org/745984">#745984</a>).</li>
+  <li>netcfg:
+    <ul>
+      <li>Lägg till stöd för /etc/network/interfaces.d/ (<a href="https://bugs.debian.org/770078">#770078</a>).</li>
+      <li>Rätta saknad gränskontroll på arrayiterering av namnservrar,
+			vilket leder till en krasch när 4 (eller fler) namnservrar finns
+			tillgängliga (<a href="https://bugs.debian.org/768218">#768218</a>).</li>
+    </ul>
+  </li>
+  <li>partman-crypto: Lägg till stöd för preseeding av lösenord
+    (<a href="https://bugs.debian.org/656710">#656710</a>). Används med försiktighet!</li>
+  <li>partman-efi:
+    <ul>
+      <li>Sätt "esp"-flaggan för ESP System-partitionen
+        (<a href="https://bugs.debian.org/768788">#768788</a>).</li>
+		<li>Varna användaren om vi har bootat till UEFI-läge men endast
+		verkar ha icke-UEFI-installationer existerande - ge dem alternativet
+		att växla installeraren till icke-UEFI-läge därifrån och
+		framåt så dom inte förstör en potentiell dual-boot-installation
+        (<a href="https://bugs.debian.org/763127">#763127</a>).</li>
+      <li>Tvinga umask för /boot/efi i mount-inställningar (<a href="https://bugs.debian.org/770033">#770033</a>).</li>
+      <li>Visa endast "Tvinga UEFI-installation"-dialog för x86 (<a href="https://bugs.debian.org/773311">#773311</a>).</li>
+    </ul>
+  </li>
+  <li>partman-md: Rätta generering av mdadm.conf (<a href="https://bugs.debian.org/763073">#763073</a>).</li>
+  <li>win32-loader:
+    <ul>
+      <li>Inaktivera "Hämta Debian GNU/kFreeBSD som stabil" eftersom detta
+			inte kommer att vara möjligt i Jessie.</li>
+      <li>Överge val av nu inaktuellt val av skrivbord (<a href="https://bugs.debian.org/762478">#762478</a>).</li>
+      <li>Undvik dll-beroendeproblem (<a href="https://bugs.debian.org/772898">#772898</a>).</li>
+    </ul>
+  </li>
+</ul>
+
+
+<h2>Förändringar i hårdvarustöd</h2>
+
+<ul>
+  <li>debian-installer:
+    <ul>
+      <li>Lägg till stöd för hd-media för armhf-anpassningen.</li>
+      <li>Lägg till scsi-modules till cdrom-smaken på ppc64el för att kunna 
+			få åtkomst till CDROM-enheten.</li>
+      <li>Lägg till grub.cfg till x86 netboot mini.iso för användning på EFI-system
+        (<a href="https://bugs.debian.org/762618">#762618</a>).</li>
+      <li>Lägg till virtio-modules udebs till fler arm-avbildningar.</li>
+      <li>Tillhandahåll en bootbar PXE grub.efi i netboot-smaken för
+        amd64 och arm64.</li>
+    </ul>
+  </li>
+  <li>linux:
+    <ul>
+      <li>[armhf] Lägg till udeb-moduler för att ge stöd för video och tangentbord för
+        imx6 (<a href="https://bugs.debian.org/770635">#770635</a>).</li>
+      <li>[i386] Byt namn på 486-smaken till 586 för udebs (<a href="https://bugs.debian.org/768288">#768288</a>).</li>
+      <li>[armhf] Lägg till chipidea usb host-drivrutin till usb-modules för
+        i.MX6.</li>
+      <li>[armhf] Lägg till mtd-modules udeb.</li>
+      <li>[armhf] Lägg till Exynos5 disk/usb/nic-moduler till udebs.</li>
+      <li>[armhf] Bakåtanpassa BananaPi enhetsträdfiler (<a href="https://bugs.debian.org/763897">#763897</a>).</li>
+      <li>udeb: Lägg till pata_rdc till pata-modules (<a href="https://bugs.debian.org/633128">#633128</a>).</li>
+    </ul>
+  </li>
+  <li>partman-base: Förbättra detektering av bootloader-området , för
+    Freescale och AM33XX-system (770666).</li>
+  <li> u-boot:
+    <ul>
+      <li>[armhf] Lägg till Bananapi-mål.</li>
+      <li>Aktivera A10-OLinuXino-Lime, A20-OLinuXino-LIME, Cubieboard2,
+        och Cubieboard2_FEL-mål (<a href="https://bugs.debian.org/762383">#762383</a>).</li>
+      <li>Inaktivera efikamx- och efikasb-målen.</li>
+      <li>Lägg till stöd för nitrogen6q till u-boot-imx.</li>
+      <li>Lägg till stöd för Arndale-kortet (<a href="https://bugs.debian.org/763186">#763186</a>).</li>
+      <li>Bygg FEL-varianter för alla sunxi-plattformar.</li>
+    </ul>
+  </li>
+</ul>
+
+
+<h2>Lokaliseringsstatus</h2>
+
+<ul>
+  <li>75 språk stöds i denna utgåva.</li>
+  <li>Komplett översättning för 19 av dessa.</li>
+</ul>
+
+
+<h2>Kända problem i denna utgåva</h2>
+
+<p>
+Se <a href="$(DEVEL)/debian-installer/errata">erratan</a> för detaljer och en
+komplett lista på kända problem.
+</p>
+
+
+<h2>Återkoppling för denna utgåva</h2>
+
+<p>
+Vi behöver din hjälp för att hitta fel och ytterligare förbättra installeraren,
+så vänligen testa den. Installerar-CDs, annan media och allt annat du kan
+tänkas behöva finns tillgängligt på våran <a href="$(DEVEL)/debian-installer">\
+webbplats</a>.
+</p>
+
+
+<h2>Tack</h2>
+
+<p>
+Debian Installer-gruppen tackar alla som har bidragit till denna utgåva.
+</p>
