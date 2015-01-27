@@ -85,7 +85,7 @@ sub init_translators {
 	    compress  => 'none'
 	    },
 	'Marcelo Santana' => {
-	    email     => 'marcgsantana@yahoo.com.br',
+	    email     => 'marcelo@msantana.eng.br',
 	    summary   => 3,
 	    logs      => 3,
 	    diff      => 3,
