@@ -11,6 +11,9 @@ use SOAP::Lite;
 use Date::Parse;
 use HTML::Entities;
 
+# Work around SOAP::Lite not being able to verify certs correctly
+$ENV{HTTPS_CA_DIR} = '/etc/ssl/ca-debian';
+
 # The maintainers flat database
 my $maintainers_file = "$(ENGLISHDIR)/devel/wnpp/Maintainers";
 # The popcon flat database

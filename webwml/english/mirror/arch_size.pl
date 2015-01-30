@@ -5,6 +5,9 @@
 use strict;
 use LWP::UserAgent;
 
+# Work around LWP::UserAgent not being able to verify certs correctly
+$ENV{HTTPS_CA_DIR} = '/etc/ssl/ca-debian';
+
 # Parameters
 my $inputfile="https://ftp-master.debian.org/arch-space";
 
