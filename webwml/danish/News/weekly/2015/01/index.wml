@@ -1,0 +1,586 @@
+#use wml::debian::projectnews::header PUBDATE="2015-02-16" SUMMARY="Historisk gennemgang af arm64-porten, Første udgivelseskandidat af Jessies Debian-installer, Ændringer til mirrors, Debian LTS, Begrænsning af den tekniske komites valgperiode, Projekter kan melde sig til Debians GSoC, Fremdrift vedrørende reproducerbare builds, Fejludryddelsesfester, Mumbai Mini-DebConf, Fjernelse af 2048 bit-nøgler"
+#use wml::debian::translation-check translation="1.5"
+
+# $Id$
+# $Rev: 5976 $
+# Status: [content-frozen]
+
+<intro issue="første" />
+<toc-display/>
+
+<toc-add-entry name="ARMS">En kort historisk gennemgang af arm64-porten</toc-add-entry>
+
+<p>Steve McIntyre giver en 
+<a href="http://blog.einval.com/2015/01/06#bootstrapping-debian-arm64">kort 
+historisk gennemgang af Debians ARM-port</a>.</p>
+
+<p>Den er nu en officiel udgivelsesarkitektur i Jessie, men arm64 var på vej i 
+mange år og krævede megen CPU-tid, de over 21.000 kildekodepakker taget i 
+betragtning.  Fra portens fødsel, har udviklerne kæmpet for at få adgang til 
+hardware, og var kun i stand til at arbejde på det ved hjælp af ARM's 
+AArch64-softwaremodeller, indtil dem der står bag projektet med 
+<a href="http://en.wikipedia.org/wiki/Tianhe-2">Tianhe-2-supercomputeren</a> i 
+Kina, kontaktede holdet med et tilbud om at benytte deres arm64-hardware.</p>
+
+<p>Senere, da <a href="http://www.arm.com/">ARM</a> begyndte at fremstille sine 
+egne <q>Juno</q>-udviklingsboards, fik Debian Developers fat i nogle af dem til 
+brug som officielle Debian-buildmaskiner.  Juno-buildd'erne kørte godt og en 
+stor del af Debians arkiv blev opbygget af dem; men problemer med deres egnethed 
+begyndte at vise sig, da man gik i gang med at bruge dem over hele verden, samt 
+med mange udviklere, der benyttede dem til debugging på den nye arkitektur.  
+Sådan gik det efter bedste beskub, indtil Linaro, med det mål at hjælpe med at 
+forbedre FOSS på ARM, kom projektet til undsætning med et 
+<a href="http://www.linaro.org/leg/servercluster/">servercluster</a>, 
+tilgængeligt for softwareudviklere, så de kunne få tidlig adgang til 
+ARMv8-hardware.</p>
+
+<p>I oktober 2014 fik Debian forhandlet sig frem til at få dedikeret adgang til 
+tre af maskinerne i clusteret, med to af dem kørende som buildmaskiner og den 
+sidste som porterboks.  Udviklerne havde nu den nødvendige hardware til 
+rådighed, så de kunne begynde buildkapløbet inden for den korte tid, der var 
+tilbage før frysningen af Jessie.</p>
+
+<p>Det lykkedes under mini-DebConf'en i Cambridge i november 2014, hvor ARM 
+officielt blev føjet til listen over udgivelsesarkitekturer.  Siden da er det 
+lykkedes Steve at låne en arm64-maskine hos AMD, som anvendes i Debian til 
+yderligere portering og building.  Han forventer, at efterhånden som flere 
+forhandlere går fra prototyper til produktionmodeller, vil mere hardware blive 
+tilgængelig, og han håber at se ARM køre ikke blot i serverrum, men også som 
+stationære og bærbare computere.  Selvfølgelig med Jessie som styresystem.</p>
+
+
+<toc-add-entry name="di-rc1">Første udgivelseskandidat af Debian Installer til Jessie</toc-add-entry>
+
+<p>Udgivelsen af Debian Installer RC1 til Jessie er 
+<a href="https://lists.debian.org/debian-devel-announce/2015/01/msg00005.html">\
+offentliggjort</a>.  Blandt ændringerne er der kontrol for manglende firmware, 
+den officielle Jessie-grafik, omdøbning af 486 til 586 samt en opdateret 
+mirrorliste.  Andre bemærkelsesværdige ændringer er understøttelse af 75 sprog, 
+en PXE-bootbar grub.efi, imx6-understøttelse og netcfg-understøttelse af 
+interface.d.  Debian Installer-holdet takker alle dem, der har været medvirkende 
+til udgivelsen.  Holdet opfordrer desuden folk til at hjælpe med at finde fejl i 
+<a href="$(HOME)/devel/debian-installer">på tilgængelige medier</a>.</p>
+
+
+<toc-add-entry name="Mirror">Nye og gamle Debian Mirrors</toc-add-entry>
+
+<p>Yasuhiro Araki, der siden februar 2008 har stået for cdn.debian.net, 
+planlægger at gøre 
+<a href="https://lists.debian.org/debian-mirrors/2014/12/msg00000.html">\
+projektet forældreløst</a>, set i lyset af det nyere projekt 
+<a href="http://http.debian.net">http.debian.net</a>.  Når han går i gang med 
+processen, vil DNS hørende til cdn.debian.net ende med at pege på 
+http.debian.net.  Tak til Yasuhiro for mange års tro tjeneste.</p>
+
+<p>Debian-projektet er glad for at kunne 
+<a href="$(HOME)/News/2015/20150206">offentliggøre</a> tilstedeværelsen af et 
+nyt security.debian.org-mirror med hardware og hosting stillet til rådighed af 
+SAKURA Internet, Inc.  Den nye vært befinder sig i, og leverer indhold fra, 
+Japan, og vil betjene brugere i Asien.</p>
+
+
+<toc-add-entry name="LTS">Debian Long Term Support</toc-add-entry>
+
+<p>Freexians femte 
+<a href="http://raphaelhertzog.com/2015/01/16/freexians-fitfth-report-about-debian-long-term-support/">\
+rapport</a> om Debian Long Term Support viste, at i december blev 46 
+arbejdstimer fordelt på fire lønnede LTS-bidragydere.  Sammenlignet med 
+november, er antallet af aflønningstimer ikke forøget fra de tildelte 48 timer 
+pr. måned.  Fra 2015, med flere sponsorer, håber holdet at kunne få en forøget 
+finansering på vej mod målet om 
+<a href="http://www.freexian.com/services/debian-lts.html">hvad der svarer til 
+en halvtidsstilling</a>.  Sikkerhedsopdateringer i LTS lå tæt på tallene fra den 
+foregående måned, med 30 pakker, som venter på en opdatering, hvilket i alt 
+påvirker 56 pakker.</p>
+
+<p>Thorsten Alteholz 
+<a href="http://blog.alteholz.eu/2015/01/my-debian-activities-in-december-2014/">\
+opdaterede</a> sin LTS-status for december, med en tildeling på 20,5 LTS-timer.  
+Han brugte tid på at uploade nye sikkerhedsopdatering til 14 pakker, herunder 
+flac, tcpdump, jasper, unzip og mange andre.  Thorsten sponserede upload'en af 
+en sikkerhedsopdatering af ettercap, som måske er den første LTS-patch fra nogen, 
+der ikke er Debian Developer, for hvilken han takker Nguyen Cong og Toshiba.</p>
+
+<p>Raphaël Hertzog 
+<a href="http://raphaelhertzog.com/2015/01/05/my-free-software-activities-for-december-2014/">\
+bloggede</a> om sit LTS-arbejde i december 2014:  Han var tildelt 20 timers 
+LTS-arbejde, som blev brugt på CVE-fejlsøgning med 47 commits til 
+securitytracker'en, to rettelse af wishlist-fejl samt flere udgivelser, hvor den 
+største var 
+<a href="https://lists.debian.org/debian-lts-announce/2014/12/msg00022.html">\
+DLA-120-1 på xorg-server</a>, hvor backport'en tog over seks timer, men rettede 
+12 CVE'er.  Raphaël oprettede en dedikeret 
+<a href="https://wiki.debian.org/LTS/Funding">finanseringsunderside</a> på 
+LTS-wikien, som nu har flere oplysninger til interesserede, samt giver flere 
+virksomheder mulighed for at blive involveret i og deltage i projektet.  Den nye 
+side korrigerer hvad der kan have været et fejlagtigt antydet forhold mellem 
+Freexian som en LTS-sponsor og Debian-projektet.</p>
+
+<p>Ben Hutchings 
+<a href="http://womble.decadent.org.uk/blog/debian-lts-work-december-2014.html">\
+offentliggjorde</a> sit LTS-resume, med 11,5 timers LTS-arbejde og en opdatering 
+til kernepakken <a href="https://packages.qa.debian.org/l/linux-2.6.html">\
+linux-2.6</a>, version 
+<a href="https://packages.qa.debian.org/l/linux-2.6/news/20141209T000621Z.html">\
+2.6.32-48squeeze9</a>.  LTS-holdet har arbejdet med og anvendt en ældre kerne, 
+tilsat sikkerhedsrettelser og kritiske rettelser, indtil et nyligt skift til at 
+rebase pakker på versionen 2.6.32.64 fra 2014.  Ben gennemgik og benyttede 
+rettelser samt sikkerhedsrettelser til kernen, som opstrøm forventer at benytte 
+i 2.6.32.65.</p>
+
+<p>Holger Levsen 
+<a href="http://layer-acht.org/thinking/blog/20150106-lts-december-2014/">\
+rapporterede</a> om 11 LTS-timer, hvor der blev arbejdet på 
+sikkerhedsopdateringen til linux-2.6 samt bind9 og ntp.</p>
+
+
+<toc-add-entry name="grtc">Debian-medlemmer stemmer om at begrænse den tekniske komites valgperiode</toc-add-entry>
+
+<p>Debian-medlemmerne blev 
+<a href="https://lists.debian.org/debian-devel-announce/2014/12/msg00010.html">\
+opfordret af Kurt Roeckx</a>, Debians sekretær, til at stemme om en generel 
+beslutning om at ændre <a href="$(HOME)/devel/constitution">Debians 
+vedtægter</a>, og at indføre en begrænset valgperiode for medlemmer af den 
+tekniske komite.  Begge forslag har til formål at sørge for en løbende 
+udskiftning blandt medlemmerne af den tekniske komite, ved at indføre en 
+valgperiode på fire år.  Forskellen på forslagene er den måde, de håndterer 
+medlemmer af den tekniske komite træder tilbage eller bliver fjernet, af andre 
+grunde end udløbet af valgperioden.  Den første valgmulighed, der kan medføre at 
+flere end to medlemmer af den tekniske komite kan forlade den i det samme år, 
+vandt <a href="https://vote.debian.org/~secretary/gr_initcoupling/tally.txt">\
+afstemningen</a>.  Flere oplysninger om resultatet af afstemningen, finder man 
+på den <a href="$(VOTE)/2014/vote_004">webside, som beskriver den pågældende 
+generelle beslutning</a>.</p>
+
+
+<toc-add-entry name="gsoc">Projekter og mentorer kan melde sig til Debians GSoC</toc-add-entry>
+
+<p>Nicolas Dandrimont bad alle Debian-bidragydere om at finde 
+<a href="https://lists.debian.org/debian-devel-announce/2015/02/msg00006.html">\
+projekter og mentorer</a>, til at hjælpe Debian med at deltage i den ellevte 
+udgave af <a href="https://developers.google.com/open-source/soc/">Google Summer 
+of Code</a>.  <q>Alle (uanset om man er medlem af Debian-projektet eller ej, 
+studerende eller ej) er velkomne til at indsende deres ideer, og prøve at finde 
+personer, der er villige til at være mentorer for projekterne</q>, forklarede 
+Nicolas i sin mail.  Hvis du har en ide, så skriv den på 
+<a href="https://wiki.debian.org/SummerOfCode2015/Projects">wikisiden</a> og 
+send en engelsksproget mail til 
+<a href="mailto:soc-coordination@lists.alioth.debian.org">\
+koordineringspostlisten</a>.  Du kan også kontakte Nicolas og de øvrige 
+GSoC-administratorer i Debian på deres postliste eller IRC-kanalen, #debian-soc 
+på irc.debian.org.</p>
+
+
+<toc-add-entry name="reproducible">Fremdrift på reproducerbare builds</toc-add-entry>
+
+<p>Holdet bag reproducerbare builds 
+<a href="https://lists.debian.org/debian-devel-announce/2015/02/msg00007.html">\
+sendte en rapport</a> om deres arbejde, som gør det muligt for alle, uafhængigt 
+at bekræfte at en given binære pakke i Debian rent faktisk er opbygget ud fra 
+en specifik kildekodepakke.  I øjeblikket kan flere end 83 procent af alle 
+kildekodepakker i den ustabile distributions hovedarkiv opbygges reproducerbart.  
+Holdet udviklede værktøjet <a href="https://packages.debian.org/debbindiff">\
+<tt>debbindiff</tt></a> med det formål at levere dybt detaljerede diff'er over 
+binære pakker.  Pakkerne opbygges dernæst to gange på 
+<a href="https://jenkins.debian.net">jenkins.debian.net</a>, og reproducerbare 
+resultater rapporteres på <a href="https://tracker.debian.org">Debian Package 
+Tracker</a>.  Holdet overvejer at indsende et forslag til at gøre reproducerbare 
+builds til et udgivelsesmål for Stretch, den næste stabile udgave efter 
+Jessie.</p>
+
+
+<toc-add-entry name="BSP">Fejludryddelsesfester</toc-add-entry>
+
+<p>Bernd Zeimetz annoncerede en Debian-fejludryddelsesfest (BSP), som finder 
+sted den 17.-19. april 2015.  Man kan tilmelde sig på 
+<a href="https://wiki.debian.org/BSP/2015/04/at/Salzburg">BSP'ens wikiside</a>. 
+BSP'en finder sted tæt på Salzburg Airport W.A. Mozart, i 
+<a href="https://www.conova.com/">Conova Communications Gmbh's</a> kontorer.  
+Ud over tilmelding, dækker wikisiden hotelindkvartering, muligheder for at se 
+seværdigheder, planlægning af måltider og fritidsaktiviteter.  Bernd hilste 
+teammøder og sprinter velkommen, men gør opmærksom på, at man skal 
+<a href="mailto:bzed@debian.org">sende en mail</a> til ham på forhånd, for at 
+sikre overnatningsmulighed.</p>
+
+<p>I rækken af 
+<a href="http://www.jwiltshire.org.uk/content/2015/01/17/alcester-bsp-day-one/">hurtige</a>
+<a href="http://www.jwiltshire.org.uk/content/2015/01/17/alcester-bsp-day-two/">blog</a>-<a href="http://www.jwiltshire.org.uk/content/2015/01/18/alcester-bsp-day-three/">indlæg</a>, 
+rapporterede Jonathan Wiltshire om det tre dage lange 
+<a href="https://wiki.debian.org/BSP/2015/01/gb/Alcester">Alcester Bug
+Squashing Party</a> (BSP), der lukkede og arbejdede på et stort antal fejl, 
+nedgraderinger, fjernelser og patches.</p>
+
+
+<toc-add-entry name="miniconf">Sammendrag mini-DebConf'en i Mumbai i 2015</toc-add-entry>
+
+<p>En mini-DebConf fandt sted ved Indian Institute of Technology Bombay (IIT 
+Bombay).  Konferencen blev åbnet af professor Kumar Appaiah fra instituttet for 
+Electrical Engineering.  En anden bemærkelsesværdig taler var Kannan Moudgalya, 
+som leder projektet Free and Open Source Software for Education (FOSSEE).  
+Blandt de debaterede emner var sikkerhed i open source, Debian på ARM ved Siji 
+Sunny samt Raspbian (Debian på Raspberry Pi).  Et komplet sammendrav af emner og 
+debatter finder man på 
+<a href="http://www.linuxveda.com/2015/01/21/mini-debconf-mumbai-2015-recap/">\
+linuxveda</a>.  Jaldhar H. Vyas deltog i mini-DebConf'en, og skrev et
+<a href="http://www.braincells.com/debian/">langt resume på sin blog</a>.  
+Konferencens organisatorer var tilfredse med fremmødet og planlægger en ny 
+mini-DebConf, som skal finde sted til næste år.</p>
+
+
+<toc-add-entry name="keyring">Fjernelse af 2048 bit-nøgler fra Debian-nøgleringen</toc-add-entry>
+
+<p>Holdet, der vedligeholder nøgleringen, er stolt over at kunne annoncere, at 
+efter næsten fem år, hvor man aktivt har bedt folk om at anvende stærkere 
+nøgler i projektet, og efter fire måneders intenstiv kampagne for at få mere 
+fart på nøglemigreringen, har vi pr. 1. januar deaktiveret alle PGP-nøgler, som 
+er svagere end 2048 bits.</p>
+
+<p>En komplet liste over påvirkede nøgler, sammen med forudsætninger for og 
+oplysninger om hvordan man indsender en ny nøgle til Debian, er 
+<a href="https://lists.debian.org/debian-devel-announce/2015/01/msg00000.html">\
+tilgængelig</a>.  En statistisk oversigt over nøgleringens evolution, finder man 
+i et <a href="http://gwolf.org/node/4022">blogindlæg</a> af Gunnar Wolf.</p>
+
+
+<toc-add-entry name="Reports">Rapporter</toc-add-entry>
+
+<p>Jingjie Jiang, vores OPW-praktikant (Outreach Program for Women), 
+<a href="http://sophiejjj.wordpress.com/2014/12/29/week2-week3-opw-journey/">\
+skrev</a> en fremdriftsrapport over sit arbejde på debsources.  Flere fejl blev 
+rettet og vil blive ført ind i kodebasen, så som at tillade symbolske links i 
+den samme version samt overtrumfning af genkendelse.  Hun har også arbejdet hen 
+imod at gøre debsources tilgængelig på sor.debian.org, og kom med nogle tanker 
+vedrørende 
+<a href="https://sophiejjj.wordpress.com/2015/01/27/yet-another-post/">fordelene 
+ved OPW-praktikken</a>.</p>
+
+
+<p>Niels Thykier kom med en 
+<a href="http://nthykier.wordpress.com/2014/12/30/status-on-jessie-december-2014/">\
+opdatering</a> vedrørende Jessies status pr. december 2014.  I øjeblikket er der 
+ikke en fastsat udgivelsesdato, og der er stadig meget, der skal gøres.  Han 
+mindede brugere og udviklere om 
+<a href="https://release.debian.org/jessie/freeze_policy.html#autoremovals">\
+klausulen om automatisk fjernelse</a>, der skulle til at træde i kraft; enhver 
+pakke med en afhængighed af en truet pakke, kan selv være i farezonen.  Arbejdet 
+på <a href="$(HOME)/releases/jessie/releasenotes">udgivelsesbemærkningerne</a> 
+har stadig brug for mere tid og flere hænder.  Selv om antallet af fejl er 
+faldende, er der stadig nogle få problematiske fejl, der skal løses.</p>
+
+<p>I øjeblikket accepteres kun rettelser af udgivelseskritiske (RC-)fejl.  Hjælp 
+ønskes!  Brugere kan indsende fejl mod 
+<a href="https://bugs.debian.org/release-notes">udgivelsesbemærkningerne</a> 
+vedrørende manglende eller forældet dokumentation, rette kendte RC-fejl, som 
+<a href="https://udd.debian.org/bugs/?release=jessie_and_sid&amp;patch=ign&amp;merged=ign&amp;done=ign&amp;rtjessie-is-blocker=only&amp;fnewerval=7&amp;flastmodval=7&amp;rc=1&amp;ctags=1&amp;cdeferred=1&amp;crttags=1&amp;sortby=id&amp;sorto=asc&amp;format=html#results">\
+blokerer Jessie</a> og rapporterer om afprøvning af opgraderingsstier og 
+installeringsmedier.</p>
+
+<p>Steve McIntyres arbejde på UEFI-understøttelse i Jessie, fortsatte med en 
+række indlæg om at få en 
+<a href="http://blog.einval.com/2015/01/02#Jessie-EFI_3">UEFI-netinstall kun til 
+i386</a> op at køre (og gjort tilgængelig med testimages til download), dernæst 
+en <a href="http://blog.einval.com/2015/01/06#Jessie-EFI_4">kombineret 
+UEFI-netinstall til 32 og 64 bit</a> (tilgængelig til test og download), samt 
+senere arbejde på <a href="http://blog.einval.com/2015/01/11#Jessie-EFI_5">\
+integration af 32 bits-grub-efi</a> med patches til Linux-kernen, grub2 til /sys 
+og en patch til grub-installer.  Steves seneste opdatering var i midten af 
+januar 2015, hvor han også fortalte, at der vil være en pause i udviklingen, til 
+fordel for nogle få andre ting, hvor der er brug for arbejde, så som RC-fejl, få 
+styr på 32 bit-images kun til Mac, samt images med debian-live.</p>
+
+<p>Gregor Herrmann opdaterede nogle RC-fejl, som har været håndteret i det 
+seneste par uger: 
+<a href="https://bugs.debian.org/774867">lirc-x</a>,
+<a href="https://bugs.debian.org/772868">gxine</a>,
+<a href="https://bugs.debian.org/774584">rtpproxy</a> og 
+<a href="https://bugs.debian.org/774862">ciderwebmail</a> for at nævne nogle få 
+af dem.</p>
+
+<p>Raphaël Hertzog 
+<a href="http://raphaelhertzog.com/2015/01/30/my-free-software-activities-for-january-2015/">\
+skrev</a> om sine fri software-aktiviteter i januar 2015, herunder 12 timers 
+lønnet arbejde på Debian LTS, hvor der blev kigget på libnokogiri-ruby og 
+<a href="https://security-tracker.debian.org/tracker/CVE-2009-3555">\
+pound-relaterede SSL-problemer</a>.  Han indsendte også fejlrapporter vedrørende 
+applikationsplatformen Tryton, oprettede tre Salt-formler til Saltstack, pakkede 
+opstrømsudgivelser af Django i experimental, sammen med en 
+<a href="https://bugs.debian.org/775892">præ-godkendelse</a>, foruden et ønske 
+om at få fjernet en blokering af Dolibarr, med kommentarer fra sikkerhedsholdet.  
+Raphaël arbejdede også på at skaffe kandidater til Debian Frances valg af et 
+tredje bestyrelsesmedlem.</p>
+
+<p>Thomas Goirand kom med en 
+<a href="http://thomas.goirand.fr/blog/?p=237">opdatering</a> vedrørende 
+tilgængeligheden af <a href="https://wiki.debian.org/OpenStack">\
+OpenStack</a>-images, hvor han fortalte at de genereres samtidig med Debians 
+officielle cd-iso-images.  Han nævnte, at cloudbrugere og operatører af 
+offentlige clouds, bør 
+<a href="http://cdimage.debian.org/cdimage/openstack/testing/">hente</a> det nu 
+ugentlige build.  I øjeblikket er den eneste tilgængelige arkitektur arm64, som 
+historisk ikke har været et problem for operatørerne.  Goirand tilføjede nogle 
+få forslag og kommentarer til imagegenereringen og den medfølgende 
+sources.tar.gz-fil.  Bidragydere og testere er velkomne.</p>
+
+<p>Roland Fehrenbacher 
+<a href="https://www.qlustar.com/content/bioinformatics-waves-french-atlantic-coast">\
+skrev en rapport</a> på sin blog om 
+<a href="https://wiki.debian.org/Sprints/2015/DebianMed2015">DebianMed Sprint 
+2015</a>, der fandt sted i Saint-Malo, Frankrig, fra den 30. januar til 2. 
+februar.  Han gav en kort oversigt over de forskellige præsentationer og 
+debatter, som fandt sted under mødet, foruden aktiviteter i forbindelse med 
+pakning og mentorering.  I en beslægtet nyhed offentliggjorde Andreas Tille et 
+Debian Med-initiativ med 
+<q><a href="https://lists.debian.org/20150210085117.GE29989@an3as.eu">månedens 
+metorering</a></q> for kvinder.  Se 
+<a href="https://wiki.debian.org/DebianMed/MoM">initiativets dedikerede 
+wikiside</a> for flere oplysninger.</p>
+
+
+<toc-add-entry name="other">Andet nyt</toc-add-entry>
+
+<p>Den ottende opdatering af den stabile Debian-distribution (kodenavn 
+<q>Wheezy</q>) blev <a href="$(HOME)/News/2015/20150110">udgivet den 10. 
+januar</a>.</p>
+
+<p>Christian Perrier 
+<a href="http://www.perrier.eu.org/weblog/2015/02/12#777777">spurgte på sin 
+blog</a>, hvem der vil rapportere fejl nummer 777777 i 
+<a href="https://bugs.debian.org">Debians fejlsporingssystem</a>.  Et par timer 
+senere besvarede Matthias Klose spørgsmålet, ved at åbne 
+<a href="https://bugs.debian.org/777777">en fejl</a> mod pakken 
+<a href="https://packages.debian.org/aqsis"><tt>aqsis</tt></a>.</p>
+
+<p>Lusas Nussbaum 
+<a href="https://lists.debian.org/debian-vote/2015/02/msg00001.html">\
+offentliggjorde<a/> at han ikke genopstiller til posten som 
+<a href="$(HOME)/devel/leader">Debians projektleder</a> (DPL), samt delte 
+indsigt og tanker om transitionen til den næste DPL, mens han reflekterede 
+over nogle af de begivenheder, der har fundet sted mens han har været leder.  
+Det næste valg kommer til at finde sted i de kommende måneder, og han foreslog 
+at vi i fællesskabet støtter en livlig kampagne, ved at kontakte vores 
+drømmekandidater og opfordrer dem til at stille op, eller selv stiller op til 
+posten.  På projektets postliste blev der i en separat tråd spurgt om 
+<q><a href="https://lists.debian.org/debian-project/2015/02/msg00039.html">\
+hvad man forventer af DPL'en</a></q>.</p>
+
+<p><a href="http://france.debian.net/">Debian France association</a> 
+organiserer en <a href="http://france.debian.net/events/minidebconf2015/">\
+mini-DebConf</a> den 11.-12. april i Lyon i Frankrig, med 
+<a href="http://epn.salledesrancy.com/evenements/mini-debconf-debian/">Maison 
+Pour Tous-Salle des Rancy</a> som værter.  Hvis man planlægger at deltage, 
+bedes man skrive sit navn på listen på den 
+<a href="https://wiki.debian.org/DebianEvents/fr/2015/Minidebconf">dedikerede 
+wikiside</a>.</p>
+
+<p>Lucas Nussbaum 
+<a href="https://lists.debian.org/debian-devel-announce/2015/02/msg00005.html">\
+opdaterede delegeringen</a> til Debian System Administrators-holdet, som nu har 
+to nye, officielle medlemmer, Paul Wise og Julien Cristau.  Kurt Roeckx er
+<a href="https://lists.debian.org/debian-devel-announce/2015/02/msg00004.html">\
+blevet genudnævnt</a> til 
+<a href="$(HOME)/devel/secretary">projektsekretær</a> i endnu et år.</p>
+
+<p>Denne udgave af Debian News Project slår i længde lige akkurat den tidligere 
+rekord, hvis indehaver var <a href="$(HOME)/News/weekly/2006/28">\
+2006/28-udgaven</a>, og er dermed den længste DPN nogensinde.</p>
+
+
+<toc-add-entry name="newcontributors">Nye Debian Contributors</toc-add-entry>
+
+<p>3 ansøgere er blevet <a href="https://nm.debian.org/public/nmlist#done">\
+accepteret</a> som Debian Developers, 8 ansøgere er 
+<a href="https://lists.debian.org/debian-project/2014/12/msg00044.html">\
+blevet</a>
+<a href="https://lists.debian.org/debian-project/2015/01/msg00080.html">\
+accepteret</a> som Debian Maintainer og 11 personer er 
+<a href="https://udd.debian.org/cgi-bin/new-maintainers.cgi">begyndt at 
+vedligeholde pakker</a> siden den foregående udgave af Debian Project News.  
+Hils 
+#DDs
+Nattie Mayer-Hutchings,
+Sebastiaan Couwenberg,
+Johannes Schauer,
+#DMs
+Alexander Alemayhu,
+Daniel Stender,
+Nigel Kukard,
+Sebastian Andrzej Siewior,
+Helge Kreutzmann,
+Etienne Millon,
+Steven Chamberlain,
+Timothy Potter,
+#DCs
+Dmitry Bogatov,
+Edward Betts,
+Aggelos Avgerinos,
+Florian Pelgrim,
+Alessio Di Mauro,
+Michael R. Crusoe,
+Mario Stephan,
+Christopher Hoskin,
+Antonio Cardoso Martins,
+Patrick Huck 
+og 
+Peter Spiess-Knafl
+velkommen i vores projekt!</p>
+
+
+<toc-add-entry name="rcstats">Statistik over udgivelseskritiske fejl i den kommende udgivelse</toc-add-entry>
+
+<rcstatslink release="Jessie"
+    url="http://richardhartmann.de/blog/posts/2015/02/13-Debian_Release_Critical_Bug_report_for_Week_07/"
+    testing="147"
+    tobefixed="77" />
+
+
+<toc-add-entry name="dsa">Vigtige Debian Security Advisories</toc-add-entry>
+
+<p>Debians Security Team har udgivet bulletiner vedrørende (blandt andre) disse 
+pakker:
+<a href="$(HOME)/security/2014/dsa-3115">pyyaml</a>,
+<a href="$(HOME)/security/2014/dsa-3116">polarssl</a>,
+<a href="$(HOME)/security/2014/dsa-3117">php5</a>,
+<a href="$(HOME)/security/2015/dsa-3118">strongswan</a>,
+<a href="$(HOME)/security/2015/dsa-3119">libevent</a>,
+<a href="$(HOME)/security/2015/dsa-3120">mantis</a>,
+<a href="$(HOME)/security/2015/dsa-3121">file</a>,
+<a href="$(HOME)/security/2015/dsa-3122">curl</a>,
+<a href="$(HOME)/security/2015/dsa-3123">binutils</a>,
+<a href="$(HOME)/security/2015/dsa-3124">otrs2</a>,
+<a href="$(HOME)/security/2015/dsa-3125">openssl</a>,
+<a href="$(HOME)/security/2015/dsa-3126">php5</a>,
+<a href="$(HOME)/security/2015/dsa-3127">iceweasel</a>,
+<a href="$(HOME)/security/2015/dsa-3128">linux</a>,
+<a href="$(HOME)/security/2015/dsa-3129">rpm</a>,
+<a href="$(HOME)/security/2015/dsa-3130">lsyncd</a>,
+<a href="$(HOME)/security/2015/dsa-3131">xdg-utils</a>,
+<a href="$(HOME)/security/2015/dsa-3132">icedove</a>,
+<a href="$(HOME)/security/2015/dsa-3133">privoxy</a>,
+<a href="$(HOME)/security/2015/dsa-3134">sympa</a>,
+<a href="$(HOME)/security/2015/dsa-3135">mysql-5.5</a>,
+<a href="$(HOME)/security/2015/dsa-3136">polarssl</a>,
+<a href="$(HOME)/security/2015/dsa-3137">websvn</a>,
+<a href="$(HOME)/security/2015/dsa-3138">jasper</a>,
+<a href="$(HOME)/security/2015/dsa-3139">squid</a>,
+<a href="$(HOME)/security/2015/dsa-3140">xen</a>,
+<a href="$(HOME)/security/2015/dsa-3141">wireshark</a>,
+<a href="$(HOME)/security/2015/dsa-3142">eglibc</a>,
+<a href="$(HOME)/security/2015/dsa-3143">virtualbox</a>,
+<a href="$(HOME)/security/2015/dsa-3144">openjdk-7</a>,
+<a href="$(HOME)/security/2015/dsa-3145">privoxy</a>,
+<a href="$(HOME)/security/2015/dsa-3146">requests</a>,
+<a href="$(HOME)/security/2015/dsa-3147">openjdk-6</a>,
+<a href="$(HOME)/security/2015/dsa-3148">chromium-browser</a>,
+<a href="$(HOME)/security/2015/dsa-3149">condor</a>,
+<a href="$(HOME)/security/2015/dsa-3150">vlc</a>,
+<a href="$(HOME)/security/2015/dsa-3151">python-django</a>,
+<a href="$(HOME)/security/2015/dsa-3152">unzip</a>,
+<a href="$(HOME)/security/2015/dsa-3153">krb5</a>,
+<a href="$(HOME)/security/2015/dsa-3154">ntp</a>,
+<a href="$(HOME)/security/2015/dsa-3155">postgresql-9.1</a>,
+<a href="$(HOME)/security/2015/dsa-3157">ruby1.9.1</a>,
+<a href="$(HOME)/security/2015/dsa-3158">unrtf</a>,
+<a href="$(HOME)/security/2015/dsa-3159">ruby1.8</a>,
+<a href="$(HOME)/security/2015/dsa-3160">xorg-server</a> og
+<a href="$(HOME)/security/2015/dsa-3161">dbus</a>.
+Læs dem omhyggeligt og gør det fornødne.</p>
+
+<p>Debian-holdet med ansvar for langtidsunderstøttelse af squeeze, har udgivet 
+sikkerhedsopdateringsbulletiner vedrørende disse pakker:
+<a href="https://lists.debian.org/debian-lts-announce/2014/12/msg00027.html">mime-support</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2014/12/msg00028.html">ettercap</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2014/12/msg00028.html">ettercap</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00000.html">pyyaml</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00001.html">polarssl</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00002.html">sox</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00003.html">firebird2.1</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00004.html">file</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00005.html">openssl</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00006.html">unrtf</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00007.html">curl</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00008.html">ia32-libs</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00009.html">tomcat6</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00010.html">websvn</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00011.html">libevent</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00012.html">eglibc</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00013.html">rpm</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00014.html">jasper</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00015.html">libksba</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00016.html">privoxy</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00017.html">python-django</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00018.html">polarssl</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/01/msg00019.html">php5</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/02/msg00000.html">wpasupplicant</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/02/msg00001.html">sympa</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/02/msg00002.html">krb5</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/02/msg00003.html">unzip</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/02/msg00004.html">ntp</a>,
+<a href="https://lists.debian.org/debian-lts-announce/2015/02/msg00005.html">libxml2</a> og
+<a href="https://lists.debian.org/debian-lts-announce/2015/02/msg00006.html">postgresql-8.4</a>.
+Læs dem omhyggeligt og gør det fornødne.</p>
+
+<p>Debians Stable Release Team har udgivet sikkerhedsopdateringsbulletiner
+vedrørende pakkerne:
+<a href="https://lists.debian.org/debian-stable-announce/2015/02/msg00000.html">tzdata</a> og
+<a href="https://lists.debian.org/debian-stable-announce/2015/02/msg00000.html">libdatetime-timezone-perl</a>.
+Læs dem omhyggeligt og gør det fornødne.</p>
+
+<p>Bemærk at dette er et udvalg af de mere vigtige sikkerhedsbulletiner fra de 
+seneste uger.  Hvis du ønsker at være ajour med sikkerhedsbulletiner udsendt af 
+Debians sikkerhedshold, så tegn abonnement på
+<a href="https://lists.debian.org/debian-security-announce/">sikkerhedspostlisten</a>
+(og den separate <a href="https://lists.debian.org/debian-backports-announce/">\
+backports-liste</a>, <a href="https://lists.debian.org/debian-stable-announce">\
+listen med opdateringer til stable</a> og 
+<a href="https://lists.debian.org/debian-lts-announce/">opdateringer til 
+langtidsunderstøttelse</a>) for at modtage annonceringerne.</p>
+
+
+<toc-add-entry name="nnwp">Nye og bemærkelsesværdige pakker</toc-add-entry>
+
+<p>158 pakker er nyligt blevet føjet til Debians ustabile arkiv. 
+<a href="https://packages.debian.org/unstable/main/newpkg">Blandt mange andre</a> 
+er der tale om:</p>
+
+<ul>
+    <li><a href="https://packages.debian.org/unstable/main/dex">\
+	dex — værktøj til generering og udførelse af .desktop-filer af typen 
+	Application</a></li>
+    <li><a href="https://packages.debian.org/unstable/main/sluice">\
+	sluice — hastighedsbegrænsende værktøj til datapiping</a></li>
+    <li><a href="https://packages.debian.org/unstable/main/apt-config-auto-update">\
+	apt-config-auto-update — apt-opsætning til automatisk 
+	cacheopdatering</a></li>
+    <li><a href="https://packages.debian.org/unstable/main/git-big-picture">\
+	git-big-picture — visualiseringsværktøj til Git-arkiver</a></li>
+    <li><a href="https://packages.debian.org/unstable/main/u2f-host">\
+	u2f-host — kommandolinjeværktøj der kan foretage Universal 2nd 
+	Factor-handlinger (U2F)</a></li>
+    <li><a href="https://packages.debian.org/unstable/main/mrtdreader">\
+	mrtdreader — program til læsning af maskinlæsbare rejsedokumenter 
+	(MRTD'er / pas)</a></li>
+    <li><a href="https://packages.debian.org/unstable/main/php5-facedetect">\
+	php5-facedetect — ansigtsgenkendelse til PHP</a></li>
+    <li><a href="https://packages.debian.org/unstable/main/sjaakii">\
+	sjaakii — Sjaak II - computerspil med mange skakvarianter, herunder 
+	Shogi og XiangQi</a></li>
+    <li><a href="https://packages.debian.org/unstable/main/guidedog">\
+	guidedog — Qt5-opsætningsværktøj til 
+	NAT/masquerading/port-forwarding</a></li>
+    <li><a href="https://packages.debian.org/unstable/main/rna-star">\
+	rna-star — lynhurtig universel RNA-seq-aligner</a></li>
+</ul>
+
+
+<toc-add-entry name="wnpp">Pakker, der har brug for hjælp</toc-add-entry>
+
+<wnpp link="https://lists.debian.org/debian-devel/2015/02/msg00140.html"
+    orphaned="668"
+    rfa="155" />
+
+
+<toc-add-entry name="continuedpn">Ønsker du fortsat at læse DPN?</toc-add-entry>
+
+<continue-dpn />
+
+#use wml::debian::projectnews::footer editor="Cédric Boutillier, Jean-Pierre Giraud, Carl J Mannino, Donald Norwood, Justin B Rye, Paul Wise" translator="Kåre Thor Olsen"
