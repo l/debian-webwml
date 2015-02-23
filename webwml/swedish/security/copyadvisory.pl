@@ -156,7 +156,7 @@ while (<SRC>)
 	s/(?:,)?( )?these problems have(?: been)?$/$1har dessa problem/;
 	s/(?:,)?( )?these problem are fixed in/$1rättas dessa problem i/;
 	s/(?:,)?( )?these problem are fixed/$1rättas dessa problem/;
-	s/(?:,)?( )?these problems will be fixed soon/$1kommer dessa problem att rättas inom kort/;
+	s/(?:,)?( )?these problems will be fixed soon/kommer dessa problem att rättas inom kort/;
 	s/(?:,)?( )?these problems will be fixed in/$1kommer dessa problem att rättas i/;
 	s/(?:,)?( )?these problems will be/$1kommer dessa problem att/;
 	s/this problem will be fixed soon/kommer detta problem att rättas inom kort/;
@@ -173,6 +173,7 @@ while (<SRC>)
 	s/([Ff])or the old ?stable/$1ör den gamla stabila/;
 	s/([Ff])or the current stable distribution/$1ör den nuvarande stabila utgåvan/;
 	s/([Ff])or the current stable/$1ör den nuvarande stabila/;
+	s/([Ff])or the upcoming stable \(jessie\) and unstable \(sid\) distributions/$1ör den kommande stabila utgåvan (Jessie) och den instabila utgåvan (Sid)/;
 	s/([Ff])or the upcoming stable distribution/$1ör den kommande stabila utgåvan/;
 	s/([Ff])or the upcoming stable/$1ör den kommande stabila/;
 	s/([Ff])or the Debian stable distribution/$1ör Debians stabila utgåva/;
