@@ -18,7 +18,7 @@ $ua->timeout("10");
 my $res = $ua->request($req);
 
 ## Check the outcome of the response
-if (!$response->is_success) {
+if (!$res->is_success) {
 	my $status = $res->status_line;
 	die "Input file cannot be fetched from $inputfile:\n$status";
 }
