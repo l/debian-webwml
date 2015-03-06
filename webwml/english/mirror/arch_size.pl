@@ -6,7 +6,8 @@ use strict;
 use LWP::UserAgent;
 
 # Work around LWP::UserAgent not being able to verify certs correctly
-$ENV{HTTPS_CA_DIR} = '/etc/ssl/ca-debian';
+my $ca_dir = '/etc/ssl/ca-debian';
+$ENV{HTTPS_CA_DIR} = $ca_dir if -d $ca_dir;
 
 # Parameters
 my $inputfile="https://ftp-master.debian.org/arch-space";
@@ -17,7 +18,10 @@ $ua->timeout("10");
 my $res = $ua->request($req);
 
 ## Check the outcome of the response
-$res->is_success or die "Input file cannot be fetched from $inputfile";
+if (!$response->is_success) {
+	my $status = $res->status_line;
+	die "Input file cannot be fetched from $inputfile:\n$status";
+}
 my $arch_space = $res->content;
 
 my $total ;

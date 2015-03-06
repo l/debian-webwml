@@ -12,7 +12,8 @@ use Date::Parse;
 use HTML::Entities;
 
 # Work around SOAP::Lite not being able to verify certs correctly
-$ENV{HTTPS_CA_DIR} = '/etc/ssl/ca-debian';
+my $ca_dir = '/etc/ssl/ca-debian';
+$ENV{HTTPS_CA_DIR} = $ca_dir if -d $ca_dir;
 
 # The maintainers flat database
 my $maintainers_file = "$(ENGLISHDIR)/devel/wnpp/Maintainers";
