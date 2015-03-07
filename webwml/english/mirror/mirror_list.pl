@@ -542,7 +542,8 @@ END
       my $countrycode = $code_of_country{$country};
 
       unless (exists $mirror[$id]{method}{'archive-http'}) {
-        die "official mirror " . $mirror[$id]{site} . " does not have archive-http?!";
+        warn "official mirror " . $mirror[$id]{site} . " does not have archive-http?!";
+        next;
       }
 
       my $arches = join(" ", sort @{$mirror[$id]{'Archive-architecture'}});
