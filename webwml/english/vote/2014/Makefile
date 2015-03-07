@@ -38,7 +38,8 @@ textfiles :=  vote_001_quorum.err  vote_001_quorum.log  \
 		vote_002_results.dot vote_002_results.txt \
 		vote_002_vote_detailed.png                \
 		vote_002_quorum.txt  vote_002_quorum.log  \
-                vote_002_quorum.err				\
+		vote_002_quorum.err                       \
+		vote_003_quorum.err                       \
 		vote_003_quorum.log  vote_003_quorum.txt  \
 		vote_003_tally.txt   vote_003_voters.txt  \
 		vote_003_vote.png    vote_003_results.png \
@@ -48,6 +49,7 @@ textfiles :=  vote_001_quorum.err  vote_001_quorum.log  \
 		vote_004_tally.txt   vote_004_voters.txt  \
 		vote_004_vote.png    vote_004_results.png \
 		vote_004_results.dot vote_004_results.txt \
+		vote_004_quorum.txt                       \
 		vote_004_vote_detailed.png		  
 		###############################################
 
