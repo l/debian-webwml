@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian-Installer errata"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.204"
+#use wml::debian::translation-check translation="1.207"
 #include "$(ENGLISHDIR)/devel/debian-installer/images.data"
 
 <h1>Kända problem i <humanversion /></h1>
@@ -12,7 +12,38 @@ Debian Installer. Om du inte ser ditt problem i listan här, vänligen sänd in 
 som beskriver problemet.
 </p>
 
-<!-- <dl class="gloss"> -->
+<dl class="gloss">
+
+	<dt>Möjlig hängning med DHCPv6 tillståndsbaserad adressering</dt>
+	<dd>Nätverkskonfiguration kan hänga sig efter domänprompten om en
+		DHCPv6-server finns tillgänglig på nätverket. I detta fall kan
+		installationen fortsättas genom att ge kommandona
+		<code>kill `pidof dhcp6c`</code> och <code>kill `pidof udhcpc`</code> i
+		terminalen.
+		<br />
+		<b>Status:</b> En felrättning för <a 
+		href="https://bugs.debian.org/768188">#768188</a> (som även påverkar
+		Jessie RC 1) bör inkluderas i Jessie RC 3.
+	</dd>
+	
+	<dt>Nätverksanslutning krävs under hd-mediainstallationer på flera
+	armel/armhf/arm64-anpassningar</dt>
+	<dd>På flera armel/armhf/arm64-anpassningar misslyckas hd-mediabaserade
+		installationer som:
+		<ul>
+			<li>endast använder den första CD/DVDn och</li>
+			<li>inte har konfigurerats för att använda en nätverksspegling</li>
+		</ul>
+		i <q>gör systemet startbart</q>-steget. Orsaken är att för att göra
+		systemet bootbart, kräver dessa anpassningar ett paket
+		<code>u-boot-tools</code>, som inte finns tillgängligt på den första
+		CDn/DVDn. Om en nätverksspegling har konfigurerats under installationen
+		hämtas det saknade paketet automatiskt och installationen lyckas.
+		<br />
+		<b>Status:</b> En felrättning för <a 
+		href="https://bugs.debian.org/780994">#780994</a> (som även påverkar
+		Jessie RC 1) bör inkluderas i Jessie RC 3.
+	</dd>
 
 <!-- things should be better starting with Jessie Beta 2...
 	<dt>Stöd för GNU/kFreeBSD</dt>
@@ -79,4 +110,4 @@ som beskriver problemet.
 	</dd>
 -->
 
-<!-- </dl> -->
+</dl>
