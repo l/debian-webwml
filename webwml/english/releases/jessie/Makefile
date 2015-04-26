@@ -3,7 +3,7 @@
 
 WMLBASE=../..
 CUR_DIR=releases/jessie
-SUBS=
+SUBS=debian-installer
 
 include $(WMLBASE)/Make.lang
 
