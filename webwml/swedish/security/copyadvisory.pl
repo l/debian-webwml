@@ -156,10 +156,11 @@ while (<SRC>)
 	s/(?:,)?( )?these problems have(?: been)?$/$1har dessa problem/;
 	s/(?:,)?( )?these problem are fixed in/$1rättas dessa problem i/;
 	s/(?:,)?( )?these problem are fixed/$1rättas dessa problem/;
-	s/(?:,)?( )?these problems will be fixed soon/kommer dessa problem att rättas inom kort/;
+	s/(?:,)?( )?these problems will be fixed soon/$1kommer dessa problem att rättas inom kort/;
 	s/(?:,)?( )?these problems will be fixed in/$1kommer dessa problem att rättas i/;
 	s/(?:,)?( )?these problems will be/$1kommer dessa problem att/;
 	s/this problem will be fixed soon/kommer detta problem att rättas inom kort/;
+	s/this problem will be fixed in/kommer detta problem att rättas i/;
 	s/this problem will be/kommer detta problem att/;
 	s/fixed soon/rättas inom kort/;
 	s/For the unstable (sid) and testing (wheezy) distribution, this problem/För den instabila utgåvan (Sid) och uttestningsutgåvan (Wheezy) kommer detta problem/;
@@ -213,6 +214,7 @@ while (<SRC>)
 	s/\(squeeze\)/(Squeeze)/;
 	s/\(wheezy\)/(Wheezy)/;
 	s/\(jessie\)/(Jessie)/;
+	s/\(stretch\)/(Stretch)/;
 	s/\(sid\)/(Sid)/;
 	s/Refer to Debian (<.*>)?bug #([0-9]+)</Se Debians $1felrapport $2</;
 	s/(of|from) the Debian Security Audit (Project|Team)/från Debians säkerhetsgranskningsprojekt/i;
