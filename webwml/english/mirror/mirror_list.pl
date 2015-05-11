@@ -44,8 +44,8 @@ sub process_line {
     $globalsite = $site;
     $count++;
     unless ($site =~ /$internalsiteregex/) {
-      if (!defined($longest{site}) || length($site) > $longest{site}) {
-        $longest{site} = length($site);
+      if (!defined($longest{site}) || length($site)+1 > $longest{site}) {
+        $longest{site} = length($site)+1;
 #        warn "increasing longest site to " . length($site) . " because of " . $site . "\n";
       }
     }
@@ -83,8 +83,8 @@ sub process_line {
     my $type = lc $1;
     my $value = $4;
     $mirror[$count-1]{method}{$type} = $value;
-    if (!defined($longest{$type}) || length($value) > $longest{$type}) {
-      $longest{$type} = length($value);
+    if (!defined($longest{$type}) || length($value)+1 > $longest{$type}) {
+      $longest{$type} = length($value)+1;
 #      warn "increasing longest $type to " . length($value) . " because of " . $value . " at " . $globalsite . "\n" if (defined($type) && $type =~ /archive-(f|ht)tp/);
     }
   }
