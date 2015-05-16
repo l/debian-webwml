@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - hakupalvelin" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.25"
+#use wml::debian::translation-check translation="1.30"
 
 <h1><a name="introduction">Opastus vikajärjestelmän hakupalvelimeen</a></h1>
 
@@ -107,6 +107,121 @@ Lista pseudopakettien kuvauksista ja ylläpitäjistä.</dd>
 <dt><code>refcard</code></dt>
 <dd>
 Pyytää postipalvelimen pikaoppaan puhtaana tekstinä.</dd>
+
+<dt><a name="user"><code>user</code> <var>osoite</var></a></dt>
+<dd>
+Aseta <var>osoite</var> <q>käyttäjäksi</q> kaikissa myöhemmissä
+<code>usertag</code>-komennoissa.
+</dd>
+
+<dt><a name="usertag"><code>usertag</code> <var>vikanumero</var>
+    [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tagi</var>
+    [ <var>tagi</var> ... ]</a></dt>
+<dd>
+Sallii määrittää tageja käyttäjäkohtaisesti. Komento <code>usertag</code>
+toimii kuten normaali <code>tag</code>-komento paitsi että
+voit käyttää mitä tahansa haluamiasi tageja. Oletuksena osoite sähköpostin
+<code>From:</code>- tai <code>Reply-To:</code>-otsakkeesta käytetään
+käyttäjänä <code>usertag</code>-komennossa.
+</dd>
+
+<dt><a name="usercategory"><code>usercategory</code>
+     <var>kategorian-nimi</var> [ <code>[hidden]</code> ]</a></dt>
+<dd>
+<p>
+Lisää, päivittää tai poistaa <code>käyttäjäkategorian</code>.
+Oletusarvoisesti käyttäjäkategoria on näkyvillä, mutta mikäli
+valinnainen argumentti <code>[hidden]</code> (piilotettu) määritetään,
+niin silloin kategoria ei ole näkyvillä, mutta siihen voidaan viitata
+muista käyttäjäkategoriamäärittelyistä.
+</p>
+
+<p>
+Tämä komento on jokseenkin erityinen, koska lisättäessä tai
+päivitettäesssä käyttäjäkategoriaa, tulee välittömästi komennon
+jälkeen seurata sisältö. Jos sisältö on tyhjä, käyttäjäkategoria
+poistetaan. Sisältö koostuu riveistä, jotka voivat alkaa millä tahansa
+määrällä tyhjää. Jokainen kategoria alkaa rivillä <code>*</code>, ja
+valinnaisesti sitä voi seurata useita valintarivejä, jotka alkavat
+<code>+</code>. Täydellinen muoto on seuraava:
+</p>
+
+<div>
+* <var>kategorian-nimi-1</var><br />
+* <var>Kategorian otsikko 2</var>
+  [ <code>[</code><var>valinta-etuliite</var><code>]</code> ]<br />
+&nbsp;+ <var>Valintaotsikko 1</var> <code>[</code>
+        [ <var>järjestys</var><code>:</code> ]
+        <var>vakunta-1</var> <code>]</code><br />
+&nbsp;+ <var>Valintaotsikko 2</var> <code>[</code>
+        [ <var>järjestys</var><code>:</code> ]
+        <var>valinta-2</var> <code>]</code><br />
+&nbsp;+ <var>Oletusvalintaotsikko</var> <code>[</code>
+        [ <var>järjestys</var>: ] <code>]</code><br />
+* <var>kategorian-nimi-3</var><br />
+</div>
+
+<p>
+<var>Kategorian-nimet</var>, joita esiintyy komennossa ja sisällössä,
+käytetään viittaamaan niihin, jolloin vältytään tarpeettomalta
+toistolta. <var>Kategorian otsikkoja</var> käytetään
+tiivistelmäraporteissa.
+</p>
+
+<p>
+Valinnainen <var>valinta-etuliite</var> on etuliitteeänä jokaiselle
+<var>valinnalle</var> jokaisessa kategoriaosuuden tietueessa.
+Ensimmäinen <var>valinta</var>, joka täsmää saa vian näkymään sen
+alla. Valinnainen <var>järjestys</var>-parametri määrittää sijainnin
+kun näytetään valintatietueita. Tämä on hyödyllinen, kun käytetään
+hakuehtoa, joka valitsee ylijoukon aiempia, mutta halutaan näkyvän
+ennen niitä.
+</p>
+
+<p>
+<var>Kategorian-nimi</var> <code>normal</code> (normaali) omaa
+erityismerkityksen olemalla oletusnäkymä, joten korvaamalla se
+toisella käyttäjäkategorialla
+<var>paketinnimi</var>@packages.debian.org käyttäjällä voidaan vaihtaa
+paketille oletusluokitusta.
+</p>
+
+<p>
+Esimerkkikäyttö:
+</p>
+
+<pre>
+    usercategory dpkg-program [hidden]
+     * Program
+       + dpkg-deb [tag=dpkg-deb]
+       + dpkg-query [tag=dpkg-query]
+       + dselect [package=dselect]
+
+    usercategory new-status [hidden]
+     * Status [pending=]
+       + Outstanding with Patch Available [0:pending+tag=patch]
+       + Outstanding and Confirmed [1:pending+tag=confirmed]
+       + Outstanding and More Information Needed [pending+tag=moreinfo]
+       + Outstanding and Forwarded [pending+tag=forwarded]
+       + Outstanding but Will Not Fix [pending+tag=wontfix]
+       + Outstanding and Unclassified [2:pending]
+       + From other Branch [absent]
+       + Pending Upload [pending-fixed]
+       + Fixed in NMU [fixed]
+       + Resolved [done]
+       + Unknown Pending Status []
+
+    \# Vaihda oletusnäkymä
+    usercategory normal
+      * new-status
+      * severity
+
+    usercategory old-normal
+      * status
+      * severity
+      * classification
+</pre>
+</dd>
 
 <dt><code>help</code></dt>
 <dd>
