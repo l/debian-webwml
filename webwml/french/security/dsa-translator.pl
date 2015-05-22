@@ -7,7 +7,7 @@
 # Todo
 # - Make a regexp that is enough generic to catch lines like that to be able to use $translation for theses lines instead of s//// '<p>For the <distrib_release> distribution (<distrib_name>) this problem has been fixed in version <version>.</p>' => 
 # - Split translation of "For the ... distribution" and "this problem" in 2 part ?? Not yet sure that it's a good idea even if it would reduce number of s///
-# - Take DSA from URL (http://cvs.debian.org/*checkout*/webwml/english/security/<YEAR>/dsa-<ID>.wml)
+# - Take DSA from URL (https://cvs.debian.org/*checkout*/webwml/english/security/<YEAR>/dsa-<ID>.wml)
 #   or from local copy. use -Y for year and -n for dsa numner, assume -Y as current year if not provided.
 #   Check for ../../english/security/<YEAR>/dsa-<ID>.wml if not found, download it
 # - Save translated DSA instead of print to STDOUT. As to be saved in <YEAR>/dsa-<ID>.wml
@@ -224,6 +224,7 @@ if (($opt_l eq "french") || ($opt_l eq "FR")) {
 	$output =~ s|\(squeeze\)|\(Squeeze\)|g;
 	$output =~ s|\(wheezy\)|\(Wheezy\)|g;
 	$output =~ s|\(jessie\)|\(Jessie\)|g;
+	$output =~ s|\(stretch\)|\(Stretch\)|g;
 
 	# Short recurrent part of text. Take care ! substitution order might be important
 	$output =~ s|(Several\|Multiple).vulnerabilities.(have.been\|were).discovered in|Plusieurs vulnérabilités ont été découvertes dans|gs;
