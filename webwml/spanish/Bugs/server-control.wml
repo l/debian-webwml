@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian BTS &mdash; control del servidor" NOHEADER=yes NOCOPYRIGHT=true
 #include "$(ENGLISHDIR)/Bugs/pkgreport-opts.inc"
-#use wml::debian::translation-check translation="1.89" maintainer="Fernando Cerezal"
+#use wml::debian::translation-check translation="1.102" maintainer="Diddier Hilarion"
 
 # Note to translators: please, do fix the command name:
 # they must not be translated -- taffit, 2012-11-17
@@ -65,44 +65,45 @@ o mediante correo electrónico usando la orden <code>refcard</code>.
 # No creo que tal y como esté esté claro (jfs)
       <td valign="top">
       <ul class="nodecoration">
-          <li><a href="#reassign">reasignar</a></li>
-          <li><a href="#severity">gravedad</a></li>
-          <li><a href="#tag">etiquetas</a></li>
-          <li><a href="#retitle">retitulación</a></li>
-          <li><a href="#submitter">remitente</a></li>
-          <li><a href="#affects">afecta</a></li>
-          <li><a href="#summary">resumen</a></li>
+          <li><a href="#reassign">reasign (reasignar)</a></li>
+          <li><a href="#severity">severity (gravedad)</a></li>
+          <li><a href="#tag">tags (etiquetas)</a></li>
+          <li><a href="#retitle">retitle (retitulación)</a></li>
+          <li><a href="#submitter">submitter (remitente)</a></li>
+          <li><a href="#affects">affects (afecta)</a></li>
+          <li><a href="#summary">summary (resumen)</a></li>
+          <li><a href="#outlook">outlook (panorama)</a></li>
         </ul>
       </td>
       <!-- Versioning -->
       <td valign="top">
         <ul class="nodecoration">
-          <li><a href="#found">found</a> | <a href="#notfound">no encontrado</a></li>
-          <li><a href="#fixed">fixed</a> | <a href="#notfixed">no arreglado</a></li>
-          <li><a href="#reopen">reabierto</a></li>
+          <li><a href="#found">found (encontrado)</a> | <a href="#notfound">notfound(no encontrado)</a></li>
+          <li><a href="#fixed">fixed (arreglado)</a> | <a href="#notfixed">notfixed(no arreglado)</a></li>
+          <li><a href="#reopen">reopen (reabierto)</a></li>
           <!-- <dt>(close)</dt> Deprecated -->
         </ul>
       </td>
       <!-- Duplicates -->
       <td valign="top">
         <ul class="nodecoration">
-          <li><a href="#merge">fusionar</a> | <a href="#unmerge">desfusionar</a></li>
-          <li><a href="#forcemerge">fusión forzada</a></li>
-          <li><a href="#clone">clonar</a></li>
+          <li><a href="#merge">merge (fusionar)</a> | <a href="#unmerge">unmerge(desunir)</a></li>
+          <li><a href="#forcemerge">forcemerge (fusión forzada)</a></li>
+          <li><a href="#clone">clone (clonar)</a></li>
         </ul>
       </td>
       <!-- Misc. -->
       <td valign="top">
         <ul class="nodecoration">
-          <li><a href="#thanks">gracias</a></li>
+          <li><a href="#thanks">thanks (gracias)</a></li>
           <li><a href="#comment">#</a></li>
-          <li><a href="#forwarded">reenvío</a> |  <a href="#notforwarded">sin reenvío</a></li>
-          <li><a href="#owner">propietario</a> | <a href="#noowner">sin propietario</a></li>
-          <li><a href="#block">bloqueo</a> | <a href="#unblock">desbloqueo</a></li>
-          <li><a href="#archive">archivar</a> | <a href="#unarchive">sacar del archivo</a></li>
-          <li><a href="server-request#user">user</a> |
-            <a href="server-request#usertag">usertag</a> |
-            <a href="server-request#usercategory">usercategory</a></li>
+          <li><a href="#forwarded">forwarded (reenvío)</a> |  <a href="#notforwarded">notforwarded(sin reenvío)</a></li>
+          <li><a href="#owner">owner (propietario)</a> | <a href="#noowner">noowner(sin propietario)</a></li>
+          <li><a href="#block">block (bloqueo)</a> | <a href="#unblock">unblock(desbloqueo)</a></li>
+          <li><a href="#archive">archive (archivar)</a> | <a href="#unarchive">unarchive(sacar del archivo)</a></li>
+          <li><a href="server-request#user">user (usuario)</a> |
+            <a href="server-request#usertag">usertag (etiqueta de usuario)</a> |
+            <a href="server-request#usercategory">usercategory (categoría de usuario</a></li>
         </ul>
       </td>
     </tr>
@@ -386,26 +387,65 @@ usar la orden <code>found</code> en su lugar.
       en la lista de paquetes de <var>paquete</var>. Esto debería
       utilizarse cuando la errata es suficientemente importante para
       causar que múltiples informes de error enviados por los usuarios 
-      se asociaran al paquete incorrecto.
+      se asociaran al paquete incorrecto. <code>=</code> indica que
+       afecta a los paquetes indicados y es la acción
+      por omisión si no se indican paquetes; <code>-</code> quita 
+      los paquetes indicados de la lista de afectados,
+      <code>+</code> añade los paquetes indicados a la lista de afectados 
+      y es la acción por omisión si se indican paquetes.
+
     </p>
   </dd>
 
   <dt><a name="summary"><code>summary</code> <var>número_de_fallo</var>
-      [<var>número de mensaje</var>]</a></dt>
+      [<var>número_de_mensaje</var> | <var>texto_de_resumen</var>]</a></dt>
   <dd>
     <p>
       Selecciona el mensaje a utilizar como resumen del fallo. Se trata el
-      primer párrafo que no forme parte de las pseudo-cabeceras y
-      se utiliza como resumen del fallo. Este resumen se muestra al principio
-      de la página de informe de fallos. Ésto es útil en los casos en los
+      primer párrafo que no forme parte de las pseudo-cabeceras o no sea una orden de control
+      y se utiliza como resumen del fallo. Este resumen se muestra al principio
+      de la página de informe de fallos. Esto es útil en los casos en los
       que el informe original no describe correctamente los problemas o
       cuando el fallo tiene demasiados mensajes y se hace difícil identificar
       el problema existente.
     </p>
     <p>
-      Se borra el resumen si no se proporciona <var>message number</var>.
-      <var>message number</var> es el número de mensaje tal y como se
-      lista en la salida del programa CGI bugreport.
+      Si no se proporciona <var>número_de_mensaje</var>, se borra el resumen.
+      <var>número_de_mensaje</var> es el número de mensaje tal y como se
+      lista en la salida del script CGI bugreport; si el 
+      <var>numero_de_mensaje</var> es 0, se usa el mensaje actual
+      (el mensaje enviado a control@bus.debian.org el cual contiene la orden de control summary).
+    </p>
+    <p>
+      Si el <var>número_de_mensaje</var> no es numérico y es una cadena no vacía, se asume 
+      que es el texto a usar como resumen.
+    </p>
+  </dd>
+   <dt><a name="outlook"><code>outlook</code> <var>número_de_fallo</var>
+      [<var>número_de_mensaje</var> | <var>texto_de_panorama</var>]</a></dt>
+  <dd>
+    <p>
+      Selecciona el mensaje a utilizar como el panorama 
+      usado para solucionar un fallo (o el estado actual 
+      de la solución de un fallo). El primer párrafo que 
+      no forme parte de las pseudo-cabeceras o no sea una 
+      orden de control se utiliza como panorama del fallo,
+      el panorama del fallo se muestra en la parte superior
+      de la página del reporte de fallo. Esto es útil para 
+      coordinar con otros que estén solucionando este fallo
+      (por ejemplo, en una reunión de corrección de fallos).
+    </p>
+    <p>
+      Si no se indica un <var>número_de_mensaje</var>, se borra el panorama.
+       <var>número_de_mensaje</var> es el número de mensaje tal y como se
+      lista en la salida del script CGI bugreport; si el
+      <var>número_de_mensaje</var> es 0, se usa el mensaje actual
+      (el mensaje enviado a control@bus.debian.org el cual contiene 
+      la orden de control outlook).
+    </p>
+    <p>
+       Si el <var>número_de_mensaje</var> no es numérico y es una cadena no vacía, se 
+       asume que es el texto a usar como panorama.
     </p>
   </dd>
  
@@ -529,7 +569,7 @@ usar la orden <code>found</code> en su lugar.
 
 <dd>
 <p>
-    Añade a las etiquetas del informe de fallo #<var>número de fallo</var> la
+    Añade a las etiquetas del informe de fallo #<var>número_de_fallo</var> la
     etiqueta <var>etiqueta</var>. No se enviará notificación alguna al usuario
     que informó del fallo.  Si la acción es <code>+</code> se añade cada
     <var>etiqueta</var> listada a continuación, si la acción es <code>-</code>
@@ -676,8 +716,12 @@ usar la orden <code>found</code> en su lugar.
      se saca del archivo, la orden debería ir acompañado de <code>reopen</code> y
      <code>found/fixed</code> según sea apropiado. Los fallos que se han sacado
      del archivo se pueden volver a archivar usando <code>archive</code>,
-     asumiendo que se cumplen todos los requerimientos para ser archivados
-     excepto el de tiempo transcurrido.
+     asumiendo que se cumplen todos los requisitos para ser archivados
+     excepto el de tiempo transcurrido. No se debe usar <code>unarchive</code> para
+     hacer cambios triviales a fallos archivados, como cambiar el remitente
+     del fallo; el propósito principal de unarchive es permitir la reapertura
+     de fallos que han sido archivados sin la intervencíón de los administradores
+     del sistema de seguimiento de fallos.
   </dd>
 
 <dt><a name="comment"><code>#</code>...</a></dt>
