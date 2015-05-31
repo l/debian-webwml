@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd&nbsp;&ndash;&nbsp;Configuration" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.124" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.127" maintainer="Jean-Paul Guillonneau"
 
 # Translators:
 # Jérome Abela, 1999.
@@ -209,7 +209,7 @@ critiques&nbsp;; toutes seront acceptées avec plaisir.
 #Grub ne fait aucune distinction entre les disques IDE et SCSI. <code>M</code>
 #identifie la partition sur le lecteur.
 #
-#  Il est indexé à partir de zéro dans GRUB 1 mais à partir de un dans GRUB 2. 
+#  Il est indexé à partir de zéro dans GRUB 1 mais à partir de un dans GRUB 2.
 #
 #  Si
 #cela vous semble confus, relaxez-vous&nbsp;: Grub va vous aider.
@@ -422,8 +422,25 @@ Les étapes suivantes seront ensuite
 nécessaires pour une configuration correcte.
 </p>
 
-<h2>Configuration</h2>
+<p>
+Vous pouvez vous procurer une image préinstallée et l’exécuter dans qemu :
+</p>
 
+<table><tr><td>&nbsp;</td><td class=example><pre>
+$ wget http://ftp.debian-ports.org/debian-cd/hurd-i386/debian-hurd-2015/debian-hurd-20150424.img.tar.gz
+$ tar xzf debian-hurd*img.tar.gz
+$ kvm -m 1G -drive file=$(echo debian-hurd-*.img),cache=writeback
+</pre></td></tr></table>
+
+<p>
+ou la convertir dans le format VDI pour virtualbox :
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+$ VBoxManage convertfromraw debian-hurd-*.img debian-hurd.vdi --format vdi
+</pre></td></tr></table>
+
+<h2>Configuration</h2>
 
 <h3>Le réseau</h3>
 
@@ -438,30 +455,30 @@ sous <tt>/dev</tt>, et par conséquent doivent être indiquées comme
 # <p>
 # D'abord, assurez-vous que la carte réseau est reconnue par GNU Mach :
 # </p>
-# 
+#
 # <table><tr><td>&nbsp;</td><td class=example><pre>
 #  \# devprobe eth0
 #  eth0
 # </pre></td></tr></table>
-# 
+#
 # <p>
 # Si <code>devprobe eth0</code> ne renvoie pas <code>eth0</code>, le noyau
 # n'a pas détecté la carte réseau et vous devez essayer une autre carte.
-# 
+#
 # Par exemple, la carte e1000 de QEMU n'est pas prise en charge, la rtl8139
 # devrait fonctionner : <code>-net nic,model=rtl8139 -net user</code>.
 # </p>
-# 
+#
 # <p>
 # Depuis la version 20120520-1, le paquet hurd contient les
 # pilotes DDE qui peuvent être utilisés pour les périphériques
 # plus récents (les pilotes viennent de Linux 2.6.32).
-# 
+#
 # Les traducteurs pour cela sont déjà configurés, et il ne reste plus qu'à
 # remplacer <code>eth0</code> (le nom du pilote Mach) par <code>/dev/eth0</code>
 # (le chemin vers le pilote DDE) dans le reste de ce document.
 # </p>
-# 
+#
 # <p>
 # Le pilote DDE peut même être essayé si GNU Mach a un pilote en passant
 # <code>nonetdev</code> à la ligne de commandes de gnumach ce qui désactivera
@@ -940,9 +957,9 @@ EndSection
 Vous aurez besoin de plusieurs paquets de X. Vous pouvez commencer par
 <code>xorg</code>, <code>rxvt</code> et un gestionnaire de fenêtres : <code>twm</code>,
 <code>wmaker</code>, <code>icewm</code>,
-<code>openbox</code>, etc. Si vous voulez que X se lance au démarrage, vous
-devez installer un gestionnaire de sessions. <code>xdm</code> fonctionne très
-bien.
+<code>openbox</code>, etc., sont un bon début. Si vous voulez que X se lance au démarrage, vous
+devez installer un gestionnaire de sessions. <code>lightdm</code> et <code>gdm</code>
+ne fonctionnent pas encore très bien, mais <code>xdm</code> le fait.
 </p>
 
 <p>
@@ -953,7 +970,7 @@ Enfin, exécutez <code>startx /usr/bin/votre_gestionnaire_de_fenêtres</code>.
 
 <p>
 Précédemment à sysvinit 2.88dsf-48 et hurd 1:0.5.git20140320-1, le
-<q>System V</q> rc n'était pas utilisé par défaut. Pour éteindre votre machine, 
+<q>System V</q> rc n'était pas utilisé par défaut. Pour éteindre votre machine,
 utilisez simplement <code>halt</code> ou <code>reboot</code>.
 </p>
 
