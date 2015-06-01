@@ -7,6 +7,8 @@ SUBS=
 
 GETTEXTFILES += bugs.mo
 
+CAPATH=$(shell dir=/etc/ssl/ca-debian ; test -d $dir && echo --ca-directory=$dir)
+
 include $(WMLBASE)/Make.lang
 
 ifeq "$(LANGUAGE)" "en"
@@ -32,7 +34,7 @@ pseudo-packages.$(LANGUAGE).html: $(ENGLISHDIR)/Bugs/pseudo-packages.description
 .PHONY: $(ENGLISHDIR)/Bugs/pseudo-packages.description
 
 $(ENGLISHDIR)/Bugs/pseudo-packages.description:
-	wget -O $(ENGLISHDIR)/Bugs/pseudo-packages.description https://bugs.debian.org/pseudopackages/pseudo-packages.description
+	wget $(CAPATH) -O $(ENGLISHDIR)/Bugs/pseudo-packages.description https://bugs.debian.org/pseudopackages/pseudo-packages.description
 
 ifeq "$(LANGUAGE)" "en"
 $(HTMLDIR)/hashbug_redirect.js: hashbug_redirect.js
