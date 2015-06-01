@@ -7,6 +7,8 @@ SUBS=
 
 GETTEXTFILES += others.mo
 
+CAPATH=$(shell dir=/etc/ssl/ca-debian ; test -d $dir && echo --ca-directory=$dir)
+
 include $(WMLBASE)/Make.lang
 
 ifeq "$(LANGUAGE)" "zh"
@@ -43,7 +45,7 @@ ifeq "$(LANGUAGE)" "en"
 mailing-lists.txt: $(mklist) $(lists.cfg) $(descfiles)
 	$(mklist) -f $(lists.cfg) -t
 $(lists.cfg):
-	wget -O lists.cfg https://lists.debian.org/lists.cfg
+	wget $(CAPATH) -O lists.cfg https://lists.debian.org/lists.cfg
 else
 mailing-lists.$(LANGUAGE).txt: $(mklist) $(lists.cfg) $(descfiles)
 	$(mklist) -f $(lists.cfg) -t && mv mailing-lists.txt mailing-lists.$(LANGUAGE).txt

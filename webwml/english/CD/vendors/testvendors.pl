@@ -11,6 +11,9 @@
 #   (deburl) points to the proper place. For the time being, the
 #   script just looks for 'Debian' (case-insensitive) in the page
 
+my $dir = '/etc/ssl/ca-global';
+my $capath = -d $dir ? "--ca-directory=$dir" : '';
+
 sub sanitize (@)
 {
 # Sanitize characters in the URL with their encoded entities
@@ -37,7 +40,7 @@ sub test_vendor(@)
     } else {
         print "N: Checking $url\n";
         my $turl = sanitize($url);
-        $vendpage = `wget -t 1 -O/dev/null '$turl' 2>&1`;
+        $vendpage = `wget $capath -t 1 -O/dev/null '$turl' 2>&1`;
         if ($vendpage =~ /: Host not found./)
         {
             print "E: Vendor \"$name\" <$email> cannot look up web page $url\n";
@@ -51,7 +54,7 @@ sub test_vendor(@)
     } else {
         print "N: Checking $deburl\n";
         my $turl = sanitize($deburl);
-        $vendpage = `wget -t 1 -O- '$turl' 2>&1`;
+        $vendpage = `wget $capath -t 1 -O- '$turl' 2>&1`;
         if ($vendpage =~ /: Host not found./)
         {
             print "E: Vendor \"$name\" <$email> cannot look up web page $deburl\n";
