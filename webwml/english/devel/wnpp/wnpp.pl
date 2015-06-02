@@ -40,7 +40,11 @@ while (<POPCON>) {
 my $soap = SOAP::Lite->uri('Debbugs/SOAP')->proxy('https://bugs.debian.org/cgi-bin/soap.cgi')
        or die "Couldn't make connection to SOAP interface: $@";
 my $bugs = $soap->get_bugs(package=>'wnpp')->result;
-my $status = $soap->get_status($bugs)->result() or die;
+my $status = {};
+while (my @slice = splice(@$bugs, 0, 500)) {
+    my $tmp = $soap->get_status(@slice)->result() or die;
+    %$status = (%$status, %$tmp);
+}
 
 my $curdate = time;
 
