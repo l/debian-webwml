@@ -7,7 +7,7 @@ SUBS=
 
 GETTEXTFILES += others.mo
 
-CAPATH=$(shell dir=/etc/ssl/ca-debian ; test -d $dir && echo --ca-directory=$dir)
+CAPATH=$(shell dir=/etc/ssl/ca-debian ; test -d $$dir && echo --ca-directory=$$dir)
 
 include $(WMLBASE)/Make.lang
 
