@@ -50,7 +50,7 @@ my $curdate = time;
 
 my ( %rfa, %orphaned, %rfabymaint, %rfp, %ita, %itp, %age,
      %rfh, %rfh_pkg, %oth, %activity, %ita_activity, %itp_activity );
- ALLPKG: foreach my $bugid (@$bugs) {
+ ALLPKG: foreach my $bugid (keys %$status) {
      use integer;
      next if $status->{$bugid}->{done};
      next if $status->{$bugid}->{archived};
