@@ -6,7 +6,7 @@ CUR_DIR=devel
 SUBS=website join misc wnpp \
  debian-jr debian-med debian-desktop debian-lex \
  debian-nonprofit debian-installer debian-accessibility buildd \
- debian-live
+ debian-live hamradio
 
 include $(WMLBASE)/Make.lang
 
