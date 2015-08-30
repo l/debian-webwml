@@ -6,7 +6,8 @@ CUR_DIR=devel/hamradio
 
 include $(WMLBASE)/Make.lang
 
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/basic.wml $(GETTEXTDEP)\
-  $(TEMPLDIR)/recent_list.wml $(wildcard News/[0-9]*/*.wml) \
-  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/News/[0-9]*/*.wml)
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/basic.wml
 
+live.$(LANGUAGE).html: live.wml $(TEMPLDIR)/basic.wml
+
+dev.$(LANGUAGE).html: dev.wml $(TEMPLDIR)/basic.wml
