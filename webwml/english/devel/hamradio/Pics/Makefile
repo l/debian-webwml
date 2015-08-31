@@ -2,7 +2,7 @@
 # please contact debian-www.
 
 WMLBASE=..
-CUR_DIR=Pics
+CUR_DIR=devel/hamradio/Pics
 SUBS=
 
 include $(WMLBASE)/Make.lang
