@@ -3,7 +3,7 @@
 
 WMLBASE=../..
 CUR_DIR=devel/hamradio
-SUBS=News Pics
+SUBS=News Pics get
 
 include $(WMLBASE)/Make.lang
 
