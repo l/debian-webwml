@@ -82,6 +82,7 @@ while (<SRC>)
 
 	s/^(<p>)?A problem has been discovered in\b/$1Ett problem har upptäckts i/;
 	s/\bdiscovered a problem in\b/upptäckte ett problem i/;
+	s/Updates for the oldstable distribution \(wheezy\) will be released shortly/Uppdateringar för den gamla stabila utgåvan \(Wheezy\) kommer att släppas inom kort/;
 	s/The oldstable distribution/Den gamla stabila utgåvan/;
 	s/is not affected by this problem/påverkas inte av detta problem/;
 	s/^(<p>)?A vulnerability was discovered in\b/$1En sårbarhet upptäcktes i/;
@@ -145,6 +146,7 @@ while (<SRC>)
 	s/compatibility with or to take advantage of this update:/med, eller för att dra nytta av, denna uppdatering:/;
 	s/For the unstable distribution \(sid\)\, this problem will be fixed (?:soon|shortly)./För den instabila utgåvan (Sid) kommer detta problem att rättas inom kort./;
 	s/For the testing \(stretch\) and unstable \(sid\) distributions\, this/För uttestningsutgåvan \(Stretch\) och den instabila utgåvan \(Sid\)\, har/;
+	s/\(sid\)\, this problem has been fixed in version/\(Sid\)\, har detta problem rättats i version/;
 	s/problem has been fixed in version/detta problem rättats i version/;
 	s/(?:,)?( )?th(?:is|e) problem (?:has been|was) fixed in/$1har detta problem rättats i/;
 	s/(?:,)?( )?th(?:is|e) problem (?:has been|was) fixed$/$1har detta problem rättats/;
@@ -185,8 +187,9 @@ while (<SRC>)
 	s/([Ff])or the testing (wheezy) and unstable (sid) distributions/$1ör uttestningsutgåvan (Wheezy) och den instabila utgåvan (Sid)/;
 	s/([Ff])or the testing (wheezy) and the unstable distribution/$1ör uttestningsutgåvan (Wheezy) och den instabila utgåvan/;
 	s/([Ff])or the testing \(([Ww])heezy\) and unstable distribution/$1ör uttestningsutgåvan (Wheezy) och den instabila utgåvan/;
-	s/([Ff])or the testing distribution \(jessie\) and the unstable distribution/$1ör uttestningsutgåvan \(Jessie\) och den instabila utgåvan/;
+	s/([Ff])or the testing distribution \(jessie\) and?( )(?:the) unstable distribution/$1ör uttestningsutgåvan \(Jessie\) och den instabila utgåvan/;
 	s/([Ff])or the testing distribution \(stretch\) and the unstable distribution/$1ör uttestningsutgåvan \(Stretch\) och den instabila utgåvan/;
+	s/([Ff])or the testing distribution \(stretch\) and unstable distribution/$1ör uttestningsutgåvan \(Stretch\) och den instabila utgåvan/;
 	s/([Ff])or the testing distribution \(([Ww])heezy\)(?:,)?( )and (?:the )?unstable distribution/$1ör uttestningsutgåvan \(Wheezy\) och den instabila utgåvan/;
 	s/([Ff])or the testing distribution/$1ör uttestningsutgåvan/;
 	s/([Ff])or the Debian unstable distribution/$1ör Debians instabila utgåva/;
