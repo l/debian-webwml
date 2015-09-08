@@ -7,4 +7,4 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/basic.wml
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml ../navbar.inc
