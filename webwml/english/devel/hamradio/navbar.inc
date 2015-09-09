@@ -13,7 +13,7 @@
       </li>
       <li><a href="$(HOME)/devel/hamradio/docs/">Documentation</a>
         <ul>
-        <li><a href="">Debian&nbsp;Hamradio&nbsp;Handbook</a></li>
+        <li><a href="https://wiki.debian.org/DebianHams/Handbook">Debian&nbsp;Hamradio&nbsp;Handbook</a></li>
         </ul>
       </li>
       <li><a href="$(HOME)/devel/hamradio/support">Support</a></li>
