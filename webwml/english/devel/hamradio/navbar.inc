@@ -24,7 +24,7 @@
         </ul>
       </li>
       <li><a href="$(HOME)/devel/hamradio/fun">Fun</a></li>
-      <li><a href="https://twitter.com/DebianHamradio"><img src="Pics/twitter.gif" alt="Twitter" width="80" height="15"></a></li>
+      <li><a href="https://twitter.com/DebianHamradio"><img src="$(HOME)/devel/hamradio/Pics/twitter.gif" alt="Twitter" width="80" height="15"></a></li>
     </ul>
    </div>
 :#alternate_navbar#}
