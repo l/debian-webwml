@@ -13,14 +13,14 @@
       </li>
       <li><a href="$(HOME)/devel/hamradio/docs/">Documentation</a>
         <ul>
-        <li><a href="https://wiki.debian.org/DebianHams/Handbook">Debian&nbsp;Hamradio&nbsp;Handbook</a></li>
+        <li><a href="<hamradio-handbook-html/>">Debian&nbsp;Hamradio&nbsp;Handbook</a></li>
         </ul>
       </li>
       <li><a href="$(HOME)/devel/hamradio/support">Support</a></li>
       <li><a href="$(HOME)/devel/hamradio/dev">Development</a>
         <ul>
         <li><a href="https://wiki.debian.org/DebianHams">Hamradio Maintainers Team</a></li>
-        <li><a href="$(HOME)/devel/hamradio/doc/hamradio-maintguide/">Hamradio Maintainers Guide</a></li>
+        <li><a href="<hamradio-maintguide-html/>">Hamradio Maintainers Guide</a></li>
         </ul>
       </li>
       <li><a href="$(HOME)/devel/hamradio/fun">Fun</a></li>
