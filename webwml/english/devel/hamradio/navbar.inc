@@ -1,3 +1,5 @@
+#use wml::debian::blends::hamradio
+
 {#alternate_navbar#:
    <div id="second-nav">
       <p><a href="$(HOME)/devel/hamradio/">Debian&nbsp;Hamradio&nbsp;Blend</a></p>
