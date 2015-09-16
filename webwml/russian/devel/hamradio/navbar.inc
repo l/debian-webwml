@@ -22,7 +22,7 @@
       <li><a href="$(HOME)/devel/hamradio/dev">Разработка</a>
         <ul>
         <li><a href="https://wiki.debian.org/DebianHams">Команда&nbsp;сопровождающих&nbsp;Hamradio</a></li>
-        <li><a href="<hamradio-maintguide/>">Руководство&nbsp;сопровождающих&nbps;Hamradio</a></li>
+        <li><a href="<hamradio-maintguide/>">Руководство&nbsp;сопровождающих&nbsp;Hamradio</a></li>
         </ul>
       </li>
       <li><a href="$(HOME)/devel/hamradio/fun">Забавное</a></li>
