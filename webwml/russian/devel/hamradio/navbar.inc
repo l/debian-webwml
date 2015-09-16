@@ -6,8 +6,8 @@
     <ul>
       <li><a href="$(HOME)/devel/hamradio/about">О&nbsp;смеси</a></li>
       <li><a href="$(HOME)/devel/hamradio/News/">Архив&nbsp;новостей</a></li>
-      <li><a href="$(HOME)/devel/hamradio/contact">Свяжитесь с нами</a></li>
-      <li><a href="$(HOME)/devel/hamradio/get/">Получить&nbsp;смесь</a>
+      <li><a href="$(HOME)/devel/hamradio/contact">Свяжитесь&nbsp;с&nbsp;нами</a></li>
+      <li><a href="$(HOME)/devel/hamradio/get/">Получить&nbsp;смесь</a>y
          <ul>
          <li><a href="$(HOME)/devel/hamradio/get/live">Загрузить&nbsp;<q>живые</q>&nbsp;образы</a></li>
          <li><a href="$(HOME)/devel/hamradio/get/metapackages">Использование&nbsp;метапакетов</a></li>
