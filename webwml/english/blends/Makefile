@@ -3,7 +3,7 @@
 
 WMLBASE=..
 CUR_DIR=blends
-SUBS=Pics
+SUBS=Pics hamradio gis
 
 include $(WMLBASE)/Make.lang
 
