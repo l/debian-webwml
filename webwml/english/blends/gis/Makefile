@@ -16,3 +16,5 @@ dev.$(LANGUAGE).html: dev.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(T
 contact.$(LANGUAGE).html: contact.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc
 
 support.$(LANGUAGE).html: support.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc
+
+deriv.$(LANGUAGE).html: contact.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc
