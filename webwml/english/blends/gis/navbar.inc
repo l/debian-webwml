@@ -2,17 +2,18 @@
 
 {#alternate_navbar#:
    <div id="second-nav">
-      <p><a href="$(HOME)/blends/hamradio/">Debian&nbsp;GIS&nbsp;Blend</a></p>
+      <p><a href="$(HOME)/blends/gis/">Debian&nbsp;GIS&nbsp;Blend</a></p>
     <ul>
-      <li><a href="$(HOME)/blends/hamradio/contact">Contact</a></li>
-      <li><a href="$(HOME)/blends/hamradio/get/">Getting&nbsp;the&nbsp;Blend</a>
+      <li><a href="$(HOME)/blends/gis/about">About</a></li>
+      <li><a href="$(HOME)/blends/gis/contact">Contact</a></li>
+      <li><a href="$(HOME)/blends/gis/get/">Getting&nbsp;the&nbsp;Blend</a>
          <ul>
-         <li><a href="$(HOME)/blends/hamradio/get/live">Download&nbsp;live&nbsp;images</a></li>
-         <li><a href="$(HOME)/blends/hamradio/get/metapackages">Using&nbsp;the&nbsp;metapackages</a></li>
+         <li><a href="$(HOME)/blends/gis/get/live">Download&nbsp;live&nbsp;images</a></li>
+         <li><a href="$(HOME)/blends/gis/get/metapackages">Using&nbsp;the&nbsp;metapackages</a></li>
 	 </ul>
       </li>
-      <li><a href="$(HOME)/blends/hamradio/support">Support</a></li>
-      <li><a href="$(HOME)/blends/hamradio/dev">Development</a>
+      <li><a href="$(HOME)/blends/gis/support">Support</a></li>
+      <li><a href="$(HOME)/blends/gis/dev">Development</a>
         <ul>
         <li><a href="https://wiki.debian.org/DebianGIS">GIS Team</a></li>
         <li><a href="<gis-policy-html/>">GIS Team Policy</a></li>
