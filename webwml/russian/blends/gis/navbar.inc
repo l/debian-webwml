@@ -1,4 +1,4 @@
-#use wml::debian::blends::hamradio
+#use wml::debian::blends::gis
 
 {#alternate_navbar#:
    <div id="second-nav">
@@ -12,19 +12,15 @@
          <li><a href="$(HOME)/blends/gis/get/metapackages">Использование&nbsp;метапакетов</a></li>
 	 </ul>
       </li>
-        <ul>
-        <li><a href="<gis-policy-html/>">Debian&nbsp;GIS</a></li>
-        </ul>
-      </li>
       <li><a href="$(HOME)/blends/gis/support">Поддержка</a></li>
       <li><a href="$(HOME)/blends/gis/deriv">Производные&nbsp;дистрибутивы</a>
       <li><a href="$(HOME)/blends/gis/dev">Разработка</a>
         <ul>
-        <li><a href="https://wiki.debian.org/DebianGis">Команда&nbsp;сопровождающих&nbsp;GIS</a></li>
-        <li><a href="<gis-policy-html/>">Руководство&nbsp;сопровождающих&nbsp;GIS</a></li>
+        <li><a href="https://wiki.debian.org/DebianGis">Команда&nbsp;GIS</a></li>
+        <li><a href="<gis-policy-html/>">Политика&nbsp;команды&nbsp;GIS</a></li>
         </ul>
       </li>
-      <li><a href="https://twitter.com/DebianHamradio"><img src="Pics/twitter.gif" alt="Twitter" width="80" height="15"></a></li>
+      <li><a href="https://twitter.com/DebianGIS"><img src="Pics/twitter.gif" alt="Twitter" width="80" height="15"></a></li>
     </ul>
    </div>
 :#alternate_navbar#}
