@@ -3,7 +3,7 @@
 
 WMLBASE=../..
 CUR_DIR=blends/gis
-SUBS=Pics
+SUBS=Pics get
 
 include $(WMLBASE)/Make.lang
 
