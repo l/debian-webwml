@@ -14,9 +14,8 @@
       </li>
       <li><a href="$(HOME)/blends/gis/support">Поддержка</a></li>
       <li><a href="$(HOME)/blends/gis/deriv">Производные&nbsp;дистрибутивы</a>
-      <li><a href="$(HOME)/blends/gis/dev">Разработка</a>
+      <li><a href="https://wiki.debian.org/DebianGis#Development">Разработка</a>
         <ul>
-        <li><a href="https://wiki.debian.org/DebianGis">Команда&nbsp;GIS</a></li>
         <li><a href="<gis-policy-html/>">Политика&nbsp;команды&nbsp;GIS</a></li>
         </ul>
       </li>

@@ -14,9 +14,8 @@
       </li>
       <li><a href="$(HOME)/blends/gis/support">Support</a></li>
       <li><a href="$(HOME)/blends/gis/deriv">Derivatives</a></li>
-      <li><a href="$(HOME)/blends/gis/dev">Development</a>
+      <li><a href="https://wiki.debian.org/DebianGIS#Development">Development</a>
         <ul>
-        <li><a href="https://wiki.debian.org/DebianGIS">GIS Team</a></li>
         <li><a href="<gis-policy-html/>">GIS Team Policy</a></li>
         </ul>
       </li>
