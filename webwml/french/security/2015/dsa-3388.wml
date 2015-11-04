@@ -10,7 +10,7 @@
 
 <p>Un défaut a été découvert dans la façon dont ntpd traite certains paquets de
 configuration à distance. Un attaquant pourrait utiliser un paquet contrefait
-pour l'occasion afin de provoquer un plantage de ntpd :</p>
+pour l'occasion afin de provoquer un plantage de ntpd, si :</p>
 
 <ul>
 <li>la configuration à distance de ntpd est activée ;</li>
@@ -55,10 +55,10 @@ Cette option peut être utilisée avec les options -q et -x.</p>
 panique si sa discipline d'horloge n'avait pas assez de temps pour atteindre
 l'état de synchronisation et et y rester pour au moins une mise à jour. Si un
 attaquant de type homme du milieu (<q>MITM</q>) pouvait contrôler le trafic NTP dès le
-lancement de ntpd (ou peut-être 15 à 30 après), il pourrait empêcher le client
+lancement de ntpd (ou peut-être 15 à 30 minutes après), il pourrait empêcher le client
 d'atteindre l'état de synchronisation et le forcer à décaler son horloge de
 n'importe quelle durée, autant de fois que désiré, ce qui pourrait être
-utilisé par des attaquants pour faire expirer des certificats, etc.</p>
+utilisé par des attaquants pour faire expirer des certificats, etc.</p>
 
 <p>Cela est contraire à ce que dit la documentation. Normalement, il est
 supposé qu'un attaquant MITM peut décaler l'horloge de plus que le seuil de
@@ -82,7 +82,7 @@ complètement validé. Recevoir de tels paquets peut faire planter ntpd.</p></li
 <p>Un défaut de fuite de mémoire a été découvert dans CRYPTO_ASSOC de ntpd.
 Si ntpd était configuré pour utiliser l'authentification autokey, un
 attaquant pourrait envoyer des paquets à ntpd qui, après plusieurs jours
-d'attaque continue, le rendre à court de mémoire.</p></li>
+d'attaque continue, pourraient le rendre à court de mémoire.</p></li>
 
 <li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7703">CVE-2015-7703</a>
 
@@ -90,23 +90,23 @@ d'attaque continue, le rendre à court de mémoire.</p></li>
 utilisée pour régler les chemins de pidfile et driftfile sans aucune
 restriction. Un attaquant distant pourrait utiliser ce défaut pour écraser
 un fichier sur le système de fichiers avec un fichier contenant le pid du
-processus ntpd (immediatement) ou la dérive actuelle estimée de l'horloge
-système (en intervalles horaires). Par example :</p>
+processus ntpd (immédiatement) ou la dérive actuelle estimée de l'horloge
+système (en intervalles horaires). Par exemple :</p>
 
 <p><code>ntpq -c ':config pidfile /tmp/ntp.pid'</code>
 <code>ntpq -c ':config driftfile /tmp/ntp.drift'</code></p>
 
-<p>Dans Debian, ntpd est configuré pour relâcher les droits du
+<p>Dans Debian, ntpd est configuré pour baisser les droits du
 superutilisateur, ce qui limite l'impact de ce problème.</p></li>
 
 <li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7704">CVE-2015-7704</a>
 
 <p>Si ntpd, en tant que client NTP, reçoit un paquet <q>baiser de la mort</q>
-(<q>Kiss-of-Death (KoD)</q>) du serveur pour réduire son taux de sondage
-(<q>polling</q>), il ne vérifie pas si le timestamp d'origine dans la réponse
-correspond au timestamp transmis dans sa requête. Un attaquant externe peut
-envoyer un paquet KoD contrefait au client, ce qui augmentera sont intervalle
-de sondage à une grande valeur et désactivera efficacement la synchronisation
+(<q>Kiss-of-Death (KoD)</q>) du serveur pour réduire son intervalle d’interrogation automatique
+(<q>polling</q>), il ne vérifie pas si l’estampille temporelle d'origine dans la réponse
+correspond à l’estampille temporelle transmise dans sa requête. Un attaquant externe peut
+envoyer un paquet KoD contrefait au client, ce qui augmentera son intervalle
+d’interrogation à une grande valeur et désactivera efficacement la synchronisation
 avec le serveur.</p></li>
 
 <li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7850">CVE-2015-7850</a>
@@ -133,13 +133,13 @@ permettre à un attaquant authentifié de planter ntpd.</p></li>
 
 <li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7871">CVE-2015-7871</a>
 
-<p>Une erreur de logique de traitement d'error existe dans ntpd. Elle se
+<p>Une erreur de logique de traitement d'erreur existe dans ntpd. Elle se
 manifeste par le traitement incorrect de condition d'erreur associé à certains
 paquets crypto-NAK. Un attaquant non authentifié externe peut forcer les
-processus ntpd sur les serveurs visés à s'appairer avec des sources de temps
+processus ntpd sur les serveurs visés à s'apparier avec des sources de temps
 choisies par l'attaquant en transmettant des paquets crypto-NAK actifs
 symétriques à ntpd. Cette attaque contourne l'authentification habituellement
-requise pour établir un appairage et permet à un attaquant de faire des
+requise pour établir un appariement et permet à un attaquant de faire des
 modifications arbitraires sur l'heure du système.</p></li>
 
 </ul>
