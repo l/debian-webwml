@@ -16,22 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-# This program is run from a crontab on a Debian website mirror like this:
-#
-# MAILTO="porridge@debian.org"
-# # Atomically and concurrent-safely create a stats.tgz
-# 18 3   *   *   *     cd "$HOME" && d=$(mktemp -d stats-wip-XXXXXXXXXX) && printf '{"hostname":"\%s"}' $(hostname -f) > "$d/stats.meta.json" && ./get-www-stats > "$d/stats.json" && tar zcf stats-wip.tgz "$d" && rm -rf "$d" && mv stats-wip.tgz stats.tgz
-#
-# And the output is transferred to dde.debian.net like this:
-#
-# MAILTO="porridge@debian.org"
-# # Atomically transfer stats and replace them.
-# 18 4   *   *   *     cd $HOME && { [ ! -e stats-old ] || please_cleanup_failed_run ; } && cp -al stats-new stats-old && ln -s stats-old stats-old.s && mv -T stats-old.s stats && { scp -q -i .ssh/stats-transfer-nopass senfl.debian.org:stats.tgz stats.tgz || scp_failed ; } && rm -rf stats-new && mkdir stats-new && tar zxf stats.tgz -C stats-new --strip-components=1 && rm stats.tgz && ln -s stats-new stats-new.s && mv -T stats-new.s stats && rm -rf stats-old
-#
-# The output is then exported via DDE (see https://wiki.debian.org/DDE) and used
-# by the stattrans.pl script to sort the page lists in the Debian web site
-# translation statistics pages.
+# This program is run from debwww crontab on Debian website master server.
 
 try:
   import json
@@ -39,6 +24,7 @@ except ImportError:
   import simplejson as json
 
 from gzip import open as gzopen
+from glob import glob
 import logging
 import os
 import re
@@ -46,15 +32,11 @@ import sys
 
 #logging.basicConfig(level=logging.INFO)
 
-logs_dir = '/var/log/apache2'
-logs_prefix = 'www.debian.org-access.log'
-logs_count = 10
-
+log_files = glob('/srv/weblogs.debian.org/incoming/*.debian.org/www.debian.org-access.log*')
 logs = []
-for f in os.listdir(logs_dir):
-  if not f.startswith(logs_prefix):
-    continue
-  parts = f.split('-')
+
+for f in log_files:
+  parts = os.path.split(f)[-1].split('-')
   if len(parts) == 2:
     logs.append((99999999, f, False))
   elif len(parts) == 3:
@@ -70,15 +52,23 @@ for f in os.listdir(logs_dir):
 
 counts = {}
 
-for n, f, gzipped in sorted(logs)[-logs_count:]:
-  logfile = os.path.join(logs_dir, f)
+for n, logfile, gzipped in sorted(logs):
   logging.info('Reading %s.' % logfile)
   opener = gzipped and gzopen or open
   for line in opener(logfile):
     line = line.rstrip()
     tokens = line.split()
+    if tokens[5] != '"GET':
+        continue
     url = tokens[6]
-    url = re.sub(r'\...\.html$', '', url)
+    url = re.sub(r'#.*$', '', url)
+    url = re.sub(r'\?.*$', '', url)
+    url = re.sub(r'//+', '/', url)
+    url = re.sub(r'/(\./)+', '/', url)
+    url = re.sub(r'^/\.\./', '/', url)
+    url = re.sub(r'/[^./]*/\.\./', '/', url)
+    url = re.sub(r'\.([a-z]{2}|[a-z]{2}-[a-z]{2})\.(html|xml|rdf|pdf)$', '', url)
+    url = re.sub(r'\.(html|xml|rdf|pdf)(\.([a-z]{2}|[a-z]{2}-[a-z]{2}))?$', '', url)
     url = re.sub(r'/$', '/index', url)
     if url in counts:
       counts[url] += 1
