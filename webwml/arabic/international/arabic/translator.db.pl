@@ -39,11 +39,11 @@ sub init_translators {
                 },
 
 
-                'Mohamed Amine' => {
+                'Med. Amine' => {
                        email           => 'med@mailoo.org',
-                       summary         => 3,
-                       logs            => 3,
-                       diff            => 3,
+                       summary         => 1,
+                       logs            => 1,
+                       diff            => 1,
                        tdiff           => 0,
                        file            => 0,
                        compress        => 'none'
