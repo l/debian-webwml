@@ -38,9 +38,10 @@ sub init_translators {
 			compress	=> 'none'
 		},
 		'Lev Lamberov' => {
-			email		=> 'l.lamberov@gmail.com',
+			email		=> 'dogsleg@debian.org',
 			summary		=> 2,
                         diff		=> 2,
+                        file            => 0,
 			compress	=> 'none'
 		},
 	default   => {
