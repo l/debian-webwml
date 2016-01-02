@@ -2,7 +2,7 @@
 # please contact debian-www.
 
 WMLBASE=../..
-CUR_DIR=security/2013
+CUR_DIR=security/2016
 SUBS=
 
 GETTEXTFILES += security.mo
