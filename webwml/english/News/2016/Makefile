@@ -2,7 +2,7 @@
 # please contact debian-www.
 
 WMLBASE=../..
-CUR_DIR=News/2015
+CUR_DIR=News/2016
 SUBS=
 
 GETTEXTFILES += newsevents.mo
@@ -13,6 +13,6 @@ include $(WMLBASE)/Make.lang
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/news.wml $(GETTEXTDEP)
 	$(WML) $(<F)
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
-  $(TEMPLDIR)/recent_list.wml $(wildcard 2015*.wml) \
-  $(wildcard $(ENGLISHDIR)/News/2015/2015*.wml) $(GETTEXTDEP)
+  $(TEMPLDIR)/recent_list.wml $(wildcard 2016*.wml) \
+  $(wildcard $(ENGLISHDIR)/News/2016/2016*.wml) $(GETTEXTDEP)
 
