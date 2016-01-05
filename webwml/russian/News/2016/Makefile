@@ -1,1 +1,1 @@
-russian/News/2016/Makefile
+include $(subst webwml/russian,webwml/english,$(CURDIR))/Makefile
