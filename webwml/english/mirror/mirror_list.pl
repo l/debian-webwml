@@ -4,8 +4,10 @@
 # Copyright (C) 1998 James Treacy
 # Copyright (C) 2000-2002, 2007-2008 Josip Rodin
 # Copyright (C) 2005 Joey Hess
+# Copyright (C) 2016 Peter Palfrader
 
 use strict;
+use English;
 require 5.001;
 
 my @filter_arches=qw(); # Architectures not to list.
@@ -36,7 +38,7 @@ my %includedsites;
 my $globalsite;
 
 sub process_line {
-  my ($line) = @_;
+  my ($lno, $line) = @_;
   my $field = '';
 
   if ($line =~ /^Site:\s*(.+)\s*$/i) {
@@ -50,6 +52,7 @@ sub process_line {
       }
     }
     $mirror[$count-1]{site} = $site;
+    $mirror[$count-1]{_lno} = $lno;
     return;
   }
   elsif ($line =~ /^Alias(?:es)?:\s*(.+)\s*$/is) {
@@ -1646,32 +1649,32 @@ if (defined $help) {
   exit;
 }
 
-open SRC, "<$mirror_source" or
+open SRC, "<", $mirror_source or
   die "Error: problem opening mirror source file, $mirror_source\n"
      ."Use the -m option?\n";
 
 my $current = '';
-foreach (<SRC>) {
-  chop;
+while (<SRC>) {
+  chomp;
   if (/^$/ && $current eq '') {
     next;
   } elsif (/^$/) {
-    process_line($current);
+    process_line($INPUT_LINE_NUMBER, $current);
     $current = '';
     next;
   } elsif (/^\s+(.*)$/) { # add line to current entry
     $current .= "\n$1";
   } elsif (/^[\w-]+:\s/) {
     if ($current ne "") { # need to process previous line
-      process_line($current);
+      process_line($INPUT_LINE_NUMBER, $current);
     }
     $current = $_;
   } else {
-    die "Error: unknown format on line $.:\n$_\n";
+    die "Error: unknown format on line $INPUT_LINE_NUMBER:\n$_\n";
   }
 }
 if ($current ne "") {
-  process_line($current);
+  process_line($INPUT_LINE_NUMBER, $current);
 }
 
 # Remove filtered mirrors.
@@ -1702,10 +1705,10 @@ foreach my $id (0..$#mirror) {
     if (exists $mirror[$id]{sponsor} && keys %{$mirror[$id]{method}}) {
       push @{ $countries_sponsors{ $mirror[$id]{country} } }, $id;
     }
-  } elsif ($mirror[$id]{type} =~/GeoDNS/i) {
+  } elsif ($mirror[$id]{type} =~/^(GeoDNS|RoundRobinDNS)$/i) {
     # TODO these are not currently displayed anywhere
   } else {
-    warn "found a mirror without a country, wtf? " . $mirror[$id]{site};
+    warn "found a mirror without a country, wtf? " . $mirror[$id]{site} .", defined at line ". $mirror[$id]{_lno};
   }
   # we'll also use this opportunity to help create a references
   # between sites which are connected with Includes:
