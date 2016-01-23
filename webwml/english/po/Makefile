@@ -8,11 +8,14 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-DOMAINS = templates bugs cdimage consultants countries date distrib \
+DOMAINS = templates bugs blends cdimage consultants countries date distrib \
 	  doc l10n langs legal mailinglists newsevents organization \
 	  ports security stats vendors vote wnpp others
 
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
+blends_FILES    = $(ENGLISHDIR)/blends/blend.defs \
+		  $(ENGLISHDIR)/blends/released.data \
+		  $(ENGLISHDIR)/blends/unreleased.data
 cdimage_FILES   = $(TEMPLDIR)/cdimage.wml $(ENGLISHDIR)/CD/CD-keys.data \
 		  $(ENGLISHDIR)/devel/debian-installer/images.data
 consultants_FILES = $(TEMPLDIR)/consultant.wml \
@@ -72,6 +75,7 @@ POTFILES = $(addprefix $(ENGLISHDIR)/po/,$(addsuffix .pot,$(DOMAINS)))
 MOFILES = $(addsuffix .mo,$(DOMAINS))
 SOURCEFILES = \
   $(bugs_FILES)                 \
+  $(blends_FILES)               \
   $(cdimage_FILES)              \
   $(consultants_FILES)          \
   $(countries_FILES)            \
@@ -100,6 +104,9 @@ $(ENGLISHDIR)/po/templates.pot: # $(templates_FILES)
 
 $(ENGLISHDIR)/po/bugs.pot: # $(bugs_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl bugs $(bugs_FILES) > $@
+
+$(ENGLISHDIR)/po/blends.pot: # $(blends_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl blends $(blends_FILES) > $@
 
 $(ENGLISHDIR)/po/cdimage.pot: # $(cdimage_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl cdimage $(cdimage_FILES) > $@
