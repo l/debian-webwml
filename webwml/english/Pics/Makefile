@@ -5,6 +5,6 @@
 
 WMLBASE=..
 CUR_DIR=Pics
-SUBS=
+SUBS=hotlink
 
 include $(WMLBASE)/Make.lang
