@@ -61,7 +61,7 @@ sub pkgsort ($$) {
         }
 }
 
-my $root = 'http://i18n.debian.org/material/';
+my $root = 'https://i18n.debian.org/material/';
 
 my $langfile = $opt_l.'/data/langs';
 #   These packages use a RFC1766 naming convention for language codes
