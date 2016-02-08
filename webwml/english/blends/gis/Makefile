@@ -7,14 +7,14 @@ SUBS=Pics get
 
 include $(WMLBASE)/Make.lang
 
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc $(TEMPLDIR)/blends/gis.wml
 
-about.$(LANGUAGE).html: about.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc
+about.$(LANGUAGE).html: about.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc $(TEMPLDIR)/blends/gis.wml
 
-dev.$(LANGUAGE).html: dev.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc
+dev.$(LANGUAGE).html: dev.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc $(TEMPLDIR)/blends/gis.wml
 
-contact.$(LANGUAGE).html: contact.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc
+contact.$(LANGUAGE).html: contact.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc $(TEMPLDIR)/blends/gis.wml
 
-support.$(LANGUAGE).html: support.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc
+support.$(LANGUAGE).html: support.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc $(TEMPLDIR)/blends/gis.wml
 
-deriv.$(LANGUAGE).html: contact.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc
+deriv.$(LANGUAGE).html: contact.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc $(TEMPLDIR)/blends/gis.wml
