@@ -2,7 +2,7 @@
 # please contact debian-www.
 
 WMLBASE=../..
-CUR_DIR=hotlink
+CUR_DIR=Pics/hotlink
 SUBS=
 
 include $(WMLBASE)/Make.lang
