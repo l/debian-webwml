@@ -50,15 +50,6 @@ sub init_translators {
 	    file      => 0,
 	    compress  => 'none'
 	    },
-	'Gustavo Noronha' => {
-	    email     => 'kov@debian.org',
-	    summary   => 3,
-	    logs      => 3,
-	    diff      => 0,
-	    tdiff     => 0,
-	    file      => 0,
-	    compress  => 'none'
-	    },
 	'Gustavo Rezende Montesino' => {
 	    email     => 'grmontesino@ig.com.br',
 	    summary   => 2,
