@@ -46,6 +46,15 @@ sub init_translators {
                        file             => 0,
                        compress         => 'none'
                 },
+                'Ana Custura'		=> {
+                       email            => 'ana@netstat.org.uk',
+                       summary          => 2,
+                       logs             => 0,
+                       diff             => 2,
+                       tdiff            => 0,
+                       file             => 0,
+                       compress         => 'none'
+                },
                 # Below are special users, used to handle special cases
                 #     default:      default values
                 #     untranslated: pages not translated
