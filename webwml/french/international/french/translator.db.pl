@@ -30,9 +30,9 @@ sub init_translators {
         my $translators = {
                 'Mohammed Adnène Trojette' => {
                        email           => 'debian-l10n-french@lists.debian.org',
-                       summary         => 3,
-                       logs            => 3,
-                       diff            => 3,
+                       summary         => 2,
+                       logs            => 0,
+                       diff            => 1,
                        tdiff           => 0,
                        file            => 0,
                        compress        => 'none'
@@ -94,9 +94,9 @@ sub init_translators {
 		},
 		'Cyril Brulebois' => {
                         email       => 'debian-l10n-french@lists.debian.org',
-		        summary     => 3,
-		        logs        => 3,
-		        diff        => 3,
+		        summary     => 2,
+		        logs        => 0,
+		        diff        => 1,
 		        tdiff       => 0,
 		        file        => 0
 		},
@@ -111,11 +111,11 @@ sub init_translators {
                 },
                 'Christian Couder' => {
                         email       => 'debian-l10n-french@lists.debian.org',
-                        summary     => 3,
-                        logs        => 3,
-                        diff        => 3,
-                        tdiff       => 3,
-                        file        => 3,
+                        summary     => 2,
+                        logs        => 0,
+                        diff        => 1,
+                        tdiff       => 0,
+                        file        => 0,
                         compress    => 'none'
                 },
                 'Guillaume Delacour' => {
@@ -309,9 +309,9 @@ sub init_translators {
 		 },
 		'Baptiste Jammet' => {
         		email           => 'baptiste@mailoo.org',
-		        summary         => 3,
-		        logs            => 3,
-		        diff            => 3,
+		        summary         => 2,
+		        logs            => 2,
+		        diff            => 2,
 		        tdiff           => 0,
 		        file            => 0,
 		        compress        => 'none',
