@@ -7,7 +7,7 @@ SUBS=Pics get
 
 include $(WMLBASE)/Make.lang
 
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc $(TEMPLDIR)/blends/gis.wml
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml $(TEMPLDIR)/blends/gis.wml
 
 about.$(LANGUAGE).html: about.wml $(TEMPLDIR)/blend.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/basic.wml navbar.inc $(TEMPLDIR)/blends/gis.wml
 
