@@ -1,0 +1,78 @@
+#use wml::debian::translation-check translation="1.3" mindelta="1"
+<define-tag description>säkerhetsuppdatering</define-tag>
+<define-tag moreinfo>
+<p>Flera sårbarheter har upptäckts i OpenSSL, en verktygsuppsättning för
+Secure Socket Layer.</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-0702">CVE-2016-0702</a>
+
+	<p>Yuval Yarom från University of Adelaide och NICTA, Daniel Genkin
+	från Technion och Univeritetet i Tel Aviv, och Nadia Heninger från
+	University of Pennsylvania upptäckte ett sidokanalsangrepp som
+	använder sig av cachebankkonflikter på mikroprocessorarkitekturen
+	Sandy-Bridge. Detta kunde tillåta lokala angripare att återställa
+	privata RSA-nycklar.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-0705">CVE-2016-0705</a>
+
+	<p>Adam Langley från Google upptäckte ett fel med dubbel frigörning vid
+	tolkning av felaktigt formatterade privata DSA-nycklar. Detta kunde
+	tillåta fjärrangripare att orsaka en överbelastning eller minneskorruption
+	i applikationer som tolkar privata DSA-nycklar som mottagits från
+	opålitliga källor.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-0797">CVE-2016-0797</a>
+
+	<p>Guido Vranken upptäckte ett heltalsspill i funktionerna BN_hex2bn och
+	BN_dec2bn som kan leda till NULL-pekardereferering och heapkorruption.
+	Detta kunde tillåta fjärrangripare att orsaka en överbelastning eller
+	minneskorruption i applikationer som behandlar hex- eller dec-data
+	som mottagits från opålitliga källor.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-0798">CVE-2016-0798</a>
+
+	<p>Emilia Käsper från utvecklingsgruppen bakom OpenSSL upptäckte ett
+	minnesläckage i lookupkoden för SRP-databasen. För att lindra
+	minnesläckaget inaktiveras seedhanteringen i SRP_VBASE_get_by_user även
+	om användaren har konfigurerat ett seed. Applikationer råds att migrera
+	till funktionen SRP_VBASE_get1_by_user.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-0799">CVE-2016-0799</a>
+
+	<p>Guido Vranken upptäckte ett heltalsspill i BIO_*printf-funktionerna
+	som kan leda till en OOB-läsning vid utskrift av väldigt långa
+	strängar. Utöver detta kan den interna funktionen doapr_outch försöka
+	att skriva till en godtycklig minnesplats vid ett minnesallokeringsfel.
+	Dessa problem kommer endast att ske på platformar där
+	sizeof(size_t) > sizeof(int) som många 64-bitarssystem. Detta kunde
+	tillåta fjärrangripare att orsaka en överbelastning eller minneskorruption
+	i applikationer som skickar stor mängder opålitlig data till
+	funktionerna BIO_*printf.</p></li>
+
+</ul>
+
+<p>Utöver detta inaktiveras EXPORT- och LOW-skiffren eftersom de kunde användas
+som en del av DROWN-
+(<a href="https://security-tracker.debian.org/tracker/CVE-2016-0800">CVE-2016-0800</a>)
+och SLOTH-
+(<a href="https://security-tracker.debian.org/tracker/CVE-2015-7575">CVE-2015-7575</a>)
+angreppen, men notera att den gamla stabila utgåvan (Wheezy) och den stabila
+utgåvan (Jessie) inte påverkas av dessa angrepp eftersom SSLv2-protokollet
+redan har övergivits i version 1.0.0c-2 av openssl-paketet.</p>
+
+<p>För den gamla stabila utgåvan (Wheezy) har dessa problem rättats
+i version 1.0.1e-2+deb7u20.</p>
+
+<p>För den stabila utgåvan (Jessie) har dessa problem rättats i
+version 1.0.1k-3+deb8u4.</p>
+
+<p>För den instabila utgåvan (Sid) kommer dessa problem att rättas inom
+kort.</p>
+
+<p>Vi rekommenderar att ni uppgraderar era openssl-paket.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2016/dsa-3500.data"
