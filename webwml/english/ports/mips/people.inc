@@ -1,9 +1,8 @@
 <ul>
-  <li> Guido Guenther
-  <li> Aurelien Jarno
-  <li> Florian Lohoff
-  <li> Karsten Merker
-  <li> Martin Michlmayr
-  <li> Peter De Schrijver
   <li> Andi Barth
+  <li> Anibal Monsalve Salazar
+  <li> Aron Xu
+  <li> Aurelien Jarno
+  <li> James Cowgill
+  <li> Yunqiang Su
 </ul>
