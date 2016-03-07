@@ -1,0 +1,34 @@
+#use wml::debian::translation-check translation="1.3" mindelta="1"
+<define-tag description>sikkerhedsopdatering</define-tag>
+<define-tag moreinfo>
+<p>Stephane Chazelas opdagede en fejl i miljøhåndteringen i Perl.  Perl stiller 
+i Perl-rummet hashvariablen %ENV til rådighed, for at kunne slå miljøvariabler 
+op.  Hvis en variabel optræder to gange i envp, vises kun den sidste værdi i 
+%ENV, mens getenv returnerer den første.  Perls taint-sikkerhedsmekanisme 
+udføres på værdien i %ENV, men ikke til anden del af miljøet.  Det kunne medføre 
+et tvetydigt miljø, som forårsagede at miljøvariabler blev sendt videre til 
+underprocesser, på trods af beskyttelserne, der burde stilles til rådighed af 
+taint-kontrollen.</p>
+
+<p>Med denne opdatering ændres Perls virkemåde til det følgende:</p>
+
+<ol style="list-style-type: lower-alpha;">
+    <li>%ENV udfyldes med den første miljøvariabel, den samme som getenv 
+	returnerer.</li>
+    <li>Gentagne forekomster i miljøet fjernes.</li>
+</ol>
+
+<p>I den gamle stabile distribution (wheezy), er dette problem rettet
+i version 5.14.2-21+deb7u3.</p>
+
+<p>I den stabile distribution (jessie), er dette problem rettet i
+version 5.20.2-3+deb8u4.</p>
+
+<p>I den ustabile distribution (sid), vil dette problem blive løst i 
+version 5.22.1-8.</p>
+
+<p>Vi anbefaler at du opgraderer dine perl-pakker.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2016/dsa-3501.data"
