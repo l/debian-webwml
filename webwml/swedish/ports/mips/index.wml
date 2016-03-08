@@ -1,5 +1,5 @@
 #use wml::debian::template title="MIPS-anpassning"
-#use wml::debian::translation-check translation="1.106"
+#use wml::debian::translation-check translation="1.108"
 
 #include "$(ENGLISHDIR)/releases/info"
 #use wml::debian::toc
@@ -18,18 +18,22 @@ oftast inte går att välja i programvaran behöver vi båda arkitekturerna.
 SGI-maskiner kör i
 <a href="http://foldoc.org/big-endian">
 &rdquo;big endian&rdquo;</a>-läge (debian-mips), medan
-Cobalt Qube/RaQ kör i
+Loongson 3 kör i
 <a href="http://foldoc.org/little-endian">
 &rdquo;little endian&rdquo;</a>-läge (debian-mipsel).
 Vissa moderkort, till exempel Broadcoms BCM91250A-utvärderingskort (alias
 SWARM), kan köra båda lägena, vilket kan väljas med en
-omkopplare på kortet.
-</p>
+omkopplare på kortet. Vissa Cavium Octeon-baserade maskiner kan växla
+mellan båda lägen i bootloadern.</p>
+
+<p>Givet att de flesta MIPS-maskiner har 64-bitars CPUer, så är en
+<em>debian-mips64el</em>-anpassning under utveckling för närvarande och
+kan möjligtvis släppas med Debian GNU/Linux 9.</p>
 
 <toc-add-entry name="status">Aktuell status</toc-add-entry>
 
 <p>
-Debian GNU/Linux <current_release_squeeze> stöder följande maskiner:
+Debian GNU/Linux <current_release_jessie> stöder följande maskiner:
 </p>
 
 <ul>
@@ -37,11 +41,15 @@ Debian GNU/Linux <current_release_squeeze> stöder följande maskiner:
      R4400-processor (IP22).</li>
  <li>SGI O2 med R5000-, R5200 och RM7000-processor (IP32).</li>
  <li>Broadcom BCM91250A (SWARM) utvärderingskort (big och little endian).</li>
- <li>Cobalt RaQ, Qube2 och RaQ2.</li>
  <li>MIPS Malta-kort (big och little-endian, 32- och 64-bitars.</li>
  <li>Loongson 2e och 2f-maskiner, inklusive Yeelong (little-endian).</li>
+ <li>Loongson 3-maskiner (little-endian).</li>
  <li>Cavium Octeon (big-endian).</li>
 </ul>
+
+<p>Utöver de ovan nämnda maskinerna är det möjligt att använda Debian på
+en hel del andra maskiner, med reservationen att en icke-Debiankärna används.
+Detta är exempelvis fallet med utvecklingskortet MIPS Creator Ci20.</p>
 
 <toc-add-entry name="info">Allmän information om MIPS</toc-add-entry>
 
@@ -56,22 +64,14 @@ för mer information.
 
 <toc-add-entry name="availablehw">Tillgänglig maskinvara för Debianutvecklare</toc-add-entry>
 
-<p>
-gabrielli.debian.org (mips) är tillgänglig för
-Debianutvecklare som vill arbeta på anpassningen.
-Se <a href="https://db.debian.org/machines.cgi">maskindatabasen</a> för mer
-information om denna maskin.
-Vanligtvis finns det tre chroot-miljöer:
-stable,
-testing
-samt unstable.
-Du kan nå dem via kommandot <em>dchroot</em>.
-För frågor, kontakta <email "debian-admin@lists.debian.org">.
-Konton på andra maskiner kan fås vid förfrågan genom att kontakta
-LIU Qi <email liuqi82@gmail.com> (Lemote-maskiner).
-</p>
+<p>Två maskiner finns tillgängliga för Debianutvecklare för arbete med
+MIPS-anpassning: etler.debian.org (mipsel/mips64el) och minkus.debian.org
+(mips). Maskinerna har utvecklings-chroot-miljöer som kan nås med
+<em>schroot</em>. Vänligen se <a 
+href = "https://db.debian.org/machines.cgi">maskindatabasen</a> för mer
+information om dessa maskiner.</p>
 
-<toc-add-entry name="credits">Tack</toc-add-entry>
+<toc-add-entry name="credits">Inblandade personer</toc-add-entry>
 
 <p>
 Här finns en lista över de som arbetar på MIPS-anpassningen:
@@ -80,7 +80,9 @@ Här finns en lista över de som arbetar på MIPS-anpassningen:
 #include "$(ENGLISHDIR)/ports/mips/people.inc"
 
 
-<toc-add-entry name="contact">Kontaktinformation</toc-add-entry>
+<toc-add-entry name="contact">Kontakter</toc-add-entry>
+
+<h3>Sändlistor</h3>
 
 <p>
 Det finns några sändlistor som handlar om Linux/MIPS och mer specifikt om
@@ -107,13 +109,18 @@ Debian/MIPS.
     </li>
 </ul>
 
+<h3>IRC</h3>
+
+<p>Du kan hitta oss på IRC på <em>irc.debian.org</em> på kanalen
+<em>#debian-mips</em>.</p>
+
 <toc-add-entry name="links">Länkar</toc-add-entry>
 
 <dl>
   <dt>Kärnutveckling för Linux/MIPS &ndash; Massor av information om MIPS</dt>
-    <dd><a href="http://www.linux-mips.org/">linux-mips.org</a></dd>
+    <dd><a href="https://www.linux-mips.org/">linux-mips.org</a></dd>
   <dt>Mikroprocessortillverkare</dt>
-    <dd><a href="http://www.mips.com/">www.mips.com</a></dd>
+    <dd><a href="https://imgtec.com/mips">https://imgtec.com/mips</a></dd>
   <dt>Information om maskinvara från SGI</dt>
     <dd><a href="http://www.sgistuff.net/hardware/">http://www.sgistuff.net/hardware/</a></dd>
   <dt>Debian på Cobalt-maskiner</dt>
@@ -123,8 +130,14 @@ Debian/MIPS.
   <dt>Debian på SGI Indy</dt>
     <dd><a href="http://www.zorg.org/linux/indy.php">http://www.zorg.org/linux/indy.php</a></dd>
   <dt>Debian på SGI O2</dt>
-    <dd><a href="http://www.cyrius.com/debian/o2/">http://www.cyrius.com/debian/o2</a></dd>
+    <dd><a href="https://cyrius.com/debian/o2/">http://www.cyrius.com/debian/o2</a></dd>
 </dl>
+
+<toc-add-entry name="thanks">Tack</toc-add-entry>
+
+<p>Anpassningsmaskinerna och de flesta av byggservrarna för <em>mips</em>-
+och <em>mipsel</em>-arkitekturerna tillhandahålls av <a 
+href="https://imgtec.com"> Imagination Technologies</a>.</p>
 
 <toc-add-entry name="dedication">Dedikation</toc-add-entry>
 
