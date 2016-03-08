@@ -1,5 +1,5 @@
 #use wml::debian::template title="Перенос на MIPS"
-#use wml::debian::translation-check translation="1.106" maintainer="Lev Lamberov"
+#use wml::debian::translation-check translation="1.108" maintainer="Lev Lamberov"
 
 #include "$(ENGLISHDIR)/releases/info"
 #use wml::debian::toc
@@ -12,16 +12,21 @@
 href="http://foldoc.org/endian">порядком байтов</a>
 двоичных файлов. Процессоры MIPS могут работать в обоих режимах порядка байтов, но
 поскольку это обычно нельзя изменить в программах, нам нужны обе
-архитектуры. Машины SGI работают в режиме <a
+архитектуры.  Машины SGI работают в режиме <a
 href="http://foldoc.org/big-endian">big-endian (от старшего к младшему)</a>
-(debian-mips), а машины Cobalt Qube/RaQ работают в режиме
+(debian-mips), а машины Loongson 3 работают в режиме
 <a
 href="http://foldoc.org/little-endian">little-endian (от младшего к старшему)</a>
 (debian-mipsel). Некоторые платы (такие как Broadcom BCM91250A evaluation
-board (известная также как SWARM)) могут работать в обоих режимах, режим выбирается переключателем на плате.</p>
+board (известная также как SWARM)) могут работать в обоих режимах, режим выбирается переключателем на плате.
+На некоторых машинах на основе Cavium Octeon можно переключать режимы с помощью
+загрузчика.</p>
+
+<p>Учитывая, что большинство машин на архитектуре MIPS имеют 64-битные ЦП, перенос <em>debian-mips64el</em>
+в настоящее время находится в стадии активной разработки и возможно будет выпущен в составе Debian GNU/Linux 9.</p>
 
 <toc-add-entry name="status">Текущий статус</toc-add-entry>
-<p>Debian GNU/Linux <current_release_squeeze> поддерживает следующие машины:</p>
+<p>Debian GNU/Linux <current_release_jessie> поддерживает следующие машины:</p>
 
 <ul>
 
@@ -31,16 +36,19 @@ board (известная также как SWARM)) могут работать 
 
 <li>Broadcom BCM91250A (SWARM) evaluation board (в режиме «от старшего к младшему» и «от младшего к старшему»).</li>
 
-<li>Cobalt RaQ, Qube2 и RaQ2.</li>
-
 <li>Платы MIPS Malta (в режиме «от старшего к младшему» и «от младшего к старшему», 32 и 64-бит).</li>
 
 <li>Машины Loongson 2e и 2f, включая ноутбук Yeelong (в режиме «от младшего к старшему»).</li>
+
+<li>Машины Loongson 3 (в режиме «от младшего к старшему»).</li>
 
 <li>Cavium Octeon (в режиме «от старшего к младшему»).</li>
 
 </ul>
 
+<p>Помимо указанных выше Debian можно использовать и на множестве других
+машин при условии, что используется специально не-Debian ядро.  Например, так обстоит
+дело в случае платы MIPS Creator Ci20.</p>
 
 <toc-add-entry name="info">Общая информация</toc-add-entry>
 
@@ -52,15 +60,12 @@ board (известная также как SWARM)) могут работать 
 <toc-add-entry name="availablehw">Оборудование, доступное для разработчиков Debian</toc-add-entry>
 <p>
 
-Машина gabrielli.debian.org (mips) доступна
-разработчикам Debian для работ по переносу. Дополнительную информацию об
-этой машине см. в <a href="https://db.debian.org/machines.cgi">
-базе данных машин</a>. Вообще, вы сможете использовать
-три окружения chroot: стабильное, тестируемое и нестабильное.
-Для получения доступа к ним вы можете использовать программу <em>dchroot</em>. По любым
-вопросам обращайтесь по адресу <email "debian-admin@lists.debian.org">. Учётные записи на других
-машинах доступны по запросу, обращайтесь к LIU Qi <email
-liuqi82@gmail.com> (машины Lemote).</p>
+<p>Разработчикам Debian доступны две машины для работы над переносом на
+MIPS: etler.debian.org (mipsel/mips64el) и minkus.debian.org (mips).
+На этих машинах имеются специальные окружения chroot, к которым можно обратиться
+с помощью команды <em>schroot</em>.  Для получения дополнительной
+информации об этих машинах см. <a href="https://db.debian.org/machines.cgi">базу
+данных машин</a>.</p>
 
 
 <toc-add-entry name="credits">Благодарности</toc-add-entry>
@@ -69,7 +74,9 @@ liuqi82@gmail.com> (машины Lemote).</p>
 
 #include "$(ENGLISHDIR)/ports/mips/people.inc"
 
-<toc-add-entry name="contact">Контактная информация</toc-add-entry>
+<toc-add-entry name="contact">Контакты</toc-add-entry>
+
+<h3>Списки рассылки</h3>
 
 <p>Существует несколько списков рассылки, посвящённых Linux/MIPS и, в особенности,
 Debian на MIPS.</p>
@@ -87,25 +94,34 @@ Debian на MIPS.</p>
 
 </ul>
 
+<h3>IRC</h3>
+
+<p>Нас можно найти в IRC на сервере <em>irc.debian.org</em> на канале
+<em>#debian-mips</em>.</p>
 
 <toc-add-entry name="links">Ссылки</toc-add-entry>
 
 <dl>
   <dt>Разработка ядра Linux/MIPS &mdash; множество информации, связанной с MIPS</dt>
-    <dd><a href="http://www.linux-mips.org/">linux-mips.org</a></dd>
+    <dd><a href="https://www.linux-mips.org/">linux-mips.org</a></dd>
   <dt>Поставщик процессоров</dt>
-    <dd><a href="http://www.mips.com/">www.mips.com</a></dd>
+    <dd><a href="https://imgtec.com/mips">https://imgtec.com/mips</a></dd>
   <dt>Информация об оборудовании SGI</dt>
     <dd><a href="http://www.sgistuff.net/hardware/">http://www.sgistuff.net/hardware/</a></dd>
-  <dt>Debian на машинах Cobalt</dt>
-    <dd><a href="http://cyrius.com/debian/cobalt/">http://cyrius.com/debian/cobalt</a></dd>
   <dt>Debian на SGI Indy</dt>
     <dd><a href="http://www.pvv.org/~pladsen/Indy/HOWTO.html">http://www.pvv.org/~pladsen/Indy/HOWTO.html</a></dd>
   <dt>Debian на SGI Indy</dt>
     <dd><a href="http://www.zorg.org/linux/indy.php">http://www.zorg.org/linux/indy.php</a></dd>
   <dt>Debian на SGI O2</dt>
-    <dd><a href="http://www.cyrius.com/debian/o2/">http://www.cyrius.com/debian/o2</a></dd>
+    <dd><a href="https://cyrius.com/debian/o2/">http://www.cyrius.com/debian/o2</a></dd>
 </dl>
+
+
+<toc-add-entry name="thanks">Благодарности</toc-add-entry>
+
+<p>Машины для работы над переносом и большинство сборочных серверов для архитектур <em>mips</em> и
+<em>mipsel</em> предоставлены компанией <a href="https://imgtec.com">
+Imagination Technologies</a>.</p>
 
 
 <toc-add-entry name="dedication">Посвящение</toc-add-entry>
@@ -114,4 +130,3 @@ Debian на MIPS.</p>
 автомобильной катастрофе. Мы <a href =
 "$(HOME)/News/2008/20081229">посвящаем выпуск</a>
 Debian GNU/Linux <q>lenny</q> его памяти.</p>
-
