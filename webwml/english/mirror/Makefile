@@ -29,8 +29,6 @@ list.$(LANGUAGE).html: list.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHDIR)/mirror/list-footer.inc
 list-full.$(LANGUAGE).html: list-full.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHDIR)/mirror/list-full.inc
-list-non-US.$(LANGUAGE).html: list-non-US.wml $(TEMPLDIR)/template.wml \
-  $(ENGLISHDIR)/mirror/list-non-US.inc
 size.$(LANGUAGE).html: size.wml $(ENGLISHDIR)/mirror/size.data
 
 # there only needs to be one version of the following so
@@ -88,10 +86,6 @@ $(ENGLISHDIR)/mirror/list-secondary.inc: \
 $(ENGLISHDIR)/mirror/list-full.inc: \
   $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
 	./mirror_list.pl -m Mirrors.masterlist -t wml-full > $@
-
-$(ENGLISHDIR)/mirror/list-non-US.inc: \
-  $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
-	./mirror_list.pl -m Mirrors.masterlist -t wml-nonus > $@
 
 $(ENGLISHDIR)/mirror/list-footer.inc: \
   $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
