@@ -36,7 +36,7 @@ size.$(LANGUAGE).html: size.wml $(ENGLISHDIR)/mirror/size.data
 ifeq "$(LANGUAGE)" "en"
 
 # Note: the masterlist file is kept private since it contains e-mail addresses
-mirrorstuff := anonftpsync \
+mirrorstuff := \
   id_rsa.pub.ftp-master id_rsa.pub.syncproxy.eu id_rsa.pub.syncproxy.wna \
 
 destmirrorstuff := $(patsubst %,$(HTMLDIR)/%,$(mirrorstuff))
