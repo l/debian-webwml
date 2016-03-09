@@ -38,15 +38,15 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
-		'Cato Auestad' => {
-		        email       => 'bleakgadfly@fsfe.org',
-			summary     => 3,
-			logs        => 3,
-                        diff        => 3,
-                        tdiff       => 3,
-                        file        => 3,
-                        compresso   => 'none'
-	    },
+                #'Cato Auestad' => {
+                #        email       => 'bleakgadfly@fsfe.org',
+                #        summary     => 3,
+                #        logs        => 3,
+                #        diff        => 3,
+                #        tdiff       => 3,
+                #        file        => 3,
+                #        compress    => 'none'
+                #},
 
                 # Below are special users, used to handle special cases
                 #     default:      default values
