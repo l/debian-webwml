@@ -2,7 +2,7 @@
 
 #include "$(ENGLISHDIR)/releases/info"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.106" maintainer="Guillaume Delacour"
+#use wml::debian::translation-check translation="1.108" maintainer="Jean-Paul Guillonneau"
 
 # Premier traducteur : Thomas Marteau
 # Deuxième traducteur : Nicolas Bertolissio
@@ -19,21 +19,24 @@ des binaires (N.d.T.&nbsp;: les microprocesseurs peuvent lire de gauche à
 droite ou inversement). Les microprocesseurs MIPS ont la possibilité de
 fonctionner dans les deux sens mais vu qu'on ne peut pas modifier ce paramètre
 de manière logicielle, nous devons avoir un portage pour chaque type. Les
-machines SGI (SGI Indy et Indigo2) fonctionnent en <a
+machines SGI fonctionnent en mode <a
 href="http://foldoc.org/big-endian">grand
-boutiste</a> et doivent utiliser debian-mips. Les Cube/RaQ de Cobalt 
-fonctionnent en <a href="http://foldoc.org/little-endian">petit
+boutiste</a> et doivent utiliser debian-mips, tandis que les machines
+Loongson·3 fonctionnent en mode <a href="http://foldoc.org/little-endian">petit
 boutiste</a> et doivent utiliser debian-mipsel. Certaines cartes, comme la
 carte experte de Broadcom BCM91250A (connu aussi sous le nom de SWARN), peuvent
 fonctionner dans les deux modes, le choix se faisant avec un interrupteur sur
-la carte système.
-</p>
+la carte système. Quelques machines basées sur Octeon de Cavium peuvent être
+changées de mode dans le chargeur de démarrage.</p>
 
+<p>Étant donné que la plupart des machines MIPS ont un CPU 64 bits, un portage
+<em>debian-mips64el</em> est en cours de développement et pourrait être publié
+avec Debian 9 GNU/Linux</p>
 
 <toc-add-entry name="status">État actuel</toc-add-entry>
 
 <p>
-La version&nbsp;<current_release_squeeze> de Debian GNU/Linux (Squeeze) gère les machines
+La version&nbsp;<current_release_jessie> de Debian GNU/Linux gère les machines
 suivantes&nbsp;:
 </p>
 
@@ -43,15 +46,19 @@ suivantes&nbsp;:
   <li>O2 de SGI avec processeur R5000, R5200 et RM7000 (IP32)&nbsp;;</li>
   <li>carte experte BCM91250A (SWARM) de Broadcom (modes grand et petit
     boutistes)&nbsp;;</li>
-  <li>RaQ, Cube2 et RaQ2 de Cobalt&nbsp;;</li>
   <li>cartes Malta MIPS (modes grand et petit boutistes, 32 et 64 bits) ;</li>
   <li>machines Loongson 2e et 2f, y compris l'ordinateur
-    portable Yeelong (petit boutiste) ;</li>
-  <li>Cavium Octeon (grand boutiste).</li>
+    portable Yeelong (mode petit boutiste) ;</li>
+  <li>machines Loongson 3 (mode petit boutiste).</li>
+  <li>Cavium Octeon (mode grand boutiste).</li>
 </ul>
 
+<p>En plus des machines ci-dessus, il est possible d'utiliser Debian sur un
+plus grand nombre de machines pourvu qu'un noyau non Debian soit utilisé.
+C'est, par exemple, le cas pour les cartes de développement MIPS Creator Ci20.
+</p>
 
-<toc-add-entry name="info">Informations générales sur l'archirecture MIPS</toc-add-entry>
+<toc-add-entry name="info">Informations générales sur l'architecture MIPS</toc-add-entry>
 
 <p>
 Veuillez lire les <a href="$(HOME)/releases/stable/mips/release-notes/">notes
@@ -62,19 +69,13 @@ d'installation</a> pour de plus amples informations.
 
 <toc-add-entry name="availablehw">Matériel disponible pour les développeurs Debian</toc-add-entry>
 
-<p>
-gabrielli.debian.org (mips) est disponible aux
-développeurs Debian pour le travail de portage. Veuillez vous reporter à la <a
-href="https://db.debian.org/machines.cgi">base de données des machines</a> pour
-plus de renseignements sur cette machine. De manière générale, vous pourrez utiliser
-trois environnements fermés d'exécution avec les distributions&nbsp;: stable
-(<:=ucfirst <current_release_name>:>), de test (<:=ucfirst <current_testing_name>:>)
-et instable (Sid). Vous pouvez utiliser le programme
-<em>dchroot</em> pour y accéder. Pour toute requête, veuillez envoyer un
-courriel à <email "debian-admin@lists.debian.org">. Des comptes sur d'autres
-machines sont disponibles sur demande en contactant LIU Qi 
-<email liuqi82@gmail.com> (machines Lemote).
-</p>
+<p>Deux machines sont disponibles pour les développeurs Debian travaillant sur
+le portage MIPS : etler.debian.org (mipsel/mips64el) et minkus.debian.org
+(mips). Ces machines ont des environnements de développement chrootés,
+accessibles avec <em>schroot</em>. Consultez la
+<a href = "https://db.debian.org/machines.cgi"> base de données des machines</a>
+pour plus d'informations sur celles-ci.</p>
+
 
 <toc-add-entry name="credits">Crédits</toc-add-entry>
 
@@ -85,7 +86,9 @@ Ceci est une liste de personnes qui travaillent sur le portage pour MIPS.
 #include "$(ENGLISHDIR)/ports/mips/people.inc"
 
 
-<toc-add-entry name="contact">Sources d'information</toc-add-entry>
+<toc-add-entry name="contact">Liens</toc-add-entry>
+
+<h3>Listes de diffusion</h3>
 
 <p>
 Il y a plusieurs listes de diffusion concernant Linux/MIPS et spécialement
@@ -104,21 +107,22 @@ Debian MIPS.
     pour obtenir des informations sur l'inscription.</li>
 </ul>
 
+<h3>IRC</h3>
+
+<p>La communauté peut être jointe sur IRC à <em>irc.debian.org</em> sur le
+   canal <em>#debian-mips</em>.</p>
 
 <toc-add-entry name="links">Liens</toc-add-entry>
 
 <dl>
   <dt>Développement de noyau Linux/MIPS &mdash;&nbsp;beaucoup d'informations sur MIPS</dt>
-  <dd><a href="http://www.linux-mips.org/">linux-mips.org</a>&nbsp;;</dd>
+  <dd><a href="https://www.linux-mips.org/">linux-mips.org</a>&nbsp;;</dd>
 
   <dt>Fabricant des microprocesseurs</dt>
-  <dd><a href="http://www.mips.com/">www.mips.com</a>&nbsp;;</dd>
+   <dd><a href="https://imgtec.com/mips">https://imgtec.com/mips</a></dd>
 
   <dt>Information sur le matériel SGI</dt>
   <dd><a href="http://www.sgistuff.net/hardware/">http://www.sgistuff.net/hardware/</a></dd>
-
-  <dt>Debian sur machines Cobalt</dt>
-  <dd><a href="http://cyrius.com/debian/cobalt/">http://cyrius.com/debian/cobalt</a></dd>
 
   <dt>Debian sur machines Indy de SGI</dt>
   <dd><a href="http://www.pvv.org/~pladsen/Indy/HOWTO.html">http://www.pvv.org/~pladsen/Indy/HOWTO.html</a></dd>
@@ -127,10 +131,15 @@ Debian MIPS.
   <dd><a href="http://www.zorg.org/linux/indy.php">http://www.zorg.org/linux/indy.php</a></dd>
 
   <dt>Debian sur machines O2 de SGI</dt>
-  <dd><a href="http://www.cyrius.com/debian/o2/">http://www.cyrius.com/debian/o2</a></dd>
+   <dd><a href="https://cyrius.com/debian/o2/">http://www.cyrius.com/debian/o2</a></dd>
 </dl>
+<toc-add-entry name="thanks">Thanks</toc-add-entry>
+
+<p>Les machines de portage et la plupart des serveurs de compilation pour les
+architectures <em>mips</em> et <em>mipsel</em> sont fournies par
+<a href="https://imgtec.com">Imagination Technologies</a>.</p>
 
 <toc-add-entry name="dedication">Dédicace</toc-add-entry>
-Thiemo Seufer, qui était à la tête de l'équipe de portage MIPS, a été tué dans 
+Thiemo Seufer, qui était à la tête de l'équipe de portage MIPS, a été tué dans
 un accident de voiture. Nous avons <a href =
 "$(HOME)/News/2008/20081229">dédié la version</a> <q>Lenny</q> de Debian GNU/Linux à sa mémoire.
