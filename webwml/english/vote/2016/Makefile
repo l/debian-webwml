@@ -2,7 +2,7 @@
 # please contact debian-www.
 
 WMLBASE=../..
-CUR_DIR=vote/2015
+CUR_DIR=vote/2016
 SUBS=platforms
 VOTE=$(basename $(wildcard vote_*.wml))
 
