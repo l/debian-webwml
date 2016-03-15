@@ -25,7 +25,6 @@
 # The possible frenquencies are:
 # 0 (never), 1 (monthly), 2 (weekly) or 3 (daily)
 
-#                        email       => 'hansfn@gmail.com',
 
 sub init_translators {
         my $translators = {
@@ -38,15 +37,6 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
-                #'Cato Auestad' => {
-                #        email       => 'bleakgadfly@fsfe.org',
-                #        summary     => 3,
-                #        logs        => 3,
-                #        diff        => 3,
-                #        tdiff       => 3,
-                #        file        => 3,
-                #        compress    => 'none'
-                #},
 
                 # Below are special users, used to handle special cases
                 #     default:      default values
@@ -54,13 +44,13 @@ sub init_translators {
                 #     unmaintained: pages without maintainer
                 #     maxdelta:     outdated pages
                 untranslated        => {
-                        email       => '',
+                        email       => 'hansfn@gmail.com',
                         mailsubject => '',
                         mailbody    => '',
                 },
                 unmaintained        => {
                         email       => 'hansfn@gmail.com',
-                        summary     => 3,
+                        summary     => 1,
                         mailsubject => 'Oversatte Debian nettsider uten vedlikeholder',
                         mailbody    => 'norwegian/international/norwegian/mail_unmaintained.txt',
                 },
