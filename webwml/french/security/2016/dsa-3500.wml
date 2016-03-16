@@ -1,0 +1,79 @@
+#use wml::debian::translation-check translation="1.3" maintainer="Jean-Paul Guillonneau"
+<define-tag description>Mise à jour de sécurité</define-tag>
+<define-tag moreinfo>
+<p>Plusieurs vulnérabilités de sécurité ont été découvertes dans OpenSSL, une
+boîte à outils SSL (Secure Socket Layer).</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-0702">CVE-2016-0702</a>
+
+    <p>Yuval Yarom de l'université d'Adélaïde et de NICTA, Daniel Genkin
+    de Technion et de l'université de Tel Aviv et Nadia Heninger de
+    l'université de Pennsylvanie ont découvert une attaque par canal
+    auxiliaire, pouvant utiliser des conflits de banque de cache dans la
+    microarchitecture d'Intel Sandy-Bridge. Cela pourrait permettre à des
+    attaquants locaux de récupérer des clefs privées RSA.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-0705">CVE-2016-0705</a>
+
+    <p>Adam Langley de Google a découvert un bogue de double appel de free lors
+    de l'analyse de clefs privées DSA malformées. Cela pourrait permettre à des
+    attaquants distants de provoquer un déni de service ou une corruption de
+    mémoire dans les applications analysant les clefs privées DSA, reçues de
+    sources non fiables.
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-0797">CVE-2016-0797</a>
+
+    <p>Guido Vranken a découvert un dépassement d'entier dans les fonctions
+     BN_hex2bn et BN_dec2bn, pouvant conduire à un déréférencement de pointeur
+     NULL et une corruption de tas. Cela pourrait permettre à des attaquants
+     distants de provoquer un déni de service ou une corruption de mémoire dans
+     les applications traitant des données hexadécimales ou décimales reçues de
+     sources non fiables.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-0798">CVE-2016-0798</a>
+
+    <p>Emilia Käsper de l'équipe de développement d'OpenSSL a découvert une
+    fuite de mémoire dans le code de consultation de la base de données SRP.
+    Pour réduire cette fuite, la gestion de la semence dans
+    SRP_VBASE_get_by_user est dorénavant désactivée, même si l'utilisateur à
+    configuré une semence. Les applications sont avisées de migrer vers la
+    fonction SRP_VBASE_get1_by_user.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-0799">CVE-2016-0799</a>,
+<a href="https://security-tracker.debian.org/tracker/CVE-2016-2842">CVE-2016-2842</a>
+
+    <p>Guido Vranken a découvert un dépassement d'entier dans les fonctions
+    BIO_*printf, pouvant conduire à une lecture hors limites lors de
+    l'impression de très longues chaines. De plus, la fonction interne
+    doapr_outch peut tenter d'écrire dans un emplacement mémoire arbitraire
+    dans le cas d'un échec d'allocation mémoire. Ces problèmes n'arriveront
+    seulement que sur les plateformes où sizeof(size_t) > sizeof(int), comme
+    la plupart des systèmes 64 bits. Cela pourrait permettre à des attaquants
+    distants de provoquer un déni de service ou une corruption de mémoire dans
+    les applications qui passent de larges montants de données non fiables aux
+    fonctions BIO_*printf.</p></li>
+
+</ul>
+
+<p>De plus, les chiffrements EXPORT et LOW étaient désactivés parce que pouvant
+participer aux attaques DROWN
+(<a href="https://security-tracker.debian.org/tracker/CVE-2016-0800">CVE-2016-0800</a>)
+et SLOTH
+(<a href="https://security-tracker.debian.org/tracker/CVE-2015-7575">CVE-2015-7575</a>),
+mais remarquez que les distributions oldstable (Wheezy) et stable (Jessie) ne
+sont pas affectées par ces attaques, puisque le protocole SSLv2 a déjà été
+retiré dans le paquet openssl version 1.0.0c-2.</p>
+
+<p>Pour la distribution oldstable (Wheezy), ces problèmes ont été corrigés dans la version 1.0.1e-2+deb7u20.</p>
+
+<p>Pour la distribution stable (Jessie), ces problèmes ont été corrigé dans la version 1.0.1k-3+deb8u4.</p>
+
+<p>Pour la distribution unstable (Sid), ces problèmes seront corrigés prochainement.</p>
+
+<p>Nous vous recommandons de mettre à jour vos paquets openssl.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2016/dsa-3500.data"
