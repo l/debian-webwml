@@ -176,7 +176,7 @@
 # bug tags. See debbugs/etc/config
 <define-tag bts_tags>
 <code>patch</code>, <code>wontfix</code>, <code>moreinfo</code>, 
-<code>unreproducible</code>, <code>help</code>, <code>pending</code>, 
+<code>unreproducible</code>, <code>help</code>, <code>newcomer</code>, <code>pending</code>, 
 <code>security</code>, <code>upstream</code>, <code>confirmed</code>, 
 <code>fixed</code>, <code>fixed-upstream</code>, 
 <code>fixed-in-experimental</code>, <code>d-i</code>, <code>ipv6</code>, 
