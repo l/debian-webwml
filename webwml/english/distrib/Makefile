@@ -14,7 +14,9 @@ archive.$(LANGUAGE).html: archive.wml $(ENGLISHDIR)/distrib/archive.mirrors \
   $(TEMPLDIR)/countries.wml
 packages.$(LANGUAGE).html: packages.wml $(TEMPLDIR)/release_info.wml \
   $(ENGLISHDIR)/distrib/search_packages-form.inc \
-  $(ENGLISHDIR)/distrib/search_contents-form.inc
+  $(ENGLISHDIR)/distrib/search_contents-form.inc \
+  $(ENGLISHDIR)/releases/sid/archive.data \
+  $(ENGLISHDIR)/releases/arches.data
 pre-installed.$(LANGUAGE).html: pre-installed.wml $(TEMPLDIR)/countries.wml \
   $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/CD/vendors/vendors.CD.def \
   $(ENGLISHDIR)/distrib/pre-installed.defs $(ENGLISHSRCDIR)/distrib/pre-installed.inc
