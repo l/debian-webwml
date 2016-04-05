@@ -142,7 +142,7 @@ $moreinfo =~ s|<p>(\s+)|$1<p>|g;
 $moreinfo =~ s|<p><p>|<p>|g;
 $moreinfo =~ s|</p>\n\n<li>|</p></li>\n\n<li>|g;
 $moreinfo =~ s|</li>\n\n<li>|\n\n<ul>\n\n<li>|;
-$moreinfo =~ s|(\s+)(http://[^\s<>{}\\^\[\]\"\'\`]+)|$1<a href="$2">$2</a>|g;
+$moreinfo =~ s|(\s+)(https?://[^\s<>{}\\^\[\]\"\'\`]+)|$1<a href="$2">$2</a>|g;
 
 # matrix creation start
 #  in matrix lines, each item cannot have space charecter sequence in it
