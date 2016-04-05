@@ -177,14 +177,13 @@ sub printrefs {
 			if ( ! $opt_p ) {
 			#Don't print DSA- for those that have year format (old
 			#type of advisories)
-				print "DSA-" if  $dsa !~ /\d{6,}/ ;
-				print "$dsa\t$dsaref{$dsa}{'printtext'}\t";
+				print uc($dsa);			    
+				print "\t$dsaref{$dsa}{'printtext'}\t";
 				print  gmctime($dsaref{$dsa}{'date'})."\n" ;
 			} else {
 				print "<tr VALIGN=\"TOP\"><td>";
 				print "<a href=\"https://www.debian.org/security/".$dsaref{$dsa}{'location'}."\">";
-				print "DSA-" if  $dsa !~ /\d{6,}/ ;
-				print "$dsa</a>";
+				print uc($dsa)."</a>";
 				print "</td>$dsaref{$dsa}{'printtext'} </tr>\n";
 			}
 		}
@@ -195,7 +194,7 @@ sub printrefs {
 sub parsefile {
 	my ($file,$filename) = @_ ;
 # The filename gives us the DSA we are parsing
-	if ( $filename =~ /dsa\-(\d+)/ || $filename =~ /(\d+\w+)/ ) {
+	if ( $filename =~ /(d[ls]a\-\d+)/ || $filename =~ /(\d+\w+)/ ) {
 		$dsa=$1;
 	} else {
 		print STDERR "File $file does not look like a proper DSA, not checking\n" if $opt_v;
