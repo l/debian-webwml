@@ -84,6 +84,7 @@ foreach my $l (<$fh>) {
   last if ($l =~ /Regards,/i);
   last if ($l =~ /^-- /);
   last if ($l =~ /^Ben Hutchings/);
+  last if ($l =~ /^Support Debian LTS:/);
   last if ($l =~ /^-----BEGIN PGP SIGNATURE/);
   last if ($l =~ /^Attachment: /);
   #$mi = 0 if ($l =~ /^(wget url|Obtaining updates|Upgrade Instructions)/i);
