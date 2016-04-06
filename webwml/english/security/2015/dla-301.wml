@@ -1,0 +1,30 @@
+<define-tag description>LTS security update</define-tag>
+<define-tag moreinfo>
+<p>Denial-of-service possibility in logout() view by filling session store</p>
+
+<p>Previously, a session could be created when anonymously accessing the
+django.contrib.auth.views.logout view (provided it wasn't decorated with
+django.contrib.auth.decorators.login_required as done in the admin). This
+could allow an attacker to easily create many new session records by
+sending repeated requests, potentially filling up the session store or
+causing other users' session records to be evicted.</p>
+
+<p>The django.contrib.sessions.middleware.SessionMiddleware has been modified
+to no longer create empty session records.</p>
+
+<p>This portion of the fix has been assigned <a href="https://security-tracker.debian.org/tracker/CVE-2015-5963">CVE-2015-5963</a>.</p>
+
+<p>Additionally, the contrib.sessions.backends.base.SessionBase.flush() and
+cache_db.SessionStore.flush() methods have been modified to avoid creating
+a new empty session. Maintainers of third-party session backends should
+check if the same vulnerability is present in their backend and correct it
+if so.</p>
+
+<p>This portion of the fix has been assigned <a href="https://security-tracker.debian.org/tracker/CVE-2015-5964">CVE-2015-5964</a>.</p>
+
+<p>We recommend that you upgrade your python-django packages.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2015/dla-301.data"
+# $Id$

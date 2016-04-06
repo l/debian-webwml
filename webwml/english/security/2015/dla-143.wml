@@ -1,0 +1,80 @@
+<define-tag description>LTS security update</define-tag>
+<define-tag moreinfo>
+<p>Multiple security issues have been found in Django:
+<a href="https://www.djangoproject.com/weblog/2015/jan/13/security/">https://www.djangoproject.com/weblog/2015/jan/13/security/</a></p>
+
+<p>For Debian 6 Squeeeze, they have been fixed in version 1.2.3-3+squeeze12
+of python-django. Here is what the upstream developers have to say about
+those issues:</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-0219">CVE-2015-0219</a>
+
+<p>- WSGI header spoofing via underscore/dash conflation</p>
+
+    <p>When HTTP headers are placed into the WSGI environ, they are
+    normalized by converting to uppercase, converting all dashes to
+    underscores, and prepending HTTP_. For instance, a header X-Auth-User
+    would become HTTP_X_AUTH_USER in the WSGI environ (and thus also in
+    Django's request.META dictionary).</p>
+
+    <p>Unfortunately, this means that the WSGI environ cannot distinguish
+    between headers containing dashes and headers containing underscores:
+    X-Auth-User and X-Auth_User both become HTTP_X_AUTH_USER. This means
+    that if a header is used in a security-sensitive way (for instance,
+    passing authentication information along from a front-end proxy), even
+    if the proxy carefully strips any incoming value for X-Auth-User, an
+    attacker may be able to provide an X-Auth_User header (with
+    underscore) and bypass this protection.</p>
+
+    <p>In order to prevent such attacks, both Nginx and Apache 2.4+ strip
+    all headers containing underscores from incoming requests by
+    default. Django's built-in development server now does the same.
+    Django's development server is not recommended for production use,
+    but matching the behavior of common production servers reduces the
+    surface area for behavior changes during deployment.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-0220">CVE-2015-0220</a>
+
+<p>- Possible XSS attack via user-supplied redirect URLs</p>
+
+    <p>Django relies on user input in some cases (e.g.
+    django.contrib.auth.views.login() and i18n) to redirect the user to an
+    <q>on success</q> URL. The security checks for these redirects (namely
+    django.util.http.is_safe_url()) didn't strip leading whitespace on the
+    tested URL and as such considered URLs like "\njavascript:..." safe. If
+    a developer relied on is_safe_url() to provide safe redirect targets
+    and put such a URL into a link, they could suffer from a XSS attack.
+    This bug doesn't affect Django currently, since we only put this URL
+    into the Location response header and browsers seem to ignore
+    JavaScript there.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-0221">CVE-2015-0221</a>
+
+<p>- Denial-of-service attack against django.views.static.serve</p>
+
+    <p>In older versions of Django, the django.views.static.serve() view read
+    the files it served one line at a time. Therefore, a big file with no
+    newlines would result in memory usage equal to the size of that file.
+    An attacker could exploit this and launch a denial-of-service attack
+    by simultaneously requesting many large files. This view now reads the
+    file in chunks to prevent large memory usage.</p>
+
+    <p>Note, however, that this view has always carried a warning that it is
+    not hardened for production use and should be used only as a
+    development aid. Now may be a good time to audit your project and
+    serve your files in production using a real front-end web server if
+    you are not doing so.</p>
+
+<p>Note that the version of Django in use in Debian 6 Squeeze was not
+affected by <a href="https://security-tracker.debian.org/tracker/CVE-2015-0222">CVE-2015-0222</a> (Database denial-of-service with
+ModelMultipleChoiceField) since that feature does not exist
+in this version.</p></li>
+
+</ul>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2015/dla-143.data"
+# $Id$
