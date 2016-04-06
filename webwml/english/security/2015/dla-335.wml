@@ -1,0 +1,153 @@
+<define-tag description>LTS security update</define-tag>
+<define-tag moreinfo>
+<p>Several security issues where found in ntp:</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-5146">CVE-2015-5146</a>
+
+   <p>A flaw was found in the way ntpd processed certain remote
+   configuration packets. An attacker could use a specially crafted
+   package to cause ntpd to crash if:</p>
+
+   <p>* ntpd enabled remote configuration
+   * The attacker had the knowledge of the configuration password
+   * The attacker had access to a computer entrusted to perform remote
+     configuration</p>
+
+   <p>Note that remote configuration is disabled by default in NTP.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-5194">CVE-2015-5194</a>
+
+    <p>It was found that ntpd could crash due to an uninitialized variable
+    when processing malformed logconfig configuration commands.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-5195">CVE-2015-5195</a>
+
+    <p>It was found that ntpd exits with a segmentation fault when a
+    statistics type that was not enabled during compilation (e.g.
+    timingstats) is referenced by the statistics or filegen
+    configuration command</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-5219">CVE-2015-5219</a>
+
+    <p>It was discovered that sntp program would hang in an infinite loop when
+    a crafted NTP packet was received, related to the conversion of the
+    precision value in the packet to double.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-5300">CVE-2015-5300</a>
+
+    <p>It was found that ntpd did not correctly implement the -g option:</p>
+
+    <p>Normally, ntpd exits with a message to the system log if the offset
+    exceeds the panic threshold, which is 1000 s by default. This
+    option allows the time to be set to any value without restriction;
+    however, this can happen only once. If the threshold is exceeded
+    after that, ntpd will exit with a message to the system log. This
+    option can be used with the -q and -x options.</p>
+
+    <p>ntpd could actually step the clock multiple times by more than the
+    panic threshold if its clock discipline doesn't have enough time to
+    reach the sync state and stay there for at least one update. If a
+    man-in-the-middle attacker can control the NTP traffic since ntpd
+    was started (or maybe up to 15-30 minutes after that), they can
+    prevent the client from reaching the sync state and force it to step
+    its clock by any amount any number of times, which can be used by
+    attackers to expire certificates, etc.</p>
+
+    <p>This is contrary to what the documentation says. Normally, the
+    assumption is that an MITM attacker can step the clock more than the
+    panic threshold only once when ntpd starts and to make a larger
+    adjustment the attacker has to divide it into multiple smaller
+    steps, each taking 15 minutes, which is slow.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7691">CVE-2015-7691</a>
+
+<p>, <a href="https://security-tracker.debian.org/tracker/CVE-2015-7692">CVE-2015-7692</a>, <a href="https://security-tracker.debian.org/tracker/CVE-2015-7702">CVE-2015-7702</a></p>
+
+    <p>It was found that the fix for <a href="https://security-tracker.debian.org/tracker/CVE-2014-9750">CVE-2014-9750</a> was incomplete: three
+    issues were found in the value length checks in ntp_crypto.c, where
+    a packet with particular autokey operations that contained malicious
+    data was not always being completely validated. Receipt of these
+    packets can cause ntpd to crash.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7701">CVE-2015-7701</a>
+
+    <p>A memory leak flaw was found in ntpd's CRYPTO_ASSOC. If ntpd is
+    configured to use autokey authentication, an attacker could send
+    packets to ntpd that would, after several days of ongoing attack,
+    cause it to run out of memory.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7703">CVE-2015-7703</a>
+
+    <p>Miroslav Lichvár of Red Hat found that the :config command can be
+    used to set the pidfile and driftfile paths without any
+    restrictions. A remote attacker could use this flaw to overwrite a
+    file on the file system with a file containing the pid of the ntpd
+    process (immediately) or the current estimated drift of the system
+    clock (in hourly intervals). For example:</p>
+
+    <p>ntpq -c ':config pidfile /tmp/ntp.pid'
+    ntpq -c ':config driftfile /tmp/ntp.drift'</p>
+
+    <p>In Debian ntpd is configured to drop root privileges, which limits
+    the impact of this issue.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7704">CVE-2015-7704</a>
+
+    <p>When ntpd as an NTP client receives a Kiss-of-Death (KoD) packet
+    from the server to reduce its polling rate, it doesn't check if the
+    originate timestamp in the reply matches the transmit timestamp from
+    its request. An off-path attacker can send a crafted KoD packet to
+    the client, which will increase the client's polling interval to a
+    large value and effectively disable synchronization with the server.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7850">CVE-2015-7850</a>
+
+    <p>An exploitable denial of service vulnerability exists in the remote
+    configuration functionality of the Network Time Protocol. A
+    specially crafted configuration file could cause an endless loop
+    resulting in a denial of service.  An attacker could provide a the
+    malicious configuration file to trigger this vulnerability.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7851">CVE-2015-7851</a>
+
+    <p>A potential path traversal vulnerability exists in the config file
+    saving of ntpd on VMS. A specially crafted path could cause a path
+    traversal potentially resulting in files being overwritten. An
+    attacker could provide a malicious path to trigger this
+    vulnerability.</p>
+
+    <p>This issue does not affect Debian.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7852">CVE-2015-7852</a>
+
+    <p>A potential off by one vulnerability exists in the cookedprint
+    functionality of ntpq. A specially crafted buffer could cause a
+    buffer overflow potentially resulting in null byte being written out
+    of bounds.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7855">CVE-2015-7855</a>
+
+    <p>It was found that NTP's decodenetnum() would abort with an assertion
+    failure when processing a mode 6 or mode 7 packet containing an
+    unusually long data value where a network address was expected. This
+    could allow an authenticated attacker to crash ntpd.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7871">CVE-2015-7871</a>
+
+    <p>An error handling logic error exists within ntpd that manifests due
+    to improper error condition handling associated with certain
+    crypto-NAK packets. An unauthenticated, off-path attacker can force
+    ntpd processes on targeted servers to peer with time sources of the
+    attacker's choosing by transmitting symmetric active crypto-NAK
+    packets to ntpd. This attack bypasses the authentication typically
+    required to establish a peer association and allows an attacker to
+    make arbitrary changes to system time.</p></li>
+
+</ul>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2015/dla-335.data"
+# $Id$

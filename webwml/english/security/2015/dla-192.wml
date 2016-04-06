@@ -1,0 +1,50 @@
+<define-tag description>LTS security update</define-tag>
+<define-tag moreinfo>
+<p>Brief introduction</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-1798">CVE-2015-1798</a>
+
+    <p>When ntpd is configured to use a symmetric key to authenticate a remote NTP
+    server/peer, it checks if the NTP message authentication code (MAC) in received
+    packets is valid, but not if there actually is any MAC included. Packets without
+    a MAC are accepted as if they had a valid MAC. This allows a MITM attacker to
+    send false packets that are accepted by the client/peer without having to know
+    the symmetric key. The attacker needs to know the transmit timestamp of the
+    client to match it in the forged reply and the false reply needs to reach the
+    client before the genuine reply from the server. The attacker doesn't
+    necessarily need to be relaying the packets between the client and the server.</p>
+
+    <p>Authentication using autokey doesn't have this problem as there is a check that
+    requires the key ID to be larger than NTP_MAXKEY, which fails for packets
+    without a MAC.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-1799">CVE-2015-1799</a>
+
+    <p>An attacker knowing that NTP hosts A and B are peering with each other
+    (symmetric association) can send a packet to host A with source address of B
+    which will set the NTP state variables on A to the values sent by the attacker.
+    Host A will then send on its next poll to B a packet with originate timestamp
+    that doesn't match the transmit timestamp of B and the packet will be dropped.
+    If the attacker does this periodically for both hosts, they won't be able to
+    synchronize to each other. This is a known denial-of-service attack, described
+    at <a href="https://www.eecis.udel.edu/~mills/onwire.html">https://www.eecis.udel.edu/~mills/onwire.html</a> .</p>
+
+    <p>According to the document the NTP authentication is supposed to protect
+    symmetric associations against this attack, but that doesn't seem to be the
+    case. The state variables are updated even when authentication fails and the
+    peers are sending packets with originate timestamps that don't match the
+    transmit timestamps on the receiving side.</p>
+
+<p>ntp-keygen on big endian hosts</p>
+
+    <p>Using ntp-keygen to generate an MD5 key on big endian hosts resulted in
+    either an infite loop or an key of only 93 possible keys.</p></li>
+
+</ul>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2015/dla-192.data"
+# $Id$

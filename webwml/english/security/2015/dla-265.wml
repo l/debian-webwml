@@ -1,0 +1,48 @@
+<define-tag description>LTS security update</define-tag>
+<define-tag moreinfo>
+<p>Martin Prpic has reported the possibility of a man-in-the-middle attack
+in the pykerberos code to the Red Hat Bugzilla (Fedora bug tracker). The
+original issue has earlier been reported upstream [1]. We are quoting the
+upstream bug reported partially below:</p>
+
+<p>The python-kerberos checkPassword() method has been badly insecure in
+previous releases. It used to do (and still does by default) a kinit
+(AS-REQ) to ask a KDC for a TGT for the given user principal, and
+interprets the success or failure of that as indicating whether the
+password is correct. It does not, however, verify that it actually spoke
+to a trusted KDC: an attacker may simply reply instead with an AS-REP
+which matches the password he just gave you.</p>
+
+<p>Imagine you were verifying a password using LDAP authentication rather
+than Kerberos: you would, of course, use TLS in conjunction with LDAP to
+make sure you were talking to a real, trusted LDAP server. The same
+requirement applies here. kinit is not a password-verification service.</p>
+
+<p>The usual way of doing this is to take the TGT you've obtained with the
+user's password, and then obtain a ticket for a principal for which the
+verifier has keys (e.g. a web server processing a username/password form
+login might get a ticket for its own HTTP/host@REALM principal), which
+it can then verify. Note that this requires that the verifier has its
+own Kerberos identity, which is mandated by the symmetric nature of
+Kerberos (whereas in the LDAP case, the use of public-key cryptography
+allows anonymous verification).</p>
+
+<p>With this version of the pykerberos package a new option is introduced
+for the checkPassword() method. Setting verify to True when using
+checkPassword() will perform a KDC verification. For this to work, you
+need to provide a krb5.keytab file containing service principal keys for
+the service you intend to use.</p>
+
+<p>As the default krb5.keytab file in /etc is normally not accessible by
+non-root users/processes, you have to make sure a custom krb5.keytab
+file containing the correct principal keys is provided to your
+application using the KRB5_KTNAME environment variable.
+<p><b>Note</b>: In Debian squeeze(-lts), KDC verification support is disabled by
+default in order not to break existing setups.</p>
+
+<p>[1] <a href="https://www.calendarserver.org/ticket/833">https://www.calendarserver.org/ticket/833</a></p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2015/dla-265.data"
+# $Id$

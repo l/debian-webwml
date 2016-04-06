@@ -1,0 +1,64 @@
+<define-tag description>LTS security update</define-tag>
+<define-tag moreinfo></p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-1853">CVE-2015-1853</a>:
+
+  <p>Protect authenticated symmetric NTP  associations against DoS attacks.</p>
+
+  <p>An attacker knowing that NTP hosts A and B are peering with each other
+  (symmetric association) can send a packet with random timestamps to host
+  A with source address of B which will set the NTP state variables on A
+  to the values sent by the attacker. Host A will then send on its next
+  poll to B a packet with originate timestamp that doesn't match the
+  transmit timestamp of B and the packet will be dropped. If the attacker
+  does this periodically for both hosts, they won't be able to synchronize
+  to each other. It is a denial-of-service attack.</p>
+
+  <p>According to [1], NTP authentication is supposed to protect symmetric
+  associations against this attack, but in the NTPv3 (RFC 1305) and NTPv4
+  (RFC 5905) specifications the state variables are updated before the
+  authentication check is performed, which means the association is
+  vulnerable to the attack even when authentication is enabled.</p>
+
+  <p>To fix this problem, save the originate and local timestamps only when
+  the authentication check (test5) passed.</p>
+
+  <p>[1] <a href="https://www.eecis.udel.edu/~mills/onwire.html">https://www.eecis.udel.edu/~mills/onwire.html</a></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-1821">CVE-2015-1821</a>:
+
+  <p>Fix access configuration with subnet size indivisible by 4.</p>
+
+  <p>When NTP or cmdmon access was configured (from chrony.conf or via
+  authenticated cmdmon) with a subnet size that is indivisible by 4 and
+  an address that has nonzero bits in the 4-bit subnet remainder (e.g.
+  192.168.15.0/22 or f000::/3), the new setting was written to an
+  incorrect location, possibly outside the allocated array.</p>
+
+  <p>An attacker that has the command key and is allowed to access cmdmon
+  (only localhost is allowed by default) could exploit this to crash
+  chronyd or possibly execute arbitrary code with the privileges of the
+  chronyd process.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-1822">CVE-2015-1822</a>:
+
+  <p>Fix initialization of reply slots for authenticated commands.</p>
+
+  <p>When allocating memory to save unacknowledged replies to authenticated
+  command requests, the last <q>next</q> pointer was not initialized to NULL.
+  When all allocated reply slots were used, the next reply could be
+  written to an invalid memory instead of allocating a new slot for it.</p>
+
+  <p>An attacker that has the command key and is allowed to access cmdmon
+  (only localhost is allowed by default) could exploit this to crash
+  chronyd or possibly execute arbitrary code with the privileges of the
+  chronyd process.</p></li>
+
+</ul>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2015/dla-193.data"
+# $Id$
