@@ -84,6 +84,8 @@ foreach my $l (<$fh>) {
   last if ($l =~ /Regards,/i);
   last if ($l =~ /^-- /);
   last if ($l =~ /^Ben Hutchings/);
+  last if ($l =~ /^Raphaël Hertzog/);
+  last if ($l =~ /^mike gabriel aka sunweaver/);
   last if ($l =~ /^Support Debian LTS:/);
   last if ($l =~ /^-----BEGIN PGP SIGNATURE/);
   last if ($l =~ /^Attachment: /);
@@ -111,6 +113,7 @@ close $fh;
 
 $moreinfo =~ s/(- )?-+\n//g;
 $moreinfo =~ s/\n\n$/\n/s;
+$moreinfo =~ s/^\n+/\n/s;
 $moreinfo =~ s/\n<p>\n$//;
 $moreinfo =~ s/\n<p>note\:/<p><b>Note<\/b>:/ig;
 $moreinfo =~ s/(\s)"(\w[\w\.,'\(\)\s]*?\w)"([\:\.',\(\)\s])/$1<q>$2<\/q>$3/g;
@@ -123,13 +126,21 @@ $moreinfo =~ s|((CAN\|CVE)-\d+-\d+)|<a href="https://security-tracker.debian.org
 $moreinfo =~ s|</p>\n\n<p>\n<p>(\w* \w* stable)|</p></li>\n\n</ul>\n\n<p>$1|; 
 $moreinfo =~ s|<p>(\s+)|$1<p>|g;
 $moreinfo =~ s|<p><p>|<p>|g;
+$moreinfo =~ s/\n<p>$//;
+$moreinfo =~ s|</p>$||;
 $moreinfo =~ s|</p>\n\n<li>|</p></li>\n\n<li>|g;
 $moreinfo =~ s|</li>\n\n<li>|\n\n<ul>\n\n<li>|;
 $moreinfo =~ s|(\s+)(https?://[^\s<>{}\\^\[\]\"\'\`]+)|$1<a href="$2">$2</a>|g;
 
 if (($moreinfo =~ /<ul>\n\n<li>/) && ($moreinfo !~ /<\/li>\n\n<\/ul>/)){
-   $moreinfo =~ s{</p>\n\n<p>((\w+ \w+ \w* ?(old ?stable|stable|testing))|Th[eo]se)}{</p></li>\n\n</ul>\n\n<p>$1}; }
+   $moreinfo =~ s{</p>\n\n<p>((\w+ \w+ \w* ?(old ?stable|stable|testing))|Th[eo]se)}{</p></li>\n\n</ul>\n\n<p>$1};
+}
 chomp ($moreinfo);
+if (($moreinfo =~ /<ul>\n\n<li>/) && ($moreinfo !~ /<\/li>\n\n<\/ul>/)){
+    $moreinfo .= "</p></li>\n\n</ul>";
+}else{
+    $moreinfo .= '</p>';
+}
 
 my ($wml, $data, $pagetitle);
 if (defined($package) && $dla =~ /DLA[- ](\d+)-(\d+)/ ) {
@@ -177,7 +188,7 @@ sub make_wml{
   }
   open WML, ">", "$wml";
   print WML "<define-tag description>LTS security update</define-tag>\n";
-  print WML "<define-tag moreinfo>$moreinfo</p>\n</define-tag>\n";
+  print WML "<define-tag moreinfo>$moreinfo\n</define-tag>\n";
   print WML "\n# do not modify the following line\n";
   print WML "#include \"\$(ENGLISHDIR)/security/$data\"\n";
   printf WML "# %sId: \$\n", "\$";
