@@ -1,0 +1,45 @@
+<define-tag description>LTS security update</define-tag>
+<define-tag moreinfo>
+<p>Brief introduction</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2013-6441">CVE-2013-6441</a>
+
+    <p>The template script lxc-sshd used to mount itself as /sbin/init in the
+    container using a writable bind-mount.</p>
+
+    <p>This update resolved the above issue by using a read-only bind-mount
+    instead preventing any form of potentially accidental damage.</p>
+
+<p></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-1335">CVE-2015-1335</a>
+
+    <p>On container startup, lxc sets up the container's initial file system
+    tree by doing a bunch of mounting, guided by the container's configuration
+    file.</p>
+
+    <p>The container config is owned by the admin or user on the host, so we
+    do not try to guard against bad entries. However, since the mount
+    target is in the container, it's possible that the container admin
+    could divert the mount with symbolic links. This could bypass proper
+    container startup (i.e. confinement of a root-owned container by the
+    restrictive apparmor policy, by diverting the required write to
+    /proc/self/attr/current), or bypass the (path-based) apparmor policy
+    by diverting, say, /proc to /mnt in the container.</p>
+
+    <p>This update implements a safe_mount() function that prevents lxc from
+    doing mounts onto symbolic links.</p>
+
+
+<p>mike gabriel aka sunweaver (Debian Developer)
+fon: +49 (1520) 1976 148</p>
+
+<p>GnuPG Fingerprint: 9BFB AEE8 6C0A A5FF BF22  0782 9AF4 6B30 2577 1B31
+mail: sunweaver@debian.org, <a href="http://sunweavers.net">http://sunweavers.net</a></p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2016/dla-442.data"
+# $Id$
