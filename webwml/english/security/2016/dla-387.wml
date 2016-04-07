@@ -1,0 +1,53 @@
+<define-tag description>LTS security update</define-tag>
+<define-tag moreinfo>
+<p>The Qualys Security team discovered two vulnerabilities in the roaming
+code of the OpenSSH client (an implementation of the SSH protocol
+suite).</p>
+
+<p>SSH roaming enables a client, in case an SSH connection breaks
+unexpectedly, to resume it at a later time, provided the server also
+supports it.</p>
+
+<p>The OpenSSH server doesn't support roaming, but the OpenSSH client
+supports it (even though it's not documented) and it's enabled by
+default.</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-0777">CVE-2016-0777</a>
+
+    <p>An information leak (memory disclosure) can be exploited by a rogue
+    SSH server to trick a client into leaking sensitive data from the
+    client memory, including for example private keys.</p>
+
+<p></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-0778">CVE-2016-0778</a>
+
+    <p>A buffer overflow (leading to file descriptor leak), can also be
+    exploited by a rogue SSH server, but due to another bug in the code
+    is possibly not exploitable, and only under certain conditions (not
+    the default configuration), when using ProxyCommand, ForwardAgent or
+    ForwardX11.</p>
+
+<p>This security update completely disables the roaming code in the OpenSSH
+client.</p>
+
+<p>It is also possible to disable roaming by adding the (undocumented)
+option <q>UseRoaming no</q> to the global /etc/ssh/ssh_config file, or to the
+user configuration in ~/.ssh/config, or by passing -oUseRoaming=no on
+the command line.</p>
+
+<p>Users with passphrase-less privates keys, especially in non interactive
+setups (automated jobs using ssh, scp, rsync+ssh etc.) are advised to
+update their keys if they have connected to an SSH server they don't
+trust.</p>
+
+<p>More details about identifying an attack and mitigations can be found in
+the Qualys Security Advisory.
+Yves-Alexis Perez</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2016/dla-387.data"
+# $Id$
