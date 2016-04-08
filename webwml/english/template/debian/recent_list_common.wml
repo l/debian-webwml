@@ -1,0 +1,241 @@
+<perl>
+    # common functions for all recent_list_*.wml
+    
+sub get_recent_list {
+    my ($time, $number, $rel_path, $english_dir, $files_match, $data_callback, $format_list_callback, $format_item_callback) =@_;
+
+    #warn "get_recent_list($time, $number, $rel_path, $english_dir, $files_match, $data_callback, $format_list_callback, $format_item_callback)\n";
+    my $since_date = determine_since_date($time);
+    #warn "since_date=$since_date\n";
+    my $files = get_matching_filenames_by_time($rel_path, $english_dir, $files_match, $since_date);
+    my $data = get_files_data($files, $english_dir, $data_callback);
+    my $filtered_data = filter_items($data, $since_date, $number);
+
+    my $str = $format_list_callback->($filtered_data, $format_item_callback);
+
+    return $str;
+}
+
+sub get_directory_list {
+    my ($rel_path, $eng_dir, $files_match, $data_callback, $format_list_callback, $format_item_callback) = @_;
+
+    my $files = get_matching_filenames($rel_path, $eng_dir, qr/^d[ls]a-.+.wml$/);
+    my $data = get_files_data($files, $eng_dir, \&get_dsa_data);
+    my $str = $format_list_callback->($data, $format_item_callback);
+
+    return $str;
+}
+    
+sub slurp_file_openrecode {
+    my ($file, $eng_dir) = @_;
+
+    (my $trans_title = $file) =~ s/\.wml$/\.title/;
+    # read file in
+    my $fh = openrecode($file, $trans_title, "$eng_dir/$file")
+	or die "couldn't open $eng_dir/$file: $!\n";
+    my $content;
+    <protect pass=2>
+    {
+	local $/;
+	$content = <$fh>;
+    }
+    </protect>
+	close $fh;
+
+    return $content;
+}
+sub slurp_file {
+    my ($file) = @_;
+
+    open my $fh, '<', $file
+	or die "couldn't open $file: $!\n";
+    my $content;
+    <protect pass=2>
+    {
+	local $/;
+	$content = <$fh>;
+    }
+    </protect>
+    close $fh;
+
+    return $content;
+}
+
+sub match_tag {
+    my ($content, $tag) = @_;
+
+    my $value;
+    <protect pass=2>
+    if ($content =~ m|^<define-tag $tag>\s*(.*?)\s*</define-tag>|ms) {
+	$value = qq/$1/; }      # all
+    </protect>
+    return $value;
+}
+
+sub match_tag_first_p {
+    my ($content, $tag) = @_;
+
+    my $value;
+    <protect pass=2>
+    if ($content =~ m"^<define-tag $tag>\s*(?:(.*?</p>)|(.*?)</define-tag>)"ms) {
+	$value = qq/$1/; }      # all
+    </protect>
+    return $value;
+}
+
+sub determine_since_date {
+    my ($time) = @_;
+
+    return parse_time($time) if $time;
+    return '';
+}
+	
+sub determine_relevant_years {
+    my ($since_date) = @_;
+	
+    my $year = $(CUR_YEAR);
+    $since_year = $year;
+    if ($since_date){
+	$since_year = (gmtime($since_date))[5] + 1900;
+	if ($since_year > $year) {
+	    warn "since_year > year ($since_year > $year)\n";
+	}
+    }
+    # djpig: take $since_year-1, perhaps better define an $oldest_year?
+    # djpig: but there should be no more updates to an item after a year
+    # djpig: we're saving time so.
+    return [($since_year-1) .. $year];
+}
+    
+sub get_matching_filenames_by_time {
+    my ($rel_path, $english_dir, $match, $since_date) =@_;
+
+    my @files;
+
+    my $years = determine_relevant_years($since_date);
+    for my $act_year (@$years) {
+	my $act_path = $rel_path eq '.' ? $act_year : "$rel_path/$act_year"; 
+	my $new_files = get_matching_filenames($act_path, "$english_dir/$act_year", $match);
+
+	push @files, @$new_files;
+    }
+
+    return \@files;
+}
+    
+sub get_matching_filenames {
+    my ($rel_path, $eng_dir, $match) = @_;
+
+    #warn "get_match_filesnames( $rel_path, $eng_dir, $match )\n";
+    opendir my $dir_h, $eng_dir
+	or die "couldn't open dir $eng_dir: $!\n";
+    my @files = grep { ($_ =~ $match)
+			   && -f "$eng_dir/$_"
+			   && ($_="$rel_path/$_")
+    } readdir($dir_h);
+    closedir $dir_h;
+
+    return \@files;
+}
+
+sub get_files_data {
+    my ($files, $eng_dir, $callback) = @_;
+
+    my %data;
+    foreach my $file (@$files) {
+	$callback->($file, $eng_dir, \%data);
+    }
+
+    return \%data;
+}
+
+sub filter_items {
+    my ($data, $since_date, $minnumber) = @_;
+
+    my @dates = sort { $b <=> $a } keys %$data;
+    #warn "since_date: ".scalar gmtime($since_date)." minnum: $minnumber\n";
+    my $count = 0;
+    my %filtered_data;
+    foreach my $date (@dates) {
+	#warn "date: ".scalar gmtime($date)." ($count >= $minnumber) && ($date < $since_date)\n";
+	if ($count >= $minnumber) {
+	    if((!$since_date && $minnumber)
+	       || (($since_date || !$minnum)
+		   && ($date lt $since_date)) ) {
+		last;
+	    }
+	}
+	$filtered_data{$date} = $data->{$date};
+	$count += scalar @{$data->{$date}};
+    }
+
+    return \%filtered_data;
+}
+
+# parse_time gets as argument a string and returns a unix timestamp
+# Input: $time_str - String with the following format
+#                    $time_str ::= <integer>(d|w|m|y)
+# Output: integer timestamp
+#
+# parse_time subtracts <integer> days/weeks/months from the actual time and
+# returns the corresponding timestamp. Years are handled special: 1y means
+# "since January, 1st of actual year", 2y means "since January, 1st of
+# last year", etc.
+sub parse_time {
+    my $time_str = shift;
+    my $year = (gmtime())[5] + 1900;
+    my $time = time();
+    my $res;
+
+    for ($time_str) {
+	/\d{4}/ && do {
+	    $res = timegm(0,0,0,1,0,$year);
+	    last;
+	};
+
+	/(\d+)d/ && do {
+	    $res = $time - 86400 * $1;
+	    last;
+	};
+
+	/(\d+)w/ && do {
+	    $res = $time - 86400 * 7 * $1;
+	    last;
+	};
+
+	/(\d+)m/ && do {
+	    # All months have 30 days,
+	    # all other would be far more complicated
+	    $res = $time - 86400 * 30 * $1;
+	    last;
+	};
+
+	/(\d+)y/ && do {
+	    # years are handled special
+	    my $ryear = $year - $1 + 1; # the actual year count as a whole one
+	    $res = timegm(0,0,0,1,0,$ryear); # 01.01.$ryear 00:00:00
+	    last;
+	};
+
+    }
+
+    return $res;
+}
+
+# iso2stamp converts a date in ISO format (YYYY-MM-DD) to an
+# unix timestamp for 23:59:59 on the specified day
+# Input: $time - String with the ISO date
+# Output: integer timestamp
+sub iso2stamp {
+    my $time = shift;
+
+    if ($time =~ /undated/) {
+	return 0;
+    }
+    my ($year, $month, $day) = ($time =~ /(\d{4})-(\d{1,2})-(\d{1,2})/);
+    unless ($year && $month && $day) { warn "not an ISO date: $time\n"; }
+
+    return timegm( 59, 59, 23, $day, $month-1, $year);
+}
+
+</perl>
