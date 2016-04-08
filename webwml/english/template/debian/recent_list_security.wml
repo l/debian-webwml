@@ -1,0 +1,395 @@
+#use wml::debian::ctime
+#use wml::debian::common_tags
+#use wml::debian::openrecode
+#use wml::debian::recent_list_common
+
+<define-tag noitemsforthisyear whitespace=delete>
+  <gettext>No items for this year.</gettext>
+</define-tag>
+
+
+<define-tag new_revision whitespace="delete">
+    <gettext>(new revision)</gettext>
+</define-tag>
+
+<perl>
+
+# get_recent_security_list( $time, $number, $security_rel_path, $english_dir )
+# get_recent_security_list_rdf( [rdf, rdf-long, rdfseq], $time, $number, $security_rel_path, $english_dir )
+# get_directory_security_list( $security_year_dir, $english_year_dir )
+#
+# get_recent_security_list grabs the date and title of the most recent security
+# advisories. The amount of advisories shown is controlled by parameters
+# $number and $time.
+#
+# The format of the time specification $time
+# is \d+(d|w|m|y) for \d+ days/weeks/months/years.
+# If $time is true, $number is only the minimum number of shown items.
+#
+# $security_rel_path is the relative path to security/, $english_dir is $(ENGLISHDIR)/security
+# 
+# get_directory_security_list creates a list for a complete year of security
+# advisories. In this case you give the path to the year directory directly
+# instead of the path of the security top directory.    
+#
+# example usage:
+# 1) /index.wml
+# get_recent_security_list( '2w', '10', 'security/', '$(ENGLISHDIR)/security' )
+# 2) security/index.wml
+# get_recent_security_list( '1m', '6', '.', '$(ENGLISHDIR)/security' )
+# 3) security/dsa.rdf.in
+# get_recent_security_list_rdf( 'rdf', '1m', '6', '.', '$(ENGLISHDIR)/security' );
+# 4) security/2015/index.wml
+# get_directory_security_list ('.', '$(ENGLISHDIR)/security/2015' )
+    
+# get_recent_security_list( $time, $number, $security_rel_path, $english_dir )
+sub get_recent_security_list {
+    return get_recent_list( @_, qr/^d[ls]a-.+.wml$/, \&get_dsa_data, \&format_security_items, \&format_security_item ); 
+}
+
+# get_recent_security_list_rdf( [rdf, rdf-long, rdfseq], $time, $number, $security_rel_path, $english_dir )
+sub get_recent_security_list_rdf {
+    my ($format) = shift;
+    #warn "get_recent_security_list_rdf( format = $format )";
+    if( $format eq 'rdf' ){
+	return get_recent_list( @_, qr/^d[ls]a-.+.wml$/, \&get_dsa_data, \&format_security_items, \&format_security_item_rdf );
+    }elsif( $format eq 'rdf-long' ){
+	return get_recent_list( @_, qr/^d[ls]a-.+.wml$/, \&get_dsa_data, \&format_security_items, \&format_security_item_rdf_long );
+    }elsif( $format eq 'rdfseq' ){
+	return get_recent_list( @_, qr/^d[ls]a-.+.wml$/, \&get_dsa_data, \&format_security_items, \&format_security_item_rdf_seq );
+    }else{
+	die "unknown format $format\n";
+    }
+}    
+
+# get_directory_security_list( $security_year_dir, $english_year_dir )
+sub get_directory_security_list {
+    return get_directory_list( @_, qr/^d[ls]a-.+.wml$/, \&get_dsa_data, \&format_security_items, \&format_security_item );
+}
+
+
+
+sub get_dsa_data {
+    my ($file, $eng_dir, $data) = @_;
+    
+    (my $basename = $file) =~ s/\.wml$//;
+
+    #warn "get_dsa_data( $file, $eng_dir, $data )\n";
+    my $content = slurp_file_openrecode($file, $eng_dir);
+
+    my $title = match_tag($content, 'pagetitle');
+    my $desc = match_tag($content, 'description');
+    my $moreinfo = match_tag_first_p($content, 'moreinfo');
+
+    # read in datafile
+    my $data_content = slurp_file("$eng_dir/$basename.data");
+    my $t = match_tag($data_content, 'pagetitle');
+    $title = $t if $t;
+    $rdate = match_tag($data_content, 'report_date');
+
+    my @hdate = split ',', $rdate;
+    my @isodate = map( sprintf("%04d-%02d-%02d", split '-', $_), @hdate );
+	
+    $title =~ s/(D[LS]A-\d{2,})-\d{1}/$1/; # strip off the revision in the DSA number
+
+    #warn "rdate=$rdate title=$title desc=$desc\n";
+    my $revision = 1;
+    foreach my $isodate (@isodate){
+	my $timestamp = iso2stamp($isodate);
+	#warn "$isodate ($timestamp) => $file\n";
+	push @{$data->{$timestamp}}, {
+	    file => $file,
+	    basename => $basename,
+	    isodate => $isodate,
+	    date => newsdate($isodate),
+	    title => $title,
+	    revision => $revision++,
+	    description => $desc,
+	    moreinfo => $moreinfo,
+	};
+    }
+}
+
+
+sub format_security_items {
+    my ($data, $format_item) = @_;
+
+    my @dates = sort { $b <=> $a } keys %$data;
+
+    unless (@dates) {
+	 return "<noitemsforthisyear/>\n";
+    }
+
+    my @str;
+    foreach my $date (@dates){
+	#warn "date=".scalar gmtime($date)."\n";
+	foreach my $file_data (sort { $b->{title} cmp $a->{title} } @{$data->{$date}}){
+	    #warn "title=$file_data->{title}\n";
+	    push @str, $format_item->($file_data);
+	}
+    }
+    return join('',@str);
+}
+
+sub format_security_item {
+    my ($file_data) = @_;
+    my $new_revision = $file_data->{revision} > 1 ? ' <new_revision>' : '';
+    return "<tt>[$file_data->{date}]</tt> "
+	."<strong><a href=\"$file_data->{basename}\">$file_data->{title}</a></strong> "
+	."$file_data->{description}$new_revision<br />\n";
+}
+
+my $security_homepage = 'https://www.debian.org/security/';
+
+sub format_security_item_rdf_seq {
+    my ($file_data) = @_;
+    # we need absolute paths for rdf
+    (my $rdfbase = $file_data->{basename}) =~ s@^security/@@;
+<protect pass=2>
+    return qq{<rdf:li resource="$security_homepage$rdfbase" />\n};
+</protect>
+}
+
+sub format_security_item_rdf {
+    my ($file_data) = @_;
+    # we need absolute paths for rdf
+    (my $rdfbase = $file_data->{basename}) =~ s@^security/@@;
+    return "\n"
+	."<item rdf:about=\"$security_homepage$rdfbase\">\n"
+	."  <title>$file_data->{title}</title>\n"
+	."  <link>$security_homepage$rdfbase</link>\n"
+	."  <description>\n"
+	."    $file_data->{description}\n"
+	."  </description>\n"
+	."  <dc:date>$file_data->{isodate}</dc:date>\n"
+	."</item>\n";
+}
+
+sub format_security_item_rdf_long {
+    my ($file_data) = @_;
+    # we need absolute paths for rdf
+    (my $rdfbase = $file_data->{basename}) =~ s@^security/@@;
+
+    # $moreinfo is WML/HTML; we need to strip tags here
+    <protect pass=2>
+    my $moreinfo = $file_data->{moreinfo};
+    # HTML entities
+    $moreinfo =~ s/(&[^#;]+;)/&decodehtmlentity($1)/ge;
+    # <email "xxx"> <url "xxx">
+    $moreinfo =~ s#<email "?([^>"]+)"?>#<a href="mailto:$1">$1</a>#g;
+    $moreinfo =~ s#<url "([^>]+)">#<a href="$1">$1</a>#g;
+    # HTML tags
+    $moreinfo =~ s/</&lt;/g;
+    $moreinfo =~ s/>/&gt;/g;
+    $moreinfo =~ s/"/&quot;/g; #"
+    # WML continuation
+    $moreinfo =~ s/\\\n//g;
+    </protect>
+
+    return "\n"
+	."<item rdf:about=\"$security_homepage$rdfbase\">\n"
+	."  <title>$file_data->{title} - $file_data->{description}</title>\n"
+	."  <link>$security_homepage$rdfbase</link>\n"
+	."  <description>\n"
+	."    $moreinfo\n"
+	."  </description>\n"
+	."  <dc:date>$file_data->{isodate}</dc:date>\n"
+	."</item>\n";
+}
+
+
+# decode_html_entity is used in the RDF outputs to convert the predefined
+# HTML/SGML entities to NCRs, as they are not predefined for XML formats.
+sub decodehtmlentity {
+  my $ent = shift;
+
+  # ISO 8859-1 entities
+  @entities = (
+    '&nbsp;', '&iexcl;', '&cent;', '&pound;', '&curren;', '&yen;',
+    '&brvbar;', '&sect;', '&uml;', '&copy;', '&ordf;', '&laquo;', '&not;',
+    '&shy;', '&reg;', '&macr;', '&deg;', '&plusmn;', '&sup2;', '&sup3;',
+    '&acute;', '&micro;', '&para;', '&middot;', '&cedil;', '&sup1;',
+    '&ordm;', '&raquo;', '&frac14;', '&frac12;', '&frac34;', '&iquest;',
+    '&Agrave;', '&Aacute;', '&Acirc;', '&Atilde;', '&Auml;', '&Aring;',
+    '&AElig;', '&Ccedil;', '&Egrave;', '&Eacute;', '&Ecirc;', '&Euml;',
+    '&Igrave;', '&Iacute;', '&Icirc;', '&Iuml;', '&ETH;', '&Ntilde;',
+    '&Ograve;', '&Oacute;', '&Ocirc;', '&Otilde;', '&Ouml;', '&times;',
+    '&Oslash;', '&Ugrave;', '&Uacute;', '&Ucirc;', '&Uuml;', '&Yacute;',
+    '&THORN;', '&szlig;', '&agrave;', '&aacute;', '&acirc;', '&atilde;',
+    '&auml;', '&aring;', '&aelig;', '&ccedil;', '&egrave;', '&eacute;',
+    '&ecirc;', '&euml;', '&igrave;', '&iacute;', '&icirc;', '&iuml;',
+    '&eth;', '&ntilde;', '&ograve;', '&oacute;', '&ocirc;', '&otilde;',
+    '&ouml;', '&divide;', '&oslash;', '&ugrave;', '&uacute;', '&ucirc;',
+    '&uuml;', '&yacute;', '&thorn;', '&yuml;'
+  );
+
+  for (my $i = 0; $i < $#entities; ++ $i)
+  {
+    return "&#".($i+160).";" if $entities[$i] eq $ent;
+  }
+
+  # Non-ISO 8859-1 entities
+  %entities = (
+    # Specials
+    '&OElig;' => '&#338;',
+    '&oelig;' => '&#339;',
+    '&Scaron;' => '&#352;',
+    '&scaron;' => '&#353;',
+    '&Yuml;' => '&#376;',
+    '&circ;' => '&#710;',
+    '&tilde;' => '&#732;',
+    '&ensp;' => '&#8194;',
+    '&emsp;' => '&#8195;',
+    '&thinsp;' => '&#8201;',
+    '&zwnj;' => '&#8204;',
+    '&zwj;' => '&#8205;',
+    '&lrm;' => '&#8206;',
+    '&rlm;' => '&#8207;',
+    '&ndash;' => '&#8211;',
+    '&mdash;' => '&#8212;',
+    '&lsquo;' => '&#8216;',
+    '&rsquo;' => '&#8217;',
+    '&sbquo;' => '&#8218;',
+    '&ldquo;' => '&#8220;',
+    '&rdquo;' => '&#8221;',
+    '&bdquo;' => '&#8222;',
+    '&dagger;' => '&#8224;',
+    '&Dagger;' => '&#8225;',
+    '&permil;' => '&#8240;',
+    '&lsaquo;' => '&#8249;',
+    '&rsaquo;' => '&#8250;',
+    '&euro;' => '&#8364;',
+    # Symbols
+    '&fnof;' => '&#402;',
+    '&Alpha;' => '&#913;',
+    '&Beta;' => '&#914;',
+    '&Gamma;' => '&#915;',
+    '&Delta;' => '&#916;',
+    '&Epsilon;' => '&#917;',
+    '&Zeta;' => '&#918;',
+    '&Eta;' => '&#919;',
+    '&Theta;' => '&#920;',
+    '&Iota;' => '&#921;',
+    '&Kappa;' => '&#922;',
+    '&Lambda;' => '&#923;',
+    '&Mu;' => '&#924;',
+    '&Nu;' => '&#925;',
+    '&Xi;' => '&#926;',
+    '&Omicron;' => '&#927;',
+    '&Pi;' => '&#928;',
+    '&Rho;' => '&#929;',
+    '&Sigma;' => '&#931;',
+    '&Tau;' => '&#932;',
+    '&Upsilon;' => '&#933;',
+    '&Phi;' => '&#934;',
+    '&Chi;' => '&#935;',
+    '&Psi;' => '&#936;',
+    '&Omega;' => '&#937;',
+    '&alpha;' => '&#945;',
+    '&beta;' => '&#946;',
+    '&gamma;' => '&#947;',
+    '&delta;' => '&#948;',
+    '&epsilon;' => '&#949;',
+    '&zeta;' => '&#950;',
+    '&eta;' => '&#951;',
+    '&theta;' => '&#952;',
+    '&iota;' => '&#953;',
+    '&kappa;' => '&#954;',
+    '&lambda;' => '&#955;',
+    '&mu;' => '&#956;',
+    '&nu;' => '&#957;',
+    '&xi;' => '&#958;',
+    '&omicron;' => '&#959;',
+    '&pi;' => '&#960;',
+    '&rho;' => '&#961;',
+    '&sigmaf;' => '&#962;',
+    '&sigma;' => '&#963;',
+    '&tau;' => '&#964;',
+    '&upsilon;' => '&#965;',
+    '&phi;' => '&#966;',
+    '&chi;' => '&#967;',
+    '&psi;' => '&#968;',
+    '&omega;' => '&#969;',
+    '&thetasym;' => '&#977;',
+    '&upsih;' => '&#978;',
+    '&piv;' => '&#982;',
+    '&bull;' => '&#8226;',
+    '&hellip;' => '&#8230;',
+    '&prime;' => '&#8242;',
+    '&Prime;' => '&#8243;',
+    '&oline;' => '&#8254;',
+    '&frasl;' => '&#8260;',
+    '&weierp;' => '&#8472;',
+    '&image;' => '&#8465;',
+    '&real;' => '&#8476;',
+    '&trade;' => '&#8482;',
+    '&alefsym;' => '&#8501;',
+    '&larr;' => '&#8592;',
+    '&uarr;' => '&#8593;',
+    '&rarr;' => '&#8594;',
+    '&darr;' => '&#8595;',
+    '&harr;' => '&#8596;',
+    '&crarr;' => '&#8629;',
+    '&lArr;' => '&#8656;',
+    '&uArr;' => '&#8657;',
+    '&rArr;' => '&#8658;',
+    '&dArr;' => '&#8659;',
+    '&hArr;' => '&#8660;',
+    '&forall;' => '&#8704;',
+    '&part;' => '&#8706;',
+    '&exist;' => '&#8707;',
+    '&empty;' => '&#8709;',
+    '&nabla;' => '&#8711;',
+    '&isin;' => '&#8712;',
+    '&notin;' => '&#8713;',
+    '&ni;' => '&#8715;',
+    '&prod;' => '&#8719;',
+    '&sum;' => '&#8721;',
+    '&minus;' => '&#8722;',
+    '&lowast;' => '&#8727;',
+    '&radic;' => '&#8730;',
+    '&prop;' => '&#8733;',
+    '&infin;' => '&#8734;',
+    '&ang;' => '&#8736;',
+    '&and;' => '&#8743;',
+    '&or;' => '&#8744;',
+    '&cap;' => '&#8745;',
+    '&cup;' => '&#8746;',
+    '&int;' => '&#8747;',
+    '&there4;' => '&#8756;',
+    '&sim;' => '&#8764;',
+    '&cong;' => '&#8773;',
+    '&asymp;' => '&#8776;',
+    '&ne;' => '&#8800;',
+    '&equiv;' => '&#8801;',
+    '&le;' => '&#8804;',
+    '&ge;' => '&#8805;',
+    '&sub;' => '&#8834;',
+    '&sup;' => '&#8835;',
+    '&nsub;' => '&#8836;',
+    '&sube;' => '&#8838;',
+    '&supe;' => '&#8839;',
+    '&oplus;' => '&#8853;',
+    '&otimes;' => '&#8855;',
+    '&perp;' => '&#8869;',
+    '&sdot;' => '&#8901;',
+    '&lceil;' => '&#8968;',
+    '&rceil;' => '&#8969;',
+    '&lfloor;' => '&#8970;',
+    '&rfloor;' => '&#8971;',
+    '&lang;' => '&#9001;',
+    '&rang;' => '&#9002;',
+    '&loz;' => '&#9674;',
+    '&spades;' => '&#9824;',
+    '&clubs;' => '&#9827;',
+    '&hearts;' => '&#9829;',
+    '&diams;' => '&#9830;',
+  );
+  return $entities{$ent} if defined $entities{$ent};
+  return '?'; # Say what?
+}
+</perl>
+
+#
+# vim:ts=8:sw=4:
+#
