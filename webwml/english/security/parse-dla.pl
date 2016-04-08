@@ -34,7 +34,7 @@ my %shortmoy = ( en => [
 );
 
 open my $fh, '<', $adv or die "couldn't open advisory file $adv: $!\n";
-my ($dla, $date, $package, @dbids, $moreinfo, $year);
+my ($dla, $date, $package, $version, @dbids, $moreinfo, $year);
 my ($nl, $mi, $headersnearingend);
 foreach my $l (<$fh>) {
   if ($l =~ /Subject.*:.*\[(DLA[- ]\d+-\d+)\]/) {
@@ -59,6 +59,9 @@ foreach my $l (<$fh>) {
   }
   if ($l =~ /Package(?:s)*\s*: (.+)\s*/) {
     $package = $1;
+  }
+  if ($l =~ /Version\s*: (.+)\s*/) {
+    $version = $1;
   }
   if ($l =~ /^(Debian Bug\(?s?\)?)\s*: (.+)/i) {
       for my $id (split (/,? /, $2)) {
@@ -141,6 +144,9 @@ if (($moreinfo =~ /<ul>\n\n<li>/) && ($moreinfo !~ /<\/li>\n\n<\/ul>/)){
 }else{
     $moreinfo .= '</p>';
 }
+if ($version && ($moreinfo !~ /(this|th[eo]se) issues? ha(s|ve) been fixed in/)){
+    $moreinfo .= "\n\n<p>For Debian 6 <q>Squeeze</q>, these issues have been fixed in $package version $version</p>";
+} 
 
 my ($wml, $data, $pagetitle);
 if (defined($package) && $dla =~ /DLA[- ](\d+)-(\d+)/ ) {
