@@ -144,7 +144,7 @@ if (($moreinfo =~ /<ul>\n\n<li>/) && ($moreinfo !~ /<\/li>\n\n<\/ul>/)){
 }else{
     $moreinfo .= '</p>';
 }
-if ($version && ($moreinfo !~ /(this|th[eo]se) issues? ha(s|ve) been fixed in/)){
+if ($version && ($moreinfo !~ /(this|th[eo]se) (issue|problem)s? ha(s|ve) been fixed in/)){
     $moreinfo .= "\n\n<p>For Debian 6 <q>Squeeze</q>, these issues have been fixed in $package version $version</p>";
 } 
 
