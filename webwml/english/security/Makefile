@@ -12,10 +12,13 @@ include $(WMLBASE)/Make.lang
 
 
 index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/dsa-*.wml) \
+  $(wildcard $(CUR_YEAR)/dla-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.data) \
+  $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dla-*.wml) \
+  $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dla-*.data) \
   $(TEMPLDIR)/release_info.wml \
-  $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml $(GETTEXTDEP)
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list_security.wml $(GETTEXTDEP)
 
 pam-auth.$(LANGUAGE).html: pam-auth.wml \
   $(ENGLISHSRCDIR)/security/pam-auth.wml
@@ -52,7 +55,10 @@ $(DSARDF): $(ENGLISHDIR)/security/dsa.rdf.in \
   $(wildcard $(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dsa-*.data) \
-  $(TEMPLDIR)/recent_list.wml $(GETTEXTDEP)
+  $(wildcard $(CUR_YEAR)/dla-*.wml) \
+  $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dla-*.wml) \
+  $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dla-*.data) \
+  $(TEMPLDIR)/recent_list_security.wml $(GETTEXTDEP)
 ifeq "$(LANGUAGE)" "zh"
 	@echo -n "Processing $(<F): "
 	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:dsa.zh-$$1.rdf,g') \
@@ -68,7 +74,10 @@ $(DSALONGRDF): $(ENGLISHDIR)/security/dsa-long.rdf.in \
   $(wildcard $(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dsa-*.data) \
-  $(TEMPLDIR)/recent_list.wml $(GETTEXTDEP)
+  $(wildcard $(CUR_YEAR)/dla-*.wml) \
+  $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dla-*.wml) \
+  $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dla-*.data) \
+  $(TEMPLDIR)/recent_list_security.wml $(GETTEXTDEP)
 ifeq "$(LANGUAGE)" "zh"
 	@echo -n "Processing $(<F): "
 	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:dsa-long.zh-$$1.rdf,g') \
