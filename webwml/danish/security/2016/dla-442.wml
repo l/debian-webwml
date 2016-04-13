@@ -1,0 +1,37 @@
+#use wml::debian::translation-check translation="1.2" mindelta="1"
+<define-tag description>LTS-sikkerhedsopdatering</define-tag>
+<define-tag moreinfo>
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2013-6441">CVE-2013-6441</a>
+
+    <p>Skabelonskriptet lxc-sshd, som anvendes til at mounte sig selv 
+    /sbin/init i containeren ved hjælp af en skrivbar bind-mount.</p>
+
+    <p>Denne opdatering løser ovennævnte problem ved i stedet at anvende en kan 
+    læsbar bind-mount, hvilket forhindrer enhver form for potentiel utilsigtet 
+    beskadigelse.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-1335">CVE-2015-1335</a>
+
+    <p>Ved containerstart opsætter lxc containerens indlende filsystemstræ, ved 
+    at foretage et antal mounts, vejledt af containerens opsætningsfil.</p>
+
+    <p>Containerens opsætningsfil ejes af administratoren eller brugeren på 
+    værten, så der gøres ikke forsøg på at sikre sig mod fejlbehæftede 
+    forekomster.  Men da mountmålet dog er i containeren, er det muligt at 
+    containeradministratoren kan have viderestillet mount'en med symbolske 
+    links.  Det kunne omgå korrekt containerstart (dvs. indespærring af en 
+    rootejet container med den restriktive apparmor-policy, ved at 
+    viderestille den krævede skrivning til /proc/self/attr/current), eller 
+    omgå (den stibaserede) apparmor-policy ved at viderestille eksempelvis 
+    /proc til /mnt i containeren.</p>
+
+    <p>Opdateringen implementerer en safe_mount()-funktion, som forhindrer lxc 
+    i at foretage mounts på symbolske links.</p></li>
+
+</ul>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2016/dla-442.data"
