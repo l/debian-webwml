@@ -1,0 +1,43 @@
+#use wml::debian::translation-check translation="1.2" mindelta="1"
+<define-tag description>LTS-sikkerhedsopdatering</define-tag>
+<define-tag moreinfo>
+<p>Flere fejl blev opdaget i PostgreSQL, et relationsdatabasesystem.  
+8.4-forgreningen understøttes ikke længere af opstrømsudviklerne, men er stadig 
+til stede i Debian squeeze.  Denne nye mindre LTS-version indeholder rettelser, 
+som blev udrullet af opstrøm i version 9.1.20, tilbageført til 8.4.22, som var 
+den sidste officielt understøttede version udgivet af PostgreSQL-udviklere.  
+Dette LTS-arbejde vedrørende squeeze-lts, er et fællesskabsprojekt sponseret af
+credativ GmbH.</p>
+
+<p>Denne udgave er den sidste LTS-opdatering af PostgreSQL 8.4.  Brugerne bør 
+migrere til en nyere PostgreSQL så snart som muligt.</p>
+
+<h3>Migrering til version 8.4.22lts6</h3>
+
+<p>En dump/restore er ikke krævet for dem, der kører 8.4.X.  Men hvis man 
+opgraderer fra en version tidligere end 8.4.22, så de de relevante 
+udgivelsesbemærkninger.</p>
+
+<h3>Rettelser</h3>
+
+<p>Retter problemer med uendelige løkker og bufferoverløb i regulære udtryk (Tom 
+Lane)</p>
+
+    <p>Meget store tegnsætspænd i bracket-udtryk kunne medføre uendelige løkker
+    under nogle omstændigheder, og hukommelsesoverskrivninger i andre tilfælde.
+    (<a href="https://security-tracker.debian.org/tracker/CVE-2016-0773">CVE-2016-0773</a>)</p>
+
+<p>Udfører en omgående nedlukning hvis filen postmaster.pid er fjernet (Tom 
+Lane)</p>
+
+    <p>Postmaster kontrollerer nu hvert minut eller så, om postmaster.pid stadig 
+    findes og stadig indeholder sin egen PID.  Hvis det ikke er tilfældet, 
+    udføres en omgående nedlukning, som om der er modtaget en SIGQUIT.  Den 
+    primære årsag til ændringen er at sikre, at fejlende buildfarm-kørsler 
+    bliver ryddet op, uden manuel indblanding; men det tjener også til at 
+    begrænse bivirkningerne, hvis en DBA med magt fjerner postmaster.pid og 
+    dernæst starter en ny postmaster.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2016/dla-432.data"
