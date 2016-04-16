@@ -49,17 +49,13 @@ $(destmirrorstuff): $(HTMLDIR)/%: %
 cleandest::
 	rm -f $(destmirrorstuff)
 
-.PHONY: text html full nonus $(ENGLISHDIR)/mirror/size.data 
+.PHONY: text html full $(ENGLISHDIR)/mirror/size.data 
 text: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t text
 html: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t html
 full: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t fullmethods
-nonus: mirror_list.pl Mirrors.masterlist
-	@./mirror_list.pl -m Mirrors.masterlist -t nonus
-nonushtml: mirror_list.pl Mirrors.masterlist
-	@./mirror_list.pl -m Mirrors.masterlist -t nonushtml
 
 $(ENGLISHDIR)/mirror/size.data: $(ENGLISHDIR)/mirror/arch_size.pl
 	./arch_size.pl
