@@ -13,7 +13,7 @@ require 5.001;
 my @filter_arches=qw(); # Architectures not to list.
 
 my $officialsiteregex = q{^ftp\d?(?:\.wa)?\...\.debian\.org$};
-my $internalsiteregex = q{^((ftp|security|volatile|backports)-master|ftp)\.debian\.org$};
+my $internalsiteregex = q{^((ftp|security|volatile)-master|ftp)\.debian\.org$};
 
 use Getopt::Long;
 my ($mirror_source, $output_type, $help);
@@ -31,7 +31,7 @@ $mirror_source = 'Mirrors.masterlist' if (! defined $mirror_source);
 my $last_modify = gmtime((stat($mirror_source))[9]);
 
 my (@mirror, %countries, %countries_sorted, %countries_sponsors, %longest);
-my ($count, $volatilecount, $cdimagecount, $backportscount);
+my ($count, $volatilecount, $cdimagecount);
 my (%code_of_country, %plain_name_of_country);
 my %includedsites;
 
@@ -82,7 +82,7 @@ sub process_line {
       $mirror[$count-1]{$field} = $2;
     }
   }
-  elsif ($line=~ /^((Archive|Security|CDimage|Jigdo|Old|Volatile|Backports)-(\w*)):\s*(.*)\s*$/i) {
+  elsif ($line=~ /^((Archive|Security|CDimage|Jigdo|Old|Volatile)-(\w*)):\s*(.*)\s*$/i) {
     my $type = lc $1;
     my $value = $4;
     $mirror[$count-1]{method}{$type} = $value;
@@ -1519,7 +1519,6 @@ $count = @mirror;
 
 foreach my $id (0..$#mirror) {
   $volatilecount++ if (defined $mirror[$id]{method}{'volatile-ftp'} || defined $mirror[$id]{method}{'volatile-http'});
-  $backportscount++ if (defined $mirror[$id]{method}{'backports-ftp'} || defined $mirror[$id]{method}{'backports-http'});
 }
 
 # Create arrays of countries, with their mirrors.
@@ -1613,9 +1612,6 @@ if ($output_type eq 'html') {
   cdimage_mirrors("httpftp");
 } elsif ($output_type eq 'cdimages-rsync') {
   cdimage_mirrors("rsync");
-} elsif ($output_type eq 'backports-wml') {
-  generate_html_matrix("Backports");
-  footer_stuff('wml', $backportscount);
 } elsif ($output_type eq 'volatile-wml') {
   generate_html_matrix("Volatile");
   footer_stuff('wml', $volatilecount);
