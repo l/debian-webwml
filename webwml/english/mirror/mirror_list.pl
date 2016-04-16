@@ -31,7 +31,7 @@ $mirror_source = 'Mirrors.masterlist' if (! defined $mirror_source);
 my $last_modify = gmtime((stat($mirror_source))[9]);
 
 my (@mirror, %countries, %countries_sorted, %countries_sponsors, %longest);
-my ($count, $nonuscount, $volatilecount, $cdimagecount, $backportscount);
+my ($count, $volatilecount, $cdimagecount, $backportscount);
 my (%code_of_country, %plain_name_of_country);
 my %includedsites;
 
@@ -82,7 +82,7 @@ sub process_line {
       $mirror[$count-1]{$field} = $2;
     }
   }
-  elsif ($line=~ /^((Archive|NonUS|Security|CDimage|Jigdo|Old|Volatile|Backports)-(\w*)):\s*(.*)\s*$/i) {
+  elsif ($line=~ /^((Archive|Security|CDimage|Jigdo|Old|Volatile|Backports)-(\w*)):\s*(.*)\s*$/i) {
     my $type = lc $1;
     my $value = $4;
     $mirror[$count-1]{method}{$type} = $value;
@@ -136,14 +136,8 @@ sub aptlines {
       if (defined $mirror[$id]{method}{'archive-ftp'}) {
         print "deb ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'} stable main contrib non-free$archcomm\n";
       }
-      if (defined $mirror[$id]{method}{'nonus-ftp'}) {
-        print "deb ftp://$mirror[$id]{site}$mirror[$id]{method}{'nonus-ftp'} stable/non-US main contrib non-free$archcomm\n";
-      }
       if (defined $mirror[$id]{method}{'archive-http'}) {
         print "deb http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'} stable main contrib non-free$archcomm\n";
-      }
-      if (defined $mirror[$id]{method}{'nonus-http'}) {
-        print "deb http://$mirror[$id]{site}$mirror[$id]{method}{'nonus-http'} stable/non-US main contrib non-free$archcomm\n";
       }
       print "\n";
     }
@@ -778,13 +772,11 @@ EOM
 }
 
 sub header {
-  my $nonus = shift;
-  $nonus = "" unless $nonus;
   print <<END;
 <html>
 
 <head>
-  <title>Debian ${nonus}worldwide mirror sites</title>
+  <title>Debian worldwide mirror sites</title>
 </head>
 
 <body>
@@ -952,7 +944,6 @@ EOF
       foreach my $method ( sort keys %{ $mirror[$id]{method} } ) {
         my $display = $method;
         $display =~ s/archive-/Packages /;
-        $display =~ s/nonus-/Non-US packages /;
         $display =~ s/security-/Security updates /;
         $display =~ s/cdimage-/CD Images /;
         $display =~ s/jigdo-/Jigdo files /;
@@ -1022,172 +1013,6 @@ EOF
     }
   }
   print "</pre>\n" if $html;
-}
-
-sub nonus_intro {
-  my $format = shift;
-  die "must get format for nonus_intro()" unless $format;
-  my $html = 1 if ($format eq 'html');
-  my $text = 1 if ($format eq 'text');
-
-  if ($html) {
-    print "<h1 align=\"center\">Debian non-US packages</h1>\n\n";
-  } else {
-    print <<END;
-
-                           Debian non-US packages
-                           ----------------------
-
-END
-  }
-  print "<p>" if $html;
-  print <<END;
-Prior to the release of Debian 3.1, United States laws placed restrictions on
-the export of certain defense articles, which, unfortunately, included some
-types of cryptographic software. PGP and SSH, among others, fell into this
-category.  It was legal however, to import such software into the US.
-
-END
-  print "<p>" if $html;
-  print <<END;
-To prevent anyone from taking unnecessary legal risks, some Debian
-packages were only available from a site in Leiden, The Netherlands, until 
-the release of Debian 3.1, which incorporates this software thanks to
-changes in United States law.
-
-END
-  print "<p>" if $html;
-  print <<END;
-You should not need the non-US archive unless you are using a version of
-Debian from before Debian 3.1.
-
-END
-  print "<p>" if $html;
-  print <<END;
-Available access methods are:
-END
-  print "<blockquote>\n" if $html;
-  print "<a href=\"ftp://non-us.debian.org/debian-non-US/\">" if $html;
-  print <<END;
-  ftp://non-us.debian.org/debian-non-US/
-END
-  print "</a><br>" if $html;
-  print "<a href=\"http://non-us.debian.org/debian-non-US/\">" if $html;
-  print <<END;
-  http://non-us.debian.org/debian-non-US/
-END
-  print "</a><br>" if $html;
-  print <<END;
-  rsync://non-us.debian.org/debian-non-US/  (limited)
-
-END
-  print "</blockquote>\n" if $html;
-  print "<p>" if $html;
-  print <<END;
-To use these packages with APT, you can add the following lines to your
-sources.list file:
-
-END
-  print "<pre>" if $html;
-  print <<END;
-  deb http://non-us.debian.org/debian-non-US stable/non-US main contrib non-free
-  deb-src http://non-us.debian.org/debian-non-US stable/non-US main contrib non-free
-END
-  print "</pre>" if $html;
-  print <<END;
-
-Read sources.list(5) on your Debian system for more information.
-
-END
-  if ($html) {
-    print "<h2 align=\"center\">Debian non-US mirror sites</h2>\n";
-  } else {
-    print <<END;
-                         Debian non-US mirror sites
-                         --------------------------
-
-END
-  }
-  print "<p>" if $html;
-  print <<END;
-Mirrors of non-us.debian.org are normally located outside of the US.
-If they are located within the US they should be registered with the
-US government.
-
-END
-
-  print "<p>" if $html;
-  print <<END;
-The authoritative copy of the following mirror list can always be found at:
-END
-  print "<a href=\"https://www.debian.org/mirror/list-non-US\">" if $html;
-  print <<END;
-                  https://www.debian.org/mirror/list-non-US
-END
-  print "</a>" if $html;
-
-  print "<p>" if $html;
-  print <<END;
-
-Everything else you want to know about Debian mirrors:
-END
-  print "<a href=\"https://www.debian.org/mirror/\">" if $html;
-  print <<END;
-                        https://www.debian.org/mirror/
-END
-  print "</a>" if $html;
-}
-
-sub nonus_mirrors {
-  my $format = shift;
-  die "must get format for nonus_mirrors()" unless $format;
-  my $html = 1 if ($format eq 'html');
-  my $text = 1 if ($format eq 'text');
-  my $wml = 1 if ($format eq 'wml');
-  print "#use wml::debian::countries\n" if $wml;
-
-  foreach my $country (sort keys %countries) {
-    my %our_mirrors;
-    foreach my $id (@{ $countries{$country} }) {
-      if (defined $mirror[$id]{method}{'nonus-ftp'} ||
-          defined $mirror[$id]{method}{'nonus-http'}) {
-        $our_mirrors{$id} = 1;
-      }
-    }
-    next unless (keys %our_mirrors);
-    print "\n";
-    my $countryplain = $plain_name_of_country{$country};
-    my $countrycode = $code_of_country{$country};
-    if ($html) {
-      print "<h3>$countryplain</h3>";
-    } elsif ($text) {
-      print "$countryplain:";
-    } elsif ($wml) {
-      print "<h3><${countrycode}c></h3>";
-    }
-    print "\n";
-    foreach my $id (@{ $countries_sorted{$country} }) {
-      next unless (exists $our_mirrors{$id});
-      print "<p>" if ($html || $wml);
-      if (defined $mirror[$id]{method}{'nonus-ftp'}) {
-        print "<a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{'nonus-ftp'}\">" if ($html || $wml);
-        print "  ftp://$mirror[$id]{site}$mirror[$id]{method}{'nonus-ftp'}";
-        print "</a><br>\n" if ($html || $wml);
-        if (defined $mirror[$id]{method}{'nonus-http'}) {
-          print "\n    ";
-          print "<a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{'nonus-http'}\">" if ($html || $wml);
-          print "http://$mirror[$id]{site}$mirror[$id]{method}{'nonus-http'}";
-          print "</a>\n" if ($html || $wml);
-        }
-      } elsif (defined $mirror[$id]{method}{'nonus-http'}) {
-        print "  ";
-        print "<a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{'nonus-http'}\">" if ($html || $wml);
-        print "http://$mirror[$id]{site}$mirror[$id]{method}{'nonus-http'}";
-        print "</a>\n" if ($html || $wml);
-      }
-      print "\n\n";
-    }
-  }
 }
 
 sub compact_list($$) {
@@ -1693,7 +1518,6 @@ foreach my $id (reverse @filtered) { # reverse order so indexes are valid
 $count = @mirror;
 
 foreach my $id (0..$#mirror) {
-  $nonuscount++ if (defined $mirror[$id]{method}{'nonus-ftp'} || defined $mirror[$id]{method}{'nonus-http'});
   $volatilecount++ if (defined $mirror[$id]{method}{'volatile-ftp'} || defined $mirror[$id]{method}{'volatile-http'});
   $backportscount++ if (defined $mirror[$id]{method}{'backports-ftp'} || defined $mirror[$id]{method}{'backports-http'});
 }
@@ -1779,23 +1603,8 @@ if ($output_type eq 'html') {
 } elsif ($output_type eq 'wml-full') {
   full_listing('wml');
   footer_stuff('wml', $count);
-} elsif ($output_type eq 'nonus') {
-  nonus_intro('text');
-  nonus_mirrors('text');
-  footer_stuff('text', $nonuscount);
-} elsif ($output_type eq 'nonushtml') {
-  header("non-US ");
-  nonus_intro('html');
-  nonus_mirrors('html');
-  footer_stuff('html', $nonuscount);
-  trailer();
-} elsif ($output_type eq 'compact-nonus') {
-  compact_list('nonus', 'countrysite');
 } elsif ($output_type eq 'compact-old') {
   compact_list('old', 'sitecountry');
-} elsif ($output_type eq 'wml-nonus') {
-  nonus_mirrors('wml');
-  footer_stuff('wml', $nonuscount);
 } elsif ($output_type eq 'officialsponsors') {
   primary_mirror_sponsors();
 } elsif ($output_type eq 'sponsors') {
@@ -1831,9 +1640,6 @@ Usage: $0 [mt|--type type] [-m|--mirror mirror_list_source]
     wml-footer
     apt
     fullmethods
-    nonus
-    nonushtml
-    nonusshort
     officialsponsors
     sponsors
     cdimages-httpftp
