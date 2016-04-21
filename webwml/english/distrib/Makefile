@@ -10,7 +10,6 @@ GETTEXTFILES = distrib.mo
 include $(WMLBASE)/Make.lang
 
 archive.$(LANGUAGE).html: archive.wml $(ENGLISHDIR)/distrib/archive.mirrors \
-  $(ENGLISHDIR)/distrib/archive-nonus.mirrors \
   $(TEMPLDIR)/countries.wml
 packages.$(LANGUAGE).html: packages.wml $(TEMPLDIR)/release_info.wml \
   $(ENGLISHDIR)/distrib/search_packages-form.inc \
@@ -35,7 +34,7 @@ $(ENGLISHSRCDIR)/distrib/pre-installed.inc: pre-installed.data count
 	$(ENGLISHSRCDIR)/distrib/count
 
 clean::
-	rm -f archive.mirrors archive-nonus.mirrors
+	rm -f archive.mirrors
 
 $(ENGLISHSRCDIR)/distrib/archive.mirrors: \
  $(ENGLISHSRCDIR)/mirror/Mirrors.masterlist $(ENGLISHSRCDIR)/mirror/mirror_list.pl
@@ -43,15 +42,6 @@ $(ENGLISHSRCDIR)/distrib/archive.mirrors: \
 	echo "<define-tag archivemirrors>" >> $@
 	echo "<ul>" >> $@
 	../mirror/mirror_list.pl -m ../mirror/Mirrors.masterlist -t compact-old >> $@
-	echo "</ul>" >> $@
-	echo "</define-tag>" >> $@
-
-$(ENGLISHSRCDIR)/distrib/archive-nonus.mirrors: \
- $(ENGLISHSRCDIR)/mirror/Mirrors.masterlist $(ENGLISHSRCDIR)/mirror/mirror_list.pl
-	echo "#use wml::debian::countries" > $@
-	echo "<define-tag archivenonusmirrors>" >> $@
-	echo "<ul>" >> $@
-	../mirror/mirror_list.pl -m ../mirror/Mirrors.masterlist -t compact-nonus >> $@
 	echo "</ul>" >> $@
 	echo "</define-tag>" >> $@
 
