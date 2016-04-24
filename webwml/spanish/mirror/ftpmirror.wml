@@ -1,0 +1,262 @@
+#use wml::debian::template title="Creación de una réplica de los archivos de Debian"
+#use wml::debian::toc
+#use wml::debian::translation-check translation="1.75" maintainer="Diddier Hilarion"
+#include "$(ENGLISHDIR)/releases/sid/archive.data"
+#include "$(ENGLISHDIR)/releases/arches.data"
+
+<toc-display />
+
+<toc-add-entry name="whether">Cuándo montar una réplica</toc-add-entry>
+
+<p>Aunque apreciamos todas las réplicas nuevas, cada futuro mantenedor de una réplica
+debe estar seguro de poder responder las siguientes preguntas antes de montar
+una réplica:</p>
+
+<ul>
+  <li>¿Es necesaria la réplica en mi región? Quizá ya haya algunas
+  réplicas en una ubicación geográfica cercana.</li>
+  <li>¿Tengo los recursos necesarios para montar la réplica? Las réplicas requieren de bastante
+      <a href="size">espacio en disco</a> y ancho de banda, se debe ser capaz de asumir estos costos.</li>
+      <li>¿Es una réplica lo que necesito? algunas veces la gente monta una réplica cuando
+      lo que en realidad desean montar es un proxy caché como <a href="https://packages.debian.org/apt-cacher-ng">apt-cacher-ng</a>.</li>
+</ul>
+
+<toc-add-entry name="what">A qué se le debe hacer una réplica</toc-add-entry>
+
+<p>La <a href="./">página principal de réplicas</a> contiene la lista de archivos disponibles para
+replicar.</p>
+
+<ul>
+  <li>
+    El archivo debian/ es usado para instalar Debian a través
+    de la red, crear CDs (usando jigdo), y actualizar sistemas ya
+    instalados
+  </li>
+
+  <li>
+    debian-cd/ es un archivo que no es igual en todas las réplicas. En
+    algunas réplicas contiene plantillas de jigdo para crear imágenes de CD
+    (usadas en combinación con los ficheros de debian/), en otras contiene imágenes
+    de CD listas para usar, y en algunas réplicas contiene ambas.
+<br />
+Vea <a href="$(HOME)/CD/mirroring/">réplicas de imágenes de CD</a>
+  para más información.</li>
+
+<li>
+  debian-archive/ contiene el verdadero <em>archivo</em>, en el se encuentran las imágenes antiguas
+  y obsoletas de Debian. Por lo general este será de interés para un pequeño
+grupo de usuarios</li>
+
+</ul>
+
+<p>Vea la página <a href="size">tamaño de réplica</a> 
+para obtener información más precisa acerca del tamaño de las réplicas.</p>
+
+<p>El archivo debian-security/ contiene las actualizaciones de seguridad publicadas por
+el equipo de seguridad de Debian. Suena interesante replicar este archivo, pero dado que
+las actualizaciones de seguridad son efímeras, sería necesario replicar con mucha frecuencia
+para tenerlo actualizado (o usar <a href="push_mirroring">replicación pasiva</a>) por lo
+cual no se recomienda. Por el contrario Debian hace el mayor esfuerzo por mantener la alta
+disponibilidad de security.debian.org</p>
+
+<p>Nota: el archivo debian-non-US/ está obsoleto desde la versión 3.1
+(<em>sarge</em>) versión de junio de 2005.</p>
+
+<toc-add-entry name="wherefrom">Desde dónde hacer las réplicas</toc-add-entry>
+
+<p>Muchas personas suelen creer que <code>ftp.debian.org</code> es la ubicación
+principal de los paquetes de Debian y que por lo tanto será mejor hacer la réplica
+de ese sitio. Esto <strong>no es cierto</strong>.</p>
+
+<p><code>ftp.debian.org</code> es apenas uno de los muchos servidores que
+son actualizados desde un servidor interno de Debian. Esa dirección apunta a un sólo
+servidor, y existe por cuestión de compatibilidad con versiones anteriores.</p>
+
+<p>Las <a href="official">réplicas oficiales</a> son un buen sitio de donde
+replicar. Cualquiera de los servidores en <a href="list-full">la lista
+completa de réplicas</a> que tenga las etiquetas <q><kbd>Type: Push-Primary</kbd></q> o
+<q><kbd>Type: Push-Secondary</kbd></q> deben ser una buena fuente para replicar.
+Por favor use uno que esté cerca físicamente y que tenga una buena tasa de transferencia.</p>
+
+<p>No hay diferencia real entre los distintos servidores réplica tipo <em>Push-Primary</em>
+en cuanto a su uso para replicar. Por el contrario, si muchas personas usan
+ftp.debian.org para replicar (y desafortunadamente, esto sucede), esto 
+desperdicia innecesariamente el ancho de banda donado.</p>
+
+<p>Los administradores de las réplicas en los Estados Unidos deben replicar de
+ftp.us.debian.org (la dirección oficial de réplicas para los Estados Unidos,
+la cual es una réplica tipo Push-Primary). Pero, dado que esa dirección es un
+alias para un grupo de servidores, es mejor determinar cual de ellos es el mejor
+y replicar de este.
+<br />
+<small>La ventaja de hacer esto es que evita el riesgo de error
+cuando cuando se ejecuta rsync en dos pasos (los diferentes pasos pueden ejecutarse
+en servidores diferentes, esto puede suceder en un  periodo de tiempo en el cual estos
+tienen ficheros diferentes, causando una condición de carrera). La desventaja de esto es
+que concentra la carga en un solo servidor, lo cual puede variar el rendimiento,
+aunque esto es inherente a nuestra red de réplicas en realidad.</small></p>
+
+<toc-add-entry name="how">Cómo replicar</toc-add-entry>
+
+<p>El método recomendado para replicar es con el conjunto de scripts llamado ftpsync,
+el cual está disponible en dos formas:</p>
+<ul>
+    <li>como fichero comprimido en:  <url "https://ftp-master.debian.org/ftpsync.tar.gz"></li>
+    <li>como repositorio de git: <kbd>git clone https://ftp-master.debian.org/git/archvsync.git</kbd></li>
+</ul>
+
+
+<p>El protocolo para replicar y el cual recomendamos ampliamente es
+<a href="https://packages.debian.org/stable/net/rsync">rsync</a>.</p>
+
+<p>Por favor no haga réplicas de Debian usando <kbd>wget</kbd> y otras herramientas
+basadas en FTP. Estas pueden parecer tener un buen funcionamiento, pero tienen bastantes
+problemas (no pueden detectar enlaces no simbólicos, es más dificil hacer réplicas parciales,
+etc).</p>
+
+<h3>Configuración de rsync</h3>
+
+<p>Recomendamos el uso de <a href="https://ftp-master.debian.org/ftpsync.tar.gz">el conjunto de scripts de ftpsync</a>.
+para replicar el archivo. Siga las instrucciones en el fichero README para replicar.</p>
+
+<p>Si usted usa sus propios scripts, la funcionalidad mínima que deben
+tener es la siguiente:</p>
+
+<ul>
+   <li><p>TIENEN que realizar una sincronización en dos pasos</p>
+   <p>La réplica del archivo debe hacerse en dos pasos. La primera ejecución de rsync
+   debe ignorar los ficheros de índice.  Las opciones de exclusión para la primera 
+   ejecución de rsync son:</p>
+   <kbd>--exclude Packages* --exclude Sources* --exclude Release* --exclude InRelease --exclude i18n/* --exclude ls-lR*</kbd>
+   <p>El primer paso no debe eliminar ningún fichero.</p>
+   <p>El segundo paso debe transferir los ficheros excluidos anteriormente y
+   eliminar los ficheros que ya no pertenecen a la réplica.</p>
+
+   <p>Explicación: si la réplica es hecha en un solo paso, va a haber periodos
+   de tiempo en los cuales el índice va a referenciar ficheros que aún
+   no han sido replicados.</p>
+   </li>
+
+   <li><p>NO SE DEBEN descartar replicaciones pasivas mientras se sincroniza (cuando se usa <a href="push_mirroring">replicación pasiva</a>).</p>
+   <p>Si se recibe una replicación pasiva durante la sincronización de la réplica, esta NO
+   DEBE ser ignorada.  Toda la sincronización debe ser reiniciada.</p>
+
+   <p>Explicación: muchas implementaciones de los scripts de replicación dejarán la
+   réplica en un estado inconsistente en el caso de recibir una segunda
+   replicación pasiva mientras la primera sincronización aún se está ejecutando. Es probable que en
+   un futuro cercano la frecuencia de las replicaciones pasivas aumente.</p>
+   </li>
+
+  <li>Ejecute rsync usando al menos estas opciones: <kbd>--recursive --times
+      --links --hard-links --delete</kbd>.</li>
+
+  <li>Si posee suficiente espacio en disco, también debería usar la opción <kbd>--delete-after</kbd>
+       con el fin de hacer la sincronización en el menor tiempo posible.</li>
+
+  <li>Cuando rsync haya finalizado de sincronizar, cree un fichero con una marca de tiempo en el 
+      subdirectorio <code>project/trace/</code> de la réplica, nómbrelo con el 
+      nombre de su servidor. Esto es equivalente a ejecutar
+      <kbd>date -u &gt; .../debian/project/trace/<var>nombre.del.servidor</var></kbd>
+      haga lo anteriormente mencionado cuando la ejecución de rsync diaria haya finalizado.</li>
+
+  <li>Sugerimos no excluir los directorios <tt>project/</tt>, <tt>doc/</tt>
+      y otros subdirectorios. Estos por lo general no ocupan mucho espacio en disco y son
+      útiles para los usuarios.
+      En especial el directorio <tt>project/trace</tt> es de mucha ayuda cuando hay problemas en la réplica.</li>
+
+</ul>
+
+<toc-add-entry name="partial">Replicación parcial</toc-add-entry>
+
+<p>Considerando <a href="size">el gran tamaño del archivo de Debian</a>,
+algunas personas prefieren replicar sólo algunas partes de él si las necesitan. Si desea
+excluir algo, debería excluir la parte de las arquitecturas adicionales.</p>
+
+<p>Con el conjunto de scripts recomendados <a href="https://ftp-master.debian.org/ftpsync.tar.gz">ftpsync</a>, esto puede ser
+realizado editando la variable ARCH_EXCLUDE.</p>
+
+<li>Sugerimos no excluir los directorios <tt>project/</tt>, <tt>doc/</tt>
+y otros subdirectorios. Estos por lo general no ocupan mucho espacio en disco y son
+útiles para los usuarios.
+En especial el directorio <tt>project/trace</tt> es de mucha ayuda cuando hay problemas en la réplica.</li>
+
+<p>Aunque es posible usar otros scripts para replicar de esta forma, estos no
+son necesarios y no se recomienda su uso en réplicas oficiales.
+
+<toc-add-entry name="when">En qué momento hacer réplicas</toc-add-entry>
+
+<p>El archivo principal se actualiza cuatro veces en el día.
+Las réplicas usualmente empiezan a actualizarse cerca de las 3:00, 9:00, 15:00 y 21:00 (todas las horas en UTC),
+pero estas horas nunca son fijas y no se deben fijar sus horas de sincronización basándose en ellas.</p>
+
+<p>Su réplica debe actualizarse unas pocas horas después de que alguna de las réplicas del archivo principal
+se actualicen.
+Se debe verificar si el sitio que se está replicando tiene
+un fichero con una marca de tiempo en el subdirectorio <kbd>project/trace/</kbd>. El fichero con la marca de tiempo
+debe ser nombrado con el nombre de ese servidor, y debe contener la fecha y hora de finalización
+de la actualización de su réplica. Añada un par de horas a esa fecha y hora (para estar más seguros)
+y haga la réplica.</p>
+
+<p><b>Es esencial que su réplica se mantenga sincronizada con el archivo principal</b>. Un 
+mínimo de 4 actualizaciones en un periodo de 24 horas garantizarán que su réplica refleja el estado actual 
+de el archivo. Es necesario aclarar que las réplicas que no están actualizadas con respecto al 
+archivo principal no serán listadas en la lista oficial de réplicas.</p>
+
+<p>La forma más sencilla de que la réplica se actualice todos los días es
+usando cron. Ejecute <kbd>man crontab</kbd> para más detalles.</p>
+
+<p>Tenga en cuenta que si su réplica usa replicación pasiva, entonces no será
+necesario preocuparse por lo descrito en esta sección.</p>
+
+<h3>Replicación pasiva</h3>
+
+<p><q>Replicación pasiva</q> es una forma de replicar que hemos desarrollado
+para reducir el tiempo que los cambios al archivo se ven reflejados en las réplicas.
+Una réplica maestra usa una notificación por SSH para informar a una réplica cliente
+que se actualice. La <q>notificación</q> se hace mediante un mecanismo seguro que no
+tiene información variable, por lo cual el resto del proceso de replicación es igual
+al hecho mediante cron.</p>
+
+<p>La replicación pasiva es necesaria para mantener grupos de servidores sincronizados
+(como los servidores usados con balanceo de carga mediante DNS como <tt>ftp.us.debian.org</tt>),
+es usada para los servidores de primer y segundo nivel. Dado que este método
+requiere más trabajo para configurar los servidores, su uso no es común en réplicas
+<q>privadas</q>.</p>
+
+<p>Para una descripción más detallada acerca del funcionamiento de la replicación pasiva, del por qué
+es segura y cómo montar una réplica pasiva, por favor vea <a href="push_mirroring">la explicación completa
+</a>.</p>
+
+<toc-add-entry name="settings">Ajustes adicionales recomendados</toc-add-entry>
+
+<p>Si la réplica va a estar disponible a través de HTTP, por favor
+añada las siguientes líneas a su configuración de Apache (asumiendo, que usará
+Apache), en la directiva
+<code>&lt;Directory <var>/ruta/a/su/réplica</var>&gt;</code>,
+donde <var>/ruta/a/su/réplica</var> debe ser la ruta real
+del directorio donde se almacena la réplica:</p>
+
+<pre>
+   Options +Indexes +SymlinksIfOwnerMatch
+   IndexOptions NameWidth=* +SuppressDescription
+</pre>
+
+<p>Esto activa la generación de índices y asegura que se pueda acceder a contenido a través de
+enlaces simbólicos. Los nombres de los ficheros en los directorios no serán acortados y
+las (casi inexistentes) descripciones no se mostrarán.</p>
+
+<p>En Apache 1.3.x, la siguiente opción puede ser añadida:</p>
+
+<pre>
+   DirectoryIndex .
+</pre>
+
+<p>No añada esta opción en Apache 2.x.</p>
+
+<toc-add-entry name="submit">Cómo añadir una réplica a la lista de réplicas</toc-add-entry>
+
+<p>Una vez la réplica se ha montado, debe ser <a href="submit">registrada</a>
+con el fin de que sea incluida en la <a href="list">lista de réplicas</a>.
+Los registros pueden realizarse usando este simple <a href="submit">formulario</a>.</p>
+
+<p>Cualquier problema o pregunta puede ser comunicado a <email mirrors@debian.org>.</p>
