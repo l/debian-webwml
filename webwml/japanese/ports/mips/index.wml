@@ -1,7 +1,7 @@
 #use wml::debian::template title="MIPS 移植版"
 #include "$(ENGLISHDIR)/releases/info"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.106"
+#use wml::debian::translation-check translation="1.108"
 
 <toc-display/>
 
@@ -14,14 +14,18 @@ CPU は両方のエンディアンで動作させられますが、
 ソフトウェアの中では普通は変更できませんので、
 両方のアーキテクチャがある必要があります。SGI のマシンは
 <a href="http://foldoc.org/big-endian">ビッグエンディアン</a>
-モード (debian-mips)で動作しますが、Cobalt Qube/RaQ は
+モード (debian-mips)で動作しますが、Loongson 3 マシンは
 <a href="http://foldoc.org/little-endian">リトルエンディアン</a>
 モード (debian-mipsel) で動作します。BCM91250A 評価ボード (SWARM とも呼ばれる)
-はボード上のスイッチで切り替えることで、どちらのモードでも動作します。</p>
+はボード上のスイッチで切り替えることで、どちらのモードでも動作します。Cavium Octeon
+ベースのマシンの一部にはブートローダで各モードを切り替えられるものがあります。</p>
+
+<p>MIPS マシンはほとんどが64ビットCPUを備えているため <em>debian-mips64el</em>
+ 移植版が現在開発中で、Debian GNU/Linux 9 ではリリースされるかもしれません。</p>
 
 <toc-add-entry name="status">現状</toc-add-entry>
 
-<p>Debian GNU/Linux <current_release_squeeze> では以下の機種をサポートしています:</p>
+<p>Debian GNU/Linux <current_release_jessie> では以下の機種をサポートしています:</p>
 <ul>
 
 <li>R4x00 または R5000 CPU 搭載の SGI Indy や、R4400 CPU 搭載の Indigo2 (IP22)</li>
@@ -30,16 +34,18 @@ CPU は両方のエンディアンで動作させられますが、
 
 <li>Broadcom BCM91250A (SWARM) 評価ボード (ビッグ / リトルエンディアン)</li>
 
-<li>Cobalt RaQ、Qube2、および RaQ2</li>
-
 <li>MIPS Malta ボード (ビッグ / リトルエンディアン、32/64 ビット)</li>
 
-<li>Yeelong ラップトップを含む Loongson 2e および 2f マシン (リトルエンディアン)。</li>
+<li>Yeelong ラップトップを含む Loongson 2e および 2f マシン (リトルエンディアン)</li>
 
-<li>Cavium Octeon (ビッグエンディアン).</li>
+<li>Loongson 3 マシン (リトルエンディアン)</li>
+
+<li>Cavium Octeon (ビッグエンディアン)</li>
 
 </ul>
 
+<p>上記のマシンに加え、Debian 以外のカーネルを利用しているさらに多数のマシンで Debian
+を使うことが可能です。これには例えば MIPS Creator Ci20 開発用ボードがあります。</p>
 
 <toc-add-entry name="info">MIPS についての一般情報</toc-add-entry>
 
@@ -52,16 +58,12 @@ CPU は両方のエンディアンで動作させられますが、
 <toc-add-entry name="availablehw">Debian 開発者が利用可能なハードウェア</toc-add-entry>
 
 <p>
-
-gabrielli.debian.org (mips) を移植作業のため
-Debian 開発者が利用することができます。これについてのさらなる情報は<a
+etler.debian.org (mipsel/mips64el) と minkus.debian.org (mips) を MIPS
+移植作業のため Debian 開発者が利用することができます。各マシンには開発用の
+chroot 環境があり、<em>schroot</em> でアクセスできるようになっています。
+これについてのさらなる情報は<a
  href="https://db.debian.org/machines.cgi">マシンデータベース</a>
-を参照してください。一般的に、3 種類の chroot 環境: stable,
-testing および unstable を利用することができます。そのアクセスには
-<em>dchroot</em> プログラムを使用します。問い合わせ先は
-<email "debian-admin@lists.debian.org"> です。他のマシンへのアカウントについては、
-LIU Qi <email liuqi82@gmail.com> (Lemote マシン) に連絡を取ってください。</p>
-
+を参照してください。</p>
 
 <toc-add-entry name="credits">クレジット</toc-add-entry>
 
@@ -69,7 +71,9 @@ LIU Qi <email liuqi82@gmail.com> (Lemote マシン) に連絡を取ってくだ�
 
 #include "$(ENGLISHDIR)/ports/mips/people.inc"
 
-<toc-add-entry name="contact">連絡先情報</toc-add-entry>
+<toc-add-entry name="contacts">連絡先</toc-add-entry>
+
+<h3>メーリングリスト</h3>
 
 <p>Linux/MIPS と Debian/MIPS について議論するメーリングリストが 2
 つあります</p>
@@ -91,23 +95,33 @@ Debian/MIPS について議論します。<br />
 
 </ul>
 
+<h3>IRC</h3>
+
+<p>IRC を使って <em>irc.debian.org</em> の <em>#debian-mips</em>
+チャネルで私たちを見つけられます。</p>
+
 <toc-add-entry name="links">リンク</toc-add-entry>
 
 <dl>
   <dt>Linux/MIPS カーネル開発 &mdash; 多くの MIPS 関連情報</dt>
-    <dd><a href="http://www.linux-mips.org/">linux-mips.org</a></dd>
+    <dd><a href="https://www.linux-mips.org/">linux-mips.org</a></dd>
   <dt>CPU ベンダ</dt>
-    <dd><a href="http://www.mips.com/">www.mips.com</a></dd>
+    <dd><a href="https://imgtec.com/mips">https://imgtec.com/mips</a></dd>
   <dt>SGI ハードウェアについての情報</dt>
     <dd><a href="http://www.sgistuff.net/hardware/">http://www.sgistuff.net/hardware/</a></dd>
-  <dt>Cobalt 上の Debian</dt>
-    <dd><a href="http://cyrius.com/debian/cobalt/">http://cyrius.com/debian/cobalt</a></dd>
   <dt>SGI Indy 上の Debian</dt>
     <dd><a href="http://www.pvv.org/~pladsen/Indy/HOWTO.html">http://www.pvv.org/~pladsen/Indy/HOWTO.html</a></dd>
   <dt>SGI Indy 上の Debian</dt>
     <dd><a href="http://www.zorg.org/linux/indy.php">http://www.zorg.org/linux/indy.php</a></dd>
   <dt>SGI O2 上の Debian</dt>
+    <dd><a href="https://cyrius.com/debian/o2/">https://cyrius.com/debian/o2</a></dd>
 </dl>
+
+<toc-add-entry name="thanks">謝辞</toc-add-entry>
+
+<p><em>mips</em> 及び <em>mipsel</em>
+アーキテクチャ向けの移植用機やビルド用サーバはほとんどが <a
+href="https://imgtec.com">Imagination Technologies</a> から提供されています。</p>
 
 <toc-add-entry name="dedication">献辞</toc-add-entry>
 
