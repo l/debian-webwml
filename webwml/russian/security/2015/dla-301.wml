@@ -1,0 +1,31 @@
+#use wml::debian::translation-check translation="1.1" maintainer="Lev Lamberov"
+<define-tag description>обновление безопасности LTS</define-tag>
+<define-tag moreinfo>
+<p>Возможный отказ в обслуживании в виде logout() из-за заполнения хранилища сессии.</p>
+
+<p>Ранее сессия создавалась при анонимном обращении к
+виду django.contrib.auth.views.logout (учитывая, что этот вид не декорировался
+django.contrib.auth.decorators.login_required как на странице администратора). Это
+позволяло злоумышленнику легко создавать много новых записей сессии путём
+отправки повторных запросов, что потенциально заполняет хранилище сессии или
+приводит к удалению сессионных записей других пользователей.</p>
+
+<p>django.contrib.sessions.middleware.SessionMiddleware был изменён
+так, чтобы пустые сессионные записи более не создавались.</p>
+
+<p>Данная часть исправления получила идентификатор <a href="https://security-tracker.debian.org/tracker/CVE-2015-5963">CVE-2015-5963</a>.</p>
+
+<p>Кроме того, методы contrib.sessions.backends.base.SessionBase.flush() и
+cache_db.SessionStore.flush() были изменены так, чтобы создание новой пустой сессии
+не происходило. Сопровождающим сторонних сессионных движков следует
+проверить наличие такой же уязвимости в их движке, а при её наличии исправить
+проблему.</p>
+
+<p>Данная часть исправления получила идентификатор <a href="https://security-tracker.debian.org/tracker/CVE-2015-5964">CVE-2015-5964</a>.</p>
+
+<p>Рекомендуется обновить пакеты python-django.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2015/dla-301.data"
+# $Id$
