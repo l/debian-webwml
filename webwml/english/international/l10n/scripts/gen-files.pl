@@ -117,6 +117,8 @@ sub transform_translator {
         $name =~ s/\s*<.*//;
         $name =~ s/&(?!#)/&amp;/g;
         $name =~ s/=\?.*?\?=//g;
+        # BREAK PERMITTED HERE (U+0082) is not allowed in HTML 4.01.
+        $name =~ s/(?:&#0*130;|&#x0*82;|\N{U+0082})//ig;
         $name = 'DDTP' if $name eq 'Debian Description Translation Project';
         $name = '' if $name =~ m/\@/;
         return $name;
