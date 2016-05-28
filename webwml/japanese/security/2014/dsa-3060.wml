@@ -1,0 +1,100 @@
+#use wml::debian::translation-check translation="1.2"
+<define-tag description>セキュリティ更新</define-tag>
+<define-tag moreinfo>
+<p>Linux カーネルに複数の欠陥が発見されました。
+サービス拒否につながる可能性があります:</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3610">CVE-2014-3610</a>
+
+    <p>Google の Lars Bull さんと Nadav Amit さんが、KVM が特定の MSR
+    レジスタへの非カノニカルの書き込みを処理する方法に欠陥を報告しています。
+    権限のあるゲストユーザがこの欠陥を悪用してホストのサービス拒否
+    (カーネルパニック) を引き起こすことが可能です。</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3611">CVE-2014-3611</a>
+
+    <p>Google の Lars Bull さんが、KVM の PIT
+    エミュレーションコードに競合状態を報告しています。PIT の I/O
+    ポートにアクセスできるローカルのゲストユーザがこの欠陥を悪用し、
+    ホストのサービス拒否 (クラッシュ) を引き起こすことが可能です。</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3645">CVE-2014-3645</a>
+/ <a href="https://security-tracker.debian.org/tracker/CVE-2014-3646">CVE-2014-3646</a>
+
+    <p>インテルセキュリティの高度脅威研究チーム (Intel <abbr
+    title="Advanced Threat Research">ATR</abbr> が、KVM サブシステムが
+    <abbr title="Invalidate Translations Derived from EPT">invept</abbr>
+    (EPT派生の翻訳を無効化) 及び <abbr
+    title="Invalidate Translations Based on VPID">invvpid</abbr>
+    (VPID ベースの翻訳を無効化) 命令による VM
+    の終了処理を行儀よく行っていないことを発見しました。
+    インテルプロセッサを搭載し invept/invppid による
+    VM の終了をサポートしているホストで、
+    権限のないゲストユーザがこの命令を悪用して
+    ゲストをクラッシュさせることが可能です。</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3647">CVE-2014-3647</a>
+
+    <p>Nadav Amit さんが、<abbr title="Relative Instruction Pointer">RIP</abbr>
+    (相対命令ポインタ) を変更する命令をエミュレートしている場合に KVM
+    が非カノニカルアドレスの処理を誤っていることを報告しています。潜在的に誤った
+    VM エントリを引き起こします。I/O や MMIO
+    にアクセスできるゲストユーザがこの欠陥を悪用し、ゲストのサービス拒否
+    (システムのクラッシュ) を引き起こすことが可能です。</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3673">CVE-2014-3673</a>
+
+    <p>Red Hat の Liu Wei さんが net/core/skbuff.c に欠陥を発見しています。
+    悪意のある ASCONF chunk を受け取った場合カーネルパニックにつながります
+    リモートの攻撃者がこの欠陥を悪用してシステムをクラッシュさせることが可能です。</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3687">CVE-2014-3687</a>
+
+    <p><abbr title="Stream Control Transmission Protocol">SCTP</abbr>
+    (ストリーム制御転送プロトコル) スタックに欠陥が発見されました。
+    複製 ASCONF chunk を受け取った場合カーネルパニックにつながります。
+    リモートの攻撃者がこの欠陥を悪用してシステムをクラッシュさせることが可能です。</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3688">CVE-2014-3688</a>
+
+    <p>SCTP スタックが、過剰なキューによるメモリ負荷問題を
+    リモートから起こしやすいことが発見されました。
+    リモートの攻撃者がこの欠陥を悪用し、
+    システムのサービス拒否の状況を引き起こすことが可能です。</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3690">CVE-2014-3690</a>
+
+    <p>Andy Lutomirski さんが KVM での誤ったレジスタ処理を発見しました。
+    サービス拒否につながる可能性があります。</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-7207">CVE-2014-7207</a>
+
+    <p>複数の Debian 開発者が IPv6
+    ネットワークサブシステムの問題を報告しています。tun や
+    macvtap デバイス、あるいはこういったデバイスと接続した
+    仮想マシンにアクセスできるローカルユーザが、サービス拒否
+    (システムのクラッシュ) を引き起こすことが可能です。</p></li>
+
+</ul>
+
+<p>この更新では macvtap、tun、virtio_net ドライバでの
+UFO (UDP Fragmentation Offload) を無効にする、<a
+href="https://security-tracker.debian.org/tracker/CVE-2014-7207">CVE-2014-7207</a>
+関連のバグ修正を収録しています。これにより、VM
+に virtio ネットワーク機器が割り当てられている場合、
+以前のカーネルバージョンで動作しているホストから\
+このカーネルバージョンで動作しているホストへの、VM
+動作中の移行は失敗します。
+こういった VM を移行するためにはまずシャットダウンしておかないといけません。</p>
+
+<p>安定版 (stable) ディストリビューション (wheezy)
+では、この問題はバージョン 3.2.63-2+deb7u1 で修正されています。</p>
+
+<p>直ちに linux パッケージをアップグレードすることを勧めます。</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2014/dsa-3060.data"
+
