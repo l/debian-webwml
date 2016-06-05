@@ -188,6 +188,8 @@
 <code>squeeze</code>, <code>squeeze-ignore</code>, 
 <code>wheezy</code>, <code>wheezy-ignore</code>, 
 <code>jessie</code>, <code>jessie-ignore</code>, 
+<code>stretch</code>, <code>stretch-ignore</code>, 
+<code>buster</code>, <code>buster-ignore</code>, 
 <code>sid</code>, 
 <code>experimental</code></define-tag>
 
