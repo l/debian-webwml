@@ -174,6 +174,30 @@
 <bts_severities>, <bts_severities_obsolete></define-tag>
 
 # bug tags. See debbugs/etc/config
+<define-tag bts_release_tags>
+<code>potato</code>,
+<code>woody</code>, 
+<code>sarge</code>,
+<code>etch</code>,
+<code>lenny</code>,
+<code>squeeze</code>,
+<code>wheezy</code>,
+<code>jessie</code>,
+<code>stretch</code>,
+<code>buster</code>,
+<code>sid</code>, 
+<code>experimental</code></define-tag>
+
+<define-tag bts_release_ignore_tags>
+<code>sarge-ignore</code>, 
+<code>etch-ignore</code>, 
+<code>lenny-ignore</code>, 
+<code>squeeze-ignore</code>, 
+<code>wheezy-ignore</code>, 
+<code>jessie-ignore</code>, 
+<code>stretch-ignore</code>, 
+<code>buster-ignore</code></define-tag>
+
 <define-tag bts_tags>
 <code>patch</code>, <code>wontfix</code>, <code>moreinfo</code>, 
 <code>unreproducible</code>, <code>help</code>, <code>newcomer</code>, <code>pending</code>, 
@@ -181,15 +205,6 @@
 <code>fixed</code>, <code>fixed-upstream</code>, 
 <code>fixed-in-experimental</code>, <code>d-i</code>, <code>ipv6</code>, 
 <code>lfs</code>, <code>l10n</code>, 
-<code>potato</code>, <code>woody</code>, 
-<code>sarge</code>, <code>sarge-ignore</code>, 
-<code>etch</code>, <code>etch-ignore</code>, 
-<code>lenny</code>, <code>lenny-ignore</code>, 
-<code>squeeze</code>, <code>squeeze-ignore</code>, 
-<code>wheezy</code>, <code>wheezy-ignore</code>, 
-<code>jessie</code>, <code>jessie-ignore</code>, 
-<code>stretch</code>, <code>stretch-ignore</code>, 
-<code>buster</code>, <code>buster-ignore</code>, 
-<code>sid</code>, 
-<code>experimental</code></define-tag>
+<bts_release_tags>
+<bts_release_ignore_tags></define-tag>
 
