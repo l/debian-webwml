@@ -205,6 +205,6 @@
 <code>fixed</code>, <code>fixed-upstream</code>, 
 <code>fixed-in-experimental</code>, <code>d-i</code>, <code>ipv6</code>, 
 <code>lfs</code>, <code>l10n</code>, 
-<bts_release_tags>
+<bts_release_tags>,
 <bts_release_ignore_tags></define-tag>
 
