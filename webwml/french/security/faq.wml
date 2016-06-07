@@ -1,5 +1,5 @@
 #use wml::debian::template title="FAQ de l'équipe Debian sur la sécurité"
-#use wml::debian::translation-check translation="1.88" maintainer="Jean-Paul Guillonneau"
+#use wml::debian::translation-check translation="1.92" maintainer="Jean-Paul Guillonneau"
 #include "$(ENGLISHDIR)/security/faq.inc"
 
 # Translators:
@@ -9,18 +9,42 @@
 # Simon Paillard, 2005-2009
 # Jean-Édouard Babin, 2008
 # David Prévot, 2011-2015.
-
-<p>Ces derniers jours, nous avons reçu un peu trop souvent des questions
-identiques, et avons donc décidé d'écrire cette page pour y répondre
-globalement.</p>
+# Jean-Paul Guillonneau, 2016.
 
 <maketoc>
+
+<toc-add-entry name=buthow>Une annonce de sécurité (DSA) est reçue émanant de
+debian-security-announce, comment mettre à niveau le paquet vulnérable ?
+</toc-add-entry>
+
+<p>Réponse : Comme il est indiqué dans le courriel de DSA, vous devez mettre à
+  niveau les paquets touchés par cette vulnérabilité annoncée. Cela peut être
+  fait simplement en mettant à niveau (après une mise à jour de la liste des
+  paquets disponibles avec <tt>apt-get update</tt>) tous les paquets composant
+  votre système avec <tt>apt-get upgrade</tt>, ou en mettant à niveau un paquet
+  particulier avec <tt>apt-get install <i>paquet</i></tt>.</p>
+
+<p>Le courriel d’annonce mentionne le paquet source dans lequel la
+  vulnérabilité était présente. Par conséquent, tous les paquets binaires issus
+  de ce paquet source doivent être mis à niveau. Pour connaître les paquets
+  binaires à mettre à niveau, consultez
+  <tt>https://packages.debian.org/search?lang=fr&keywords=src:<i>nom_paquet_source</i></tt>
+  et cliquez sur <i>[recherche ... noms de paquets]</i> pour la distribution à
+  mettre à jour.</p>
+
+<p>Il peut être nécessaire de redémarrer un service ou un processus en cours.
+  La commande <a
+  href="https://manpages.debian.org/checkrestart"><tt>checkrestart</tt></a>
+  fournie par le paquet <a
+  href="https://packages.debian.org/debian-goodies">debian-goodies</a> peut aider
+  à déterminer lesquels.</p>
+
 
 <toc-add-entry name=signature>
 La signature des avis de sécurité ne semble pas authentique !
 </toc-add-entry>
 <p>
-Réponse : C'est sans doute dû à un problème de votre côté. La liste
+R. : C'est sans doute dû à un problème de votre côté. La liste
    <a href="https://lists.debian.org/debian-security-announce/">\
    debian-security-announce</a> a un filtre qui n'autorise que les messages
    avec une signature valable d'un membre de l'équipe chargée de la
@@ -91,22 +115,6 @@ R. : Une faille de sécurité dans la distribution stable justifie un
    une faille de sécurité. Ces mises à jour n'ont pas vocation à intégrer
    d'autres modifications dans la version stable en outrepassant la procédure
    de mise à jour de publication.</p>
-
-<toc-add-entry name=localremote>Que signifie <q>local (remote)</q> ?
-  </toc-add-entry>
-<p>
-R. : Certaines annonces couvrent des vulnérabilités qui ne peuvent pas
-   être classées suivant la distinction habituelle d'une exploitation locale
-   ou distante. Certaines vulnérabilités ne peuvent pas être exploitées à
-   distance, c'est-à-dire sans démon à l'écoute d'un port réseau. Si elles
-   peuvent être exploitées avec des fichiers spéciaux issus du réseau alors
-   que le service vulnérable n'est pas connecté de manière permanente au
-   réseau, nous écrivons alors <q>local (remote)</q>.</p>
-
-<p>Ce genre de vulnérabilité est en quelque sorte en partie locale et distante,
-   et concerne souvent des fichiers disponibles par le réseau, comme les
-   les pièces jointes des courriers électroniques, ou depuis une page de
-   téléchargement.</p>
 
 <toc-add-entry name=version>
 Le numéro de version d'un paquet indique-t-il une version vulnérable ?
@@ -180,12 +188,15 @@ R. : La réponse courte est : elle ne l'est pas. <tt>contrib</tt> et
 <toc-add-entry name=sidversionisold>L'annonce dit que la distribution unstable
   est corrigée dans la version 1.2.3-1, mais unstable a la version 1.2.5-1, que
   se passe-t-il ?</toc-add-entry>
+
 <p>R. : Nous essayons de donner le numéro de la première version qui a résolu
    le problème dans unstable. Parfois, le mainteneur du paquet a pu mettre à
    disposition entre temps une version plus récente. Comparez la version qui se
-   trouve dans unstable avec la version que nous indiquons dans l'annonce, si
-   la version dans unstable est égale ou supérieure vous devriez être à l'abri
-   de la vulnérabilité.</p>
+   trouve dans unstable avec la version que nous indiquons dans l'annonce, si la
+   version dans unstable est égale ou supérieure vous devriez être à l'abri de la
+   vulnérabilité. Pour en être sûr, le journal des modifications peut être
+   consulté avec <tt>apt-get changelog nom_paquet</tt> et l’entrée annonçant la
+   résolution du problème recherchée.</p>
 
 <toc-add-entry name=mirror>Pourquoi n'y a-t-il pas de miroir officiel de
 security.debian.org ?</toc-add-entry>
@@ -390,7 +401,7 @@ R. : S'il vous plaît, réexaminez chaque problème avant de le
 de la sécurité ?</toc-add-entry>
 <p>
 R. : L'équipe en charge de la sécurité comporte
-<a href="../intro/organization">plusieurs membres et assistants</a>.
+<a href="../intro/organization#security">plusieurs membres et assistants</a>.
    L'équipe chargée de la sécurité nomme elle-même ses membres.</p>
 
 <toc-add-entry name=lifespan>Pendant combien de temps les mises à jour de
@@ -467,3 +478,22 @@ R. : Debian est une autorité de numération CVE et peut assigner des
    détaillée dans le <a
    href="http://people.redhat.com/kseifrie/CVE-OpenSource-Request-HOWTO.html">\
    CVE OpenSource Request HOWTO</a>.</p>
+
+<h1>FAQ obsolète de l'équipe Debian sur la sécurité</h1>
+
+<toc-add-entry name=localremote>Que signifie <q>local (remote)</q> ?
+ </toc-add-entry>
+<p><b>Le champ <i>Type de problème</i> dans les courriels DSA n’est plus
+utilisé depuis avril 2014.</b><br/>
+R. : Certaines annonces couvrent des vulnérabilités qui ne peuvent pas être
+  classées suivant la distinction habituelle d'une exploitation locale ou
+  distante. Certaines vulnérabilités ne peuvent pas être exploitées à distance,
+  c'est-à-dire sans démon à l'écoute d'un port réseau. Si elles peuvent être
+  exploitées avec des fichiers spéciaux issus du réseau alors que le service
+  vulnérable n'est pas connecté de manière permanente au réseau, nous écrivons
+  alors <q>local (remote)</q>.</p>
+
+<p>Ce genre de vulnérabilité est en quelque sorte en partie local et distant,
+  et concerne souvent des fichiers disponibles par le réseau, comme les les
+  pièces jointes des courriers électroniques, ou depuis une page de
+  téléchargement.</p>
