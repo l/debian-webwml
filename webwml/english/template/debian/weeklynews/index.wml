@@ -4,6 +4,7 @@
 <perl>
 
 use Cwd;
+use Encode;
 
 # Very similar to get_recent_list except it looks for the .wml files
 # inside subdirectories of the given directory, and if it finds less than
@@ -45,13 +46,13 @@ sub get_weeklynews_list {
 		my $fh = openrecode("$trans_dir/$year/$_", "$trans_dir/$year/$trans_title", "$eng_dir/$year/$_");
 		$title = '';
 		$summary = '';
-		$line=<$fh>;
-		$line=<$fh> if $line =~ m/use wml::debian::translation-check/;
+		$line=Encode::decode_utf8(<$fh>);
+		$line=Encode::decode_utf8(<$fh>) if $line =~ m/use wml::debian::translation-check/;
 		if ($line =~ /PUBDATE="(.*?)"/) {
-			$title=newsdate($1);
+			$title=newsdate(Encode::encode_utf8($1));
 		}
 		if ($line =~ /SUMMARY="(.*?)"/) {
-			$summary=$1;
+			$summary=Encode::encode_utf8($1);
 		}
 		if ($title) {
 			$str.="<a href=\"". ($noyear ? "$dirprefix" : "$year/" )."$base\">$title</a> $summary<br />\n";

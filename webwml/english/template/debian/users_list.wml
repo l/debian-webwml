@@ -16,6 +16,8 @@
 # The match parameter is a regexp used to determine if the file should be
 # parsed.
 
+use Encode;
+
 <protect pass=2>
     my $listhead = '<ul>';
     my $listfoot = '</ul>';
@@ -66,7 +68,7 @@ sub grab_titles {
 	<protect pass=2>
 	{
 	    local $/;
-	    $content = <$fh>;
+	    $content = Encode::decode_utf8(<$fh>);
 	}
 	</protect>
 	close $fh;
@@ -74,9 +76,9 @@ sub grab_titles {
 	my ($title, $webpage);
 	<protect pass=2>
 	if ($content =~ /^<define-tag pagetitle>\s*(.*?)\s*<\/define-tag>/ms) {
-	    $title = qq/$1/; }
+	    $title = Encode::encode_utf8(qq/$1/); }
 	if ($content =~ /^<define-tag webpage>\s*(.*?)\s*<\/define-tag>/ms) {
-	    $webpage = qq/$1/; }
+	    $webpage = Encode::encode_utf8(qq/$1/); }
 	my ($shortfile) = $file =~ /^(?:.*\/)?(.*)\.wml$/;
 	#$eng_dir =~ /^(?:.*\/)?(.*)$/;
 	</protect>

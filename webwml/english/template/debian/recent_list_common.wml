@@ -1,4 +1,6 @@
 <perl>
+use Encode;
+
     # common functions for all recent_list_*.wml
     
 sub get_recent_list {
@@ -65,9 +67,10 @@ sub match_tag {
     my ($content, $tag) = @_;
 
     my $value;
+    $content = Encode::decode_utf8($content);
     <protect pass=2>
     if ($content =~ m|^<define-tag $tag>\s*(.*?)\s*</define-tag>|ms) {
-	$value = qq/$1/; }      # all
+	$value = Encode::encode_utf8(qq/$1/); }      # all
     </protect>
     return $value;
 }

@@ -9,6 +9,8 @@
 
 <perl>
 
+use Encode;
+
 my ($listhead, $listfoot, $elemhead, $elemdate, $elemfoot, $elemrealfoot);
 
 sub get_alphabetical_list {
@@ -105,15 +107,15 @@ sub grab_titles {
             };
         <protect pass=2>
         my ( $free, $l_name, $rdate );
-        foreach my $l (<DATAFILE>) {
+        foreach my $l (Encode::decode_utf8(<DATAFILE>)) {
             if ($l =~ /^<define-tag pagetitle>(.*)<\/define-tag>/) 
-            { $title = qq/$1/; }
+            { $title = Encode::encode_utf8(qq/$1/); }
             if ($l =~ /^<define-tag license-name>(.*)<\/define-tag>/) 
-            { $l_name = qq/$1/; }
+            { $l_name = Encode::encode_utf8(qq/$1/); }
             elsif ($l =~ /^<define-tag report_date>(.*)<\/define-tag>/) 
-            { $rdate = qq/$1/; }
+            { $rdate = Encode::encode_utf8(qq/$1/); }
             elsif ($l =~ /^<define-tag isfree>(.*)<\/define-tag>/) 
-            { $free = qq/$1/; }
+            { $free = Encode::encode_utf8(qq/$1/); }
         }
         </protect>
 	close DATAFILE;
