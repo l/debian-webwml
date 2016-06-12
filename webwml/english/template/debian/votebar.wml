@@ -206,6 +206,9 @@
 </define-tag>
 
 <perl>
+
+use Encode;
+
 sub get_issues_list {
 
 my ( $path, $number, $current_dir ) = @_;
@@ -232,11 +235,11 @@ foreach $year (reverse sort @years) {
     }
     $title = ''; $status = '';
 <protect pass=2>
-    foreach $line (<$fh>) {
+    foreach $line (Encode::decode_utf8(<$fh>)) {
       if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>/) {
-        $title = $1;
+        $title = Encode::encode_utf8($1);
       } elsif ($line =~ /^<define-tag status>(.*)<\/define-tag>/) {
-        $status = $1;
+        $status = Encode::encode_utf8($1);
       }
 </protect>
       

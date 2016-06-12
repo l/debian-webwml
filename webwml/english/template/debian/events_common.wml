@@ -54,6 +54,8 @@ else
 
 
 <perl>
+use Encode;
+
 #############################################################################
 # grabs the date and title of the last $number news items from directory $path.
 # If $number is zero then all the news items are shown.
@@ -79,35 +81,35 @@ sub get_event_stuff {
      $title = ''; $date = ''; $contact = ''; $email = ''; $desc = '';
      $startdate = ''; $enddate = '';
      <protect pass=2>
-     foreach $line (<$fh>) 
+     foreach $line (Encode::decode_utf8(<$fh>)) 
 	 {
         if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>/) 
 		{
-           $title = $1;
+           $title = Encode::encode_utf8($1);
         }
         elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>/) 
 		{
-           $date = $1;
+           $date = Encode::encode_utf8($1);
         }
         elsif ($line =~ /^<define-tag startdate>(.*)<\/define-tag>/) 
 		{
-           $startdate = $1;
+           $startdate = Encode::encode_utf8($1);
         }
         elsif ($line =~ /^<define-tag enddate>(.*)<\/define-tag>/) 
 		{
-           $enddate = $1;
+           $enddate = Encode::encode_utf8($1);
         }
         elsif ($line =~ /^<define-tag contact>(.*)<\/define-tag>/) 
 		{
-           $contact = $1;
+           $contact = Encode::encode_utf8($1);
         }
         elsif ($line =~ /^<define-tag email>(.*)<\/define-tag>/) 
 		{
-           $email = $1;
+           $email = Encode::encode_utf8($1);
         }
         elsif ($line =~ /^<define-tag desc>(.*)<\/define-tag>/) 
 		{
-           $desc = $1;
+           $desc = Encode::encode_utf8($1);
         }
      </protect>
 		if ($startdate && $enddate)

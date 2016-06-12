@@ -79,6 +79,8 @@
 # 3) News/2002/index.wml
 # get_recent_list ('.', '0', '$(ENGLISHDIR)/News/2002', '', '\d+\w*')
 
+use Encode;
+
 my ($listhead, $listfoot, $elemhead, $elemdate, $elemfoot, $elememptyfoot, $elemrealfoot);
 my $is_events = 0;
 my $is_by_date = 0;
@@ -229,7 +231,7 @@ sub grab_titles {
 	<protect pass=2>
 	{
 	    local $/;
-	    $content = <$fh>;
+	    $content = Encode::decode_utf8(<$fh>);
 	}
 	</protect>
 	close $fh;
@@ -255,38 +257,38 @@ sub grab_titles {
 	my (@hdate, @rdate, @isodate) = ();
 	<protect pass=2>
 	if ($content =~ /^<define-tag pagetitle>\s*(.*?)\s*<\/define-tag>/ms) {
-	    $title = qq/$1/; }      # all
+	    $title = Encode::encode_utf8(qq/$1/); }      # all
 	if ($content =~ /^<define-tag release_date>(.*?)<\/define-tag>/ms) {
-	    $date = qq/$1/; }       # News, news.XX.rdf
+	    $date = Encode::encode_utf8(qq/$1/); }       # News, news.XX.rdf
 	if ($content =~ /^<p>(.*?)<\/p>/ms) {
-            $moreinfo = qq/$1/; }   # news.XX.rdf  Should catch the first paragraph
+            $moreinfo = Encode::encode_utf8(qq/$1/); }   # news.XX.rdf  Should catch the first paragraph
 	if ($content =~ /^<define-tag where>(.*?)<\/define-tag>/ms) {
-	    $where = qq/$1/; }      # events
+	    $where = Encode::encode_utf8(qq/$1/); }      # events
 	if ($content =~ /^<define-tag date>(.*?)<\/define-tag>/ms) {
-	    $date = qq/$1/; }       # events
+	    $date = Encode::encode_utf8(qq/$1/); }       # events
 	if ($content =~ /^<define-tag description>(.*?)<\/define-tag>/ms) {
-	    $desc = qq/$1/; }       # security
+	    $desc = Encode::encode_utf8(qq/$1/); }       # security
 	if ($content =~ /^<define-tag justification>\s*(.*?)\s*<\/define-tag>/ms) {
-	    $just = qq/$1/; }      # licenses
+	    $just = Encode::encode_utf8(qq/$1/); }      # licenses
 	if ($content =~ /^<define-tag moreinfo>(?:(.*?<\/p>)|(.*?)<\/define-tag>)/ms) {
-	    $moreinfo = qq/$1/; }   # dsa-long.XX.rdf
+	    $moreinfo = Encode::encode_utf8(qq/$1/); }   # dsa-long.XX.rdf
 	if ($content =~ /^<define-tag status>(.*?)<\/define-tag>/ms) {
-	    $status = qq/$1/; }     # vote
+	    $status = Encode::encode_utf8(qq/$1/); }     # vote
 	if ($content =~ /^<define-tag startdate>(.*?)<\/define-tag>/ms) {
-	    $startdate = qq/$1/; }	# startdate (events)
+	    $startdate = Encode::encode_utf8(qq/$1/); }	# startdate (events)
 	if ($content =~ /^<define-tag enddate>(.*?)<\/define-tag>/ms) {
-	    $enddate = $1; }        # enddate (events)
+	    $enddate = Encode::encode_utf8($1); }        # enddate (events)
 	my ($shortfile) = $file =~ /^(?:.*\/)?(.*)\.wml$/;
 	if ($content =~ /<a\s+href="($shortfile-report)"\s*>/ms) {
-	    $repfile = $1; }        # Report (events)
+	    $repfile = Encode::encode_utf8($1); }        # Report (events)
 	if ($content =~ /<report\s+href="([^"]*)\s*"\/?>/ms) { #"
-            $repfile = $1; }        # Report (events)
+            $repfile = Encode::encode_utf8($1); }        # Report (events)
 	if ($content =~ /^<define-tag release>(.*?)<\/define-tag>/ms) {
-	    $release = qq/$1/; }	# News
+	    $release = Encode::encode_utf8(qq/$1/); }	# News
 	if ($content =~ /^<define-tag codename>(.*?)<\/define-tag>/ms) {
-	    $codename = qq/$1/; }	# News
+	    $codename = Encode::encode_utf8(qq/$1/); }	# News
 	if ($content =~ /^<define-tag revision>(.*?)<\/define-tag>/ms) {
-	    $revision = qq/$1/; }	# News
+	    $revision = Encode::encode_utf8(qq/$1/); }	# News
 	</protect>
 	$hdate = $date || $startdate;
 	#warn "file=$file hdate=$hdate date=$date rdate=$rdate\n";
