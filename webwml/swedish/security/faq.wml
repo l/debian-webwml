@@ -1,12 +1,30 @@
 #use wml::debian::template title="Debians frågor och svar om säkerhet"
-#use wml::debian::translation-check translation="1.88"
+#use wml::debian::translation-check translation="1.94"
 #include "$(ENGLISHDIR)/security/faq.inc"
 
-<p>Vi får följande frågor lite för ofta i dagsläget, så därför har vi
-summerat svaret på dem här.
-</p>
-
 <maketoc>
+
+<toc-add-entry name="buthow">Jag tog emot en DSA via debian-security-announce, hur kan jag uppgradera de sårbara paketen?</toc-add-entry>
+<p>S: Så som DSA-mailet säger, bör du uppgradera paketen som påverkas av 
+tillkännagivna sårbarheter. Du kan göra detta genom att helt enkelt uppgradera 
+alla paket (efter att du har uppdaterat listan på tillgängliga paket mha
+<tt>apt-get update</tt>)
+i ditt system med <tt>apt-get upgrade</tt> eller genom att uppgradera endast
+ett enskilt paket, med <tt>apt-get install <i>package</i></tt>.</p>
+
+<p>E-postmeddelandet med tillkännagivandet nämner källkodspaketet där
+	sårbarheten fanns. Därför bör du uppdatera alla binära paket från det
+	källkodspaketet. För att kontrollera vilka binära paket som behöver
+	uppdateras, besök
+	<tt>https://packages.debian.org/src:<i>source-package-name</i></tt> och
+	klicka på <i>[show ... binary packages]</i> för distributionen som du
+	uppdaterar.</p>
+
+<p>Det kan även vara nödvändigt att start om en tjänst eller en körande process.
+	Kommandot <a href="https://manpages.debian.org/checkrestart"><tt>checkrestart</tt></a>
+	som inkluderas i paketet
+	<a href="https://packages.debian.org/debian-goodies">debian-goodies</a> kan
+	hjälpa dig att avgöra vilka.</p>
 
 <toc-add-entry name=signature>Signaturen på era bulletiner gick inte igenom verifieringen
 ordentligt!</toc-add-entry>
@@ -89,25 +107,6 @@ De är inte ett sätt att smyga in andra ändringar i den stabila utgåvan utan
 att genomgå den vanliga processen med underutgåvor.
 </p>
 
-<toc-add-entry name=localremote>Vad betyder <q>local
-(remote)</q>?</toc-add-entry>
-
-<p>
-S: Vissa bulletiner beskriver sårbarheter det inte är möjligt att placera i
-den klassiska uppdelningen mellan lokalt och utifrån nåbart utnyttjande.
-Vissa sårbarheter kan inte utnyttjas utifrån, t.ex är inte kopplade till en
-server som lyssnar på en nätverksport.
-Om de kan utnyttjas genom speciella filer som kan komma via nätverket trots
-att den sårbara tjänsten inte är permanent ansluten till nätverket skriver
-vi <q><span lang="en">local (remote)</span></q>.
-</p>
-
-<p>
-Dessa sårbarheter ligger någonstans mellan lokala och utifrån nåbara
-sårbarheter, och handlar ofta om arkiv som kan komma över nätverket, t.ex
-e-postbilagor eller filer från en hämtningssida.
-</p>
-
 <toc-add-entry name=version>Versionsnumret för ett paket tyder på att jag fortfarande kör en
 sårbar version!</toc-add-entry>
 
@@ -178,7 +177,10 @@ det?</toc-add-entry>
 S: Vi försöker ange den första version i den instabila utgåvan där felet är
 rättat. Ibland har paketansvariga sänt in ännu nyare versioner sedan dess.
 Jämför versionsnumret i den instabila utgåvan med versionen vi anger, och om
-den är samma eller högre så bör du vara säker från det här problemet.
+den är samma eller högre så bör du vara säker från det här problemet. Om du
+vill säkerställa detta, kan kontrollera paketets förändringslogg med
+<tt>apt-get changelog paketnamn</tt> och söka efter posten som tillkännager
+rättningen.
 </p>
 
 <toc-add-entry name=mirror>Varför finns det inte några officiella speglar av
@@ -394,7 +396,7 @@ säkerhetsgruppen.
 
 <toc-add-entry name=composing>Hur är säkerhetsgruppen uppbyggd?</toc-add-entry>
 <p>S: Debians säkerhetsgrupp består av
-<a href="../intro/organization">flera medlemmar och sekreterare</a>.
+<a href="../intro/organization#security">flera medlemmar och sekreterare</a>.
 Säkerhetsgruppen utser själv vilka personer som skall delta i den.
 </p>
 
@@ -465,3 +467,24 @@ utgåvan.
 	så rekommenderar vi proceduren som beskrivs i <a
 	href="http://people.redhat.com/kseifrie/CVE-OpenSource-Request-HOWTO.html">\
 	CVE OpenSource Request HOWTO</a>.</p>
+
+<h1>Övergivna frågor i Debian Säkerhets-FAQ</h1>
+
+<toc-add-entry name=localremote>Vad betyder <q>local
+(remote)</q>?</toc-add-entry>
+
+<p><b>Fältet <i>Problemtyp</i> i DSA-meddelanden används inte sedan April 2014.</b><br/>
+S: Vissa bulletiner beskriver sårbarheter det inte är möjligt att placera i
+den klassiska uppdelningen mellan lokalt och utifrån nåbart utnyttjande.
+Vissa sårbarheter kan inte utnyttjas utifrån, t.ex är inte kopplade till en
+server som lyssnar på en nätverksport.
+Om de kan utnyttjas genom speciella filer som kan komma via nätverket trots
+att den sårbara tjänsten inte är permanent ansluten till nätverket skriver
+vi <q><span lang="en">local (remote)</span></q>.
+</p>
+
+<p>
+Dessa sårbarheter ligger någonstans mellan lokala och utifrån nåbara
+sårbarheter, och handlar ofta om arkiv som kan komma över nätverket, t.ex
+e-postbilagor eller filer från en hämtningssida.
+</p>
