@@ -10,6 +10,7 @@ chomp($host);
 use SOAP::Lite;
 use Date::Parse;
 use HTML::Entities;
+use Encode;
 
 # Work around SOAP::Lite not being able to verify certs correctly
 my $ca_dir = '/etc/ssl/ca-debian';
@@ -54,7 +55,7 @@ my ( %rfa, %orphaned, %rfabymaint, %rfp, %ita, %itp, %age,
      use integer;
      next if $status->{$bugid}->{done};
      next if $status->{$bugid}->{archived};
-     my $subject = $status->{$bugid}->{subject};
+     my $subject = Encode::decode_utf8($status->{$bugid}->{subject});
      # If a bug is merged with another, then only consider the youngest
      # bug and throw the others away.  This will weed out duplicates.
      my $mergedwith = $status->{$bugid}->{mergedwith};
@@ -66,30 +67,30 @@ my ( %rfa, %orphaned, %rfabymaint, %rfp, %ita, %itp, %age,
      $subject = encode_entities($subject, '<>&"');
      # Make order out of chaos    
      if ($subject =~ m/^(?:ITO|RFA):\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
-         $rfa{$bugid} = $1 . ($2?": ":"") . $2;
-         if (defined($maintainer{$1})) {
-             push @{$rfabymaint{$maintainer{$1}}}, $bugid;
+         $rfa{$bugid} = Encode::encode_utf8($1 . ($2?": ":"") . $2);
+         if (defined($maintainer{Encode::encode_utf8($1)})) {
+             push @{$rfabymaint{$maintainer{Encode::encode_utf8($1)}}}, $bugid;
          } else {
              push @{$rfabymaint{"Unknown"}}, $bugid;
          }
      } elsif ($subject =~ m/^O:\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
-         $orphaned{$bugid} = $1 . ($2?": ":"") . $2;
+         $orphaned{$bugid} = Encode::encode_utf8($1 . ($2?": ":"") . $2);
      } elsif ($subject =~ m/^ITA:(?:\s*(?:ITO|RFA|O|W):)?\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
-         $ita{$bugid} = $1 . ($2?": ":"") . $2;
+         $ita{$bugid} = Encode::encode_utf8($1 . ($2?": ":"") . $2);
 	 $ita_activity{$bugid} = ($curdate - $status->{$bugid}->{log_modified});
      } elsif ($subject =~ m/^ITP:(?:\s*RFP:)?\s*(.*)/) {
-         $itp{$bugid} = join(": ", split(/\s+-+\s+/, $1,2));
+         $itp{$bugid} = join(": ", map { Encode::encode_utf8($_) } split(/\s+-+\s+/, $1,2));
 	 $itp_activity{$bugid} = ($curdate - $status->{$bugid}->{log_modified});
      } elsif ($subject =~ m/^RFP:\s*(.*)/) {
-         $rfp{$bugid} = join(": ", split(/\s+-+\s+/, $1,2));
+         $rfp{$bugid} = join(": ", map { Encode::encode_utf8($_) } split(/\s+-+\s+/, $1,2));
      } elsif ($subject =~ m/^RFH:\s*(.*)/) {
-         $rfh{$bugid} = join(": ", split(/\s+-+\s+/, $1,2));
+         $rfh{$bugid} = join(": ", map { Encode::encode_utf8($_) } split(/\s+-+\s+/, $1,2));
 	 $rfh_pkg{$bugid} = $rfh{$bugid};
 	 $rfh_pkg{$bugid} =~ s/^(.+?):\s+.*$/$1/;
      } elsif ($subject =~ m/^(?:OTH|ITH):\s*(.*)/) {
-         $oth{$bugid} = join(": ", split(/\s+-+\s+/, $1,2));
+         $oth{$bugid} = join(": ", map { Encode::encode_utf8($_) } split(/\s+-+\s+/, $1,2));
      } else {
-#         print STDERR "What is this ($bugid): $subject\n" if ( $host ne "klecker.debian.org" );
+#         print STDERR "What is this ($bugid): " . Encode::encode_utf8($subject) . "\n" if ( $host ne "klecker.debian.org" );
      }
  }
 
