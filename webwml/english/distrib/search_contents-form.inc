@@ -20,8 +20,8 @@
 <br />
 <input type=radio name="mode" value="filename" id="searchword" />
   <label for="searchword"><gettext domain="distrib">packages that contain files whose names contain the keyword</gettext></label>
-<div>
 </div>
+<div>
 <label for="distro"><gettext domain="distrib">Distribution</gettext>:</label>
 <select name="suite" id="distro">
   <option value="experimental"><gettext domain="distrib">experimental</gettext></option>
