@@ -4,13 +4,12 @@
 <bind-gettext-domain domain="distrib" />
 
 <form method="GET" action="//packages.debian.org/search">
-<p>
+<div>
 <input type="hidden" name="searchon" value="contents" />
 <label for="keyword"><gettext domain="distrib">Keyword</gettext>:</label>
-<input type="text" size="30" name="keywords" id="keyword" /> &nbsp;
-<input type="submit" value="<gettext domain="distrib">Search</gettext>" />
-&nbsp;<input type="reset" value="<gettext domain="distrib">Reset</gettext>" />
-<br />
+<input type="text" size="30" name="keywords" id="keyword" />
+</div>
+<div>
 <gettext domain="distrib">Display</gettext>:
 <br />
 <input type=radio name="mode" value="path" id="searchpath" checked="checked" />
@@ -21,7 +20,8 @@
 <br />
 <input type=radio name="mode" value="filename" id="searchword" />
   <label for="searchword"><gettext domain="distrib">packages that contain files whose names contain the keyword</gettext></label>
-<br />
+<div>
+</div>
 <label for="distro"><gettext domain="distrib">Distribution</gettext>:</label>
 <select name="suite" id="distro">
   <option value="experimental"><gettext domain="distrib">experimental</gettext></option>
@@ -43,5 +43,9 @@
  }
 :>
 </select>
-</p>
+</div>
+<div class="action-block-form">
+  <input type="submit" value="<gettext domain="distrib">Search</gettext>" />
+  <input type="reset" value="<gettext domain="distrib">Reset</gettext>" />
+</div>
 </form>
