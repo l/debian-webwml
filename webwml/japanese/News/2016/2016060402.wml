@@ -1,0 +1,204 @@
+#use wml::debian::translation-check translation="1.1"
+<define-tag pagetitle>Debian 7 更新: 7.11 リリース</define-tag>
+<define-tag release_date>2016-06-04</define-tag>
+#use wml::debian::news
+
+<define-tag release>7</define-tag>
+<define-tag codename>wheezy</define-tag>
+<define-tag revision>7.11</define-tag>
+
+<define-tag dsa>
+    <tr><td align="center"><a href="$(HOME)/security/%0/dsa-%1">DSA-%1</a></td>
+        <td align="center"><:
+    my @p = ();
+    for my $p (split (/,\s*/, "%2")) {
+	push (@p, sprintf ('<a href="https://packages.debian.org/src:%s">%s</a>', $p, $p));
+    }
+    print join (", ", @p);
+:></td></tr>
+</define-tag>
+
+<define-tag correction>
+    <tr><td><a href="https://packages.debian.org/src:%0">%0</a></td><td>%1</td></tr>
+</define-tag>
+
+<define-tag srcpkg><a href="https://packages.debian.org/src:%0">%0</a></define-tag>
+
+<p>Debian プロジェクトは、旧安定版 (oldstable) ディストリビューション Debian <release>
+(コード名 <q><codename></q>) の11回目 (そして最後) の更新を発表できることを嬉しく思います。
+この更新は主にセキュリティ問題の修正を旧安定版 (oldstable)
+リリースに加えるもので、重大な問題に対する若干の調整への対応を追加しています。
+セキュリティ勧告はすでに個別に発表されており、利用可能なものは参照されています。</p>
+
+<p><a href="$(HOME)/security/2016/dsa-3548">DSA-3548</a> 
+のパッケージと、一部アーキテクチャに <a
+href="$(HOME)/security/2016/dsa-3547">DSA-3547</a>、<a
+href="$(HOME)/security/2015/dsa-3219">DSA-3219</a>、<a
+href="$(HOME)/security/2016/dsa-3482">DSA-3482</a>、<a
+href="$(HOME)/security/2015/dsa-3246">DSA-3246</a>
+が技術的理由によりこのポイントリリースに収録されていません。
+<q><codename></q>の生涯に発表されて前回のポイントリリースに入らなかった
+他のセキュリティ更新は全てこの更新に収録されています。</p>
+
+<p>この更新は Debian <release> の新しいバージョンを構成するといった性質のものではなく、
+収録されているパッケージの一部を更新するだけであることに注意してください。
+古い<q><codename></q>のCDやDVDを投げ捨てる必要はなく、インストール後に最新の
+Debian ミラーから更新を取得して古くなったパッケージを更新するだけです。</p>
+
+<p>頻繁に security.debian.org
+から更新をインストールしている人は大量のパッケージ更新をする必要はありません。
+security.debian.org での更新のほとんどが今回のアップデートに含まれています。</p>
+
+<p>新規のインストールメディアや CD、DVD イメージには更新されたパッケージが含まれ、
+いつもの場所で間もなく入手可能になります。</p>
+
+<p>オンラインからの今回のリビジョンへのアップグレードは、通常
+aptitude (または apt) パッケージツールで Debian の FTP/HTTP
+ミラーの多くのうちの一つを指定することで実施されます
+(sources.list(5) マニュアルページを参照してください)。
+ ミラーの完全なリストは以下から入手出来ます:</p>
+
+<div class="center">
+  <a href="$(HOME)/mirror/list">https://www.debian.org/mirror/list</a>
+</div>
+
+<h2>様々なバグ修正</h2>
+
+<p>この旧安定版の更新では以下のパッケージに重要な修正が加えられています:</p>
+<table border=0>
+<tr><th>パッケージ</th>               <th>理由</th></tr>
+<correction base-files                       "ポイントリリース向けに更新">
+<correction debian-installer                 "ポイントリリース向けに再ビルド">
+<correction debian-installer-netboot-images  "ポイントリリース向けに再ビルド。d-i の Built-Using とインストーラによる取得を入れ替え、バージョンの不一致による失敗を先に">
+<correction dpkg                             "Dpkg::Control::HashCore で空行の「.」区切り文字を処理する前に行末の空白文字を削除 (dpkg 1.16.16 で導入されたリグレッション)。対話シェルで SHELL 環境変数だけを利用。dpkg-deb での tar オプション --no-recursion を -T の前に移動。前にトリガー保留状態にあったパッケージについても Config-Version を初期化。dpkg の infodb フォーマットのアップグレードロジックにあったメモリ漏洩を修正。dpkg での物理ファイルのオフセット比較を修正。">
+<correction groovy                           "リモートからの信頼できないコードの実行と DoS 脆弱性の可能性を修正 [CVE-2015-3253]">
+<correction gtk+3.0                          "gdk_cairo_set_source_pixbuf で巨大なメモリブロックを割り当てる際の整数オーバーフローを修正 [CVE-2013-7447]">
+<correction highlight                        "定義されていない書式によるセグメンテーション違反を回避">
+<correction icecast2                         "セキュリティ修正 [CVE-2014-9018]">
+<correction libcrypto++                      "Rijndael タイミング攻撃対策を修正 [CVE-2016-3995]">
+<correction libdatetime-timezone-perl        "tzdata 2016d に更新">
+<correction openldap                         "powerpc で back-mdb テストスイートを無効化し、64KB のページを利用している、jessie ppc64 カーネルで動作している buildd で back-mdb 周りのテストが成功しない問題に暫定対処">
+<correction optipng                          "メモリの開放後利用脆弱性を修正 [CVE-2015-7801]">
+<correction postgresql-9.1                   "新しい上流リリース">
+<correction tzdata                           "新しい上流バージョン">
+<correction xapian-core                      "特に recoll でデータベースが破損する可能性を修正">
+<correction zendframework                    "ZF2015-08 でのリグレッションを修正: バイナリデータ破損。ZF2016-01を修正: ZF1 に無秩序さが十分でないことによる潜在的な脆弱性">
+</table>
+
+<h2>セキュリティ更新</h2>
+
+<p>この改訂では旧安定版 (oldstable) リリースに以下のセキュリティ更新が追加されます。.
+セキュリティチームはこれらの更新それぞれについての勧告をすでに発表しています:</p>
+
+<table border=0>
+<tr><th>勧告ID</th><th>パッケージ</th></tr>
+
+<dsa 2013 2722 icedtea-web>
+<dsa 2013 2727 openjdk-6>
+<dsa 2013 2768 icedtea-web>
+<dsa 2014 2893 openswan>
+<dsa 2014 2912 openjdk-6>
+<dsa 2014 2980 openjdk-6>
+<dsa 2014 3070 kfreebsd-9>
+<dsa 2014 3077 openjdk-6>
+<dsa 2015 3147 openjdk-6>
+<dsa 2015 3157 ruby1.9.1>
+<dsa 2015 3163 libreoffice>
+<dsa 2015 3175 kfreebsd-9>
+<dsa 2015 3219 libdbd-firebird-perl>
+<dsa 2015 3234 openjdk-6>
+<dsa 2015 3236 libreoffice>
+<dsa 2015 3246 ruby1.9.1>
+<dsa 2015 3339 openjdk-6>
+<dsa 2015 3356 openldap>
+<dsa 2015 3394 libreoffice>
+<dsa 2015 3410 icedove-l10n>
+<dsa 2015 3410 icedove>
+<dsa 2015 3410 enigmail>
+<dsa 2016 3432 icedove>
+<dsa 2016 3442 isc-dhcp>
+<dsa 2016 3458 openjdk-7>
+<dsa 2016 3465 openjdk-6>
+<dsa 2016 3467 tiff>
+<dsa 2016 3475 postgresql-9.1>
+<dsa 2016 3480 eglibc>
+<dsa 2016 3482 libreoffice>
+<dsa 2016 3485 didiwiki>
+<dsa 2016 3491 icedove>
+<dsa 2016 3515 graphite2>
+<dsa 2016 3520 icedove>
+<dsa 2016 3523 iceweasel>
+<dsa 2016 3530 tomcat6>
+<dsa 2016 3534 dhcpcd>
+<dsa 2016 3536 libstruts1.2-java>
+<dsa 2016 3537 imlib2>
+<dsa 2016 3538 libebml>
+<dsa 2016 3539 srtp>
+<dsa 2016 3540 lhasa>
+<dsa 2016 3541 roundcube>
+<dsa 2016 3542 mercurial>
+<dsa 2016 3543 oar>
+<dsa 2016 3544 python-django>
+<dsa 2016 3546 optipng>
+<dsa 2016 3547 imagemagick>
+<dsa 2016 3550 openssh>
+<dsa 2016 3551 fuseiso>
+<dsa 2016 3552 tomcat7>
+<dsa 2016 3553 varnish>
+<dsa 2016 3555 imlib2>
+<dsa 2016 3556 libgd2>
+<dsa 2016 3559 iceweasel>
+
+</table>
+
+<h2>Debian インストーラ</h2>
+
+<p>インストーラが更新され、このポイントリリースまでに旧安定版
+(oldstable) に盛り込まれた修正が収録されています。</p>
+
+<h2>URL</h2>
+
+<p>このリリースで変更されたパッケージの完全なリスト:</p>
+
+<div class="center">
+  <url "http://ftp.debian.org/debian/dists/<downcase <codename>>/ChangeLog">
+</div>
+
+<p>現在の旧安定版 (oldstable) ディストリビューション:</p>
+
+<div class="center">
+  <url "http://ftp.debian.org/debian/dists/oldstable/">
+</div>
+
+<p>旧安定版 (oldstable) ディストリビューションへの更新提案中のパッケージ
+(Proposed updates):</p>
+
+<div class="center">
+  <url "http://ftp.debian.org/debian/dists/oldstable-proposed-updates">
+</div>
+
+<p>旧安定版 (oldstable) ディストリビューション情報 (リリースノート、正誤表など):</p>
+
+<div class="center">
+  <a
+  href="$(HOME)/releases/oldstable/">https://www.debian.org/releases/oldstable/</a>
+</div>
+
+<p>セキュリティ関連のアナウンスと情報について:</p>
+
+<div class="center">
+  <a href="$(HOME)/security/">https://security.debian.org/</a>
+</div>
+
+<h2>Debian について</h2>
+
+<p>Debian プロジェクトはインターネットを介し、
+時間と労力を費やして完全にフリーなオペレーティングシステムである
+Debian を開発しているフリーソフトウェア開発者らによる団体です。</p>
+
+<h2>連絡先について</h2>
+
+<p>より詳細な情報については、<a
+href="$(HOME)/">https://www.debian.org/</a> を訪れるか、
+&lt;press@debian.org&gt; にメールを送るか、安定版リリースチーム
+&lt;debian-release@lists.debian.org&gt; に連絡を取ってください。</p>
