@@ -1,10 +1,30 @@
 #use wml::debian::template title="Debian セキュリティ FAQ"
 #include "$(ENGLISHDIR)/security/faq.inc"
-#use wml::debian::translation-check translation="1.88"
-
-<p>最近、以下のような質問をよく受けますので、その回答をまとめてみました。</p>
+#use wml::debian::translation-check translation="1.94"
 
 <maketoc>
+
+<toc-add-entry name=buthow>debian-security-announce を経由してDSAを受け取りました。どのようにして脆弱なパッケージをアップグレードすれば良いでしょう?</toc-add-entry>
+<p>A: DSAのメールで言うように、
+発表された脆弱性により影響を受けるパッケージはアップグレードすべきです。
+(<tt>apt-get update</tt> により利用可能パッケージ一覧を更新後に)
+<tt>apt-get upgrade</tt> によりシステムにある全パッケージをアップグレードするか
+<tt>apt-get install <i>パッケージ</i></tt>
+により特定のパッケージだけをアップグレードすることができます。</p>
+
+<p>告知のメールでは脆弱性が存在したソースパッケージに言及しています。
+したがってソースパッケージから作られたバイナリパッケージを全て更新すべきです。
+更新するバイナリパッケージは、
+<tt>https://packages.debian.org/src:<i>ソースパッケージ名</i></tt>
+にアクセスし、更新するディストリビューションの「バイナリパッケージ:」行を確認します。
+バイナリパッケージが多く非表示になっている場合は、
+<i>[...個のバイナリパッケージを表示]</i>をクリックすると展開されます。</p>
+
+<p>また、サービスや実行中のプロセスを再起動する必要があるかもしれません。
+<a href="https://packages.debian.org/debian-goodies">debian-goodies</a>
+パッケージに収録されている <a
+href="https://manpages.debian.org/checkrestart"><tt>checkrestart</tt></a>
+コマンドが再起動を要するものを見つけるのに役立つかもしれません。</p>
 
 <toc-add-entry name=signature>セキュリティ勧告につけられた署名が正しく検証できません。</toc-add-entry>
 <p>A: おそらく、あなたの側の問題です。
@@ -73,19 +93,6 @@
    セキュリティ上の脆弱性に対する修正を提供することです。
    それは、通常のポイントリリースの手順を迂回して、安定版 (stable) 
    リリースにそれ以外の変更を加えるための手段では、ありません。</p>
-
-<toc-add-entry name=localremote><q>ローカル (リモート)</q>の意味は?</toc-add-entry>
-<p>A: 勧告の中には、手段をローカル、
-   リモートという古い体系では区別できない脆弱性を扱うものがあります。
-   ある脆弱性はリモートからは突くことができない、つまり、
-   ネットワークポートに対して待ち受けるデーモンには該当しません。
-   脆弱性のあるサービスが継続的にネットワークに接続していなくても、
-   ネットワークから配置できる特定のファイルにより突くことができる場合、
-   <q>ローカル (リモート)</q>と書きます。</p>
-
-<p>こういった脆弱性はローカル及びリモートの間にある脆弱性で、
-   ネットワークから配置できるもの、
-   例えばメールの添付ファイルやダウンロードページが対象になることはよくあります。</p>
 
 <toc-add-entry name=version>パッケージのバージョン番号からすると、
 私は今もなお危険なバージョンを使っているはずです!</toc-add-entry>
@@ -158,7 +165,10 @@
    勧告を出す前にメンテナがさらに新しいバージョンをアップロードしてしまうことがあります。
    不安定版に含まれているバージョンを、私たちの記載したバージョンと比較してください。
    同じバージョンか高いバージョンなら、
-   お使いのパッケージにはこの脆弱性の影響を受けないはずです。</p>
+   お使いのパッケージにはこの脆弱性の影響を受けないはずです。
+   確実を期したい場合は <tt>apt-get changelog パッケージ名</tt>
+   によりそのパッケージの変更履歴を確認し、
+   その修正を告知している項目を探すと良いでしょう。</p>
 
 
 <toc-add-entry name=mirror>なぜ security.debian.org の公式ミラーは
@@ -346,7 +356,7 @@
 
 <toc-add-entry name=composing>セキュリティチームの構成を教えてください</toc-add-entry>
 <p>A: Debian セキュリティチームは、<a
-   href="../intro/organization">数人の役員と書記</a>から構成されています。
+   href="../intro/organization#security">数人の役員と書記</a>から構成されています。
    チームへの参加者は、チーム自身が任命します。</p>
 
 <toc-add-entry name=lifespan>セキュリティアップデートはどれくらいの期間
@@ -409,3 +419,19 @@ DSA を出していますか?</toc-add-entry>
    その脆弱性が既に公開されている場合は <a
    href="http://people.redhat.com/kseifrie/CVE-OpenSource-Request-HOWTO.html">CVE
    OpenSource リクエスト HOWTO</a> の手順に従うことを勧めます。</p>
+
+<h1>Deprecated Debian security FAQ</h1>
+
+<toc-add-entry name=localremote><q>ローカル (リモート)</q>の意味は?</toc-add-entry>
+<p><b>The field <i>Problem type</i> in DSA mails is not used since April 2014.</b><br/>
+   A: 勧告の中には、手段をローカル、
+   リモートという古い体系では区別できない脆弱性を扱うものがあります。
+   ある脆弱性はリモートからは突くことができない、つまり、
+   ネットワークポートに対して待ち受けるデーモンには該当しません。
+   脆弱性のあるサービスが継続的にネットワークに接続していなくても、
+   ネットワークから配置できる特定のファイルにより突くことができる場合、
+   <q>ローカル (リモート)</q>と書きます。</p>
+
+<p>こういった脆弱性はローカル及びリモートの間にある脆弱性で、
+   ネットワークから配置できるもの、
+   例えばメールの添付ファイルやダウンロードページが対象になることはよくあります。</p>
