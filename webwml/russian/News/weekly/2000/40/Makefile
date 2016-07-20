@@ -1,1 +1,0 @@
-russian/News/weekly/2000/40/Makefile
