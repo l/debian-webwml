@@ -5,7 +5,7 @@ WMLBASE=..
 CUR_DIR=download
 SUBS=
 
-GETTEXTFILES = download.mo
+GETTEXTFILES += download.mo
 
 include $(WMLBASE)/Make.lang
 
