@@ -1,0 +1,83 @@
+#use wml::debian::translation-check translation="1.2" maintainer="Jean-Pierre Giraud"
+<define-tag description>Mise à jour de sécurité</define-tag>
+<define-tag moreinfo>
+<p>Plusieurs vulnérabilités ont été découvertes dans l'implémentation du
+langage de programmation Perl. Le projet « Common Vulnerabilities and Exposures » (CVE) identifie les problèmes suivants :</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-1238">CVE-2016-1238</a>
+
+<p>John Lightsey et Todd Rinaldo ont signalé que le chargement opportuniste
+de modules optionnels peut provoquer le chargement involontaire de code par
+de nombreux programmes à partir du répertoire de travail courant (qui
+pourrait être changé pour un autre répertoire sans que l'utilisateur s'en
+rende compte) et éventuellement menait à une augmentation de droits, comme
+cela a été démontré dans Debian avec certaines combinaisons de paquets
+installés.</p>
+
+<p>Le problème est lié au chargement de modules par Perl à partir du tableau
+de répertoire « includes » (@INC) dans lequel le dernier élément est le
+répertoire courant ("."). Cela signifie que, quand <q>perl</q> souhaite
+charger un module (lors d'une première compilation ou du chargement
+paresseux d'un module durant l'exécution), Perl cherche le module dans le
+répertoire courant finalement dans la mesure ou « . » est le dernier
+répertoire inclus dans son tableau de répertoires inclus à explorer. Le
+problème vient de la demande de bibliothèques qui sont dans « . » mais qui ne sont pas autrement installées.</p>
+
+<p>Avec cette mise à jour, plusieurs modules qui sont connus pour être
+vulnérables sont mises à jour pour ne pas charger de modules à partir du
+répertoire courant.</p>
+
+<p>En complément, la mise à jour permet le retrait configurable de « . » de
+@INC dans /etc/perl/sitecustomize.pl pour une période de transition. Il est
+recommandé d'activer ce réglage si la casse potentielle d'un site
+particulier a été supputée. Les problèmes dans les paquets fournis dans 
+Debian résultant du passage au retrait de « . » dans @INC doivent être
+signalés aux mainteneurs de Perl à l'adresse perl@paquets.debian.org .</p>
+
+<p>Il est prévu de passer au retrait par défaut de « . » dans @INC lors
+d'une mise à jour ultérieure de Perl à l'aide d'une version intermédiaire si
+possible, et de toute façon pour la version stable à venir, Debian 9
+(Stretch).</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-6185">CVE-2016-6185</a>
+
+<p>XSLoader, un module essentiel de Perl pour le chargement dynamique de
+bibliothèques C dans le code de Perl, pourrait charger une bibliothèque
+partagée à partir d'un emplacement incorrect. XSLoader utilise les
+informations de caller() pour localiser le fichier .so à charger. Cela peut
+être incorrect si XSLoader::load() est appelé dans une évaluation de chaîne.
+Un attaquant peut tirer avantage de ce défaut pour exécuter du code
+arbitraire.</p></li>
+
+</ul>
+
+<p>Pour la distribution stable (Jessie), ces problèmes ont été corrigés dans
+la version 5.20.2-3+deb8u6. En complément, cette mise à jour comprend la
+mise à jour des paquets suivants pour corriger les vulnérabilités de
+chargement de module liées à
+<a href="https://security-tracker.debian.org/tracker/CVE-2016-1238">CVE-2016-1238</a>,
+ou les échecs de construction qui se produisent lorsque « . » est supprimé
+de @INC :</p>
+
+<ul>
+<li>cdbs 0.4.130+deb8u1</li>
+<li>debhelper 9.20150101+deb8u2</li>
+<li>devscripts 2.15.3+deb8u12</li>
+<li>exim4 4.84.2-2+deb8u12</li>
+<li>libintl-perl 1.23-1+deb8u12</li>
+<li>libmime-charset-perl 1.011.1-1+deb8u22</li>
+<li>libmime-encwords-perl 1.014.3-1+deb8u12</li>
+<li>libmodule-build-perl 0.421000-2+deb8u12</li>
+<li>libnet-dns-perl 0.81-2+deb8u12</li>
+<li>libsys-syslog-perl 0.33-1+deb8u12</li>
+<li>libunicode-linebreak-perl 0.0.20140601-2+deb8u22</li>
+</ul>
+
+<p>Nous vous recommandons de mettre à jour vos paquets perl.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2016/dsa-3628.data"
+# $Id$
