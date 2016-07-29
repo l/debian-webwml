@@ -1,0 +1,78 @@
+#use wml::debian::translation-check translation="1.2" mindelta="1"
+<define-tag description>sikkerhedsopdatering</define-tag>
+<define-tag moreinfo>
+<p>Adskillige sårbarheder blev opdaget i implementeringen af 
+programmeringssproget Perl.  Projektet Common Vulnerabilities and Exposures har 
+registreret følgende problemer:</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-1238">CVE-2016-1238</a>
+
+    <p>John Lightsey og Todd Rinaldo rapporterede at den opportunistiske 
+    indlæsning af valgfrie moduler, kunne få mange program til at utilsigtet at 
+    indlæse kode fra en aktuelle arbejdsmappe (som kan ændres til en anden mappe 
+    uden at brugeren er opmærksom på det) og potentielt føre til 
+    rettighedsforøgelse, som demonstreret i Debian med visse kombinationer af 
+    installerede pakker.</p>
+
+    <p>Problemet er relateret til Perls indlæsning af moduler fra 
+    includes-mappearrayet ("@INC"), hvor det sidste element er den aktuelle 
+    mappe (<q>.</q>).  Det betyder at når <q>perl</q> ønsker at indlæse et modul 
+    (under firste kompilering eller under doven indlæsning af et modul på 
+    kørselstidspunktet), kigger perl til sidst efter modulet i den aktuelle 
+    mappe, da <q>.</q> er den sidst medtagne mappe i dens array bestående af 
+    indclude-mapper, som skal gennemsøges.  Problemet drejer sig om at kræve 
+    biblioteker i <q>.</q>, men som ellers ikke er installeret.</p>
+
+    <p>Med denne opdatering opdateres flere moduler, hvor det er kendt at de er 
+    sårbare, til ikke at indlæse moduler fra den aktuelle mappe.</p>
+
+    <p>Desuden tillader denne opdatering, at man via opsætningen kan fjerne 
+    <q>.</q> fra @INC i /etc/perl/sitecustomize.pl i en overgangsperiode.  Det 
+    anbefales at aktivere indstilling, hvis man har vurderet hvorvidt det vil 
+    påvirke kørende sites.  Problemer i pakkerne som leveres via Debian, som 
+    følge af indstillingen til at fjerne <q>.</q> fra @INC, skal rapporteres til 
+    Perl-vedligeholderne på perl@packages.debian.org .</p>
+
+    <p>Det er planlagt at skifte tli som standard at fjerne <q>.</q> i @INC i en
+    efterfølgende opdatering af perl gennem en punktopdatering, om muligt, og i 
+    hvert fald i den kommende stabile udgave, Debian 9 (stretch).</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-6185">CVE-2016-6185</a>
+
+    <p>Man opdagede at XSLoader, et kernemodul i Perl til dynamisk indlæsning af 
+    C-biblioteker i Perl-kode, kunne indlæse delte biblioteker fra ukorrekte 
+    placeringer.  XSLoader anvender caller()-oplysninger til at finde .so-filen, 
+    der skal indlæses.  Det kan være forkert, hvis XSLoader::load() kaldes i en 
+    streng-eval.  En angriber kunne drage nytte af fejlen til at udføre 
+    vilkårlig kode.</p></li>
+
+</ul>
+
+<p>I den stabile distribution (jessie), er disse problemer rettet i version 
+5.20.2-3+deb8u6.  Desuden indeholder denne opdatering følgende opdaterede pakker 
+til løsning af valgfri modulindlæsningssårbarhederne med relation til 
+<a href="https://security-tracker.debian.org/tracker/CVE-2016-1238">\
+CVE-2016-1238</a>, eller til løsning af opbygningsfejl, der opstår når <q>.</q>
+fjernes fra @INC:</p>
+
+<ul>
+    <li>cdbs 0.4.130+deb8u1</li>
+    <li>debhelper 9.20150101+deb8u2</li>
+    <li>devscripts 2.15.3+deb8u12</li>
+    <li>exim4 4.84.2-2+deb8u12</li>
+    <li>libintl-perl 1.23-1+deb8u12</li>
+    <li>libmime-charset-perl 1.011.1-1+deb8u22</li>
+    <li>libmime-encwords-perl 1.014.3-1+deb8u12</li>
+    <li>libmodule-build-perl 0.421000-2+deb8u12</li>
+    <li>libnet-dns-perl 0.81-2+deb8u12</li>
+    <li>libsys-syslog-perl 0.33-1+deb8u12</li>
+    <li>libunicode-linebreak-perl 0.0.20140601-2+deb8u22</li>
+</ul>
+
+<p>Vi anbefaler at du opgraderer dine perl-pakker.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2016/dsa-3628.data"
