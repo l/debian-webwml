@@ -1,0 +1,79 @@
+#use wml::debian::translation-check translation="1.2" mindelta="1"
+<define-tag description>säkerhetsuppdatering</define-tag>
+<define-tag moreinfo>
+<p>Flera sårbarheter har upptäckts i implementationen av programmeringsspråket
+Perl. Projektet Common Vulnerabilities and Exposures
+project identifierar följande problem:</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-1238">CVE-2016-1238</a>
+
+	<p>John Lightsey och Todd Rinaldo rapporterade att den opportunistiska
+	laddningen av valfria moduler kan göra att många program laddar kod
+	oavsiktligt från aktuell arbetskatalog (som kan ändras till en annan
+	mapp utan att användaren noterar det) och potentiellt leda till
+	utökning av privilegier, som har demonstrerats i Debian med vissa
+	kombinationer av installerade paket.</p>
+
+	<p>Problemet relaterar till hur Perl laddar moduler från mappmatrisen
+	("@INC") där det sista elementet är aktuell mapp ("."). Detta betyder
+	att när <q>perl</q> vill ladda en modul (under första kompileringen
+	eller under lat laddning av en modul under körtid), kommer perl att
+	söka efter modulen i aktuell mapp på slutet, eftersom '.' är den
+	sista inkluderade mappen i dess matris av inkluderade mappar att söka
+	igenom. Problemet ligger i beroende på bibliotek som ligger i "." men
+	som inte är installerade på annat vis.</p>
+
+	<p>Med denna uppdatering rättas flera moduler som är kända att vara
+	sårbara till att inte ladda moduler från aktuell mapp.</p>
+
+	<p>Utöver detta tillåter uppdateringen konfigurerbar borttagning av
+	"." från @INC i /etc/perl/sitecustomize.pl under en övergångsperiod.
+	Det rekommenderas att aktivera denna inställning om det eventuella
+	problematiken har evaluerats för en specifik sajt. Problem i paket
+	som tillhandahålls av Debian som ett resultat av borttagningen av '.'
+	från @INC bör rapporteras till de Perl-paketansvariga på
+	perl@packages.debian.org .</p>
+
+	<p>Det planeras att växla till standardborttagning av '.' i @INC i en
+	kommande uppdatering av perl via en punktutgåva om möjligt, och i
+	andra fall i den kommande stabila utgåvan Debian 9 (Stretch).</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-6185">CVE-2016-6185</a>
+
+
+    <p>Man har upptäckt att XSLoader, en kärnmodul från Perl för att
+	 dynamiskt ladda C-bibliotek i Perl-kod, kunde ladda delade
+	 bibliotek från felaktiga positioner. XSLoader använder caller()-information
+	 för att lokalisera vilken .so-fil man skall ladda. Detta kan vara
+	 felaktigt om XSLoader::load() anropas från en strängevaluering. En 
+	 angripare kan dra fördel av denna brist för att köra godtycklig kod.</p></li>
+
+</ul>
+
+<p>För den stabila utgåvan (Jessie) har dessa problem rättats i
+version 5.20.2-3+deb8u6. Utöver detta inkluderar denna uppdatering
+följande uppdaterade paket för att adressera frivillig modulladdningssårbarheter
+relaterade till <a href="https://security-tracker.debian.org/tracker/CVE-2016-1238">CVE-2016-1238</a>,
+eller för att adressera byggfel som kan ske när '.' tas bort från @INC:</p>
+
+<ul>
+    <li>cdbs 0.4.130+deb8u1</li>
+    <li>debhelper 9.20150101+deb8u2</li>
+    <li>devscripts 2.15.3+deb8u12</li>
+    <li>exim4 4.84.2-2+deb8u12</li>
+    <li>libintl-perl 1.23-1+deb8u12</li>
+    <li>libmime-charset-perl 1.011.1-1+deb8u22</li>
+    <li>libmime-encwords-perl 1.014.3-1+deb8u12</li>
+    <li>libmodule-build-perl 0.421000-2+deb8u12</li>
+    <li>libnet-dns-perl 0.81-2+deb8u12</li>
+    <li>libsys-syslog-perl 0.33-1+deb8u12</li>
+    <li>libunicode-linebreak-perl 0.0.20140601-2+deb8u22</li>
+</ul>
+
+<p>Vi rekommenderar att ni uppgraderar era perl-paket.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2016/dsa-3628.data"
