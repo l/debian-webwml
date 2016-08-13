@@ -1,7 +1,7 @@
 #use wml::debian::cdimage title="Domande ricorrenti sui CD Debian" NOHEADER=true BARETITLE=true
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/info"
-#use wml::debian::translation-check translation="1.132" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.133" maintainer="Luca Monducci"
 
 <define-tag toc-title-formatting endtag="required" whitespace="delete">
 <p><strong>%body</strong></p>
@@ -563,8 +563,8 @@ possibile controllare che:
 <ul>
 <li>le checksum dei <em>file scaricati delle immagini ISO</em> corrispondano
 con quelle presenti nei file con le checksum. È possibile calcolare la
-checksum dei file delle immagini ISO usando strumenti quali <q>md5sum</q>,
-<q>sha1sums</q>, <q>sha512sums</q>;</li>
+checksum dei file delle immagini ISO usando strumenti quali <q>sha512sums</q>
+e <q>sha256sums</q>;</li>
 
 <li>le checksum dei <em>supporti ottici dopo la scrittura</em> corrispondano
 con quelle presenti nei file con le checksum. Questa operazione è leggermente
@@ -591,15 +591,15 @@ count</q> e <q>sector size</q> del supporto ottico, dove <q>&lt;device&gt;</q>
 <br/><tt>$ /sbin/isosize -x &lt;device&gt;</tt>
 <br/><tt>sector count: 25600, sector size: 2048</tt></li>
 
-<li>I valori di <q>sector count</q> e <q>sector size</q> sono passati a <q>dd</q>
-per leggere il numero corretto di byte dal supporto ottico e lo stream di byte è
-poi inviato tramite una pipe al programma di calcolo della checksum (md5sum,
-sha1sum, ecc).
+<li>I valori di <q>sector count</q> e <q>sector size</q> sono passati al
+programma <q>dd</q> in modo che legga il numero corretto di byte dal supporto
+ottico poi lo stream di byte è inviato tramite una pipe al programma che
+calcola la checksum (sha512sum, sha256sum, ecc).
 <br/><tt>$ dd if=&lt;device&gt; count=&lt;sector count&gt; bs=&lt;sector
-size&gt; | sha1sum</tt></li>
+size&gt; | sha512sum</tt></li>
 
-<li>La checksum così calcolata deve essere confrontata con la checksum
-corrispondente presente nel relativo file delle checksum (MD5SUMS, SHA1SUMS,
+<li>La checksum così calcolata deve essere confrontata con quella
+riportata nel corrispondente file delle checksum (SHA512SUMS, SHA256SUMS,
 ecc).</li>
 </ul>
 
@@ -607,22 +607,22 @@ ecc).</li>
 href="https://people.debian.org/~danchev/debian-iso/check_debian_iso">\
 check_debian_iso</a> capace di verificare i <em>file delle immagini
 ISO</em> e i <em>supporti ottici</em>, legge il numero corretto di byte
-dal supporto e poi calcola la checksum e la confronta con il file delle
-checksum.
+dal supporto e poi calcola la checksum e la confronta con quella contenuta
+nel file delle checksum.
 </p>
 
 <ul>
 <li><em>Verifica del file dell'immagine ISO.</em>
-Confronta la checksum del file dell'immagine ISO the debian-6.0.3-amd64-netinst.iso
-con la corrispondente checksum contenuta nel file MD5SUMS. 
-<br/><tt>$ ./check_debian_iso  MD5SUMS  debian-6.0.3-amd64-netinst.iso</tt></li>
+Confronta la checksum del file dell'immagine ISO debian-6.0.3-amd64-netinst.iso
+con la corrispondente checksum contenuta nel file SHA512SUMS. 
+<br/><tt>$ ./check_debian_iso  SHA512SUMS  debian-6.0.3-amd64-netinst.iso</tt></li>
 
 <li><em>Verifica del supporto ottico.</em>
 Confronta la checksum del supporto accessibile come /dev/dvd con la checksum
-di debian-6.0.3-amd64-DVD-1.iso contenuta nel file  MD5SUMS. Notare che non è
+di debian-6.0.3-amd64-DVD-1.iso contenuta nel file  SHA512SUMS. Notare che non è
 necessario il file con l'immagine ISO, il suo nome è usato solamente per
 trovare la checksum corrispondente all'interno del file con le checksum.
-<br/><tt>$ ./check_debian_iso  MD5SUMS  debian-6.0.3-amd64-DVD-1.iso  /dev/dvd</tt></li>
+<br/><tt>$ ./check_debian_iso  SHA512SUMS  debian-6.0.3-amd64-DVD-1.iso  /dev/dvd</tt></li>
 </ul>
 
 # ============================================================
