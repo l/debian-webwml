@@ -372,7 +372,7 @@ sub alioth_cvs_diff_url {
     my ( $path, $r1, $r2, $diff_format ) = @_;
 
     return alioth_cvs_file_url($path)
-        . sprintf( '?r1=%s;r2=%s;diff_format=%s', $r1, $r2, $diff_format );
+        . sprintf( '?r1=%s&r2=%s&diff_format=%s', $r1, $r2, $diff_format );
 }
 
 sub alioth_cvs_view_url {
