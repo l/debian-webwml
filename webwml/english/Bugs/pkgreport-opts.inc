@@ -185,6 +185,7 @@
 <code>jessie</code>,
 <code>stretch</code>,
 <code>buster</code>,
+<code>bullseye</code>,
 <code>sid</code>, 
 <code>experimental</code></define-tag>
 
@@ -196,7 +197,9 @@
 <code>wheezy-ignore</code>, 
 <code>jessie-ignore</code>, 
 <code>stretch-ignore</code>, 
-<code>buster-ignore</code></define-tag>
+<code>buster-ignore</code>,
+<code>bullseye-ignore</code>
+</define-tag>
 
 <define-tag bts_tags>
 <code>patch</code>, <code>wontfix</code>, <code>moreinfo</code>, 
