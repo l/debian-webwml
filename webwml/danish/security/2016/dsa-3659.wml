@@ -1,0 +1,64 @@
+#use wml::debian::translation-check translation="1.1" mindelta="1"
+<define-tag description>sikkerhedsopdatering</define-tag>
+<define-tag moreinfo>
+<p>Flere sårbarheder er opdaget i Linux-kernen, hvilke kunne føre til en 
+rettighedsforøgelse, lammelsesangreb (denial of service) eller have anden 
+indvirkning.</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-5696">CVE-2016-5696</a>
+
+    <p>Yue Cao, Zhiyun Qian, Zhongjie Wang, Tuan Dao og Srikanth V. 
+    Krishnamurthy fra University of California, Riverside; samt Lisa M. Marvel 
+    fra United States Army Research Laboratory, opdagede at Linux' 
+    implementering af TCP Challenge ACK-funktionaliteten, medførte en 
+    sidekanal, der kunne anvendes til at finde TCP-forbindelser mellem 
+    specifikke IP-adresser, og til at indsprøjte meddelelser ind i disse 
+    forbindelser.</p>
+
+    <p>Hvor en service gøres tilgængelig gennem TCP, kunne det blive muligt for 
+    fjernangribere at udgive sig for at være en anden bruger tilsluttet serveren 
+    eller over for en anden tilsluttet bruger, at udgive sig for at være 
+    serveren.  Hvis servicen anvender en protokol med meddelelsesautentifikation 
+    (fx TLS eller SSH), muliggør sårbarheden kun lammelsesangreb 
+    (forbindelsesfejl).  Et angreb tager over ti sekunder, så kortlivede 
+    TCP-forbindelser er næppe sårbare.</p>
+
+    <p>Dette kan løses ved at forøge <q>rate limit</q> for TCP Challenge ACK'er, 
+    så den aldrig overskrides: sysctl 
+    net.ipv4.tcp_challenge_ack_limit=1000000000</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-6136">CVE-2016-6136</a>
+
+    <p>Pengfei Wang opdagede at audit-undersystemet havde en dobbelthentnings- 
+    eller <q>TOCTTOU</q>-fejl i sin håndtering af særlige tegn i navnet på en 
+    eksekvérbar fil.  Hvor auditlogning af execve() er aktiveret, var det 
+    dermed muligt for en lokal bruger at genere misvisende logbeskeder.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-6480">CVE-2016-6480</a>
+
+    <p>Pengfei Wang opdagede at aacraid-driveren til Adaptec RAID-controllere 
+    havde en dobbelthentnings- eller <q>TOCTTOU</q>-fejl i sin validering af 
+    <q>FIB</q>-meddelelser, der overføres gennem ioctl()-systemkaldet.  Der er 
+    ingen praktisk sikkerhedsindvirkning i de aktuelle 
+    Debian-udgivelser.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-6828">CVE-2016-6828</a>
+
+    <p>Marco Grassi rapporterede om en fejl i forbindelse med anvendelse efter 
+    frigivelse i TCP-implementeringen, hvilket kunne udløses af lokale brugere.  
+    Sikkerhedsindvirkningen er uklar, men kan blandt andet omfatte 
+    lammelsesangreb eller rettighedsforøgelse.</p></li>
+
+</ul>
+
+<p>I den stabile distribution (jessie), er disse problemer rettet i
+version 3.16.36-1+deb8u1.  Desuden indeholder denne opdatering flere ændringer, 
+som oprindelig var tiltænkt den kommende punktopdatering af jessie.</p>
+
+<p>Vi anbefaler at du opgraderer dine linux-pakker.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2016/dsa-3659.data"
