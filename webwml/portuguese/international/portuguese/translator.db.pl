@@ -84,7 +84,7 @@ sub init_translators {
 	    file      => 0,
 	    compress  => 'none'
 	    },
-	'Paulo Henrique de Lima Santana' => {
+	'Paulo Henrique de Lima Santana (phls)' => {
 	    email     => 'phls@softwarelivre.org',
 	    summary   => 3,
 	    logs      => 3,
