@@ -1,10 +1,11 @@
 #use wml::debian::template title="Debian GNU/Hurd&nbsp;&ndash;&nbsp;Développement" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.57" maintainer="David Prévot"
+#use wml::debian::translation-check translation="1.58" maintainer="Jean-Paul Guillonneau"
 
 # Translators:
 # Mohammed Adnène Trojette 2005-2007.
 # David Prévot, 2010-2013.
+# Jean-Paul Guillonneau, 2016
 
 <h1>
 Debian&nbsp;GNU/Hurd</h1>
@@ -14,7 +15,7 @@ Développement de la distribution</h2>
 <h3>
 Porter des paquets Debian</h3>
 <p>
-Si vous souhaitez le portage Debian&nbsp;GNU/Hurd, vous devriez
+Si vous souhaitez aider le portage Debian&nbsp;GNU/Hurd, vous devriez
 vous familiariser avec le système d'empaquetage de Debian. Une fois
 que vous l'aurez fait en lisant la documentation disponible et en
 visitant le <a href="$(HOME)/devel/">Coin du développeur</a>, vous devriez
@@ -30,7 +31,7 @@ Le code source peut être obtenu en exécutant simplement
 </p>
 <p>
 Extraire un paquet source Debian nécessite le fichier
-<code>paquet_version.dsc</code> et les fichiers qui y sont présents.
+<code>paquet_version.dsc</code> et les fichiers qui y sont listés.
 Vous créez le répertoire d'empaquetage Debian avec la commande
 <code>dpkg-source -x paquet_version.dsc</code>.
 </p>
@@ -55,7 +56,7 @@ qui installera tous les paquets nécessaires.
 Choisissez un paquet</h3>
 <p>
 Sur quels paquets faut-il travailler ? À vrai dire,
-tous les paquets qui ne sont pas encore portés, mais qui en ont besoin.
+tous les paquets qui ne sont pas encore portés, mais qui nécessitent de l’être.
 Cela change constamment, alors il est conseillé de se focaliser
 d'abord sur les paquets ayant beaucoup de dépendances inverses,
 qui sont visibles sur le graphique de dépendance des paquets
@@ -66,15 +67,22 @@ la liste des demandes à long terme, la liste des demandes à court
 terme est <url "https://people.debian.org/~sthibault/graph-top.txt">).
 
 C'est généralement une bonne idée aussi d'en prendre parmi la liste des
-paquets dépassés <url "https://people.debian.org/~sthibault/out_of_date.txt">,
-car ils ont fonctionné et qu'ils ne sont probablement cassés qu'à cause d'une
-paire de raisons.
+paquets périmés <url "https://people.debian.org/~sthibault/out_of_date2.txt"> et
+<url "https://people.debian.org/~sthibault/out_of_date.txt">,
+car ils ont fonctionné et qu'ils ne sont probablement cassés qu'à cause d'un
+petit nombre de raisons.
 
 Vous pouvez aussi en prendre un au hasard
 parmi les paquets manquants, surveiller les journaux
 des processus d'empaquetage automatique sur la liste de diffusion
-debian-hurd ou utiliser la liste de wanna-build en
-<url "https://people.debian.org/~sthibault/failed_packages.txt">.
+debian-hurd-build-logs ou utiliser la liste de wanna-build en
+<url "https://people.debian.org/~sthibault/failed_packages.txt">. Quelques
+problèmes de construction sont plus faciles à résoudre que d’autres,
+classiquement, «·undefined reference to foo·», ou foo consiste en quelque chose
+comme pthread_create, dlopen, cos…, (qui sont bien évidemment présents dans
+hurd-i386), qui montre que l’étape de configuration du paquet a aussi oublié
+d’inclure -lpthread, -ldl, -lm, etc., sur le Hurd. Notez que les fonctions ALSA
+MIDI ne sont pas disponibles.
 </p>
 
 <p>
@@ -85,7 +93,7 @@ sur le BTS (<url "https://bugs.debian.org/cgi-bin/pkgreport.cgi?users=debian-hur
 <url "https://wiki.debian.org/Debian_GNU/Hurd"> et l'état
 en temps réel des paquets sur buildd.debian.org, par
 exemple <url "https://buildd.debian.org/util-linux">.
-</p> 
+</p>
 
 <h4>
 Paquets qui ne seront pas portés</h4>
@@ -105,7 +113,7 @@ spécifique à Linux.</li>
 <code>base/modconf</code> et <code>base/modutils</code>, parce que
 les modules sont un concept spécifique à Linux.</li>
 <li>
-<code>base/netbase</code>, parce que le reste qui s'y trouve
+<code>base/netbase</code>, parce que ce qui s'y trouve
 est hautement spécifique au noyau Linux. Le Hurd utilise
 <code>inetutils</code> à la place.</li>
 <li>
@@ -137,15 +145,15 @@ demandent juste à être adaptés pour convenir aussi à hurd-i386.
   <li>
     <code>Broken libc6 dependency</code>
     <p>
-      Certains paquets dépendent par erreur de <code>libc6-dev</code>.
+      Certains paquets utilisent une dépendance erronée à <code>libc6-dev</code>.
 
-      C'est inexact parce que <code>libc6</code> est
+      C'est incorrect parce que <code>libc6</code> est
       spécifique à certaines architectures GNU/Linux.
 
       Le paquet GNU correspondant est <code>libc0.3-dev</code>, mais
       les autres systèmes d'exploitation en utilisent de différents.
 
-      Le problème est situé dans le fichier
+      Le problème peut être localisé avec le fichier
       <code>debian/control</code> de l'arborescence source.
 
       Parmi les solutions typiques, il est possible de détecter
@@ -153,10 +161,10 @@ demandent juste à être adaptés pour convenir aussi à hurd-i386.
       et de mettre « en dur » (« hardcode ») le soname, ou mieux,
       utiliser un OU logique.
 
-      Par exemple : 
+      Par exemple :
 <code>libc6-dev | libc6.1-dev | libc0.3-dev | libc0.1-dev | libc-dev</code>.
 
-      <code>libc-dev</code> est un paquet virtuel qui
+      <code>Libc-dev</code> est un paquet virtuel qui
       fonctionne pour n'importe quel soname, mais il
       ne faut le placer qu'en dernière option.
     </p>
@@ -175,7 +183,7 @@ fournies, comme par exemple toutes les opérations de séquenceur.
 Si le paquet le permet, la prise en charge d'ALSA devrait être
 désactivée pour les architectures <code>!linux-any</code> (par exemple
 à l'aide d'une option de <code>configure</code>), un qualificatif
-<code>[linux-any]</code> ajouté au <code>Build-Depends</code> d'alsa,
+<code>[linux-any]</code> ajouté au <code>Build-Depends</code> d'ALSA,
 et l'inverse ajouté à <code>Build-Conflicts</code>, comme par exemple
 <code>Build-Conflicts: libasound2-dev [!linux-any]</code>.
 </p>
