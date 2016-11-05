@@ -70,7 +70,7 @@ sub init_translators {
                         diff        => 0,
                         tdiff       => 0,
                         file        => 0,
-                        frequency   => ['aldri', 'månedlig', 'ukentlig', 'daglig'],
+                        frequency   => ['aldri', 'mÃ¥nedlig', 'ukentlig', 'daglig'],
                         mailsubject => 'Oppdatering for oversettelse av Debian nettsider',
                         mailbody    => 'norwegian/international/norwegian/mail_user.txt',
                         compress    => 'none'

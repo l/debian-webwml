@@ -123,7 +123,7 @@ push @stories, $story;
 # Once we get here, all that remains is some junk, some links we should
 # print, and more junk. So scan forward to the links, and print them.
 while (<IN>) {
-	last if m/^\s\s\sВидимые ссылки/;
+	last if m/^\s\s\sц╥ц┴ц└ц┴ц█ц≥ц┘ ц⌠ц⌠ц≥ц▄ц▀ц┴/;
 }
 
 # print "\n", $divider, "References\n";

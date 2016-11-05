@@ -7,7 +7,7 @@
 # names as parameters to create the .ics file
 
 # Originally written 2002-12-29 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2002-2003 Software in the public interest, Inc.
+# Â© Copyright 2002-2003 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
