@@ -106,8 +106,13 @@ while (<SRC>)
 	s/missing input validation/manglende fornuftighedskontrol af inddata/;
 	s/Several vulnerabilities/Flere sårbarheder/;
 	s/several vulnerabilities/flere sårbarheder/;
+	s/multiple vulnerabilities/adskillige sårbarheder/;
 	s/security update/sikkerhedsopdatering/;
 	s/>several</>flere</;
+	s/>multiple</>adskillige</;
+	s/>the execution of arbitrary code</>udførelse af vilkårlig kode</;
+	s/>execution of arbitrary code</>udførelse af vilkårlig kode</;
+	s/>information disclosure</>informationsafsløring</;
 	s/This has been fixed in version/Dette er rettet i version/;
 	s/this problem has been fixed in/er dette problem rettet i/;
 	s/this problem has been fixed$/er dette problem rettet/;
@@ -145,10 +150,11 @@ while (<SRC>)
 	s/^stable distribution/stabile distribution/;
 	s/^unstable distribution/ustabile distribution/;
 	s/does(?: not|n't) contain a(?:ny)? ([^ ]) package/indeholder ikke pakken $1/;
+	s/For the testing distribution/I distributionen testing/;
 	s/testing distribution/distributionen testing/;
 	s/privilege escalation/rettighedsforøgelse/;
 	s/cross site/på tværs af servere/;
-	s/heap-based/heap-baseret/;
+	s/heap-based/heapbaseret/;
 	s/heap overflow/heapoverløb/;
 	s/\bis not affected by this problem/er ikke påvirket af dette problem/;
 	s/does not contain ([[:word:]]*) packages?/indeholder ikke pakker $1-pakker/;
