@@ -1,0 +1,346 @@
+#use wml::debian::translation-check translation="1.2"
+<define-tag pagetitle>Debian 8 更新: 8.3 リリース</define-tag>
+<define-tag release_date>2016-01-23</define-tag>
+#use wml::debian::news
+
+<define-tag release>8</define-tag>
+<define-tag codename>jessie</define-tag>
+<define-tag revision>8.3</define-tag>
+
+<define-tag dsa>
+    <tr><td align="center"><a href="$(HOME)/security/%0/dsa-%1">DSA-%1</a></td>
+        <td align="center"><:
+    my @p = ();
+    for my $p (split (/,\s*/, "%2")) {
+	push (@p, sprintf ('<a href="https://packages.debian.org/src:%s">%s</a>', $p, $p));
+    }
+    print join (", ", @p);
+:></td></tr>
+</define-tag>
+
+<define-tag correction>
+    <tr><td><a href="https://packages.debian.org/src:%0">%0</a></td><td>%1</td></tr>
+</define-tag>
+
+<define-tag srcpkg><a href="https://packages.debian.org/src:%0">%0</a></define-tag>
+
+<p>Debian プロジェクトは安定版 (stable) ディストリビューション Debian 
+<release> (コード名 <q><codename></q>) の3回目の更新を発表できることを嬉しく思います。
+この更新は主にセキュリティ問題の修正を安定版 (stable)
+リリースに加えるもので、重大な問題に対する若干の調整への対応を追加しています。
+セキュリティ勧告はすでに個別に発表されており、利用可能なものは参照されています。</p>
+
+<p>この更新は Debian <release> の新しいバージョンを構成するといった性質のものではなく、
+収録されているパッケージの一部を更新するだけであることに注意してください。
+古い <q><codename></q> のCDやDVDを投げ捨てる必要はなく、インストール後に最新の
+Debian ミラーから更新を取得して古くなったパッケージを更新するだけです。</p>
+
+<p>頻繁に security.debian.org
+から更新をインストールしている人は大量のパッケージ更新をする必要はありません。
+security.debian.org での更新のほとんどが今回のアップデートに含まれています。</p>
+
+<p>新規のインストールメディアや CD、DVD イメージには更新されたパッケージが含まれ、
+いつもの場所で間もなく入手可能になります。</p>
+
+<p>オンラインからの今回のリビジョンへのアップグレードは、通常
+aptitude (または apt) パッケージツールで Debian の FTP/HTTP
+ミラーの多くのうちの一つを指定することで実施されます
+(sources.list(5) マニュアルページを参照してください)。
+ミラーの完全なリストは以下から入手出来ます:</p>
+
+<div class="center">
+  <a href="$(HOME)/mirror/list">https://www.debian.org/mirror/list</a>
+</div>
+
+<h2>様々なバグ修正</h2>
+
+<p>この安定版 (stable) の更新では以下のパッケージに重要な修正が加えられています:</p>
+
+<table border=0>
+<tr><th>パッケージ</th>                          <th>理由</th></tr>
+<correction android-platform-frameworks-base     "[i386] 再ビルドして android-libhost への依存を修正">
+<correction apache2                              "split-logfile を現在の perl で動作するように修正。メインの初期化スクリプトを「set -e」でソースとしないように secondary-init-script を修正。先送りした MPM 切り替え時のテストを修正。libapache2-mod-macro への バージョンを指定した 置換 (Replaces) / 破壊 (Breaks) を追加">
+<correction apt                                  "最初の pdiff マージ失敗デバッグ用メッセージを出さないように。APT::Never-MarkAuto-Sections にあるパッケージの依存を手動でインストールしたと設定する処理を修正。リモートから取得したソースの Status フィールドを解析しないように">
+<correction apt-dater-host                       "カーネルバージョン検出を修正">
+<correction apt-offline                          "欠けている python-apt への依存を追加">
+<correction arb                                  "コンパイラのバージョン確認を省略">
+<correction augeas                               "HTTPD lense: /etc/apache2/conf-available ディレクトリを含めるように。節タグ以降のコメントに改行を使えるように">
+<correction base-files                           "8.3 ポイントリリース向けに更新。os-release: SUPPORT_URL 変数末尾のスラッシュを除去">
+<correction bcfg2                                "Django 1.7 をサポート">
+<correction ben                                  "buildd.debian.org の小型表示版へのリンクを修正。ロックファイル削除時に出る可能性があるエラーを無視。dose-debcheck を --deb-native-arch を指定して呼び出し">
+<correction ca-certificates                      "同梱の Mozilla CA をバージョン 2.6 に更新">
+<correction ceph                                 "バケット名をURLエンコード [CVE-2015-5245]">
+<correction charybdis                            "セキュリティ修正 [CVE-2015-5290]。gnutls を適切に初期化">
+<correction chrony                               "libcap-dev にビルド依存し、権限を落とせるように">
+<correction commons-httpclient                   "HTTPS の呼び出しでSSLハンドシェイク時に必ず http.socket.timeout を使うように [CVE-2015-5262]">
+<correction cpuset                               "ファイルシステム名前空間の接頭辞パッチを更新">
+<correction curlftpfs                            "64ビットアーキテクチャで getpass() の安全でない呼び方を回避">
+<correction dbconfig-common                      "PostgreSQL バックアップファイルの権限を修正">
+<correction debian-handbook                      "Jessie 向けに更新">
+<correction debian-installer                     "QNAP TS-x09 向けインストーラのイメージを再導入。プラグコンピュータ向けに U-Boot イメージを提供。part_gpt モジュールをコアの grub イメージに追加。UEFI の x86 ブートメニューにビープ音を追加。UEFI の x86 ブートメニューに音声合成のショートカットとして「s」キーを追加。armel の network-console イメージから usb-serial-modules を、armel/orion5x の network-console イメージから usb-modules を明示的に除外。QNAP デバイス向けの initrd からファイルの拡張子を除去。(f|ht)tp:// だけでなく file:// を扱えるように p-u サポートを調整。">
+<correction debian-installer-netboot-images      "ポイントリリース向けに再ビルド">
+<correction docbook2x                            "info/dir.gz ファイルをインストールしないように">
+<correction doctrine                             "ディレクトリ権限の問題を修正 [CVE-2015-5723]">
+<correction drbd-utils                           "IPv6 ピアアドレスを調整して drbdadm を修正">
+<correction ejabberd                             "LDAP クエリーが壊れていたのを修正">
+<correction exfat-utils                          "バッファオーバーフローと無限ループを修正">
+<correction exim4                                "MIME ACL 関連のクラッシュをいくらか修正。特にTLS接続で多重配送を引き起こすバグを修正">
+<correction fglrx-driver                         "新しい上流リリース、セキュリティ問題を修正 [CVE-2015-7724]">
+<correction file                                 "--parameter の処理を修正">
+<correction flash-kernel                         "debconf フロントエンドが他に動作している場合に Ctrl-C を待たないように">
+<correction fuse-exfat                           "バッファオーバーフローと無限ループを修正">
+<correction ganglia-modules-linux                "以前に実行されていた場合にのみ ganglia サービスをインストール後に再起動">
+<correction getmail4                             "poplib._MAXLINE=1MB をセット">
+<correction glance                               "イメージの状態がv1 API 経由で直接変更されないように [CVE-2015-5251]">
+<correction glibc                                "nscd で初期化されていないデータを getaddrinfo が返すことがあるのを修正。NSS ファイルデータベースを読み込む際のデータ破損を修正 [CVE-2015-5277]。internal_fnmatch でのバッファオーバーフロー (過去のバッファ終端を読み取る) を修正。_IO_wstr_overflow での整数オーバーフローを修正。nss_files データベースを予期せず閉じてサービス拒否を引き起こすのを修正 [CVE-2014-8121]。NSCD ネットグループのキャッシュを修正。LD_POINTER_GUARD を無条件で無効化。関数ポインタを tls_dtor_list で変更するように。スタックでのバッファオーバーフローにつながる可能性のあるメモリ割り当ての問題を修正。TSX ブラックリストを更新し、Broadwell CPU の一部を収録">
+<correction gnome-orca                           "パスワードの入力時に正しいフォーカスを確保し、文字を反復しないように">
+<correction gnome-shell-extension-weather        "openweathermap.org は API キーがないと機能しなくなっているため、ユーザからキーが提供されない場合に警告を表示">
+<correction gummi                                "一時ファイルに予測可能な名前を付けないように [CVE 2015-7758]">
+<correction human-icon-theme                     "debian/clean-up.sh: プロセスをバックグラウンドで実行しないように">
+<correction ieee-data                            "収録しているデータファイルを更新し、mam.txt と oui36.txt を追加。現在 standards.ieee.org で採用している TLS AIA を wget も curl もサポートしないため、HTTPS 経由でダウンロードするのを廃止">
+<correction intel-microcode                      "収録しているマイクロコードを更新">
+<correction iptables-persistent                  "rules ファイルを誰でも書き込める状態にするのを廃止。README を書き直し">
+<correction isc-dhcp                             "64ビットのシステムで最大リース時間を使っている場合のエラーを修正">
+<correction keepassx                             "パスワードを平文のテキストで保存していたのを修正 [CVE-2015-8378]">
+<correction libapache-mod-fastcgi                "構築依存を libtool から libtool-bin に切り替え、ビルドに失敗するのを修正">
+<correction libapache2-mod-perl2                 "modperl_interp_unselect() でのクラッシュを修正">
+<correction libcgi-session-perl                  "セッションストレージバックエンドから送られたデータの汚染を除去し、perl の CVE-2015-8607 の修正によるリグレッションを修正">
+<correction libdatetime-timezone-perl            "新しい上流リリース">
+<correction libencode-perl                       "デコード時に BOM がない場合に正しく処理">
+<correction libhtml-scrubber-perl                "コメントのクロスサイトスクリプティング脆弱性を修正 [CVE-2015-5667]">
+<correction libinfinity                          "文書ブラウザから項目が削除された場合とアクセス制御リストが有効になっている場合にクラッシュする可能性を修正">
+<correction libiptables-parse-perl               "一時ファイルに予測可能な名前を使うのを修正 [CVE-2015-8326]">
+<correction libraw                               "smal_decode_segment での索引オーバーフローを修正 [CVE-2015-8366]。メモリオブジェクトが適切に初期化されていないのを修正 [CVE-2015-8367]">
+<correction libssh                               "<q>SSH_MSG_NEWKEYS 及び KEXDH_REPLY パケットの処理にある論理エラーによる NULL ポインタ参照 </q>を修正[CVE-2015-3146]">
+<correction linux                                "上流リリース 3.16.7-ctk20 に更新。nbd: リクエストタイムアウトの検出を復旧。[x86] PINCTRL_BAYTRAIL を有効化。[mips*/octeon] CAVIUM_CN63XXP1 を有効化。firmware_class: ディレクトリ検索ループの条件を修正。[x86] KVM: svm: #DB (デバッグ例外) に無条件で割り込み [CVE-2015-8104]">
+<correction linux-tools                          "新しい hyperv-daemons パッケージを追加">
+<correction lldpd                                "誤った形式の LLDP 管理アドレスを受け取った場合のセグメンテーション違反とアサート失敗を修正">
+<correction madfuload                            "autoreconf -fi を使い、automake 1.14 でのビルド失敗を修正">
+<correction mdadm                                "グレードを下げた RAID のブートで問題を引き起こす可能性があるため増分アセンブリを無効化">
+<correction mkvmlinuz                            "run-parts の出力を表示されるエラーにリダイレクト">
+<correction monit                                "5.8.1 からの umask 関連のリグレッションを修正">
+<correction mpm-itk                              "親側で接続を閉じようとした場合の問題を修正。これにより<q>Connection: close</q>を守らない他、特定のブラウザでの SSL keepalive に変な影響がいろいろとあるかもしれません">
+<correction multipath-tools                      "sysfs 属性の値がないデバイスの検出を修正。わかりやすい名前を使う場合を対象とする文言を追加。init: root デバイスが見つからない場合に停止に失敗するのを修正。デフォルトのプロパティのホワイトリストとして「SCSI_IDENT_.*」を使用">
+<correction netcfg                               "s390x の is_layer3_qeth を修正し、ネットワークドライバが qeth でない場合に放置しないように">
+<correction nvidia-graphics-drivers              "新しい上流リリース [CVE-2015-5950]。ユーザモードの入力がサニタイズされない問題を修正 [CVE-2015-7869]">
+<correction nvidia-graphics-drivers-legacy-304xx "新しい上流リリース。ユーザモードの入力がサニタイズされない問題を修正 [CVE-2015-7869]">
+<correction nvidia-graphics-modules              "nvidia-kernel-source 340.96 に対して再ビルド">
+<correction openldap                             "監査ログオーバーレイが有効化されている場合に巨大な属性値を追加するとクラッシュするのを修正">
+<correction openvpn                              "if-up.d スクリプトに --no-block を追加し、openvpn のインターフェイスでブートがハングするのを回避">
+<correction owncloud                             "Microsoft Windows プラットフォームでのローカルファイル取り込み [CVE-2015-4716]、ファイル名を無害化する際にリソースを使い果たす [CVE-2015-4717]、外部 SMB ストレージ利用時のコマンドインジェクション [CVE-2015-4718]、カレンダーのエクスポート: User-Controlled Key を経由した認証の迂回 [CVE-2015-6670]、OCS プロバイダー検出での反射型XSS [oc-sa-2016-001] [CVE-2016-1498]、戻り値を確認していないことによる、<q>.v</q>から始まるファイルの漏洩 [oc-sa-2016-003] [CVE-2016-1500]、ファイルスキャナでのディレクトリ一覧を経由した情報漏洩 [oc-sa-2016-002] [CVE-2016-1499]、エラーメッセージからのインストールパス公開 [oc-sa-2016-004] [CVE-2016-1501] を修正">
+<correction pam                                  "pam_unix でのパイプをブロックすることによる DoS / ユーザ列挙を修正 [CVE-2015-3238]">
+<correction pcre3                                "セキュリティ問題を修正 [CVE-2015-2325 CVE-2015-2326 CVE-2015-3210 CVE-2015-5073 CVE-2015-8384 CVE-2015-8388]">
+<correction pdns                                 "デフォルト設定でのアップグレードを修正">
+<correction perl                                 "デコード時に BOM がない場合に正しく処理">
+<correction php-auth-sasl                        "pkg-php-tools 1.28 に対して再ビルドし、PHP依存を修正">
+<correction php-doctrine-annotations             "ディレクトリ権限の問題を修正 [CVE-2015-5723]">
+<correction php-doctrine-cache                   "ファイル / ディレクトリ権限の問題を修正 [CVE-2015-5723]">
+<correction php-doctrine-common                  "ファイル権限の問題を修正 [CVE-2015-5723]">
+<correction php-dropbox                          "@ を含んでいるファイルの処理を全て拒否 [CVE-2015-4715]">
+<correction php-mail-mimedecode                  "pkg-php-tools 1.28 で再ビルドし、PHP依存を修正">
+<correction php5                                 "新しい上流リリース">
+<correction plowshare4                           "Javascript サポートを無効化">
+<correction postgresql-9.1                       "新しい上流リリース">
+<correction pykerberos                           "KDC 信頼性検証のサポートを追加 [CVE-2015-3206]">
+<correction python-yaql                          "壊れている python3-yaql パッケージを削除">
+<correction qpsmtpd                              "Net::DNS の新しいバージョンとの互換性の問題を修正">
+<correction quassel                              "/op * コマンドによる quassel コアのリモートDoSを修正 [CVE-2015-8547]">
+<correction redis                                "systemd で使っている場合に有効な実行ディレクトリが必ず作成されるように">
+<correction redmine                              "プラグインがローカルにインストールされている場合のアップグレードを修正。プロジェクトをまたぐ移動の問題を修正">
+<correction rsyslog                              "inotify モードを使っている場合に imfile モジュールでクラッシュするのを修正。dynafile 作成時のセグメンテーション違反を修正">
+<correction ruby-bson                            "DoS と潜在的なインジェクションを修正 [CVE-2015-4410]">
+<correction s390-dasd                            "チャンネルが見つからない場合にきれいに終了するように。これにより s390-dasd で virtio ディスクを使っているVMでの異常から離脱できるように">
+<correction shadow                               "ユーザ検出が立て込んでいるときのエラー処理を修正">
+<correction sparse                               "llvm-3.5 でのビルド失敗を修正">
+<correction spip                                 "クロスサイトスクリプティングの問題を修正">
+<correction stk                                  "欠けている SKINI.{msg,tbl} インクルードファイルをインストール">
+<correction sus                                  "上流 tar アーカイブのチェックサムを更新">
+<correction swift                                "バージョン付き Swift オブジェクトを承認なく削除するのを修正 [CVE-2015-1856]。Swift の一時URLを経由した情報漏洩を修正 [CVE-2015-5223]。初期化スクリプト中の objec-expirer のサービス名を修正。container-sync 初期化スクリプトを追加。ユーザの追加を標準化">
+<correction systemd                              "パスのソートが誤っていることによる名前空間の破損を修正。デバイス用のパスワードが入力されていなかった場合に90秒後までタイムアウトしないように。RTC がローカルタイムで動作している場合にのみカーネルのタイムゾーンをセットするようにし、時間が巻き戻る可能性を回避。systemd-delta の区切り文字であるコンマの処理が誤っていたのを修正。DHCP ブロードキャストの挙動を systemd-networkd で設定できるように">
+<correction tangerine-icon-theme                 "debian/clean-up.sh: プロセスをバックグラウンドで実行しないように">
+<correction torbrowser-launcher                  "0.1.9-1+deb8u1 のパッチを本当に適用。スクリプトを AppArmor で制限するのを一旦廃止。usr.bin.torbrowser-launcher の AppArmor プロファイルに「complain」モードをセット">
+<correction ttylog                               "デバイス選択時にデバイス名が切り詰められるのを修正">
+<correction tzdata                               "新しい上流リリース">
+<correction uqm                                  "欠けていた -lm フラグを追加してビルド失敗を修正">
+<correction vlc                                  "新しい上流安定版リリース">
+<correction webkitgtk                            "新しい上流安定版リリース。TLS証明書の検証が遅れるのを修正 [CVE-2015-2330]">
+<correction wxmaxima                             "ダイアログに「(」「)」があるとクラッシュするのを回避">
+<correction zendframework                        "captcha の無秩序さの問題を修正 [ZF2015-09]">
+</table>
+
+<h2>セキュリティ更新</h2>
+
+<p>この改訂では安定版 (stable) リリースに以下のセキュリティ更新が追加されます。
+セキュリティチームはこれらの更新それぞれについての勧告をすでに発表しています:</p>
+
+<table border=0>
+<tr><th>勧告 ID</th><th>パッケージ</th></tr>
+<dsa 2015 3208 freexl>
+<dsa 2015 3235 openjdk-7>
+<dsa 2015 3280 php5>
+<dsa 2015 3311 mariadb-10.0>
+<dsa 2015 3316 openjdk-7>
+<dsa 2015 3324 icedove>
+<dsa 2015 3327 squid3>
+<dsa 2015 3332 wordpress>
+<dsa 2015 3337 gdk-pixbuf>
+<dsa 2015 3344 php5>
+<dsa 2015 3346 drupal7>
+<dsa 2015 3347 pdns>
+<dsa 2015 3348 qemu>
+<dsa 2015 3350 bind9>
+<dsa 2015 3351 chromium-browser>
+<dsa 2015 3352 screen>
+<dsa 2015 3353 openslp-dfsg>
+<dsa 2015 3354 spice>
+<dsa 2015 3355 libvdpau>
+<dsa 2015 3356 openldap>
+<dsa 2015 3357 vzctl>
+<dsa 2015 3358 php5>
+<dsa 2015 3359 virtualbox>
+<dsa 2015 3360 icu>
+<dsa 2015 3361 qemu>
+<dsa 2015 3363 owncloud-client>
+<dsa 2015 3364 linux>
+<dsa 2015 3365 iceweasel>
+<dsa 2015 3366 rpcbind>
+<dsa 2015 3367 wireshark>
+<dsa 2015 3368 cyrus-sasl2>
+<dsa 2015 3369 zendframework>
+<dsa 2015 3370 freetype>
+<dsa 2015 3371 spice>
+<dsa 2015 3373 owncloud>
+<dsa 2015 3374 postgresql-9.4>
+<dsa 2015 3375 wordpress>
+<dsa 2015 3376 chromium-browser>
+<dsa 2015 3377 mysql-5.5>
+<dsa 2015 3378 gdk-pixbuf>
+<dsa 2015 3379 miniupnpc>
+<dsa 2015 3380 php5>
+<dsa 2015 3381 openjdk-7>
+<dsa 2015 3382 phpmyadmin>
+<dsa 2015 3384 virtualbox>
+<dsa 2015 3385 mariadb-10.0>
+<dsa 2015 3386 unzip>
+<dsa 2015 3387 openafs>
+<dsa 2015 3388 ntp>
+<dsa 2015 3390 xen>
+<dsa 2015 3391 php-horde>
+<dsa 2015 3392 freeimage>
+<dsa 2015 3393 iceweasel>
+<dsa 2015 3394 libreoffice>
+<dsa 2015 3395 krb5>
+<dsa 2015 3397 wpa>
+<dsa 2015 3398 strongswan>
+<dsa 2015 3399 libpng>
+<dsa 2015 3400 lxc>
+<dsa 2015 3401 openjdk-7>
+<dsa 2015 3402 symfony>
+<dsa 2015 3403 libcommons-collections3-java>
+<dsa 2015 3404 python-django>
+<dsa 2015 3405 smokeping>
+<dsa 2015 3406 nspr>
+<dsa 2015 3407 dpkg>
+<dsa 2015 3409 putty>
+<dsa 2015 3411 cups-filters>
+<dsa 2015 3412 redis>
+<dsa 2015 3413 openssl>
+<dsa 2015 3414 xen>
+<dsa 2015 3415 chromium-browser>
+<dsa 2015 3416 libphp-phpmailer>
+<dsa 2015 3417 bouncycastle>
+<dsa 2015 3418 chromium-browser>
+<dsa 2015 3419 cups-filters>
+<dsa 2015 3420 bind9>
+<dsa 2015 3421 grub2>
+<dsa 2015 3422 iceweasel>
+<dsa 2015 3423 cacti>
+<dsa 2015 3424 subversion>
+<dsa 2015 3425 tryton-server>
+<dsa 2015 3426 linux>
+<dsa 2015 3427 blueman>
+<dsa 2015 3428 tomcat8>
+<dsa 2015 3429 foomatic-filters>
+<dsa 2015 3430 libxml2>
+<dsa 2016 3431 ganeti>
+<dsa 2016 3433 ldb>
+<dsa 2016 3433 samba>
+<dsa 2016 3434 linux>
+<dsa 2016 3435 git>
+<dsa 2016 3438 xscreensaver>
+<dsa 2016 3439 prosody>
+<dsa 2016 3440 sudo>
+<dsa 2016 3441 perl>
+<dsa 2016 3442 isc-dhcp>
+<dsa 2016 3443 libpng>
+<dsa 2016 3444 wordpress>
+<dsa 2016 3445 pygments>
+<dsa 2016 3446 openssh>
+
+</table>
+
+<h2>削除されたパッケージ</h2>
+
+<p>以下のパッケージが私たちの力の及ばない事情により削除されました:</p>
+
+<table border=0>
+<tr><th>パッケージ</th>   <th>理由</th></tr>
+<correction core-network  "セキュリティ問題">
+<correction elasticsearch "サポートされなくなっている">
+<correction googlecl      "時代遅れのAPIに依存しているため使えない">
+<correction libnsbmp      "セキュリティ問題、保守されていない">
+<correction libnsgif      "セキュリティ問題、保守されていない">
+<correction vimperator    "iceweasel の新しいバージョンとの互換性がない">
+</table>
+
+<h2>Debian インストーラ</h2>
+<p>インストーラが更新され、QNAP TS-x09 
+機器のサポートが再び導入されるとともにこのポイントリリースまでに安定版
+(stable) に盛り込まれた修正が収録されています。</p>
+
+<h2>URL</h2>
+
+<p>このリリースで変更されたパッケージの完全なリスト:</p>
+
+<div class="center">
+  <url "http://ftp.debian.org/debian/dists/<downcase <codename>>/ChangeLog">
+</div>
+
+<p>現在の安定版 (stable) ディストリビューション:</p>
+
+<div class="center">
+  <url "http://ftp.debian.org/debian/dists/stable/">
+</div>
+
+<p>安定版 (stable) ディストリビューションへの更新提案中のパッケージ
+(Proposed updates):</p>
+
+<div class="center">
+  <url "http://ftp.debian.org/debian/dists/proposed-updates">
+</div>
+
+<p>安定版 (stable) ディストリビューション情報 (リリースノート、正誤表など):</p>
+
+<div class="center">
+  <a
+  href="$(HOME)/releases/stable/">https://www.debian.org/releases/stable/</a>
+</div>
+
+<p>セキュリティ関連のアナウンスと情報について:</p>
+
+<div class="center">
+  <a href="$(HOME)/security/">https://security.debian.org/</a>
+</div>
+
+<h2>Debian について</h2>
+
+<p>Debian プロジェクトはインターネットを介し、
+時間と労力を費やして完全にフリーなオペレーティングシステムである
+Debian を開発しているフリーソフトウェア開発者らによる団体です。</p>
+
+<h2>連絡先について</h2>
+
+<p>より詳細な情報については、<a
+href="$(HOME)/">https://www.debian.org/</a> を訪れるか、
+&lt;press@debian.org&gt; にメールを送るか、安定版リリースチーム
+&lt;debian-release@lists.debian.org&gt; に連絡を取ってください。</p>
