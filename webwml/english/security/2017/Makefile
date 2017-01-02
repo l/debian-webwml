@@ -2,7 +2,7 @@
 # please contact debian-www.
 
 WMLBASE=../..
-CUR_DIR=security/2013
+CUR_DIR=security/2017
 SUBS=
 
 GETTEXTFILES += security.mo
@@ -17,5 +17,7 @@ include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(wildcard dsa-[0-9]*.wml) \
   $(ENGLISHSRCDIR)/$(CUR_DIR)/dsa-[0-9]*.data \
-  $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml $(GETTEXTDEP)
+  $(ENGLISHSRCDIR)/$(CUR_DIR)/dla-[0-9]*.wml \
+  $(ENGLISHSRCDIR)/$(CUR_DIR)/dla-[0-9]*.data \
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list_security.wml $(GETTEXTDEP)
 	$(WML) $(<F)
