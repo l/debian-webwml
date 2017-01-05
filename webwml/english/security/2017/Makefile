@@ -17,7 +17,6 @@ include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(wildcard dsa-[0-9]*.wml) \
   $(ENGLISHSRCDIR)/$(CUR_DIR)/dsa-[0-9]*.data \
-  $(ENGLISHSRCDIR)/$(CUR_DIR)/dla-[0-9]*.wml \
-  $(ENGLISHSRCDIR)/$(CUR_DIR)/dla-[0-9]*.data \
-  $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list_security.wml $(GETTEXTDEP)
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml $(GETTEXTDEP)
 	$(WML) $(<F)
+
