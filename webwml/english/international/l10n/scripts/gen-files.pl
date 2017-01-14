@@ -117,7 +117,10 @@ sub transform_translator {
         $name =~ s/\s*<.*//;
         $name =~ s/&(?!#)/&amp;/g;
         $name =~ s/=\?.*?\?=//g;
-        # BREAK PERMITTED HERE (U+0082) is not allowed in HTML 4.01.
+        # BREAK PERMITTED HERE (U+0082) is allowed in HTML 4.01. 
+        # but the "tidy" tool that we use complains about them,
+        # so we just remove those characters for now, until better solution
+        # see Bug #820119
         $name =~ s/(?:&#0*130;|&#x0*82;|\N{U+0082})//ig;
         $name = 'DDTP' if $name eq 'Debian Description Translation Project';
         $name = '' if $name =~ m/\@/;
