@@ -13,6 +13,6 @@ include $(WMLBASE)/Make.lang
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/news.wml $(GETTEXTDEP)
 	$(WML) $(<F)
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
-  $(TEMPLDIR)/recent_list.wml $(wildcard 2016*.wml) \
+  $(TEMPLDIR)/recent_list.wml $(wildcard 2017*.wml) \
   $(wildcard $(ENGLISHDIR)/News/2017/2017*.wml) $(GETTEXTDEP)
 
