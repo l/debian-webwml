@@ -535,6 +535,11 @@ foreach $lang (@search_in) {
         if (open (HTML, ">$config{'htmldir'}/$l.wml")) {
 	    printf HTML "#use wml::debian::template title=\"<:=\$trans{\$CUR_ISO_LANG}{%s}:>\"\n", $lang;
 	    print HTML "#use wml::debian::toc\n";
+        printf HTML qq|<define-tag transstatslink><a href="%s">webwml-stattrans</a></define-tag>\n|,
+            alioth_cvs_view_url('stattrans.pl');
+        print HTML "<define-tag createdwith><address>\n";
+        print HTML "<gettext domain=\"stats\">Created with <transstatslink></gettext>\n"
+        print HTML "</address></define-tag>\n";
             print HTML "<script src=\"diffstat.js\" type=\"text/javascript\"></script>\n\n";
             $color = get_color ($percent_a{$lang});
 
@@ -655,10 +660,7 @@ foreach $lang (@search_in) {
                 print HTML "</table>\n";
             }
 
-            print HTML
-                '<address><gettext domain="stats">Created with</gettext> <a href="'
-                . alioth_cvs_view_url('stattrans.pl')
-                . '">webwml-stattrans</a></address>' . "\n";
+            print HTML "<createdwith/>\n";
             close (HTML);
         } else {
             print "Can't open $config{'htmldir'}/$l.wml\n";
@@ -675,6 +677,11 @@ open (HTMLI, ">$config{'htmldir'}/index.wml")
 
 print HTMLI "#use wml::debian::stats_tags\n";
 printf HTMLI "#use wml::debian::template title=\"%s\"\n\n", $config{'title'};
+printf HTMLI qq|<define-tag transstatslink><a href="%s">webwml-stattrans</a></define-tag>\n|,
+       alioth_cvs_view_url('stattrans.pl');
+print HTMLI "<define-tag createdwith><address>\n";
+print HTMLI "<gettext domain=\"stats\">Created with <transstatslink></gettext>\n"
+print HTMLI "</address></define-tag>\n";
 print HTMLI '<h2><gettext domain="stats">Translated web pages</gettext></h2>'."\n";
 printf HTMLI "<p><stats_pages %d></p>\n",($wml{'english'}+$untranslated{'english'});
 
@@ -809,10 +816,7 @@ foreach $lang (@search_in) {
 print HTMLI "</tbody>";
 print HTMLI "</table>\n";
 
-print HTMLI
-    '<address><gettext domain="stats">Created with</gettext> <a href="'
-    . alioth_cvs_view_url('stattrans.pl')
-    . '">webwml-stattrans</a></address>' . "\n";
+print HTMLI "<createdwith/>\n";
 close (HTMLI);
 
 print "done.\n" if ($config{'verbose'});
