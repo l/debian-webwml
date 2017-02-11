@@ -75,13 +75,6 @@ sub process_line {
       $mirror[$count-1]{$key}=\@arches;
     }
   }
-  elsif ($line =~ /^([\w-]+-upstream):\s*(.+)\s*$/s) {
-    $field = lc $1;
-    # no need for this private data in the %mirror hash
-    if ($field !~ /^x-/) {
-      $mirror[$count-1]{$field} = $2;
-    }
-  }
   elsif ($line=~ /^((Archive|Security|CDimage|Jigdo|Old)-(\w*)):\s*(.*)\s*$/i) {
     my $type = lc $1;
     my $value = $4;
