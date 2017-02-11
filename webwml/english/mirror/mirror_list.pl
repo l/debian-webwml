@@ -957,12 +957,6 @@ EOF
       }
       print "\n";
       print "<br>" if $wml;
-      if (exists $mirror[$id]{'ipv6'}) {
-        if ($mirror[$id]{ipv6} ne 'no') {
-          print "IPv6: ".$mirror[$id]{ipv6}."\n";
-          print "<br>" if $wml;
-        }
-      }
       if (exists $mirror[$id]{'comment'}) {
         print "Comment: ";
         print "<span style=\"white-space: pre;\">" if $wml;
