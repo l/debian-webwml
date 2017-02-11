@@ -43,11 +43,6 @@ function takeau(element) {
 }
 function giveau(element) {
   au = document.getElementById('archive-upstream');
-  su = document.getElementById('security-upstream');
-  suc = document.getElementById('cb_security-upstream');
-  if (suc.checked) {
-    su.value = au.value;
-  }
   cu = document.getElementById('cdimage-upstream');
   cuc = document.getElementById('cb_cdimage-upstream');
   if (cuc.checked) {
