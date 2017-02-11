@@ -133,9 +133,6 @@ sub aptlines {
       if ($mirror[$id]{'Archive-architecture'}) {
         $archcomm=" # ".join(" ", sort @{$mirror[$id]{'Archive-architecture'}})."\n";
       }
-      if (defined $mirror[$id]{method}{'archive-ftp'}) {
-        print "deb ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'} stable main contrib non-free$archcomm\n";
-      }
       if (defined $mirror[$id]{method}{'archive-http'}) {
         print "deb http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'} stable main contrib non-free$archcomm\n";
       }
@@ -166,15 +163,14 @@ sub secondary_mirrors {
 <table border="0" class="center">
 <tr>
   <th>Host name</th>
-  <th>FTP</th>
   <th>HTTP</th>
   <th>Architectures</th>
 </tr>
 END
     } else {
-      my $formatstring = "%-$longest{site}s %-$longest{'archive-ftp'}s%-$longest{'archive-http'}s%s\n";
-      printf $formatstring, "HOST NAME", "FTP", "HTTP", "ARCHITECTURES";
-      printf $formatstring, "---------", "---", "----", "-------------";
+      my $formatstring = "%-$longest{site}s %-$longest{'archive-http'}s%s\n";
+      printf $formatstring, "HOST NAME", "HTTP", "ARCHITECTURES";
+      printf $formatstring, "---------", "----", "-------------";
     }
   } elsif ($wml) {
     print "<perl>\n";
@@ -184,8 +180,7 @@ END
     my $countrycode = $code_of_country{$country};
     my %our_mirrors;
     foreach my $id (@{ $countries{$country} }) {
-      if (defined $mirror[$id]{method}{'archive-ftp'} ||
-          defined $mirror[$id]{method}{'archive-http'}) {
+      if (defined $mirror[$id]{method}{'archive-http'}) {
         $our_mirrors{$id} = 1;
       }
     }
@@ -203,7 +198,7 @@ END
       print "\n";
     }
     foreach my $id (@{ $countries_sorted{$country} }) {
-      next unless (defined $mirror[$id]{method}{'archive-ftp'} or defined $mirror[$id]{method}{'archive-http'});
+      next unless defined $mirror[$id]{method}{'archive-http'};
       my $aliaslist;
       if (exists $mirror[$id]{'aliases'}) {
         if (!exists $mirror[$id]{includes}) {
@@ -247,34 +242,6 @@ SUBSITEID:  foreach my $mid (0 .. $#mirror) {
       } elsif ($text) {
         my $formatstring = "%-$longest{site}s ";
         printf $formatstring, $mirror[$id]{site};
-      }
-      if (defined $mirror[$id]{method}{'archive-ftp'}) {
-        my $rest = $longest{'archive-ftp'} - length($mirror[$id]{method}{'archive-ftp'});
-        if ($html) {
-          print <<END;
-<td valign=top><a rel="nofollow" href="ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'}">$mirror[$id]{method}{'archive-ftp'}</a></td>
-END
-        } elsif ($text) {
-          my $formatstring = "%s%${rest}s";
-          printf $formatstring, $mirror[$id]{method}{'archive-ftp'}, '';
-        } elsif ($wml) {
-          print <<EOF;
-  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
-        "<a rel=\\\"nofollow\\\" href=\\\"ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'}\\\">$mirror[$id]{method}{'archive-ftp'}</a>";
-EOF
-        }
-      } else {
-        if ($html) {
-          print "<td></td>\n";
-        } elsif ($text) {
-          my $formatstring = "%-$longest{'archive-ftp'}s";
-          printf $formatstring, " ";
-        } elsif ($wml) {
-          print <<EOF;
-  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
-        "";
-EOF
-        }
       }
       if (defined $mirror[$id]{method}{'archive-http'}) {
         my $rest = $longest{'archive-http'} - length($mirror[$id]{method}{'archive-http'});
