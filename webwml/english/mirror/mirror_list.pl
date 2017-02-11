@@ -13,7 +13,7 @@ require 5.001;
 my @filter_arches=qw(); # Architectures not to list.
 
 my $officialsiteregex = q{^ftp\d?(?:\.wa)?\...\.debian\.org$};
-my $internalsiteregex = q{^((ftp|security|volatile)-master|ftp)\.debian\.org$};
+my $internalsiteregex = q{^((ftp|security)-master|ftp)\.debian\.org$};
 
 use Getopt::Long;
 my ($mirror_source, $output_type, $help);
@@ -31,7 +31,7 @@ $mirror_source = 'Mirrors.masterlist' if (! defined $mirror_source);
 my $last_modify = gmtime((stat($mirror_source))[9]);
 
 my (@mirror, %countries, %countries_sorted, %countries_sponsors, %longest);
-my ($count, $volatilecount, $cdimagecount);
+my ($count, $cdimagecount);
 my (%code_of_country, %plain_name_of_country);
 my %includedsites;
 
@@ -82,7 +82,7 @@ sub process_line {
       $mirror[$count-1]{$field} = $2;
     }
   }
-  elsif ($line=~ /^((Archive|Security|CDimage|Jigdo|Old|Volatile)-(\w*)):\s*(.*)\s*$/i) {
+  elsif ($line=~ /^((Archive|Security|CDimage|Jigdo|Old)-(\w*)):\s*(.*)\s*$/i) {
     my $type = lc $1;
     my $value = $4;
     $mirror[$count-1]{method}{$type} = $value;
@@ -777,9 +777,6 @@ access method for each type.
   archive, with sections for Debian packages that could not be
   distributed in the US due to software patents or use of encryption.
   The debian-non-US updates were discontinued with Debian 3.1.
-<dt><strong>Volatile packages</strong>
-  <dd>Packages from the debian-volatile project. See
-  <a href="https://www.debian.org/volatile/">https://www.debian.org/volatile/</a> for details.
 </dl>
 
 <p>The following access methods are possible:
@@ -915,7 +912,6 @@ EOF
         $display =~ s/cdimage-/CD Images /;
         $display =~ s/jigdo-/Jigdo files /;
         $display =~ s/old-/Old releases /;
-        $display =~ s/volatile-/Volatile packages /;
         $display =~ s/ftp/over FTP/;
         $display =~ s/http/over HTTP/;
         $display =~ s/nfs/over NFS/;
@@ -1073,7 +1069,6 @@ END
 
 
 # fork of secondary_mirrors
-# Changed for debian-volatile by Francesco Paolo Lovergine, 2005 
 sub generate_html_matrix {
   my $archive_name = $_[0];
   my $archive_name_lc = lc($archive_name);
@@ -1314,10 +1309,6 @@ foreach my $id (reverse @filtered) { # reverse order so indexes are valid
 # the masterlist parser's $count included the filtered sites
 $count = @mirror;
 
-foreach my $id (0..$#mirror) {
-  $volatilecount++ if (defined $mirror[$id]{method}{'volatile-ftp'} || defined $mirror[$id]{method}{'volatile-http'});
-}
-
 # Create arrays of countries, with their mirrors.
 foreach my $id (0..$#mirror) {
   if (exists $mirror[$id]{country}) {
@@ -1409,9 +1400,6 @@ if ($output_type eq 'html') {
   cdimage_mirrors("httpftp");
 } elsif ($output_type eq 'cdimages-rsync') {
   cdimage_mirrors("rsync");
-} elsif ($output_type eq 'volatile-wml') {
-  generate_html_matrix("Volatile");
-  footer_stuff('wml', $volatilecount);
 } elsif ($output_type eq 'origins') {
   mirror_tree_by_origin();
 } else {
@@ -1435,7 +1423,6 @@ Usage: $0 [mt|--type type] [-m|--mirror mirror_list_source]
     sponsors
     cdimages-httpftp
     cdimages-rsync
-    volatile-html
     nsupdate
 END
 }
