@@ -538,7 +538,7 @@ foreach $lang (@search_in) {
         printf HTML qq|<define-tag transstatslink><a href="%s">webwml-stattrans</a></define-tag>\n|,
             alioth_cvs_view_url('stattrans.pl');
         print HTML "<define-tag createdwith><address>\n";
-        print HTML '<gettext domain="stats">Created with <transstatslink></gettext>\n"'
+        print HTML '<gettext domain="stats">Created with <transstatslink></gettext>\n"';
         print HTML "</address></define-tag>\n";
             print HTML "<script src=\"diffstat.js\" type=\"text/javascript\"></script>\n\n";
             $color = get_color ($percent_a{$lang});
@@ -680,7 +680,7 @@ printf HTMLI "#use wml::debian::template title=\"%s\"\n\n", $config{'title'};
 printf HTMLI qq|<define-tag transstatslink><a href="%s">webwml-stattrans</a></define-tag>\n|,
        alioth_cvs_view_url('stattrans.pl');
 print HTMLI "<define-tag createdwith><address>\n";
-print HTMLI '<gettext domain="stats">Created with <transstatslink></gettext>\n'
+print HTMLI '<gettext domain="stats">Created with <transstatslink></gettext>\n';
 print HTMLI "</address></define-tag>\n";
 print HTMLI '<h2><gettext domain="stats">Translated web pages</gettext></h2>'."\n";
 printf HTMLI "<p><stats_pages %d></p>\n",($wml{'english'}+$untranslated{'english'});
