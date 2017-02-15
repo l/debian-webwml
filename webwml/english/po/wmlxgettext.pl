@@ -79,7 +79,7 @@ foreach (@ARGV) {
 }
 
 print "msgid \"\"\nmsgstr \"\"\n".
-        "\"Content-Type: text/plain; charset=ASCII\\n\"\n".
+        "\"Content-Type: text/plain; charset=UTF-8\\n\"\n".
         "\"Content-Transfer-Encoding: 8bit\\n\"\n\n";
 
 foreach my $msgid (@msgids) {
