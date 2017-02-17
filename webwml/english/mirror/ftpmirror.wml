@@ -7,7 +7,7 @@
 
 <toc-add-entry name="whether">Whether to mirror</toc-add-entry>
 
-<p>While we appreciate all new mirrors, every prospective mirror maintainer
+<p>While we appreciate new mirrors, every prospective mirror maintainer
 should make sure that they can answer these questions before trying to
 start their own mirror:</p>
 
@@ -16,9 +16,9 @@ start their own mirror:</p>
       mirrors nearby.</li>
   <li>Do I have the resources to host a mirror? Mirrors take up considerable
       <a href="size">disk space</a> and bandwidth, one has to be able to commit to the cost.</li>
-  <li>Is a mirror the right choice? Sometimes people mistakenly start
-      a mirror, when they actually want to run a caching proxy,
-      such as <a href="https://packages.debian.org/apt-cacher-ng">apt-cacher-ng</a>.</li>
+  <li>Is a mirror the right choice?  If you primarily want to support
+      users at your ISP/facility, then maybe a caching proxy such as
+      apt-cacher-ng, squid, or varnish might be the better choice.
 </ul>
 
 <toc-add-entry name="what">What to mirror</toc-add-entry>
@@ -30,7 +30,7 @@ mirroring.</p>
 <li>
 Users will look for the debian/ archive to install Debian over
 the network, to build CDs from (with jigdo), and to upgrade already
-installed systems.</li>
+installed systems.  <em>We recommend you mirror this repository</em></li>
 
 <li>
 debian-cd/ is an archive that isn't identical across all the different
@@ -52,134 +52,57 @@ of users.</li>
 more precise information about mirror sizes.</p>
 
 <p>The debian-security/ archives contain the security updates released by
-the Debian security team. It sounds interesting to everyone, but since the
-security updates are sporadic, one would have to mirror it very often to be
-up to date (or use <a href="push_mirroring">push mirroring</a>) so we do not
-recommend it. Debian makes every effort to maintain the high availability of
-security.debian.org instead.</p>
+the Debian security team. While it sounds interesting to everyone, we do
+not recommend to our users to use mirrors to obtain security updates and
+instead ask them to directly download them from our distributed
+security.debian.org service.  <em>We recommend debian-security be
+<strong>not</strong> mirrored</em></p>
 
 <toc-add-entry name="wherefrom">Where to mirror from</toc-add-entry>
 
-<p>Many people seem to think that <code>ftp.debian.org</code> is the
-canonical location of Debian packages and that it will be best for them
-to mirror from that site. This is <strong>not true</strong>.</p>
-
-<p><code>ftp.debian.org</code> is merely one of several servers that get
-updated from an internal Debian server. That address is presently located
-on a single server, and it still exists mainly for
-backwards compatibility.</p>
+<p>Note that <code>ftp.debian.org</code> is not canonical location of Debian
+packages, instead it is merely one of several servers that get updated from an
+internal Debian server.</p>
 
 <p>The <a href="official">official mirrors</a> are meant to be a good place
-to mirror from. Any of the servers in the <a href="list-full">full list of
-mirrors</a> that have the tags <q><kbd>Type: Push-Primary</kbd></q> or
-<q><kbd>Type: Push-Secondary</kbd></q> should be good to mirror from.
-Please use one that is close to you both network-wise and geographically.</p>
+to mirror from. Most of the servers in the <a href="list-full">full list of
+mirrors</a> should be good to mirror from.  Please use one that is close to
+you network-wise.</p>
 
-<p>There is no real difference between different <em>Push-Primary</em>
-mirror servers as far as mirroring is concerned. On the other
-hand, if many people use ftp.debian.org (and unfortunately, they do), this
-needlessly wastes the donated bandwidth.</p>
-
-<p>Mirror administrators in the United States should mirror from
-ftp.us.debian.org (the official mirror address from the US, which is a
-Push-Primary mirror). But, since that address is also a round-robin alias
-for several machines, it usually makes sense to determine which of the
-components is the best and then mirror from that particular one.
-<br />
-<small>The upside of doing that is that it avoids the risk of failures
-when performing a two-stage rsync (different stages might end up on
-different machines during time windows where they have different data,
-causing a race condition). The downside is that it concentrates on
-a single site the performance of which may vary, but that is currently
-inherent to our mirror network in general.</small></p>
+<p>You should avoid mirroring from any service names that resolve to more
+than one address (such as <code>ftp.us.debian.org</code>) as this might cause
+you to sync between different states if your upstream mirrors get out of sync.
+Also note that the only service that we guarantee to exist on
+<code>ftp.CC.debian.org</code> is HTTP.  If you want to mirror using rsync, we
+suggest you pick the proper site name for the machine that currently provides
+the <code>ftp.CC.debian.org</code>.  (Consult the
+<code>/debian/project/trace</code> directory of that server to learn it).
 
 <toc-add-entry name="how">How to mirror</toc-add-entry>
 
-<p>The recommended method of mirroring is with the so called ftpsync scriptset,
-available in two forms:</p>
+<p>The recommended method of mirroring is with the ftpsync scriptset, available
+in two forms:</p>
 <ul>
     <li>as a tarball from <url "https://ftp-master.debian.org/ftpsync.tar.gz"></li>
-    <li>as a git repository: <kbd>git clone https://ftp-master.debian.org/git/archvsync.git</kbd></li>
+    <li>as a git repository: <kbd>git clone https://anonscm.debian.org/git/mirror/archvsync.git</kbd> (see <url "https://anonscm.debian.org/cgit/mirror/archvsync.git/"></li>
 </ul>
 
-
-<p>The mirroring protocol which we strongly recommend is
-<a href="https://packages.debian.org/stable/net/rsync">rsync</a>.</p>
-
-<p>Please do not mirror Debian using <kbd>wget</kbd> and other tools
-based on FTP. They may seem to work well, but will have numerous
-issues (they can't detect hard links, it's harder to make partial
-mirrors, etc).</p>
-
-<h3>rsync setup</h3>
-
-<p>We recommend to use <a href="https://ftp-master.debian.org/ftpsync.tar.gz">the ftpsync scriptset</a> to mirror the archive.
-Follow the README file included to set up mirroring.</p>
-
-<p>If you do use your own scripts, the minimal functionality that must be 
-supported is as follows:</p>
-
-<ul>
-   <li><p>MUST perform a 2-stage sync</p>
-   <p>The archive mirroring must be done in 2 stages. The first rsync run
-   must ignore the index files.  The correct exclude options for the 
-   first rsync run are:</p>
-   <kbd>--exclude Packages* --exclude Sources* --exclude Release* --exclude InRelease --exclude i18n/* --exclude ls-lR*</kbd>
-   <p>The first stage must not delete any files.</p>
-   <p>The second stage should then transfer the above excluded files and
-   delete files that no longer belong on the mirror.</p>
-
-   <p>Rationale: if archive mirroring is done in a single stage, there will be
-   periods of time during which the index files will reference files not
-   yet mirrored.</p>
-   </li>
-
-   <li><p>MUST not ignore pushes while running (for <a href="push_mirroring">push mirroring</a>).</p>
-   <p>If a push is received during a run of the mirror sync, it MUST NOT
-   be ignored.  The whole synchronization process must be rerun.</p>
-
-   <p>Rationale: most implementations of Debian mirror scripts will leave the
-   mirror in an inconsistent state in the event of a second push being
-   received while the first sync is still running.  It is likely that in
-   the near future, the frequency of pushes will increase.</p>
-   </li>
-
-  <li>Run rsync with at least these options: <kbd>--recursive --times
-      --links --hard-links --delete</kbd>.</li>
-
-  <li>If you have extra disk space, also use the <kbd>--delete-after</kbd>
-      option to avoid some of the temporary update problems.</li>
-
-  <li>After rsync is done mirroring, add a time stamp file to the
-      <code>project/trace/</code> subdirectory of the Debian mirror
-      named after your server. This means running
-      <kbd>date -u &gt; .../debian/project/trace/<var>your.server</var></kbd>
-      after your daily rsync is finished.</li>
-
-  <li>We strongly advise against excluding the <tt>project/</tt>, <tt>doc/</tt>
-      and other subdirectories. Usually these are minor in size and yet useful to
-      users.
-      Especially <tt>project/trace</tt> helps very much if there are any mirror issues.</li>
-
-</ul>
+<p>Do not use your own scripts, and do not just use single-pass rsyncs.  Using
+ftpsync ensures updates are done in a way so that apt does not get confused.
+In particular, ftpsync processes translations, contents, and other metadata
+files in an order such that apt is not running into validation errors should a
+user update the package list while a mirror-run is in progress.  Furthermore,
+it also produces trace files that contain more information that is useful for
+determining whether a mirror works, what architectures it carries, and where it
+syncs from.</p>
 
 <toc-add-entry name="partial">Partial mirroring</toc-add-entry>
 
 <p>Considering the already <a href="size">large size of Debian archive</a>,
-some people prefer to mirror only parts of it they need. If you want to
-exclude something, you should exclude architectures.</p>
-
-<p>With the recommended <a href="https://ftp-master.debian.org/ftpsync.tar.gz">ftpsync</a>, this can be done by
-editing the ARCH_EXCLUDE variable.</p>
-
-<p>We strongly advise against excluding the <tt>project/</tt>, <tt>doc/</tt>
-and other subdirectories. Usually these are minor in size and yet useful to
-users.
-Especially <tt>project/trace</tt> helps very much if there are any mirror issues.
-</p>
-
-<p>It is possible to use other specially written scripts, but they are
-usually not necessary, and not recommended for official mirrors.
+it might be advisable to only mirror parts of the archive.  Public mirrors
+should carry all suites (testing, unstable, etc.), but they may restrict the
+architecture set that they carry.  The configuration file for ftpsync has
+ARCH_EXCLUDE and ARCH_INCLUDE settings for this purpose.</p>
 
 <toc-add-entry name="when">When to mirror</toc-add-entry>
 
@@ -187,17 +110,16 @@ usually not necessary, and not recommended for official mirrors.
 The mirrors commonly start updating around 3:00, 9:00, 15:00 and 21:00 (all times UTC),
 but these are never fixed times and you should not fixate your mirror on them.</p>
 
-<p>Your mirror should update a few hours after one of the main archive
-mirror pulses.
-You should check if the site you're mirroring from leaves a time stamp
+<p>Your mirror should update a few hours after one of the main archive mirror
+pulses.  You should check if the site you're mirroring from leaves a time stamp
 file in their <kbd>project/trace/</kbd> subdirectory. The time stamp file
 will be named like that site, and it will contain the completion time of
 their last mirror update. Add a couple of hours to that time (to be safe)
 and mirror then.</p>
 
-<p><b>It is essential that your mirror is in sync with the main archive</b>. A 
-minimum of 4 updates per 24 hours will ensure that your mirror is a true 
-reflection of the archive. Please understand that mirrors that are not in sync 
+<p><b>It is essential that your mirror is in sync with the main archive</b>. A
+minimum of 4 updates per 24 hours will ensure that your mirror is a true
+reflection of the archive. Please understand that mirrors that are not in sync
 with the main archive will not be listed in the official mirrors listing.</p>
 
 <p>The easiest way to automatically have the mirror run every day is to use
@@ -217,7 +139,7 @@ simply <q>pull</q> like with a cron job.</p>
 
 <p>Push mirroring is necessary to keep multiple servers in synchronization
 (such as servers in DNS round-robin aliases like <tt>ftp.us.debian.org</tt>),
-and we use it for our first and second tier mirrors. But as this method
+and we use it for some of our first and second tier mirrors. But as this method
 requires a bit more effort to set it up, it isn't commonly done for
 <q>private</q> mirrors.</p>
 
@@ -227,34 +149,23 @@ explanation</a>.</p>
 
 <toc-add-entry name="settings">Recommended additional settings</toc-add-entry>
 
-<p>If you are going to make the Debian mirror available through HTTP, please
-add the following settings to your Apache configuration (presuming, of
-course, you will use Apache), within the
-<code>&lt;Directory <var>/path/to/your/debian/mirror</var>&gt;</code>
-block, where <var>/path/to/your/debian/mirror</var> should be the actual
-name of the directory where you keep the mirror:</p>
+<p>Public mirrors should make the Debian archive available over HTTP at <code>/debian</code>.</p>
 
+<p>Furthermore, please ensure directory listings are enabled (with full length
+filenames) and symlinks followed.
+
+If you use Apache, something like this might work:
 <pre>
+&lt;Directory <var>/path/to/your/debian/mirror</var>&gt;
    Options +Indexes +SymlinksIfOwnerMatch
    IndexOptions NameWidth=* +SuppressDescription
+&lt;/Directory&gt;
 </pre>
-
-<p>This enables the directory indices and makes sure that following
-symlinks will work. The file names in the directory indices won't be truncated,
-and (mostly nonexistent) descriptions won't be shown.</p>
-
-<p>In Apache 1.3.x, the following option may also be added:</p>
-
-<pre>
-   DirectoryIndex .
-</pre>
-
-<p>Do not add that option in Apache 2.x.</p>
 
 <toc-add-entry name="submit">How to add a mirror to the mirror list</toc-add-entry>
 
 <p>
-If you would like to have your mirror listed on the official mirrors list please: 
+If you would like to have your mirror listed on the official mirrors list please:
 </p>
 
 <ul>
@@ -266,7 +177,6 @@ mirror carries</li>
 <p>Once the mirror is set up, it should be <a href="submit">registered with Debian</a>
 in order to get included in the <a href="list">official mirror list</a>.
 Submissions can be done using our <a href="submit">simple web form</a>.</p>
-
 
 
 <p>Any problems or enquiries can be sent to <email mirrors@debian.org>.</p>
