@@ -5,65 +5,40 @@ for changes to the archive to reach mirrors. The master server uses
 a triggering mechanism to immediately inform the client mirror that it
 needs to be updated.</p>
 
-<p>Push mirroring takes a little more effort to set up since the maintainers
+<p>Push mirroring takes a more effort to set up since the maintainers
 of the upstream and downstream mirror must exchange information. The benefit
 is that the upstream mirror initiates the mirror process immediately after
 its archive has been updated. This allows changes to the archive to
-propagate extremely quickly.
+propagate quickly.
 </p>
 
 <h2>Explanation of the method</h2>
 
-<p>First some background on ssh. Ssh allows people to connect to accounts
-on different machines in a secure way. Not only are passwords never passed
-in the clear, once you connect to a machine you are basically guaranteed that
-future connections will be to the same machine. This prevents many man-in-the-middle
-attacks.
-</p>
-
-<p>One capability ssh has is the ability for a user to take the public identity
-key for a user on another machine and add it to a file of authorized keys on your
-machine. By default, the user on the other machine (who has the private identity
-key associated with the public identity key given to you)
-then has login privileges to your account. It is possible, though, to add text
-to an authorized key restricting the type of access a person accessing your
-account using that key has.
-</p>
-
-<p>So to protect the downstream mirror, the key provided by the upstream mirror
-has text added to it to limit it to only give the person accessing your account
-permission to do one thing &mdash; start the program on your machine that updates
-your mirror. Even if someone (an evil third party) was able to break the key,
-the most they could do is to start the mirror program on your machine. 
-You do not even have to worry about multiple copies of the program being started
-as a lockfile is used.
-</p>
-
-<p>On the upstream end, rsync can be configured to restrict who can mirror
-a given area by username and password. These are totally separate from <kbd>/etc/passwd</kbd>
-so a push server doesn't have to worry about giving others access to their machine.
-As it is set up, the username and password are passed in the clear. This
-shouldn't be a problem though, as the worst that can happen is that a
-third party gains the ability to mirror Debian from that site.
+<p>Triggers are done using ssh.  The push-server sshs into the pusehd server's
+mirror account using public-key authentication.  The key is set up such that
+this action may only trigger a mirror run, no other commands.  The pushed
+server then runs ftpsync to update the archive using rsync as normal.
+<br />
+Exchanging public keys and potentially access to restricted rsync servers
+requires coordination between a mirror operator and their upstream source.
 </p>
 
 <h2>Setting up a push client mirror</h2>
 
-<p>It is best to set this up using the account of an ordinary user, not
-root. The contents of the public ssh key given to you by the upstream mirror
-should be placed in <kbd>~&lt;user&gt;/.ssh/authorized_keys</kbd>.
-</p>
-
 <p>To become a push client for the FTP archive, you will need to set up
 mirroring using our standard <a href="ftpmirror#how">ftpsync</a> script set.
-Copy ftpsync.conf.sample to <code>ftpsync.conf</code> and modify it to
-suit your system and the values provided by upstream.
-</p>
+<br />
+Once that is working, add the public sshkey of your upstream mirror
+in your <code>~<user>/.ssh/authorized_keys</code> with a
+<code>command="~/bin/ftpsync</code>
+restriction. (You may have ftpsync in a different directory, adapt
+accordingly.)
 
 <h2>Push-Primary client sites</h2>
 
 <p>Push-Primary client mirrors, also referred to as Tier-1 mirrors, are the
-push client mirrors which are allowed to mirror from our master archives.
+push client mirrors which sync directly from Debian's internal syncproxy
+network.
 </p>
 
 <p>If your site is <strong>very</strong> well connected (both very good
@@ -77,16 +52,12 @@ primary push mirror as we already have a fair number of Tier-1 mirrors.
 <h2>Setting up a push server mirror</h2>
 
 <p>Given the large number of mirrors and the size of the Debian archive, it
-is not feasible for all the mirrors to use the master archive site or Debian's
-primary syncproxies as the upstream source for Debian (i.e. their push server
-mirror). It is much more efficient if the load is distributed among a number of
-push mirrors distributed throughout the globe.
+is not feasible for all the mirrors to use Debian's internal syncproxies as the
+upstream source for Debian. It is much more efficient if the load is
+distributed among a number of push mirrors distributed throughout the globe.
 </p>
 
-<p>Push server mirrors should be push client mirrors of the master archive
-(or perhaps another push server), and they should contain a mirror of the
-entire Debian archive.
-</p>
-
-<p>See the <a href="push_server">details on setting up a push server</a>.
+<p>Therefore, a number of Push-Primary sites are, in turn, push servers for
+their downstreams.  If you want to configure your site as a push server for
+your downstream sites, see the <a href="push_server">details on setting up a push server</a>.
 </p>
