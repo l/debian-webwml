@@ -12,17 +12,11 @@ submit.$(LANGUAGE).html: submit.wml $(ENGLISHDIR)/mirror/submit.inc \
   $(ENGLISHSRCDIR)/releases/sid/archive.data  $(GETTEXTDEP) \
   $(TEMPLDIR)/countries.wml
 
-official_sponsors.$(LANGUAGE).html: official_sponsors.wml \
-  $(TEMPLDIR)/template.wml $(ENGLISHDIR)/mirror/official_sponsors.list \
-  $(GETTEXTDEP)
 sponsors.$(LANGUAGE).html: sponsors.wml \
   $(TEMPLDIR)/template.wml $(ENGLISHDIR)/mirror/sponsors.list \
   $(TEMPLDIR)/countries.wml $(GETTEXTDEP)
 ftpmirror.$(LANGUAGE).html: ftpmirror.wml $(TEMPLDIR)/template.wml \
   $(TEMPLDIR)/toc.wml $(ENGLISHDIR)/releases/sid/archive.data $(GETTEXTDEP)
-official.$(LANGUAGE).html: official.wml $(TEMPLDIR)/template.wml \
-  $(ENGLISHDIR)/mirror/Mirrors.masterlist \
-  $(ENGLISHDIR)/mirror/official.data $(GETTEXTDEP)
 list.$(LANGUAGE).html: list.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHDIR)/mirror/list-primary.inc \
   $(ENGLISHDIR)/mirror/list-secondary.inc \
@@ -60,16 +54,9 @@ full: mirror_list.pl Mirrors.masterlist
 $(ENGLISHDIR)/mirror/size.data: $(ENGLISHDIR)/mirror/arch_size.pl
 	./arch_size.pl
 
-$(ENGLISHDIR)/mirror/official_sponsors.list: \
-  $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
-	./mirror_list.pl -m Mirrors.masterlist -t officialsponsors > $@
-
 $(ENGLISHDIR)/mirror/sponsors.list: \
   $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
 	./mirror_list.pl -m Mirrors.masterlist -t sponsors > $@
-
-$(ENGLISHDIR)/mirror/official.data: $(TEMPLDIR)/countries.wml \
-  $(ENGLISHDIR)/mirror/Mirrors.masterlist
 
 $(ENGLISHDIR)/mirror/list-primary.inc: \
   $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
