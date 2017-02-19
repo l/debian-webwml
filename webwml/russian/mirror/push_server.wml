@@ -1,23 +1,22 @@
-#use wml::debian::template title="Настройка push-сервера"
-#use wml::debian::translation-check translation="1.22" maintainer="Lev Lamberov"
+#use wml::debian::template title="Настройка проталкивающего сервера"
+#use wml::debian::translation-check translation="1.23" maintainer="Lev Lamberov"
 #use wml::debian::toc
 
-<p>Настройка push-сервера состоит из двух основных задач: настройка rsync
+<p>Настройка проталкивающего сервера состоит из двух основных задач: настройка rsync
 доступа (для нормального, <q>тянущего</q> зеркалирования) и настройка триггерного механизма ssh
 (для <q>проталкивания</q> тянущего зеркалирования).
 </p>
 
-<p><small>(Подробности о том, что такое push-сервер, читайте в
-<a href="push_mirroring">разъяснениях push-зеркалирования</a>.)</small>
+<p><small>(Подробности о том, что такое проталкивающий сервер, читайте в
+<a href="push_mirroring">разъяснениях о проталкивающем зеркалировании</a>.)</small>
 </p>
 
 <toc-display />
 
 <toc-add-entry name="rsync">Настройка rsync</toc-add-entry>
 
-<p>Установите <code>rsync</code> версии 2.1.1 или выше. Если ваш сайт работает на
-Debian, просто установите последний пакет
-<a href="https://packages.debian.org/stable/net/rsync">rsync</a>.
+<p>Установите <code>rsync</code>. Если ваш сайт под управлением Debian, то
+просто установите пакет <a href="https://packages.debian.org/stable/rsync">rsync</a>.
 </p>
 
 <p>Создайте файл <code>rsyncd.conf</code> и внесите в него что-то подобное этому:
@@ -26,13 +25,13 @@ Debian, просто установите последний пакет
 <pre>
 uid = nobody
 gid = nogroup
-max connections = 25
+max connections = 50
 socket options = SO_KEEPALIVE
 
 [debian]
   path = /srv/debian/mirror
-  comment = The Debian Archive (~250 GB)
-  auth users = authorized_account1,authorized_account2,authorized_accountN
+  comment = The Debian Archive (https://www.debian.org/mirror/size)
+  auth users = *
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
 </pre>
@@ -42,26 +41,20 @@ socket options = SO_KEEPALIVE
 </p>
 
 <pre>
-авторизованная_учётная_запись1:пароль
-авторизованная_учётная_запись2:другой_пароль
-авторизованная_учётная_записьN:Nный_пароль
+site1.example.com:пароль
+site2.example.com:ещё_пароль
+site3.example.net:другой_пароль
 </pre>
 
-<p>Теперь вы даёте нижележащим зеркалам доступ к архиву на вашей машине.
+<p>Теперь вы даёте нижележащим зеркалам доступ к архиву на вашей
+машине. Если вы хотите предоставить доступ через rsync всем, то пропустите
+настройку <code>auth users</code> и <code>secrets file</code> в
+<code>rsyncd.conf</code>. В этом случае вам не нужны секретные файлы.
 </p>
 
-<p>Возможно, вы захотите, чтобы демон rsync запускался из inetd. Чтобы сделать это,
-вы должны добавить сервис rsync в файл <code>/etc/services</code> (если он ещё
-не там), как показано ниже:
-</p>
-
-<pre>
-rsync           873/tcp
-</pre>
-
-<p>
-Добавьте следующую строку в файл <code>/etc/inetd.conf</code>, чтобы разрешить
-демон из inetd:
+<p>Возможно, вы захотите, чтобы служба rsync запускалась из inetd.
+Чтобы включить службу добавьте следующую строку в ваш файл
+<code>/etc/inetd.conf</code>:
 </p>
 
 <pre>
@@ -73,25 +66,21 @@ rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daem
 
 <toc-add-entry name="sshtrigger">Настройка механизма триггера ssh</toc-add-entry>
 
-<p>Создайте новый ключ ssh для учётной записи, которую вы используете для зеркалирования Debian.
-Будьте осторожны и не перезапишите ваш оригинальный ключ ssh, для чего воспользуйтесь ключом
-командной строки -f, например:
-</p>
+<p>С помощью <code>ssh-keygen</code> создайте новый ssh-ключ для учётной записи,
+которую вы используете для зеркалирования Debian. Если у вашей учётной записи уже имеется ключ,
+используемый для других целей, то можно создать ещё один и сохранить его в другом файле с помощью
+команды <code>ssh-keygen -f ~/.ssh/identity.mysite</code></p>
+
+На серверах, которые выполняют синхронизацию с вашим сервером в качестве источника,
+в их файлы <code>~/.ssh/authorized_keys</code> следует добавить следующую строку:
 
 <pre>
-ssh-keygen -f ~/.ssh/identity.mysite
+command="~/bin/ftpsync",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty &lt;contents of your ~/.ssh/&lt;key&gt;.pub file&gt;
 </pre>
 
-<p>Убедитесь что новый публичный ключ (~/.ssh/identity.mysite.pub) содержит
-в начале IPADDRESS с IP-адресом вышестоящего зеркала:
-</p>
-
-<pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADDRESS"
-</pre>
-
-<p>Вам нужно настроить сценарий, который будет связываться с нижележащими зеркалами.
-ftpsync tarball содержит сценарий <code>runmirrors</code>, который выполняет все
+<p>Вам нужно настроить процесс зеркалирования так, чтобы он связывался с нижележащими серверами по
+завершению его синхронизации.
+Набор сценариев ftpsync содержит сценарий <code>runmirrors</code>, который выполняет все
 необходимые вам задачи. Просто измените ваш ftpsync.conf так, чтобы он содержал
 <code>HUB=true</code>, скопируйте <code>runmirrors.conf.sample</code> в
 <code>runmirrors.conf</code>, <code>runmirrors.mirror.sample</code> в
