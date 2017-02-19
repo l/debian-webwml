@@ -1,6 +1,6 @@
 #use wml::debian::template title="Sätta upp en spegel av Debianarkivet"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.79"
+#use wml::debian::translation-check translation="1.83"
 #include "$(ENGLISHDIR)/releases/sid/archive.data"
 #include "$(ENGLISHDIR)/releases/arches.data"
 
@@ -9,7 +9,7 @@
 <toc-add-entry name="whether">Om du ska spegla</toc-add-entry>
 
 <p>
-Även om vi är glada för alla speglar, bör alla som vill sätta upp en spegel
+Även om vi är glada för nya speglar, bör alla som vill sätta upp en spegel
 försäkra sig om att de kan svara på dessa frågor innan de försöker starta
 sin egen spegel:
 </p>
@@ -25,10 +25,9 @@ sin egen spegel:
   bandbredd, en kostnad man måste vara beredd att ta.
  </li>
  <li>
-  Är en spegel rätt val?
-  Några har av misstag börjat sätta upp en spegel när de egentligen ville
-  ha en cachande mellanserver som <a 
-  href="https://packages.debian.org/apt-proxy">apt-proxy</a>
+  Är en spegel rätt val? Om du primärt vill stödja användare på din
+  ISP/facilitet kanske en cachande proxy så som apt-cacher-ng, squid
+  eller varnish kan vara bättre val.
  </li>
 </ul>
 
@@ -42,8 +41,8 @@ vilka arkiv som är tillgängliga för spegling.
 <ul>
 <li>
 Användarna kommer att leta efter debian/-arkivet för att installera Debian
-över nätverket, att bygga cd:ar (med jigdo) och att uppgradera redan
-installerade system.
+över nätverket, att bygga cd:s (med jigdo) och att uppgradera redan
+installerade system. <em>Vi rekommenderar att du speglar detta förråd.</em>
 </li>
 
 <li>
@@ -59,7 +58,8 @@ för vidare information om detta.
 <li>
 debian-archive/ innehåller det sanna <em>arkivet</em>, de gamla och
 föråldrade versionerna av Debian.
-Den är vanligtvis bara intressant för en liten del av användarna.
+Den är vanligtvis bara intressant för en liten del av användarna. (Om du
+inte vet om du vill spegla detta eller inte, så vill du troligtvis inte det.)
 </li>
 </ul>
 
@@ -71,181 +71,63 @@ information om spegelstorlekar.
 <p>
 Arkiven i debian-security/ innehåller säkerhetsuppdateringar som släppts av
 Debians säkerhetsgrupp.
-Det låter intressant för alla, men eftersom säkerhetsuppdateringarna är
-sporadiska måste man spegla den väldigt ofta för att hålla sig à jour (eller
-använda <a href="push_mirroring"><q>push</q>-spegling</a>), så vi
-rekommenderar det inte.
-Debian gör allt som står i vår makt för att istället vidmakthålla
-tillgängligheten hos security.debian.org.
+Medan det låter intressant för alla så rekommenderar vi inte våra användare
+att använda speglingar för att få säkerhetsuppdateringar och ber dem istället
+att hämta dessa från våran distribuerade tjänst security.debian.org.
+<em>Vi rekommenderar att debian-security <strong>inte</strong> speglas</em>.</p>
 </p>
 
 <toc-add-entry name="wherefrom">Platser att spegla</toc-add-entry>
 
-<p>Många tror att <code>ftp.debian.org</code> är <q>rätt</q> plats
-för Debianpaket och att det är bäst att spegla därifrån.
-Detta är <strong>inte korrekt</strong>.
-</p>
-
-<p>
-<code>ftp.debian.org</code> är bara en av många servrar som uppdateras från
+<p>Notera att <code>ftp.debian.org</code> inte är den vederhäftiga platsen
+för Debianpaket, utan endast en av flera servrar som blir uppdaterad från
 en intern Debianserver.
-Adressen pekar för närvarande mot en enda adress och är mest där för
-bakåtkompatibilitet.
-</p>
 
-<p>
-<a href="official">Officiella speglar</a> är tänkta att vara bra platser att
-spegla från.
-Alla servrar i den <a href="list-full">kompletta spegellistan</a> som
-är märkta <q><kbd>Type: Push-Primary</kbd></q> eller
-<q><kbd>Type: Push-Secondary</kbd></q>
-bör vara lämpade att spegla från.
-Välj en som är nära dig både nätverksmässigt och geografiskt.
-</p>
+Det finns många <a href="list-full">publika speglingar</a> som stödjer
+rsync och är lämpade att spegla från. Vänligen välj en som är i närheten av
+dig nätverksmässigt.</p>
 
-<p>
-Det är i praktiken ingen skillnad mellan olika <em>Push-Primary</em>-speglar
-vad gäller själva speglingen.
-Å andra sidan, om många använder ftp.debian.org (vilket tyvärr sker) slösar
-detta i onödan med donerad bandbredd.
-</p>
-
-<p>
-Spegeladministratörer i Förenta Staterna bör spegla från ftp.us.debian.org
-(den officiella spegeladressen i USA, vilken är en Push-Primary-spegel).
-Men eftersom den adressen även är ett cirkulerande alias för flera maskiner
-är det
-oftast en bra idé att bestämma vilken av komponenterna som är bäst och
-därefter spegla från just den.
-<br />
-<small>Fördelen med detta är att man undviker risken för misslyckanden när
-man kör en tvåstegs-rsync (olika steg kan hamna hos olika maskiner under det
-tidsfönster då de har olika data, vilket ger en kapplöpningseffekt).
-Nackdelen är att den koncentrerar sig på en enda plats, vilket gör att
-prestanda kan variera, men det är något som finns där i hela vårt
-spegelnätverk för närvarande.</small>
-</p>
+<p>Du bör undvika att spegla från alla tjänstnamn som resolvar till mer än
+en adress (så som <code>ftp.us.debian.org</code>) eftersom detta kan orsaka
+att du synkar mellan olika tillstånd över dina speglingskörningar om dina
+uppströmsspeglingar är osynkade.
+#
+Notera även att HTTP är den enda tjänsten som garanterar att den existerar på
+<code>ftp.CC.debian.org</code>. Om du vill spegla med hjälpa av rsync (med
+ftpsync som rekommenderas), föreslår vi att du väljer det korrekta sajtnamnet
+för maskinen som för närvarande tillhandahåller <code>ftp.CC.debian.org</code>.
+(Se mappen <code>/debian/project/trace</code> på servern för att hitta 
+detta).</li>
 
 <toc-add-entry name="how">Hur man speglar</toc-add-entry>
 
 <p>
-Den rekommenderade metoden för att spegla är med den skriptsamling
-som kallas <a href="anonftpsync">ftpsync</a>
-och finns tillgänglig på två sätt:
+Den rekommenderade metoden för att spegla är med skriptsamlingen
+ftpsync, som finns tillgänglig i två former:
 </p>
 <ul>
     <li>som en tarboll från <url "https://ftp-master.debian.org/ftpsync.tar.gz"></li>
-    <li>som ett gitarkiv: <kbd>git clone https://ftp-master.debian.org/git/archvsync.git</kbd></li>
+    <li>som ett gitarkiv: <kbd>git clone https://ftp-master.debian.org/git/archvsync.git</kbd>
+    (se <url "https://anonscm.debian.org/cgit/mirror/archvsync.git/"></li>
 </ul>
 
-<p>
-Vi rekommenderar starkt speglingsprotokollet anonym
-<a href="https://packages.debian.org/stable/net/rsync">rsync</a>.
-</p>
-
-<p>
-Vi ber dig att inte använda <kbd>wget</kbd> eller andra ftp-baserade
-verktyg.
-De verkar fungera bra, men har vissa problem (de kan inte detektera hårda
-länkar, gör det svårare att ha en delvis spegling, osv).
-</p>
-
-<h3>Ställa in rsync</h3>
-
-<p>
-Vi rekommenderar att du använder
-skriptsamlingen <a href="https://ftp-master.debian.org/ftpsync.tar.gz">ftpsync</a> för att spegla
-arkivet.
-Följ den medföljande README-filen för att sätta upp spegeln.
-</p>
-
-<p>
-Om du använder dina egna skript, gäller att den minsta funktionaliteten
-som måste stödjas är som följer:
-</p>
-
-<ul>
- <li>
-  <p>MÅSTE genomföra en 2-stegssynkronisering.</p>
-  <p>Arkivspeglingen måste göras i två steg.
-  Den första rsync-körningen måste ignorera indexfilerna.
-  Det korrekta valet av "exclude"-parametrar för
-  den första rsync-körningen är</p>
-  <kbd>--exclude Packages* --exclude Sources* --exclude Release* --exclude InRelease --exclude i18n/* --exclude ls-lR*</kbd>
-  <p>Det första steget får inte ta bort några filer.</p>
-  <p>Det andra steget måste sedan hämta de filer
-  som exkluderades ovan och ta bort filer som inte längre hör hemma
-  på spegeln.</p>
-
-  <p>Motivering: om arkivspegling görs i ett enda steg,
-  kommer det finnas
-  tidsperioder då indexfilerna refererar till filer som inte har
-  speglats ännu.</p>
- </li>
-
- <li>
-   <p>FÅR INTE ignorera uppdateringar under körning (för <a href="push_mirroring">&rdquo;push&rdquo;-spegling</a>).</p>
-  <p>Om en uppdatering tas emot under en körning av spegelsynkroniseringen FÅR den INTE
-  ignoreras.  Hela synkroniseringsprocessen måste köras om.</p>
-
-  <p>Motivering: de flesta implementationer av speglingsskript för Debian kommer lämna
-  spegeln i ett inkonsekvent tillstånd vid hämdelse av en andra uppdatering
-  som utförs medan den första synkroniseringen fortfarande körs.
-  Det är troligt att uppdateringsfrekvensen kommer öka i framtiden.</p>
- </li>
- <li>
-  Kör rsync med åtminstone dessa flaggor:
-  <kbd>--recursive --times --links --hard-links --delete</kbd>.
- </li>
-
- <li>
-  Om du har tillräckligt med diskutrymme bör även flaggan
-  <kbd>--delete-after</kbd> användas för att undvika vissa temporära
-  uppdateringsproblem.
- </li>
-
- <li>
-  När rsync är färdig med sin spegling, lägg till en tidsstämpelfil i
-  underkatalogen <code>project/trace/</code> på Debianspegeln, med din
-  server som namn.
-  Det betyder att du bör köra
-  <kbd>date -u &gt; .../debian/project/trace/<var>din.server</var></kbd>
-  när din dagliga rsync är färdig.
- </li>
-
- <li>
-  Vi avråder å det bestämdaste att exkludera <tt>project/</tt>,
-  <tt>doc/</tt> och andra kataloger.
-  Dessa är normalt mycket små, men väldigt användbara för användarna.
-  Speciellt <tt>project/trace</tt> är väldigt bra att ha om det är några
-  problem med speglingsprocessen.
- </li>
-
-</ul>
+<p>Använd inte dina egna skript, och använd inte bara single-pass rsync. Om
+du använder ftpsync säkerställer detta att uppdateringar görs på ett sätt som
+inte förvirrar apt. ftpsync behandlar översättningar, innehåll och andra
+metadatafiler i en ordning som gör att apt inte råkar ut för valideringsfel om
+en användare uppdaterar paketlistan samtidigt som en speglingskörning pågår.
+Utöver detta producerar den även spårningsfiler som innehåller mer information
+som är användbar för att avgöra om en spegling fungerar, vilka arkitekturer
+som den bär, och var den synkar från.
 
 <toc-add-entry name="partial">Spegla delmängder</toc-add-entry>
 
 <p>Med tanke på <a href="size">hur stort</a> Debianarkivet
-redan är föredrar vissa att bara spegla de delar de behöver.
-Om du vill undvara något bör du undvara arkitekturer.</p>
-
-<p>Med det rekommenderade <a href="https://ftp-master.debian.org/ftpsync.tar.gz">ftpsync</a> kan detta göras genom att
-redigera ARCH_EXCLUDE-variabeln.
-Det finns även andra specialskrivna skript, de är dock inte lämpliga för
-officiella speglar.
-</p>
-
-<p>Vi rekommenderar å det bestämdaste mot att exkludera <tt>project/</tt>,
-<tt>doc/</tt> och andra underkataloger.
-Vanligtvis är dessa inte speciellt stora men ändå användbara för användare.
-Speciellt <tt>project/trace</tt> är väldigt bra att ha om det är några
-problem med speglingsprocessen.
-</p>
-
-<p>
-Du kan välja att använda andra specialskrivna skript, men det är oftast inte
-nödvändigt, och rekommenderas inte för officiella speglar.
-</p>
+redan är kan det vara fördelaktigt att endast spegla en del av
+arkivet. Publika speglingar skall innehålla alla uppsättningar
+(uttestningsutgåvan, instabila utgåvan, osv.), men de kan begränsa vilka
+arkitekturer som dom innehåller. Konfigurationsfilen för ftpsync har
+ARCH_EXCLUDE- och ARCH-INCLUDE-inställningar för detta ändamål.</p>
 
 <toc-add-entry name="when">När du bör spegla</toc-add-entry>
 
@@ -258,9 +140,8 @@ runt dem.
 
 <p>
 Din spegel bör uppdatera ett par timmar efter en av huvudarkivets
-spegelpulser.
-Du bör se om platsen du speglar från skapar en tidsstämpelfil i sin
-<kbd>project/trace/</kbd>-katalog.
+spegelpulser. Du bör se om platsen du speglar från skapar en tidsstämpelfil
+i sin <kbd>project/trace/</kbd>-katalog.
 Tidsstämpelfilen kommer ha samma namn som den platsen, och ange den
 tidpunkt när senaste speglingskörningen slutfördes.
 Lägg till ett par timmar på det (för att vara på den säkra sidan) och spegla
@@ -285,62 +166,31 @@ Om din plats blir <q>push</q>-speglad behöver du inte bry dig om något av dett
 <h3><q>Push</q>-styrd spegling</h3>
 
 <p>
-<q>Push</q>-spegling är en form av spegling med rsync vi har utvecklat
+<q>Push</q>-spegling är en form av spegling vi har utvecklat
 som minimerar tiden det tar för ändringar i huvudarkivet att nå speglarna.
 En uppströmsspegel använder en SSH-utlösare som informerar nedströmsspegeln
 om att den måste uppdateras.
-<q>Pushningen</q> begränsas oftast till en säker utlösare som inte tar någon
-variabel indata, så att resten av spegelfunktionen är en vanlig <q>pull</q>,
-på samma sätt som för ett cron-jobb.
-</p>
 
-<p>
-<q>Push</q>-spegling är nödvändig för att hålla flera servrar
-synkroniserade (som servrarna för cirkulerande DNS-alias, till exempel
-<tt>ftp.us.debian.org</tt>), och vi använder det vanligtvis för våra första-
-och andranivåspeglar.
-För <q>vanliga</q> speglar kräver detta en hel del arbete att ställa
-in vilket egentligen inte är värt besväret jämfört med ett finjusterat
-cron-jobb.
-</p>
-
-<p>
 För en mer utförlig beskrivning av hur det fungerar, varför det är
 säkert, och hur man sätter upp en <q>push</q>-spegel, se
 <a href="push_mirroring">den kompletta förklaringen</a>.
 </p>
 <toc-add-entry name="settings">Rekommenderade ytterligare inställningar</toc-add-entry>
 
-<p>Om du planerar att göra Debianspegeln tillgänglig över HTTP ber vi dig
-lägga till följande inställningar till Apaches konfiguration (förutsatt,
-naturligtvis, att du använder Apache), innanför blocket
-<code>&lt;Directory <var>/sökväg/till/din/debianspegel</var>&gt;</code>,
-där <code>/sökväg/till/din/debianspegel</code> är namnet på den
-katalog du har spegeln i:
-</p>
+<p>Publika speglingar bör göra Debianarkivet tillgängligt över HTTP vid
+<code>/debian</code>.</p>
+
+<p>Utöver detta, säkerställ att directory listings är aktiverade (med
+fullständiga filnamn) och att symboliska länkar följs.
+
+Om du använder apache kan något likt följande fungera:
 
 <pre>
+&lt;Directory <var>/path/to/your/debian/mirror</var>&gt;
    Options +Indexes +SymlinksIfOwnerMatch
    IndexOptions NameWidth=* +SuppressDescription
+&lt;/Directory&gt;
 </pre>
-
-<p>
-Detta aktiverar katalogindex och försäkrar att symboliska länkar fungerar.
-Filnamnen i katalogindexen kommer inte trunkeras och (de huvudsakligen
-icke-existerande) beskrivningarna kommer inte att visas.
-</p>
-
-<p>
-I Apache 1.3.x kan även följande alternativ läggas till:
-</p>
-
-<pre>
-   DirectoryIndex .
-</pre>
-
-<p>
-Lägg inte till detta alternativ för Apache 2.x.
-</p>
 
 <toc-add-entry name="submit">Lägga till en spegel i spegellistan</toc-add-entry>
 
@@ -366,3 +216,27 @@ Registrering kan göras via vårt <a href="submit">enkla webbformulär</a>.
 Problem eller frågor kan ställas till
 <email mirrors@debian.org>.
 </p>
+
+<toc-add-entry name="mailinglists">Mailinglists</toc-add-entry>
+
+<p>Det finns två publika <a href="../MailingLists/">sändlistor</a> om
+Debianspeglingar,
+<a href="https://lists.debian.org/debian-mirrors-announce/">debian-mirrors-announce</a>
+och
+<a href="https://lists.debian.org/debian-mirrors/">debian-mirrors</a>.
+Vi rekommenderar att alla speglingsunderhållare att prenumerera på
+tillkännagivandesändlistan eftersom den kommer att användas för alla viktiga
+tillkännagivanden. Denna lista är modererad och kommer endast att få en liten
+mängd trafik. Den andra sändlistan menas för allmänna diskussioner och är
+öppen för alla.</p>
+
+<p>Om du har några frågor som inte besvaras på dessa webbsidor kan du
+kontakta oss på <email mirrors@debian.org> eller med hjälp av IRC, #debian-mirrors på
+<tt>irc.debian.org</tt>.</p>
+
+
+<toc-add-entry name="private-mirror">Anmärkningar för privata (delmängds-) speglingar</toc-add-entry>
+
+Om du vill driva en spegling för endast din egna sajt, och du endast behöver hålla en
+delmängd av sviterna (så som stabila utgåvan), kan även
+<a href="https://packages.debian.org/stable/debmirror">debmirror</a> passa dig.
