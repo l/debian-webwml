@@ -3,14 +3,14 @@
 #include "$(ENGLISHDIR)/releases/sid/archive.data"
 #include "$(ENGLISHDIR)/releases/arches.data"
 
-#use wml::debian::translation-check translation="1.79" maintainer="Jean-Paul Guillonneau"
-
+#use wml::debian::translation-check translation="1.84" maintainer="Jean-Paul Guillonneau"
+#traducteurs : voir journal
 
 <toc-display />
 
 <toc-add-entry name="whether">Dans quel cas faire un miroir ?</toc-add-entry>
 
-<p>Même si nous apprécions tout nouveau miroir, chaque responsable potentiel de
+<p>Même si nous apprécions les nouveaux miroirs, chaque responsable potentiel de
 miroir doit s'assurer qu'il peut répondre aux questions suivantes avant de commencer
 à mettre en place son propre miroir :</p>
 
@@ -22,10 +22,10 @@ miroir doit s'assurer qu'il peut répondre aux questions suivantes avant de comm
   occupent une quantité importante d'<a href="size">espace disque</a> et de bande passante, dont
   il faut s'engager à supporter le coût.</li>
 
-  <li>Un miroir est-il le bon choix ? Parfois, certaines personnes démarrent
-  un miroir par erreur, alors qu'en fait elles veulent un serveur cache
-  mandataire (<q>proxy cache</q>),
-  tel qu'<a href="https://packages.debian.org/apt-cacher-ng">apt-cacher-ng</a>.</li>
+  <li>Un miroir est-il le bon choix ? Si principalement vous voulez aider les
+  utilisateurs par vos possibilités de FAI, alors peut-être qu’un serveur cache
+  mandataire (<q>proxy cache</q>) tel apt-cacher-ng, squid ou varnish serait un
+  meilleur choix.</li>
 </ul>
 
 
@@ -39,7 +39,8 @@ possible de dupliquer.
 <li>
 Les utilisateurs cherchent l'archive dans debian/ pour installer Debian
 par le réseau, pour construire des CD (avec jigdo), ou pour mettre à
-jour des systèmes déjà installés.</li>
+jour des systèmes déjà installés. <em>Nous préconisons de faire un miroir de ce
+dépôt.</em></li>
 
 <li>
 debian-cd/ est une archive qui n'est pas identique sur tous les différents
@@ -55,57 +56,42 @@ Debian</a></li>
 <li>
 debian-archive/ contient la véritable <em>archive</em>, les anciennes versions
 obsolètes de Debian. Elle n'est en général intéressante que pour une petite
-partie des utilisateurs.
-</li>
+partie des utilisateurs. (Sans bonne raison, vous ne devriez pas en créer un
+miroir.)</li>
 
 </ul>
 
-<p>Veuillez voir la page des <a href="size">tailles des miroirs</a>
+<p>Veuillez consulter la page des <a href="size">tailles des miroirs</a>
 pour des informations plus précises sur les tailles des miroirs.</p>
 
 <p>L'archive debian-security/ contient les mises à jour de sécurité éditées par
-l'équipe de sécurité de Debian. Elle semble intéressante pour tout le monde,
-mais comme les mises à jour de sécurité sont sporadiques, il faudrait
-synchroniser le miroir très souvent pour être à jour (ou utiliser <a
-href="push_mirroring">un miroir <i>push</i></a>) aussi nous ne recommandons pas
-de la dupliquer. Au lieu de cela, Debian fait tous les efforts possibles pour
-conserver la haute disponibilité de security.debian.org.</p>
+l'équipe de sécurité de Debian. Bien qu’elle semble intéressante pour tout le
+monde, nous ne recommandons pas l’utilisation de miroirs pour obtenir les mises à
+jour de sécurité, et demandons à la place de les télécharger directement depuis
+notre service distribué, security.debian.org. <em>Nous préconisons de ne
+<strong>pas</strong> faire un miroir de debian-security</em>.</p>
 
 <toc-add-entry name="wherefrom">À partir d'où faire un miroir&nbsp;?</toc-add-entry>
 
-<p>Beaucoup de gens pensent que <code>ftp.debian.org</code> est
-l'emplacement canonique des paquets Debian et que faire un miroir de
-ce site est ce qu'il y a de mieux. <strong>Ce n'est pas vrai</strong>.</p>
+<p>Notez que <code>ftp.debian.org</code> n’est pas un emplacement canonique des
+paquets Debian, c’est plutôt simplement l’emplacement d’un serveur parmi d’autres
+mis à jour à partir d’un serveur interne de Debian.
 
-<p><code>ftp.debian.org</code> est seulement l'un des serveurs mis à jour à
-partir d'un serveur Debian interne. Cette adresse pointe actuellement vers un
-unique serveur, et existe encore principalement pour des
-raisons de compatibilité ascendante.</p>
+Il existe de nombreux <a href="list-full">miroirs publics</a> qui prennent en
+charge rsync et qui forment de bons miroirs. Merci d'utiliser un miroir
+qui soit proche de vous, au sens de la proximité réseau.</p>
 
-<p>Les <a href="official">miroirs officiels</a> sont censés être de bonnes
-sources. Tout serveur parmi ceux qui se trouvent dans la <a
-href="list-full">liste complète des miroirs</a> portant la marque
-<q><kbd>Type: Push-Primary</kbd></q> ou <q><kbd>Type:
-Push-Secondary</kbd></q> est un bon candidat pour la source d'un miroir.
-Merci d'utiliser un miroir qui soit proche de vous, au sens de la
-proximité réseau.</p>
-
-<p>Il n'y a pas de différences significatives entre différents miroirs
-serveurs <em>Push-Primary</em> comme origine du miroir. De plus, si
-beaucoup de gens utilisent <code>ftp.debian.org</code> (et
-malheureusement c'est le cas), cela gaspille inutilement la bande
-passante que l'on nous donne.</p>
-
-<p>Les administrateurs de miroirs situés aux États-Unis devraient mettre à jour
-leur miroir depuis ftp.us.debian.org (le miroir officiel pour les États-Unis,
-qui est un miroir <q>Push-Primary</q>). Or comme cette adresse est un alias
-pour plusieurs serveurs, il est recommandé de déterminer lequel vous convient
-le mieux et de mettre à jour le miroir depuis l'un d'entre eux.
-<br />
-<small>Cela a pour avantage d'éviter les ennuis lors du rsync en deux étapes
-(puisque les différentes étapes risquent d'être effectuées sur des serveurs
-différents, et tomber à des instants où les données sont différentes,
-provoquant une problème de concurrence).</small></p>
+<p>Vous devez éviter de faire un miroir à partir de n’importe quel nom de service
+conduisant à plus d’une adresse (tel ques <code>ftp.us.debian.org</code>) car
+cela pourrait amener à une synchronisation entre différents états de copies de
+miroirs amont qui pourraient être non synchronisés.
+#
+Remarquez aussi que HTTP est le seul service dont la présence est garantie sur
+<code>ftp.CC.debian.org</code>. Si vous voulez créer votre miroir en utilisant
+rsync (l’utilisation de ftpsync est recommandée), nous vous suggérons de choisir
+le nom approprié du site de la machine fournissant <code>ftp.CC.debian.org</code>.
+(Consulter le répertoire <code>/debian/project/trace</code> de ce serveur
+pour le connaître).<p>
 
 <toc-add-entry name="how">Comment faire un miroir</toc-add-entry>
 
@@ -113,84 +99,28 @@ provoquant une problème de concurrence).</small></p>
 le script ftpsync, disponible de deux manières :</p>
 <ul>
     <li>sous la forme d'une archive à l'adresse <url "https://ftp-master.debian.org/ftpsync.tar.gz"></li>
-    <li>via le dépôt git : <kbd>git clone https://ftp-master.debian.org/git/archvsync.git</kbd></li>
+    <li>en utilisant le dépôt git : <kbd>git clone https://anonscm.debian.org/git/mirror/archvsync.git</kbd> (voir <url "https://anonscm.debian.org/cgit/mirror/archvsync.git/">)</li>
 </ul>
 
-<p>
-Le protocole fortement recommandé est <a
-href="https://packages.debian.org/stable/net/rsync">rsync</a>.
-</p>
-
-<p>Merci de ne pas utiliser <kbd>wget</kbd> ou d'autres outils FTP.
-Ils semblent fonctionner correctement, mais posent beaucoup de problèmes : ils
-ne détectent pas les liens réels « hard », il est difficile d'effectuer des répliques
-partielles de l'archive, etc.</p>
-
-<h3>Configuration de rsync</h3>
-
-<p>Nous recommandons l'utilisation de <a href="https://ftp-master.debian.org/ftpsync.tar.gz">ftpsync</a> pour faire un miroir de l'archive. Suivez les indications
-se trouvant dans le fichier README pour mettre en place le miroir.</p>
-
-<p>Si vous devez utiliser vos propres scripts, ceux-ci doivent intégrer les
-fonctionnalités indispensables ci-dessous :</p>
-
-<ul>
-   <li><p>la synchronisation DOIT se faire en deux étapes</p>
-   <p>La mise à jour de l'archive doit être effectuée en deux étapes.
-   Lors du premier passage de rsync, les fichiers d'index doivent être ignorés,
-   en utilisant la liste d'exclusion suivante :</p>
-   <kbd>--exclude Packages* --exclude Sources* --exclude Release* --exclude InRelease --exclude i18n/* --exclude ls-lR*</kbd>
-   <p>La première étape ne doit pas supprimer un seul fichier.</p>
-   <p>La seconde étape doit ensuite effectuer le transfert des fichiers exclus
-   ci-dessus et supprimer les fichiers qui n'appartiennent plus à l'archive.</p>
-
-   <p>Explication : lorsque la mise à jour de l'archive est faite en une seule étape,
-   les fichiers d'index référencent des fichiers qui n'ont pas encore été récupérés.</p>
-
-   </li>
-
-   <li><p>un script en cours ne DOIT pas ignorer les signaux de déclenchement
-   (dans le cas de <a href="push_mirroring">miroir par repoussage</a>).</p>
-
-   <p>Si un signal est reçu alors qu'une mise à jour du miroir est en cours,
-   celui-ci ne DOIT PAS être ignoré. La mise à jour complète du miroir doit alors
-   être effectuée à nouveau.</p>
-
-   <p>Explication : si un second signal est reçu alors qu'une première mise à
-   jour est en cours, la plupart des scripts pour miroirs Debian laissent le
-   miroir dans un état incohérent.
-   Dans un futur proche, la fréquence de mise à jour de l'archive augmentera
-   probablement.</p>
-   </li>
-
-  <li>Lancez rsync avec au moins les options suivantes&nbsp;:
-  <kbd>--recursive --times --links --hard-links --delete</kbd>.</li>
-
-  <li>Même si vous avez de la place disque supplémentaire, utilisez
-  l'option <kbd>--delete-after</kbd> pour éviter des problèmes de mise
-  à jour temporaire.</li>
-
-  <li>Une fois que rsync a fini de mettre à jour le miroir, ajoutez
-  un fichier «&nbsp;timestamp&nbsp;» au sous-répertoire
-  <code>project/trace/</code> du miroir Debian ayant le nom de votre
-  serveur. Cela signifie lancer <kbd>date -u &gt;
-  .../debian/project/trace/<var>votre.serveur</var></kbd>
-  une fois que votre rsync journalier est terminé.</li>
-
-  <li>Nous déconseillons vivement d'exclure les sous-répertoires
-  <tt>project/</tt>, <tt>doc/</tt> et autres. Ils sont généralement
-  négligeables quant à leur taille et cependant utiles aux utilisateurs.
-  En particulier <tt>project/trace</tt> aide beaucoup en cas de
-  problème de miroir.</li>
-
-</ul>
+<p>N’utilisez pas vos propres scripts, et n’utilisez pas des exécutions uniques
+de rsync. L’utilisation de ftpsync garantit que les mises à jour seront faites
+d’une manière qu’apt ne soit pas désorienté. En particulier, ftpsync traite les
+traductions, les contenus et autres métadonnées de telle façon qu’apt ne sera pas
+amené à des erreurs de validation si un utilisateur met à jour la liste des
+paquets tandis que le miroir met sa copie à jour. De plus, cela produit des
+fichiers de trace contenant plus d’informations que nécessaires pour connaître si
+un miroir est en fonction, quelles architectures il fournit et à partir de quoi
+il se synchronise.</p>
 
 <toc-add-entry name="partial">Miroir partiel</toc-add-entry>
 
 <p>Considérant la <a href="size">taille déjà importante de l'archive
-Debian</a>, certaines personnes préfèrent ne faire un miroir que des
-quelques parties dont ils ont besoin. Si vous voulez en
-exclure une partie, vous devriez exclure les architectures.</p>
+Debian</a>, il serait peut-être préférable de ne faire un miroir que de quelques
+parties de l’archive. Les miroirs publics devrait fournir toutes les publications
+(testing, unstable, etc.), mais ils peuvent restreindre le nombre d’architectures
+proposées. Le fichier de configuration de ftpsync possède les réglages
+ARCH_EXCLUDE et ARCH_INCLUDE pour cela.</p>
+
 
 <p>Avec le script recommandé <a href="https://ftp-master.debian.org/ftpsync.tar.gz">ftpsync</a>,
 cela peut se faire en modifiant la variable ARCH_EXCLUDE.</p>
@@ -200,10 +130,6 @@ cela peut se faire en modifiant la variable ARCH_EXCLUDE.</p>
 négligeables quant à leur taille et cependant utiles aux utilisateurs.
 En particulier <tt>project/trace</tt> aide beaucoup en cas de
 problème de miroir.</p>
-
-<p>Il est possible d'utiliser d'autres scripts spécialement écrits, mais ils
-sont généralement inutiles et déconseillés pour les miroirs officiels.
-
 
 <toc-add-entry name="when">Quand rafraîchir les miroirs&nbsp;?</toc-add-entry>
 
@@ -238,28 +164,13 @@ sa mise à jour, alors vous n'avez à vous soucier d'aucun de ces
 problèmes.</p>
 
 
-<h3>rsync avec authentification, à partir d'un miroir <q>Push</q></h3>
+<h3>Copie de miroir déclenchée par <q>Push</q></h3>
 
-<p>Nous avons développé les miroirs de type <q>Push</q>, qui utilisent rsync
-et visent à minimiser le temps que mettent les changements de
-l'archive pour atteindre les miroirs.
-Un miroir amont utilise un script déclencheur SSH pour indiquer au miroir
-client qu'il doit se mettre à jour.
-Le mécanisme de <q>Push</q> est généralement limité à un script déclencheur
-unique sans variable, de sorte que le miroir se fait toujours par <q>Pull</q>,
-comme une tâche cron.
-</p>
-
-<p>Les miroirs <q>Push</q> sont nécessaires pour garder synchrones un
-ensemble de serveurs (comme les serveurs dans des alias DNS en
-<i>round-robin</i>, par exemple <tt>ftp.us.debian.org</tt>), et nous
-les utilisons pour nos miroirs de premier et deuxième niveaux.
-
-En revanche, puisque cette méthode demande un peu plus d'effort,
-elle n'est pas souvent mise en place pour les miroirs <q>privés</q>.
-</p>
-
-<p>Pour une description plus détaillée de la manière dont cette méthode
+<p>La copie de miroir de type <q>Push</q> est une manière que nous avons
+développée pour minimiser le temps que mettent les changements de l'archive pour
+atteindre les miroirs. Un miroir amont utilise un script déclencheur SSH pour
+indiquer au miroir client qu'il doit se mettre à jour.
+Pour une description plus détaillée de la manière dont cette méthode
 fonctionne, des raisons pour lesquelles elle est sûre et de la façon de
 la mettre en place, voyez <a href="push_mirroring">les explications
 complètes</a>.</p>
@@ -267,32 +178,26 @@ complètes</a>.</p>
 
 <toc-add-entry name="settings">Configuration supplémentaire recommandée</toc-add-entry>
 
-<p>Si vous voulez rendre le miroir Debian disponible par HTTP, merci
+<p>Les miroirs publics devraient rendre l’archive Debian accessible par HTTP à
+<code>/debian</code>.</p>
+
+<p>De plus, assurez-vous que les listes de répertoires soient disponibles (avec
+leurs noms de fichier complets et le suivi des liens symboliques).<p>
+
+Si vous voulez rendre le miroir Debian disponible par HTTP, merci
 de rajouter les options suivantes à votre configuration d'Apache (en
 supposant bien sûr que vous utilisez Apache) dans le paragraphe
 <code>&lt;Directory <var>/chemin/vers/votre/miroir/debian</var>&gt;</code>, où
 <var>/chemin/vers/votre/miroir/debian/</var> doit être remplacé par le
 nom du répertoire dans lequel vous gardez le miroir&nbsp;:</p>
 
+Si vous utilisez Apache, quelque chose comme ceci devrait fonctionner :
 <pre>
+&lt;Directory <var>/chemin/vers/votre/miroir/debian</var>&gt;
    Options +Indexes +SymlinksIfOwnerMatch
    IndexOptions NameWidth=* +SuppressDescription
+&lt;/Directory&gt;
 </pre>
-
-<p>
-Cela met en place les index de répertoires et assure que les liens
-symboliques fonctionnent. Les noms de fichier dans les index de
-répertoires ne seront pas tronqués et les descriptions (qui le plus
-souvent n'existent pas) n'apparaîtront pas.</p>
-
-<p>Dans le cas d'Apache&nbsp;1.3.x, l'option suivante peut également être ajoutée&nbsp;:</p>
-
-<pre>
-   DirectoryIndex .
-</pre>
-
-<p>N'ajoutez pas cette option à Apache 2.x.</p>
-
 
 <toc-add-entry name="submit">Comment ajouter un miroir à la liste des miroirs&nbsp;?</toc-add-entry>
 
@@ -314,3 +219,28 @@ href="list">liste officielle des miroirs</a>. Les inscriptions peuvent être
 faites en utilisant notre <a href="submit">simple formulaire web</a>.</p>
 
 <p>Problèmes et questions peuvent être envoyés à <email mirrors@debian.org>.</p>
+
+<toc-add-entry name="mailinglists">Listes de diffusion</toc-add-entry>
+
+<p>Il existe deux <a href="../MailingLists/">listes de diffusion</a> publiques à
+propos des miroirs de Debian,
+<a href="https://lists.debian.org/debian-mirrors-announce/">debian-mirrors-announce</a>
+et
+<a href="https://lists.debian.org/debian-mirrors/">debian-mirrors</a>.
+Nous encourageons tous les responsables de miroir à s’inscrire à la liste des
+annonces car elle est utilisée pour toute annonce importante. Cette liste est
+filtrée et ne reçoit qu’un faible trafic. La deuxième liste est destinée aux
+discussions générales et est ouverte à tous.</p>
+
+<p>Si vous avez une question sans réponse dans ces pages web, vous pouvez nous
+contacter à <email mirrors@debian.org> ou en utilisant IRC, #debian-mirrors sur
+<tt>irc.debian.org</tt>.</p>
+
+
+<toc-add-entry name="private-mirror">Remarques pour les miroirs privés (partiels)</toc-add-entry>
+
+Si vous voulez mettre en œuvre un miroir pour votre propre site seulement, et que
+vous n’avez besoin qu’une partie des publications (comme stable),
+<a href="https://packages.debian.org/stable/debmirror">debmirror</a> pourrait
+vous convenir parfaitement.
+
