@@ -29,20 +29,6 @@ size.$(LANGUAGE).html: size.wml $(ENGLISHDIR)/mirror/size.data
 # the non-english directories shouldn't try to install them
 ifeq "$(LANGUAGE)" "en"
 
-# Note: the masterlist file is kept private since it contains e-mail addresses
-mirrorstuff := \
-  id_rsa.pub.ftp-master id_rsa.pub.syncproxy.eu id_rsa.pub.syncproxy.wna \
-
-destmirrorstuff := $(patsubst %,$(HTMLDIR)/%,$(mirrorstuff))
-
-install:: $(destmirrorstuff)
-
-$(destmirrorstuff): $(HTMLDIR)/%: %
-	install -m 664 -p $< $(HTMLDIR)
-
-cleandest::
-	rm -f $(destmirrorstuff)
-
 .PHONY: text html full $(ENGLISHDIR)/mirror/size.data 
 text: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t text
