@@ -327,7 +327,6 @@ EOM
   </td>
   <td valign="top">\$elems[0]</td>
   <td valign="top">\$elems[1]</td>
-  <td valign="top"><small>\$elems[2]</small></td>
 </tr>
 EOM
   }
