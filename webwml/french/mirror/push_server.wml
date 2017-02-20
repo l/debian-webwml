@@ -1,10 +1,10 @@
 #use wml::debian::template title="Mettre en place un serveur de repoussage"
 #use wml::debian::toc
 
-#use wml::debian::translation-check translation="1.22" maintainer="Nicolas Bertolissio"
+#use wml::debian::translation-check translation="1.23" maintainer="Jean-Paul Guillonneau"
 
-# Traducteur précédant : Christian Couder
 # Premier traducteur   : Christophe Lebars
+# Traducteurs précédents : voir journal
 
 <p>
 Mettre en place un serveur de repoussage se résume à effectuer deux tâches
@@ -26,9 +26,9 @@ repoussage</a>.</small>
 <toc-add-entry name="rsync">Mettre en place rsync</toc-add-entry>
 
 <p>
-Installez <code>rsync</code>&nbsp;2.1.1 ou une version supérieure. Si votre
-site tourne sous Debian, installez simplement le dernier paquet <a
-href="https://packages.debian.org/stable/net/rsync">rsync</a>.
+Installez <code>rsync</code>. Si votre site tourne sous Debian, installez
+simplement le paquet
+<a href="https://packages.debian.org/stable/net/rsync">rsync</a>.
 </p>
 
 <p>
@@ -39,13 +39,13 @@ dans celui-ci&nbsp;:
 <pre>
 uid = nobody
 gid = nogroup
-max connections = 25
+max connections = 50
 socket options = SO_KEEPALIVE
 
 [debian]
   path = /srv/debian/mirror
-  comment = L'archive Debian (~250 Go)
-  auth users = compte_autorisé1,compte_autorisé2,compte_autoriséN
+  comment = L'archive Debian (https://www.debian.org/mirror/size)
+  auth users = *
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
 </pre>
@@ -56,29 +56,22 @@ au fichier <code>/etc/rsyncd/debian.secrets</code>&nbsp;:
 </p>
 
 <pre>
-compte_autorisé1:un_mot_de_passe
-compte_autorisé2:autre_mot_de_passe
-compte_autoriséN:_mot_de_passe
+site1.example.com:un_mot_de_passe
+site2.example.com:autre_mot_de_passe
+site3.example.com:mot_de_passe
 </pre>
 
 <p>
 Vous avez alors donné accès à l'archive se trouvant sur votre machine aux
-miroirs clients de votre machine.
+miroirs clients de votre machine. Si vous voulez donner un accès rsync à
+tout le monde, omettez les réglages <code>auth users</code> et
+<code>secrets file</code> dans <code>rsyncd.conf</code>. Vous n’avez nul
+besoin de fichier secrets.
 </p>
 
 <p>
-Vous voudrez probablement lancer le démon rsync depuis inetd. Pour cela, vous
-devez d'abord ajouter le service rsync dans le fichier
-<code>/etc/services</code> (s'il n'y est pas déjà), comme ceci&nbsp;:
-</p>
-	
-<pre>
-rsync           873/tcp
-</pre>
-
-<p>
-Pour lancer le démon avec inetd, ajoutez ce qui suit à votre fichier
-<code>/etc/inetd.conf</code>&nbsp;:
+Vous voudrez probablement lancer le démon rsync depuis inetd. Pour autoriser
+le démon, ajoutez ce qui suit au fichier <code>/etc/inetd.conf</code> :
 </p>
 
 <pre>
@@ -87,7 +80,7 @@ rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daem
 
 <p>
 N'oubliez pas d'envoyer à inetd un signal HUP pour lui dire de relire son
-fichier de configuration après que vous l'avez modifié.
+fichier de configuration après que vous l'ayez modifié.
 </p>
 
 
@@ -95,28 +88,22 @@ fichier de configuration après que vous l'avez modifié.
 
 <p>
 Créez une nouvelle clé SSH pour le compte que vous utilisez pour faire un
-miroir de Debian. Faites attention à ne pas écraser votre clé SSH originale et
-pour cela utilisez l'option -f, par exemple&nbsp;:
-</p>
+miroir de Debian en utilisant <code>ssh-keygen</code>. Si votre compte
+possède déjà une clef pour d’autres buts, vous pouvez désirer en créer une
+nouvelle et la stocker dans un fichier différent en utilisant
+<code>ssh-keygen -f ~/.ssh/identité.monsite</code></p>
 
+Vos miroirs aval auront alors besoin d’ajouter
 <pre>
-ssh-keygen -f ~/.ssh/identite.monsite
+command="~/bin/ftpsync",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty &lt;contenu de votre fichier ~/.ssh/&lt;clef&gt;.pub&gt;
 </pre>
+à leur fichier <code>~/.ssh/authorized_keys</code>.
 
 <p>
-Vérifiez que la nouvelle clé publique (~/.ssh/identite.monsite.pub) contient
-ceci au début du fichier, avec ADRESSEIP l'IP de votre miroir amont :
-</p>
-
-<pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="ADRESSEIP"
-</pre>
-
-<p>
-Vous devez aussi mettre en place le script qui contactera les miroirs clients.
-
-L'archive de ftpsync contient le script <code>runmirrors</code>
-qui s'occupe de toute les tâches ingrates à votre place.
+Vous devez configurer votre processus de recopie pour contacter les miroirs
+clients lorsque celui-ci est terminé.
+La suite ftpsync contient le script <code>runmirrors</code> qui s'occupe de
+toutes les tâches nécessaires à votre place.
 
 Modifiez simplement ftpsync.conf pour intégrer le réglage
 <code>HUB=true</code>, copiez <code>runmirrors.conf.sample</code>
