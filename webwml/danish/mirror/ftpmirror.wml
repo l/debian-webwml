@@ -1,6 +1,6 @@
 #use wml::debian::template title="Opsætning af et Debian-arkivspejl"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.79"
+#use wml::debian::translation-check translation="1.84"
 #include "$(ENGLISHDIR)/releases/sid/archive.data"
 #include "$(ENGLISHDIR)/releases/arches.data"
 
@@ -8,9 +8,9 @@
 
 <toc-add-entry name="whether">Hvorvidt man skal spejle</toc-add-entry>
 
-<p>Mens vi er glade for alle nye filspejle, bør alle der overvejer at 
-vedligeholde et filspejl sikre sig, at de kan besvare disse spørgsmål, før der 
-et eget filspejl forsøges oprettet:</p>
+<p>Selv om vi er glade for at få nye filspejle, bør alle der overvejer at 
+vedligeholde et filspejl, sikre sig at de kan besvare følgende spørgsmål, før 
+de forsøger at opsætte deres eget filspejl:</p>
 
 <ul>
     <li>Er et filspejl nødvendigt i mit område?  Måske er der allerede filspejle 
@@ -18,10 +18,9 @@ et eget filspejl forsøges oprettet:</p>
     <li>Har jeg ressourcerne til at være vært for et filspejl?  Spejle kræver en
 	betragtelig mængde <a href="size">diskplads</a> og båndbredde, man skal 
 	kunne betale omkostningerne.</li>
-    <li>Er et filspejl det rette valg?  Nogle tager fejl og starter et filspejl, 
-	når det i virkeligheden er en <q>caching proxy</q>, de har brug for, så 
-	som <a href="https://packages.debian.org/apt-cacher-ng">\
-	apt-cacher-ng</a>.</li>
+    <li>Er et filspejl det rette valg?  Hvis du primært ønsker at understøtte 
+	brugere hos din ISP/organisation, er <q>caching proxy</q> så som 
+	apt-cacher-ng, squid eller varnish måske et bedre valg.</li>
 </ul>
 
 
@@ -33,7 +32,8 @@ spejles.</p>
 <ul>
     <li>Brugere kigger efter arkivet debian/ for at installere Debian over 
     netværket, til at opbygge cd'er fra (med jigdo) og til at opgradere 
-    allerede installerede systemer.</li>
+    allerede installerede systemer.  <em>Vi anbefaler at du spejler dette 
+    arkiv.</em></li>
 
     <li>Arkivet debian-cd/ er ikke identisk på tværs af alle de forskellige 
     spejlingservere.  Nogle steder indeholder det jigdo-skabeloner til 
@@ -45,140 +45,73 @@ spejles.</p>
 
     <li>debian-archive/ indeholder det egentlige <em>arkiv</em>, dvs. gamle og
     udgåede versioner af Debian.  Generelt er det kun interessant for et fåtal 
-    af brugerne.</li>
+    af brugerne.  (Hvis du ikke ved hvorvidt du ønsker at spejle dette, er det 
+    formentlig ikke relevant.)</li>
 </ul>
 
 <p>Se siden om <a href="size">størrelser på filspejle</a> for mere præcise 
 oplysninger om størrelser på filspejle.</p>
 
 <p>Arkivet debian-security/ indeholder sikkerhedsopdateringer udsendt af
-Debians sikkerhedsteam.  Der lyder interessant for alle, men da 
-sikkerhedsopdateringer er sporadiske, er man nødt til at spejle det meget ofte,
-for at være ajour (eller bruge <a href="push_mirroring">push-spejling</a>),
-hvorfor vi ikke anbefaler det.  Debian gør i stedet meget ud af, at sørge for 
-en høj tilgængelighed af security.debian.org.</p>
+Debians sikkerhedsteam.  Mens det lyder interessant for alle, anbefaler vi ikke 
+at vores brugere benytter filspejle til at hente sikkerhedsopdateringer, og 
+beder dem i stedet om at hente dem direkte fra vores distribuerede
+security.debian.org-tjenste.  <em>Vi anbefaler at debian-security 
+<strong>ikke</strong> spejles.</em></p>
 
 
 <toc-add-entry name="wherefrom">Hvor der kan filspejles fra</toc-add-entry>
 
-<p>Mange lader til at tro, at <code>ftp.debian.org</code> er det kanoniske sted
-for Debian-pakker og at det vil være bedst for dem at filspejle det ftp-sted.
-Det er <strong>ikke rigtigt</strong>.</p>
+<p>Bemærk at <code>ftp.debian.org</code> ikke er den kanoniske placering for 
+Debian-pakker, det er blot en af flere servvere, der opdateres fra en intern 
+Debian-server.</p>
 
-<p><code>ftp.debian.org</code> er blot en af flere servere som opdateres fra en 
-intern Debian-server.  Adressen befinder sig pt. på en enkelt server, og er 
-primært bevaret af hensyn til bagudkompatibilitet.</p>
+<p>Der er mange <a href="list-full">officielle filspejle</a>, der understøtter 
+rsync og som er gode at spejle fra.  Benyt en der er netværksmæssigt tæt på 
+dig.</p>
 
-<p>Hensigten med de <a href="official">officielle filspejle</a> er at de skal
-være gode steder at spejle fra.  En hvilken som helst server på den 
-<a href="list-full">fuldstændige liste over filspejle</a>, som har flagene 
-<q><kbd>Type: Push-Primary</kbd></q> eller <q><kbd>Type: Push-Secondary</kbd></q> 
-skulle være god at basere sit filspejl på.  Anvend venligst et filspejl, der både 
-netværksgeografisk og fysisk er tæt på dig.</p>
-
-<p>Der er i praksis ikke nogen forskel på de forskellige 
-<em>Push-Primary</em>-filspejle, hvad angår spejlingen. På den anden siden, 
-hvis mange bruger ftp.debian.org (og det gør de desværre) sker der et 
-unødvendigt spild af den donerede båndbredde.</p>
-
-<p>Filspejlsadministratorer i USA bør spejle fra ftp.us.debian.org (den
-officielle filspejlsadresse i USA, som er et Push-Primary-filspejl).  Men da
-denne adresse også er et <q>round-robin</q>-alias for flere maskiner, giver
-det normalt mening at beslutte sig for, hvilken af dem det vil være bedst at
-spejle fra.
-<br />
-<small>Fordelen derved, er at man undgår risiko for fejl ved udførelse af en
-to-trins rsync (forskellige trin kan blive udført mod forskellige maskiner,
-der på det givne tidspunkt kan have forskellige data, medførende en såkaldt
-<q>race condition</q>).  Ulempen er at man anvender ét bestemt sted, hvis
-tilgængelighed kan skifte, men det gælder pt. generelt hele vores netværk af
-filspejle.</small></p>
+<p>Du bør undgå at spejle fra en hvilken som helst tjeneste, der benyttere mere 
+end én adresse (så som <code>ftp.us.debian.org</code>), da det kan medføre, at 
+du synkroniserer mellem forskellige tilstande på tværs af dine egne 
+spejlingskørsler, såfremt dit opstrømsfilspejle ikke længere er synkrone.
+#
+Bemærk også at HTTP er den eneste tjeneste, som vi garanterer findes på 
+<code>ftp.CC.debian.org</code>.  Hvis du ønsker at spejle ved hjælp af rsync 
+(anvendelse af ftpsync anbefales), så foreslår vi at du vælger det egentlige 
+navn på den maskine, der pt. står for <code>ftp.CC.debian.org</code>.  (Kig 
+i mappen <code>/debian/project/trace</code> på den pågældende server, for at 
+konstatere hvad dens navn er).</p>
 
 
 <toc-add-entry name="how">Hvordan man spejler</toc-add-entry>
 
-<p>Den anbefalede filspejlingsmetode er med det såkaldte skript 
-<a href="anonftpsync">anonftpsync</a>.</p>
-
-<p>Den kraftigt anbefalede filspejlingsprotokol er 
-<a href="https://packages.debian.org/stable/net/rsync">rsync</a>.</p>
-
-<p>Vær venlig ikke at anvende <kbd>wget</kbd> og andre ftp-værktøjer.  De 
-ser ud til at fungere, men vil have mange problemer (de kan ikke identificere
-hard links, det er mere besværligt at lave delvise filspejle, osv.).</p>
-
-
-<h3>Rsync-opsætning</h3>
-
-<p>Vi anbefaler at bruge <a href="https://ftp-master.debian.org/ftpsync.tar.gz">\
-ftpsync-skriptene</a> til at lave et filspejl af arkivet. Følg den medfølgende 
-README-fil for at sætte filspejlingen op.</p>
-
-<p>Hvis du alligevel anvender dine egne skripter, er den minimale funktionalitet, 
-som de skal indeholde, følgende:</p>
+<p>Den anbefalede filspejlingsmetode er med det skriptsættet ftpsync, der er 
+tilgængtligt på to måder:</p>
 
 <ul>
-   <li><p>SKAL udføre en to-trins-sync</p>
-   <p>Arkivspejlingen skal gøres i to trin.  Den første rsync-kørsel skal 
-   ignorere index-filerne.  De rette fravalgsindstillinger for den første 
-   rsync-kørsel er:</p>
-   <kbd>--exclude Packages* --exclude Sources* --exclude Release* --exclude InRelease --exclude i18n/* --exclude ls-lR*</kbd>
-   <p>Det førstetrin må ikke slette nogen filer.</p>
-   <p>Det andet trin skal dernæst overføre de ovenfor fravalgte filer og slette
-   filer, der ikke længerer hører til i filspejlet.</p>
-
-   <p>Rationale: hvis arkivspejlingen udføres i et trin, vil der være 
-   tidspunkter hvor index-filerne refererer til filer, som endnu ikke er 
-   spejlet.</p>
-   </li>
-
-   <li><p>Må IKKE ignorere push'er mens det kører (ved <a href="push_mirroring">\
-   push-spejl</a>).</p>
-   <p>Hvis et push modtages under kørslen spejlingssynkroniseringen, Må det IKKE
-   ignoreres.  Hele synkroniseringsprocessen skal genstartes.</p>
-
-   <p>Rationale: de fleste implementeringer af Debians filspejlingskripter vil 
-   efterlade filspejlet i en inkonsistent tilstand, i tilfælde af at et nyt push
-   modtages mens den første synkronisering stadig kører.  Det er muligt, at 
-   hyppigheden af push'er vil stige inden for den nærmeste fremtid.</p>
-   </li>
-
-  <li>Kør rsync med i hvert fald disse parametre: <kbd>--recursive --times
-      --links --hard-links --delete</kbd>.</li>
-
-  <li>Hvis du har ekstra diskplads, så brug også parametret 
-      <kbd>--delete-after</kbd> for at undgå nogle af de midlertidige 
-      opdateringsproblemer.</li>
-
-  <li>Når rsync er færdig med at spejle, tilføjes et tidsstemplingsfil til 
-      undermappen <code>project/trace/</code> på Debian-spejlet, opkaldt
-      efter din server.  Dette betyder at 
-      <kbd>date -u &gt; .../debian/project/trace/<var>din.server</var></kbd>
-      skal køres efter din daglige rsync er afsluttet.</li>
-      
-  <li>Vi fraråder kraftigt at fravælge <tt>project/</tt>, <tt>doc/</tt> og 
-      andre undermapper.  Normalt er disse mindre i størrelse og alligevel
-      nyttige for brugerne.  Særligt <tt>project/trace</tt> er meget nyttig
-      hvis der er problemer med et filspejl.</li>
+    <li>som en tarball fra <url "https://ftp-master.debian.org/ftpsync.tar.gz"></li>
+    <li>som et git-arkiv: 
+	<kbd>git clone https://anonscm.debian.org/git/mirror/archvsync.git</kbd> 
+	(se <url "https://anonscm.debian.org/cgit/mirror/archvsync.git/"></li>
 </ul>
+
+<p>Anvend ikke dine egne skripter, og brug ikke bare single-pass-rsyncs.  Når 
+ftpsync anvendes, sikres det at opdateringer foretages på en sådan måde, at apt 
+ikke bliver forvirret.  I særdeleshed behandler ftpsync oversættelser, indhold 
+og andre metadatafiler i en rækkefølge på en sådan måde, at apt ikke løber ind i 
+valideringsfejl, hvis en bruger opdaterer pakkelisten mens et mirror-run er i 
+gang.  Yderligere fremstilles der også tracefiler, som indeholder flere 
+oplysninger, som er nyttige til at afgøre hvorvidt et filspejl fungerer, hvilke 
+arkitekturer det indeholder og hvor det synkroniserer fra.</p>
 
 
 <toc-add-entry name="partial">Delvis filspejling</toc-add-entry>
 
-<p>Det allerede <a href="size">store Debian-arkiv</a> taget i betragtning, 
-foretrækker nogle kun at spejle de dele som de har brug for. Hvis du ønsker at
-fravælge noget, bør du fravælge arkitekturer.</p>
-
-<p>Med den anbefalede <a href="https://ftp-master.debian.org/ftpsync.tar.gz">\
-ftpsync</a> kan dette gøres ved at ændre ARCH EXCLUDE-variablen.</p>
-
-<p>Vi advarer kraftigt imod at fravælge mapperne <tt>project/</tt>, 
-<tt>doc/</tt> og andre undermapper. Normalt er de ikke særligt store og 
-alligevel nyttige for brugerne.  Særligt <tt>project/trace</tt> kan være meget
-nyttigt hvis der er problemer med et filspejl.</p>
-
-<p>Det er muligt at anvende andre særligt fremstillede skripter, men de er 
-normalt ikke nødvendige, og anbefales ikke til officielle filspejle.</p>
+<p>Det allerede <a href="size">store Debian-arkiv</a> taget i betragtning, kan 
+det være en god ide kun at spejle dele af arkivet.  Offentlige filspejle bør 
+indeholde alle suiter (testing, unstable, osv.), men kan have begrænsninger på 
+hvilke arkitekturer, der er tilgængelige.  Til det formål har opsætningsfilen 
+til ftpsync indstillingerne ARCH_EXCLUDE og ARCH_INCLUDE.</p>
 
 
 <toc-add-entry name="when">Hvornår man skal filspejle</toc-add-entry>
@@ -196,7 +129,7 @@ den seneste opdatering af filspejlet.  Læg et par timer til den tid (for at
 være på den sikre side) og start din filspejl på det tidspunkt.</p>
 
 <p><strong>Det er afgørende at dit filspejl er synkront med 
-hovedarkivet</strong>.  Mindst fire updateringer pr. døgn vil sikre, at dit 
+hovedarkivet</strong>.  Mindst fire updateringer pr. 24 timer vil sikre, at dit 
 filspejl er en sand spejling af arkivet.  Vær opmærksom på, at filspejle, som 
 ikke er synkrone med hovedarkivet, ikke vil optræde på den officielle 
 filspejlsliste.</p>
@@ -209,49 +142,29 @@ dag, er at bruge cron.  Se <kbd>man crontab</kbd> for flere oplysninger.</p>
 
 <h3>Push-udløst filspejling</h3>
 
-<p><q>Push</q>-filspejling er en form for spejling ved hjælp af rsync vi har 
-udviklet for at minimere den tid det tager ændringer i arkivet at nå ud til 
-filspejlene. Server-filspejlet anvender en ssh-udløser til at fortælle 
-nedenstrøms-filspejlet at det sker opdatere sig selv.  <q>Push</q>'et er normalt
-begrænset til en sikker udløser, der ikke medtager variable data, så resten af 
-filspejlingsprocessen simpelthen er et <q>pull</q> som med et cron-job.</p>
-
-<p>Push-filspejling er nødvendig hvis mange servere skal være synkrone (så som
-servere i DNS der på skrift svarer på et alias som <tt>ftp.us.debian.org</tt>),
-og vi bruger det i forbindelse med vores primære og sekundære filspejle.  Men da
-metoden kræver lidt mere opsætningsarbejde, gøres det normalt ikke ved 
-<q>private</q> filspejle.</p>
-
-<p>For en mere detaljeret beskrivelse af hvordan dette fungerer, hvorfor det er
-sikkert, og hvordan man opsætter et <q>push</q>-filspejl, se 
-<a href="push_mirroring">den komplette beskrivelse</a>.</p>
+<p><q>Push</q>-filspejling er en form for spejling vi har udviklet for at 
+minimere den tid det tager ændringer i arkivet at nå ud til filspejlene.  Et 
+opstrømsfilspejl anvender en SSH-trigger til at fortælle nedenstrømsfilspejlet, 
+at det skal opdatere sig selv.  For en mere detaljeret beskrivelse af hvordan 
+dette fungerer, hvorfor det er sikkert, og hvordan man opsætter et 
+push-filspejl, se <a href="push_mirroring">den komplette beskrivelse</a>.</p>
 
 
 <toc-add-entry name="settings">Yderligere anbefalet opsætning</toc-add-entry>
 
-<p>Hvis du ønsker at gøre et Debian-filspejl tilgængeligt via HTTP, tilføj da
-følgende indstillinger til din opsætning af Apache (naturligvis forudsat at du
-bruger Apache) i blokken <code>&lt;Directory 
-<var>/sti/til/dit/debian/spejl</var>&gt;</code>, hvor 
-<var>/sti/til/dit/debian/spejl</var> ændres til navnet på den mappe, hvor
-dit filspejl ligger:</p>
+<p>Offentlige filspejle bør gøre Debian-arkivet tilgængeligt over HTTP i 
+<code>/debian</code>.</p>
+
+<p>Yderligere skal man sikre sig, at mappelister er aktive (med 
+fuldlængdefilnavne) og at symlinks følges.  Hvis du bruger Apache, vil noget 
+ala dette nok fungere:</p>
 
 <pre>
+&lt;Directory <var>/sti/til/dit/debian/filspejl</var>&gt;
    Options +Indexes +SymlinksIfOwnerMatch
    IndexOptions NameWidth=* +SuppressDescription
+&lt;/Directory&gt;
 </pre>
-
-<p>Det slår mappeindeksering til og sikrer at man kan følge symbolske links.  
-Filnavnene i mappererne bliver ikke forkortet, og beskrivelserne (overvejende 
-ikke-eksisterende) vises ikke.</p>
-
-<p>I Apache 1.3.x kan følgende også tilføjes:</p>
-
-<pre>
-    DirectoryIndex .
-</pre>
-
-<p>Brug ikke denne indstilling i Apache 2.x.</p>
 
 
 <toc-add-entry name="submit">Hvordan et spejl føjes til spejllisten</toc-add-entry>
@@ -270,5 +183,29 @@ filspejle:</p>
 Debian</a> for at blive optaget på <a href="list">listen over filspejle</a>.
 Det gøres ved at benytte vores <a href="submit">simple webformular</a>.</p>
 
-
 <p>Problemer eller forespørgsler stilles til <email mirrors@debian.org>.</p>
+
+
+<toc-add-entry name="mailinglists">Postlister</toc-add-entry>
+
+<p>Der er to offentlige <a href="../MailingLists/">postlister</a> vedrørende 
+Debian-filspejle,
+<a href="https://lists.debian.org/debian-mirrors-announce/">debian-mirrors-announce</a>
+og 
+<a href="https://lists.debian.org/debian-mirrors/">debian-mirrors</a>.
+Vi opfordrer alle filspejlsvedligeholdere at tilmelde sig annonceringsliten, da 
+den anvendes til alle vigtige annonceringer.  Listen er modereret og har kun en 
+lav trafikmængde.  Den anden postliste er beregnet til generelle diskussioner og 
+er åben for alle.</p>
+
+<p>Hvis du har spørgsmål, som ikke er besvaret på disse websider, kan du 
+kontakte os på <email mirrors@debian.org> eller anvende IRC, #debian-mirrors på
+<tt>irc.debian.org</tt>.</p>
+
+
+<toc-add-entry name="private-mirror">Bemærkninger til private (delvise) filspejle</toc-add-entry>
+
+<p>Hvis du ønsker at drive et filspejl kun for dig eller din organisation, og du 
+kun har behov for en delmængde af suiterne (så som stable), kunne 
+<a href="https://packages.debian.org/stable/debmirror">debmirror</a> også være 
+en god løsning for dig.</p>
