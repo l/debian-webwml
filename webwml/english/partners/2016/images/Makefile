@@ -1,7 +1,7 @@
 # Considering webwml/english/partners/images/* shouldn't be in translations,
 # there should be no need to copy this file to translation directories.
 
-WMLBASE=../../../
+WMLBASE=../../..
 CUR_DIR=partners/2016/images
 SUBS=
 
