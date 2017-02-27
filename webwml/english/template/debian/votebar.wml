@@ -235,12 +235,26 @@ foreach $year (reverse sort @years) {
     }
     $title = ''; $status = '';
 <protect pass=2>
+
+# First pass parsing the files to get the title. 
+# We need encoding for this, but status retrieval does not work
+
     foreach $line (Encode::decode_utf8(<$fh>)) {
       if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>/) {
         $title = Encode::encode_utf8($1);
       } elsif ($line =~ /^<define-tag status>(.*)<\/define-tag>/) {
         $status = Encode::encode_utf8($1);
       }
+
+# Second pass parsing the files to get the status
+# with the original code that was running before we introduced 
+# the encoding to fix the titles
+
+    foreach $line (<$fh>) {
+      if ($line =~ /^<define-tag status>(.*)<\/define-tag>/) {
+        $status = $1;
+      }  
+    }
 </protect>
       
       if ( $title && $status ) {
