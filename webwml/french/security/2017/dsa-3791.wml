@@ -1,0 +1,111 @@
+#use wml::debian::translation-check translation="1.1" maintainer="Jean-Pierre Giraud"
+<define-tag description>Mise à jour de sécurité</define-tag>
+<define-tag moreinfo>
+<p>Plusieurs vulnérabilités ont été découvertes dans le noyau Linux qui
+pourraient conduire à une augmentation de droits, un déni de service ou
+avoir d'autres impacts.</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-6786">CVE-2016-6786</a> / <a href="https://security-tracker.debian.org/tracker/CVE-2016-6787">CVE-2016-6787</a>
+
+<p>Le sous-système « performance events » ne gère pas correctement les
+verrouillages lors de certaines migrations, permettant à un attaquant local
+d'augmenter ses droits. Cela peut être atténué en désactivant l'utilisation
+non privilégiée de « performance events » :
+<code>sysctl kernel.perf_event_paranoid=3</code></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-8405">CVE-2016-8405</a>
+
+<p>Peter Pi de Trend Micro a découvert que le sous-système de mémoire
+d'image vidéo ne vérifie pas correctement les limites lors de la copie des
+tables de couleurs dans l'espace utilisateur, provoquant une lecture hors
+limites du tampon de tas, menant à la divulgation d'informations.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-9191">CVE-2016-9191</a>
+
+<p>CAI Qian a découvert que le comptage de référence n'est pas correctement
+géré dans proc_sys_readdir de l'implémentation de sysctl, permettant un déni
+de service local (blocage du système) ou éventuellement une augmentation de
+droits.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-2583">CVE-2017-2583</a>
+
+<p>Xiaohan Zhang a signalé que KVM pour amd64 n'émule pas correctement le
+le chargement d'un sélecteur de pile de taille NULL. Cela peut être utilisé
+par un utilisateur dans une VM client pour un déni de service (avec un
+processeur Intel) ou pour une augmentation de droits à l'intérieur de la VM
+(avec un processeur AMD).</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-2584">CVE-2017-2584</a>
+
+<p>Dmitry Vyukov a signalé que KVM pour x86 n'émule pas correctement l'accès
+mémoire par les instructions SGDT et SIDT, ce qui peut avoir pour
+conséquence une utilisation de mémoire après libération et une fuite
+d'informations.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-2596">CVE-2017-2596</a>
+
+<p>Dmitry Vyukov a signalé que KVM divulgue des références de page lors de
+l'émulation d'un VMON pour un hyperviseur imbriqué. Cela peut être utilisé
+par un utilisateur privilégié dans une VM client pour déni de service ou
+éventuellement pour obtenir des droits dans l'hôte.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-2618">CVE-2017-2618</a>
+
+<p>Un décalage d'entier dans le traitement des attributs de SELinux dans
+/proc/pid/attr pourrait avoir pour conséquence un déni de service local.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-5549">CVE-2017-5549</a>
+
+<p>Le pilote de périphérique USB série KLSI KL5KUSB105 pourrait enregistrer
+le contenu de mémoire du noyau non initialisée avec pour conséquence une
+fuite d'informations.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-5551">CVE-2017-5551</a>
+
+<p>Jan Kara a découvert que le changement des ACL POSIX d'un fichier dans
+tmpfs ne nettoyait jamais l'étiquette set-group-ID, ce qui devrait être fait
+si l'utilisateur modifié n'est pas un membre du groupe propriétaire. Dans
+certains cas, cela peut permettre à l'utilisateur propriétaire d'un
+exécutable d'obtenir les droits du groupe propriétaire.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-5897">CVE-2017-5897</a>
+
+<p>Andrey Konovalov a découvert un défaut de lecture hors limites dans la
+fonction ip6gre_err dans le code réseau IPv6.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-5970">CVE-2017-5970</a>
+
+<p>Andrey Konovalov a découvert un défaut de déni de service dans le code
+réseau IPv4. Il peut être déclenché par un attaquant local ou distant si
+l'option IP_RETOPTS d'un socket local UDP ou brut est activée.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-6001">CVE-2017-6001</a>
+
+<p>Di Shen a découvert une situation de compétition entre des appels
+parallèles au sous-système « performance events », permettant à un attaquant
+local d'augmenter ses droits. Ce défaut existe à cause d'une correction
+incomplète de <a href="https://security-tracker.debian.org/tracker/CVE-2016-6786">CVE-2016-6786</a>.
+Cela peut être atténué en désactivant l'utilisation non privilégiée de
+« performance events » : <code>sysctl kernel.perf_event_paranoid=3</code></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-6074">CVE-2017-6074</a>
+
+<p>Andrey Konovalov a découvert une vulnérabilité d'utilisation de mémoire
+après libération dans le code réseau DCCP qui pourrait avoir pour
+conséquence un déni de service ou une augmentation de droits local. Sur les
+systèmes où le module dccp n'a pas déjà été chargé, cela peut être atténué
+en le désactivant :
+<code>echo >> /etc/modprobe.d/disable-dccp.conf install dccp false</code></p></li>
+
+</ul>
+
+<p>Pour la distribution stable (Jessie), ces problèmes ont été corrigés dans la version 3.16.39-1+deb8u1.</p>
+
+<p>Nous vous recommandons de mettre à jour vos paquets linux.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2017/dsa-3791.data"
+# $Id$
