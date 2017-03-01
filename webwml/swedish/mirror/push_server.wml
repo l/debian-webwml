@@ -1,5 +1,5 @@
 #use wml::debian::template title="Sätta upp en &quot;push&quot;-server"
-#use wml::debian::translation-check translation="1.22"
+#use wml::debian::translation-check translation="1.23"
 #use wml::debian::toc
 
 <p>Att sätta upp en <q>push</q>server består av två grundläggande steg:
@@ -15,8 +15,8 @@ ssh-utlösarmekanism (för att trycka (<q>push</q>) i <q>pull</q>-speglingen).
 
 <toc-add-entry name="rsync">Ställa in rsync</toc-add-entry>
 
-<p>Installera <code>rsync</code> version 2.1.1 eller senare.
-Om din server kör Debian installerar du bara det senaste
+<p>Installera <code>rsync</code>. 
+Om din server kör Debian installerar du helt enkelt
 <a href="https://packages.debian.org/stable/net/rsync">rsync</a>-paketet.
 </p>
 
@@ -26,12 +26,12 @@ Om din server kör Debian installerar du bara det senaste
 <pre>
 uid = nobody
 gid = nogroup
-max connections = 25
+max connections = 50
 socket options = SO_KEEPALIVE
 
 [debian]
   path = /srv/debian/mirror
-  comment = Debians arkiv (~250 Gbyte)
+  comment = Debianarkivet (https://www.debian.org/mirror/size)
   auth users = auktoriserat_konto1,auktoriserat_konto2,auktoriserat_kontoN
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
@@ -42,24 +42,19 @@ socket options = SO_KEEPALIVE
 </p>
 
 <pre>
-auktoriserat_konto1:ett_lösenord
-auktoriserat_konto2:annat_lösenord
-auktoriserat_kontoN:lösenord
+site1.exempel.com:ett_lösenord
+site2.exempel.com:ett_annat_lösenord
+site3.exempel.net:lösenord
 </pre>
 
-<p>Du har nu gett nedströmsspeglarna tillgång till arkivet på din maskin.
+<p>Du har nu gett nedströmsspeglarna tillgång till arkivet på din maskin. Om
+du vill ge åtkomst till rsync till alla, hoppa över <code>auth users</code>-
+och <code>secrets file</code>-inställningarna i <code>rsyncd.conf</code>. Du
+behöver inte heller en secrets-fil då.
 </p>
 
 <p>Du vill antagligen starta rsyncprocessen från inetd.
-För att göra detta måste du lägga in rsync-servicen i filen
-<code>/etc/services</code> (om det inte redan står där), så här:
-</p>
-
-<pre>
-rsync           873/tcp
-</pre>
-
-<p>För att aktivera servern från inetd, lägger du till följande i din
+För att aktivera demonen, lägg till följande i din 
 <code>/etc/inetd.conf</code>:
 </p>
 
@@ -74,26 +69,25 @@ rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daem
 
 <toc-add-entry name="sshtrigger">Ställa in ssh-utlösarmekanism</toc-add-entry>
 
-<p>Skapa en ny ssh-nyckel för kontot som du använder för att spegla Debian.
-Se till att du inte skriver över din riktiga ssh-nyckel genom att
-använda flaggan -f, till exempel:
+<p>Skapa en ny ssh-nyckel för kontot som du använder för att spegla Debian med
+hjälp av <code>ssh-keygen</code>. Om ditt konto redan har en nyckel för andra
+ändamål kan du vilja skapa en ny och lagra den i en annan fil med hjälp
+av <code>ssh-keygen -f ~/.ssh/identity.mysite</code>.</p>
+
+<p>
+Dina nedströmsspeglar kommer sedan att behöva lägga till 
+</p>
+<pre>
+command="~/bin/ftpsync",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty &lt;innehållet i din ~/.ssh/&lt;key&gt;.pub-fil&gt;
+</pre>
+<p>
+till deras fil <code>~/.ssh/authorized_keys</code>.
 </p>
 
-<pre>
-ssh-keygen -f ~/.ssh/identity.minserver
-</pre>
-
-<p>Se till att den nya öppna nyckeln (~/.ssh/identity.minserver.pub)
-innehåller följande i början där IPADRESS är din uppströmsspegels IP:
-</p>
-
-<pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADRESS"
-</pre>
-
-<p>Du måste ställa in skriptet så att det kontaktar speglar nedströms.
-Tar-filen ftpsync inhåller skriptet <code>runmirrors</code> som kan ta hand
-om alla nödvändiga uppgifter åt dig. Ändra din ftpsync.conf att inkludera
+<p>Du kommer att behöva sätta upp din speglingsprocess så att den kontaktar
+dina nedström när din speglingskörning avslutas. ftpsync-uppsättningen
+innehåller skriptet <code>runmirrors</code> som hanterar 
+alla nödvändiga uppgifter åt dig. Ändra din ftpsync.conf att inkludera
 inställningen <code>HUB=true</code>, kopiera <code>runmirrors.conf.sample</code>
 till <code>runmirrors.conf</code> och <code>runmirrors.mirror.sample</code> till 
 <code>runmirrors.mirror</code> och konfigurera config-filen för att passa ditt
@@ -104,7 +98,7 @@ duon ftpsync/runmirror att ta hand om allt tungt arbete åt dig.
 <p>
 Resultatet kommer bli att ditt system kommer försöka ssh'a till dina 
 nedströmsspeglar, efter att din egen spegel har uppdaterats, så dom kan starta 
-sin uppdateringar. Detta antar att du gav operatorerna av nedströmsspeglarna 
+sin uppdateringar. Detta antar att du gav operatörerna av nedströmsspeglarna 
 ssh-nyckeln som du sa till runmirrors att använda och att dom la till den i 
 deras egna ~/.ssh/authorized_keys som beskrivet ovan.
 </p>
