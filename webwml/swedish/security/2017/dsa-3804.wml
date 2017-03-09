@@ -1,0 +1,82 @@
+#use wml::debian::translation-check translation="1.1" mindelta="1"
+<define-tag description>säkerhetsuppdatering</define-tag>
+<define-tag moreinfo>
+<p>Flera sårbarheter har upptäckts i Linuxkärnan som kan leda till
+utökning av rättigheter, överbelastning eller ha andra effekter.</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-9588">CVE-2016-9588</a>
+
+    <p>Jim Mattson upptäckte att KVM-implementationen för Intel x86-processorer
+    inte hanterar #BP och #OF-undantag ordentligt i en L2 (nästlad) virtuell
+    maskin. En lokal angripare i en L2-gäst-VM kan dra fördel av denna brist
+    för att orsaka en överbelastning för L1-gäst-VM.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-2636">CVE-2017-2636</a>
+
+    <p>Alexander Popov upptäckte en kapplöpningseffekt i n_hdlc
+    line discipline vilket kan leda till en dubbel frigörning. En
+    lokal användare utan rättigheter kan dra fördel av denna brist för
+    att öka sina rättigheter. På system som inte redan har laddat
+    n_hdlc-modulen kan detta lindras genom att inaktivera den:
+    <code>echo >> /etc/modprobe.d/disable-n_hdlc.conf install n_hdlc false</code></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-5669">CVE-2017-5669</a>
+
+    <p>Gareth Evans rapporterade att privilegierade användare kan mappa
+    minne på adress 0 genom systemanropet shmat(). Detta kunde göra det
+    lättare att exploatera andra kärnsäkerhetssårbarheter via ett
+    set-UID-program.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-5986">CVE-2017-5986</a>
+
+    <p>Alexander Popov rapporterade en kapplöpningseffekt i
+    SCTP-implementationen som kan användas av lokala användare att orsaka
+    en överbelastning (krasch). Den ursprungliga rättning för detta var
+    inkorrekt och introducerade flera säkerhetsproblem (<a href="https://security-tracker.debian.org/tracker/CVE-2017-6353">\
+    CVE-2017-6353</a>). Denna uppdatering inkluderar en senare fix som undviker
+    dessa. På system som inte redan har laddat sctp-modulen kan detta
+    lindras genom att inaktivera denna:
+    <code>echo >> /etc/modprobe.d/disable-sctp.conf install sctp false</code></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-6214">CVE-2017-6214</a>
+
+    <p>Dmitry Vyukov rapporterade ett fel i TCP-implementationens hantering
+    av brådskande data i systemanropet splice(). Detta kan användas av en
+    fjärrangripare för överbelastning (hängning) mot applikationer som
+    läser från TCP-sockets med splice().</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-6345">CVE-2017-6345</a>
+
+    <p>Andrey Konovalov rapporterade att LLC typ 2-implementationen
+    felaktigt tilldelar socketbufferägarskap. Detta kan användas
+    av en lokal användare för att orsaka en överbelastning (krasch). På
+    system som inte redan har laddat modulen llc2 kan detta lindras
+    genom att inaktivera den:
+    <code>echo >> /etc/modprobe.d/disable-llc2.conf install llc2 false</code></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-6346">CVE-2017-6346</a>
+
+    <p>Dmitry Vyukov rapporterade en kapplöpningseffekt i raw packet (af_packet)
+    fanout-funktionen. Lokala användare med CAP_NET_RAW-möjligheten (i
+    alla användarnamnrymder) kan använda detta för överbelastning och
+    möjligen för utökning av privilegier.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-6348">CVE-2017-6348</a>
+
+    <p>Dmitry Vyukov rapporterade att den allmänna köimplementationen i
+    undersystemet IrDA inte hanterar flera låsningar ordentligt,
+    vilket möjligen tillåter lokala användare att orsaka en
+    överbelastning (deadlock) via skapade operationer i IrDA-tjänster.</p></li>
+
+</ul>
+
+<p>För den stabila utgåvan (Jessie) har dessa problem rättats i
+version 3.16.39-1+deb8u2.</p>
+
+<p>Vi rekommenderar att ni uppgraderar era linux-paket.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2017/dsa-3804.data"
