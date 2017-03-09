@@ -1,0 +1,83 @@
+#use wml::debian::translation-check translation="1.1" mindelta="1"
+<define-tag description>sikkerhedsopdatering</define-tag>
+<define-tag moreinfo>
+<p>Flere sårbarheder er opdaget i Linux-kernenen, hvilke kunne føre til en 
+rettighedsforøgelse, lammelsesangreb (denial of service) eller have andre 
+følger.</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-9588">CVE-2016-9588</a>
+
+    <p>Jim Mattson opdagede at KVM-implementeringen af Intel x86-processorer 
+    ikke på korrekt vis håndterede #BP- og #OF-exceptions i en (nestet) virtuel 
+    L2-maskine.  En lokal angriber på en L2-gæste-VM, kunne drage nytte af 
+    fejlen til at forårsage et lammelsesangreb mod L1-gæste-VM'en.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-2636">CVE-2017-2636</a>
+
+    <p>Alexander Popov opdagede en kapløbstilstandsfejl i linjedisciplinen 
+    n_hdlc, som kunne føre til en dobbelt frigivelse.  En lokal upriviligeret 
+    bruger kunne drage nytte af fejlen til rettighedsforøgelse.  På systemer, 
+    der ikke allerede har indlæst modulet n_hdlc, kan det løses ved at 
+    deaktivere det:  
+    <code>echo >> /etc/modprobe.d/disable-n_hdlc.conf install n_hdlc false</code></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-5669">CVE-2017-5669</a>
+
+    <p>Gareth Evans rapporterede at priviligerede brugere kunne mappe 
+    hukommelse i adresse 0 gennem systemkaldet shmat().  Dermed kunne det være 
+    lettere at udnytte andre kernesikkerhedssårbarheder gennem et 
+    set-UID-program.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-5986">CVE-2017-5986</a>
+
+    <p>Alexander Popov rapporterede om en kapløbstilstand i 
+    SCTP-implementeringen, som kunne udnyttes af lokale brugere til at 
+    forårsage et lammelsesangreb (nedbrud).  Den oprindelige rettelse heraf var 
+    ukorrekt og indførte yderligere sikkerhedsproblemer 
+    (<a href="https://security-tracker.debian.org/tracker/CVE-2017-6353">\
+    CVE-2017-6353</a>).  Opdateringen indeholder en senere rettelse, som undgår 
+    disse.  På systemer, som ikke allerede har indlæst modulet sctp, kan det 
+    løses ved at deaktivere det:  
+    <code>echo >> /etc/modprobe.d/disable-sctp.conf install sctp false</code></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-6214">CVE-2017-6214</a>
+
+    <p>Dmitry Vyukov rapporterede om en fejl i TCP-implementeringens 
+    håndtering af hastende data i systemkaldet splice().  Det kunne udnyttes af en 
+    fjernangriber til lammelsesangreb (hænging), mod applikationer, der læser fra 
+    TCP-sockets med splice().</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-6345">CVE-2017-6345</a>
+
+    <p>Andrey Konovalov rapporterede at LLC type 2-implementeringen på ukorrekt 
+    vis tildelte socketbufferejerskab.  Det kunne udnyttes af en lokal bruger 
+    til at forårsage et lammelsesangreb (nedbrud).  På systemer hvor modulet llc2 
+    ikke allerede er indlæst, kan det løses ved at deaktivere det:  
+    <code>echo >> /etc/modprobe.d/disable-llc2.conf install llc2 false</code></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-6346">CVE-2017-6346</a>
+
+    <p>Dmitry Vyukov rapporterede om en kapløbstilstand i raw packets 
+    (af_packet) fanout-funktionalitet.  Lokale brugere med muligheden 
+    CAP_NET_RAW (i et vilkårlig navnerum), kunne udnytte det til lammelsesangreb 
+    og muligvis til rettighedsforøgelse.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-6348">CVE-2017-6348</a>
+
+    <p>Dmitry Vyukov rapporterede at implementeringen af den generelle kø i 
+    undersystemet IrDA, ikke på korrekt vis håndterede flere låse, muligvis 
+    gørende det muligt for lokale brugere at forårsage et lammelsesangreb 
+    (deadlock) gennem fabrikerede handlinger på IrDA-enheder.</p></li>
+
+</ul>
+
+<p>I den stabile distribution (jessie), er disse problemer rettet i
+version 3.16.39-1+deb8u2.</p>
+
+<p>Vi anbefaler at du opgraderer dine linux-pakker.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2017/dsa-3804.data"
