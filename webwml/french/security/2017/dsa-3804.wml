@@ -1,0 +1,87 @@
+#use wml::debian::translation-check translation="1.1" maintainer="Jean-Pierre Giraud"
+<define-tag description>Mise à jour de sécurité</define-tag>
+<define-tag moreinfo>
+<p>Plusieurs vulnérabilités ont été découvertes dans le noyau Linux qui
+pourrait conduire à une augmentation de droits, un déni de service ou avoir
+d'autres impacts.</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-9588">CVE-2016-9588</a>
+
+<p>Jim Mattson a découvert que l'implémentation de KVM pour les processeurs
+Intel x86 ne gère pas correctement les exceptions #BP et #OF dans une
+machine virtuelle L2 (imbriquée). Un attaquant local dans une VM cliente L2
+peut tirer avantage de ce défaut pour provoquer un déni de service sur la
+VM cliente L1.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-2636">CVE-2017-2636</a>
+
+<p>Alexander Popov a découvert un défaut de situation de compétition dans
+la « line discipline » n_hdlc qui peut conduire à une double libération de
+zone de mémoire. Un utilisateur local sans droit peut tirer avantage de ce
+défaut pour une augmentation de droits. Pour les systèmes qui n'ont pas
+déjà le module n_hdlc chargé, cela peut être atténué en le désactivant :
+<code>echo >> /etc/modprobe.d/disable-n_hdlc.conf install n_hdlc false</code></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-5669">CVE-2017-5669</a>
+
+<p>Gareth Evans a signalé que les utilisateurs privilégiés peuvent mapper
+la mémoire à l'adresse 0 à travers l'appel système shmat(). Cela pourrait
+rendre plus facile l'exploitation d'autres vulnérabilités de sécurité du
+noyau à l'aide d'un programme « set-UID ».</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-5986">CVE-2017-5986</a>
+
+<p>Alexander Popov a signalé une situation de compétition dans 
+l'implémentation de SCTP qui peut être utilisée par des utilisateurs locaux
+pour provoquer un déni de service (plantage). La correction initiale de ce
+problème était incorrecte et introdiusait d'autres problèmes de sécurité
+(<a href="https://security-tracker.debian.org/tracker/CVE-2017-6353">
+CVE-2017-6353</a>). Cette mise à jour comprend une nouvelle correction qui
+les évite. Pour les systèmes qui n'ont pas déjà le module sctp chargé, cela
+peut être atténué en le désactivant :
+<code>echo >> /etc/modprobe.d/disable-sctp.conf install sctp false</code></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-6214">CVE-2017-6214</a>
+
+<p>Dmitry Vyukov a signalé un bogue dans le traitement par l'implémentation
+de TCP des données urgentes dans l'appel système splice(). Cela peut être
+utilisé par un attaquant distant pour provoquer une déni de service
+(blocage) à l'encontre des applications qui lisent les sockets TCP avec
+splice().</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-6345">CVE-2017-6345</a>
+
+<p>Andrey Konovalov a signalé que l'implémentation de LLC type 2 assigne
+incorrectement la propriété de la mémoire tampon des sockets. Cela peut
+être utilisé par  un utilisateur local pour provoquer un déni de service
+(plantage). Pour les systèmes qui n'ont pas déjà le module llc2 chargé,cela
+peut être atténué en le désactivant :
+<code>echo >> /etc/modprobe.d/disable-llc2.conf install llc2 false</code></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-6346">CVE-2017-6346</a>
+
+<p>Dmitry Vyukov a signalé une situation de compétition dans la fonction
+fanout de paquet brut (af_packet). Des utilisateurs locaux doté de la
+capacité CAP_NET_RAW (dans n'importe quel espace de nom) peuvent utiliser
+cela pour un déni de service et éventuellement une augmentation de droits.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-6348">CVE-2017-6348</a>
+
+<p>Dmitry Vyukov a signalé que l'implémentation de la file d'attente
+principale dans le sous-système IrDA ne gère pas correctement des verrous
+multiples, permettant éventuellement à des utilisateurs locaux de provoquer
+un déni de service (blocage) grâce à des opérations contrefaites sur des
+périphériques IrDA.</p></li>
+
+</ul>
+
+<p>Pour la distribution stable (Jessie), ces problèmes ont été corrigés dans la version 3.16.39-1+deb8u2.</p>
+
+<p>Nous vous recommandons de mettre à jour vos paquets linux.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2017/dsa-3804.data"
+# $Id$
