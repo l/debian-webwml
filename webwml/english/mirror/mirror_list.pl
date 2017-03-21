@@ -8,6 +8,7 @@
 
 use strict;
 use English;
+use HTML::Entities;
 require 5.001;
 
 my @filter_arches=qw(); # Architectures not to list.
@@ -598,7 +599,7 @@ END
             } else {
               die "can't find sponsor URL for sponsor $sponsor of $subsite";
             }
-            $sponsorname =~ s/&(\s+)/&amp;$1/g;
+            encode_entities($sponsorname);
             print "<a href=\"$sponsorurl\">$sponsorname</a>";
             $num++;
             print ", " unless ($num >= $numsponsors);
@@ -618,7 +619,7 @@ END
                 } else {
             die "can't find sponsor URL for sponsor $sponsor of $mirror[$id]{site}";
           }
-          $sponsorname =~ s/&(\s+)/&amp;$1/g;
+          encode_entities($sponsorname);
           print "<a href=\"$sponsorurl\">$sponsorname</a>";
           $num++;
           print ", " unless ($num >= $numsponsors);
@@ -672,7 +673,7 @@ END
         } else {
           die "can't find sponsor URL for sponsor $sponsor of $mirror[$id]{site}";
         }
-        $sponsorname =~ s/&(\s+)/&amp;$1/g;
+        encode_entities($sponsorname);
         print "<a href=\"$sponsorurl\">$sponsorname</a>";
         $num++;
         print ",\n" unless ($num >= $numsponsors);
