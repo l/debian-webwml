@@ -144,6 +144,7 @@ while (<SRC>)
 	s/([Ff])or the unstable distribution/I den ustabile distribution/;
 	s/([Ff])or the unstable/I den ustabile/;
 	s/current stable distribution/nuværende stabile distribution/;
+	s/For the upcoming stable distribution/I den kommende stabile distribution/;
 	s/unstable distribution/ustabile distribution/;
 	s/([Tt])he old stable distribution/Den gamle stabile distribution/;
 	s/([Tt])he oldstable distribution/Den gamle stabile distribution/;
