@@ -9,12 +9,15 @@
 use strict;
 use English;
 use HTML::Entities;
+binmode(STDOUT => ':utf8');
 require 5.001;
 
 my @filter_arches=qw(); # Architectures not to list.
 
 my $officialsiteregex = q{^ftp\d?(?:\.wa)?\...\.debian\.org$};
 my $internalsiteregex = q{^((ftp|security)-master|ftp)\.debian\.org$};
+
+my $encode = '<>&"\'';
 
 use Getopt::Long;
 my ($mirror_source, $output_type, $help);
@@ -599,7 +602,7 @@ END
             } else {
               die "can't find sponsor URL for sponsor $sponsor of $subsite";
             }
-            encode_entities($sponsorname);
+            encode_entities($sponsorname, $encode);
             print "<a href=\"$sponsorurl\">$sponsorname</a>";
             $num++;
             print ", " unless ($num >= $numsponsors);
@@ -619,7 +622,7 @@ END
                 } else {
             die "can't find sponsor URL for sponsor $sponsor of $mirror[$id]{site}";
           }
-          encode_entities($sponsorname);
+          encode_entities($sponsorname, $encode);
           print "<a href=\"$sponsorurl\">$sponsorname</a>";
           $num++;
           print ", " unless ($num >= $numsponsors);
@@ -673,7 +676,7 @@ END
         } else {
           die "can't find sponsor URL for sponsor $sponsor of $mirror[$id]{site}";
         }
-        encode_entities($sponsorname);
+        encode_entities($sponsorname, $encode);
         print "<a href=\"$sponsorurl\">$sponsorname</a>";
         $num++;
         print ",\n" unless ($num >= $numsponsors);
@@ -1117,7 +1120,7 @@ if (defined $help) {
   exit;
 }
 
-open SRC, "<", $mirror_source or
+open SRC, "<:utf8", $mirror_source or
   die "Error: problem opening mirror source file, $mirror_source\n"
      ."Use the -m option?\n";
 
