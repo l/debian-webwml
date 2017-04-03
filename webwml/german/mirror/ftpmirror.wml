@@ -2,17 +2,17 @@
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/sid/archive.data"
 #include "$(ENGLISHDIR)/releases/arches.data"
-#use wml::debian::translation-check translation="1.79"
+#use wml::debian::translation-check translation="1.85"
 # $Id$
 # Translator: Thimo Neubauer <thimo@debian.org>
 # Updated by: Frank Lichtenheld <frank@lichtenheld.de>
-# Updated: Holger Wansing <linux@wansing-online.de>, 2011, 2012, 2016.
+# Updated: Holger Wansing <linux@wansing-online.de>, 2011, 2012, 2016, 2017.
 
 <toc-display />
 
 <toc-add-entry name="whether">Spiegeln oder nicht</toc-add-entry>
 
-<p>Obwohl wir uns über alle neuen Spiegel freuen, sollte jeder zukünftige
+<p>Obwohl wir die Erstellung neuer Spiegel begrüßen, sollte jeder zukünftige
    Spiegel-Betreuer sicherstellen, dass er folgende Fragen beantworten kann,
    bevor er seinen eigenen Spiegel aufsetzt:</p>
 
@@ -23,10 +23,10 @@
       beträchtlichen <a href="size">Plattenplatz</a> 
       und Bandbreite ein, Sie müssen daher in der
       Lage sein, die Kosten dafür zu übernehmen.</li>
-  <li>Ist ein Spiegel die richtige Wahl? Manchmal beginnen Leute 
-      versehentlich, einen Spiegel aufzusetzen, obwohl Sie tatsächlich einen Proxy mit
-      Cache betreiben wollen, wie z.B.
-      <a href="https://packages.debian.org/apt-cacher-ng">apt-cacher-ng</a>.</li>
+  <li>Ist ein Spiegel das richtige für Sie? Falls Sie vor allem Benutzer
+      Ihres Internet-Providers/Ihrer Firma unterstützen möchten, könnte
+      der Betrieb eines Proxys mit Cache, wie z.B. apt-cacher-ng, squid
+      oder varnish, die bessere Wahl sein.</li>
 </ul>
 
 <toc-add-entry name="what">Was spiegeln</toc-add-entry>
@@ -39,6 +39,7 @@ verfügbaren Archive auf.</p>
 Benutzer werden nach dem debian/-Archiv suchen, um Debian über 
 Netz zu installieren, CDs zu erstellen (mit jigdo), und bereits
 installierte Systeme zu aktualisieren. 
+<em>Wir empfehlen Ihnen, dieses Archiv zu spiegeln.</em>
 </li>
 
 <li>
@@ -55,161 +56,74 @@ CD-Images</a> für weitere Informationen zu diesem Thema.
 debian-archive/ enthält das eigentliche <em>Archiv</em>, die
 alten und überholten Debian-Versionen. Es wird im Allgemeinen nur
 für einen kleinen Nutzerkreis von Interesse sein.
+(Wenn Sie sich nicht sicher sind, ob Sie dies spiegeln sollen,
+sollten Sie es wahrscheinlich nicht tun.)
 </li>
 
 </ul>
 
-<p>Bitte lesen Sie die <a href="size">Spiegel-Größen</a>-Seite für genauere
-Informationen über die Spiegel-Größen.</p>
+<p>Bitte lesen Sie <a href="size">Spiegel-Größen</a> bezüglich genauerer
+Informationen über den benötigten Speicherplatz für Spiegel.</p>
 
 <p>Das debian-security/-Archiv enthält Sicherheitsaktualisierungen,
-die durch das Debian-Security-Team veröffentlicht werden. Es klingt
-für jeden interessant, da aber Sicherheitsaktualisierungen unregelmäßig
-auftreten, müssen Sie Ihren Spiegel sehr oft aktualisieren, um
-immer auf dem neuesten Stand zu sein (oder <a href="push_mirroring">\
-Push-Spiegeln</a> benutzen), deshalb empfehlen wir nicht, es zu
-spiegeln. Debian gibt sich alle Mühe, stattdessen die hohe 
-Verfügbarkeit von security.debian.org sicherzustellen.</p>
+die durch das Debian-Security-Team veröffentlicht werden. Obwohl es sich
+für jeden interessant anhört, empfehlen wir unseren Nutzer, keine Spiegel
+zum Herunterladen von Sicherheits-Updates zu verwenden, sondern stattdessen
+unseren verteilten security.debian.org-Service.
+<em>Wir empfehlen, debian-security <strong>nicht</strong> zu spiegeln.</em></p>
 
 <toc-add-entry name="wherefrom">Von wo spiegeln</toc-add-entry>
 
-<p>Viele Leute denken, dass <code>ftp.debian.org</code> die kanonische
-Adresse von Debian-Paketen sei und dass es für sie am besten sei, von dort zu
-spiegeln. Das ist <strong>nicht wahr</strong>.</p>
+<p>Beachten Sie, dass <code>ftp.debian.org</code> nicht der eigentliche
+Speicherort von Debian-Paketen ist, sondern einer von mehreren Servern,
+die von einem internen Debian-Server synchronisiert werden.
+Es gibt viele <a href="list-full">öffentliche Spiegel</a>, die rsync
+unterstützen und sich gut dazu eignen, einen Spiegel davon zu synchronisieren.
+Bitte verwenden Sie einen, der netzwerk-topologisch in Ihrer Nähe liegt.</p>
 
-<p><code>ftp.debian.org</code> ist
-lediglich einer von mehreren Servern, die von einem internen Debian-Server
-aktualisiert werden. Diese Adresse befindet sich derzeit lediglich
-auf einem einzelnen Server und existiert hauptsächlich nur noch für die
-Abwärtskompatibilität.</p>
+<p>Sie sollten es vermeiden, von einem Service zu spiegeln, dessen Name
+auf mehr als eine Adresse aufgelöst wird (wie z.B.
+<code>ftp.us.debian.org</code>), da dies dazu führen kann, dass Sie
+zwischen unterschiedlichen Status hin- und herwechseln, falls die
+Spiegel, von denen Sie spiegeln, nicht synchron sind.
 
-<p>Die <a href="official">offiziellen Spiegel</a> sind als guter Ort gedacht,
-   um davon zu spiegeln.
-Jeder der Server in der <a href="list-full">vollständigen Liste aller
-Spiegel</a>, der das <q><kbd>Type: Push-Primary</kbd></q>- oder <q><kbd>Type: 
-Push-Secondary</kbd></q>-Tag besitzt, sollte fürs
-Spiegeln gut geeignet sein. Bitte verwenden Sie einen, der netztopologisch
-und geographisch nahe bei Ihnen liegt.</p>
-
-<p>Es gibt keinen wirklichen Unterschied zwischen den verschiedenen 
-<em>Push-Primary</em>-Spiegeln, soweit es das Spiegeln betrifft. Auf der
-anderen Seite, wenn viele Leute ftp.debian.org verwenden (und
-unglücklicherweise tun sie das), verschwendet das unnötigerweise die
-gespendete Bandbreite.</p>
-
-<p>Spiegel-Administratoren in den Vereinigten Staaten sollten von 
-   ftp.us.debian.org (der offiziellen Spiegeladresse aus den USA, einem
-   Push-Primary-Spiegel) spiegeln. Da diese Adresse aber auch ein Verteilalias 
-   (<q lang="en">round robin alias</q>) ist, ist es für gewöhnlich am 
-   sinnvollsten herauszufinden, welche der Komponenten am besten ist und direkt 
-   von dieser zu spiegeln.
-   <br />
-   <small>Das Positive daran ist, dass das Risiko von Fehlschlägen beim
-          zweistufigen Rsync vermieden wird (verschiedene Stufen könnten auf
-	  verschiedenen Maschinen ablaufen &ndash; dies kann bei bestimmten
-	  Zeitfenstern zu unterschiedlichen Daten führen und eine sog. <q lang="en">Race 
-	  Condition</q> verursachen). Das Negative daran ist, dass sich dies auf eine einzige
-	  Maschine konzentriert, deren Leistungsfähigkeit variiert,
-	  aber dies ist momentan unserem Spiegelnetz im Allgemeinen anhaftend.
-   </small></p>
+Beachten Sie auch, dass HTTP der einzige Service ist, der garantiert
+auf <code>ftp.CC.debian.org</code> läuft. Wenn Sie mittels rsync spiegeln
+möchten (indem Sie - wie empfohlen - ftpsync verwenden), sollten Sie
+den korrekten Site-Namen der Maschine nehmen, der
+<code>ftp.CC.debian.org</code> bereitstellt. (Konsultieren Sie das
+Verzeichnis <code>/debian/project/trace</code> auf dem Server, um den
+Namen zu erfahren.)
 
 <toc-add-entry name="how">Wie man spiegelt</toc-add-entry>
 
-<p>Die bevorzugte Methode zum Spiegeln erfolgt mit dem sogenannten 
+<p>Die bevorzugte Methode zum Spiegeln ist mittels dem 
    <q>ftpsync</q>-Skript-Satz, der in zwei Formen erhältlich ist:</p>
 <ul>
     <li>als Tarball von <url "https://ftp-master.debian.org/ftpsync.tar.gz"></li>
-    <li>als ein Git-Depot: 
-       <kbd>git clone https://ftp-master.debian.org/git/archvsync.git</kbd></li>
+    <li>als Git-Depot: 
+       <kbd>git clone https://anonscm.debian.org/git/mirror/archvsync.git</kbd> 
+       (siehe <url "https://anonscm.debian.org/cgit/mirror/archvsync.git/">)</li>
 </ul>
 
-<p>Das von uns dringend empfohlene Spiegelprotokoll ist
-<a href="https://packages.debian.org/stable/net/rsync">rsync</a>.</p>
-
-<p>Bitte spiegeln Sie Debian nicht mittels <kbd>wget</kbd> oder anderen
-   FTP-basierten Werkzeugen. Sie scheinen gut zu funktionieren, aber sie
-   haben eine Reihe von Problemen (sie können keine harten Links erkennen,
-   das Erstellen von Teilspiegeln ist schwieriger usw.).</p>
-
-<h3>Rsync-Einrichtung</h3>
-
-<p>Wir empfehlen die Verwendung <a 
-   href="https://ftp-master.debian.org/ftpsync.tar.gz">des 
-   ftpsync-Skript-Satzes</a>,
-um das Archiv zu spiegeln. Folgen Sie der beigefügten README-Datei, um das
-   Spiegeln einzurichten.</p>
-
-<p>Falls Sie Ihre eigenen Skripte verwenden, müssen diese mindestens die
-   folgenden Funktionalitäten aufweisen:</p>
-
- <ul>
-   <li><p>Sie MÜSSEN einen zweistufigen Sync durchführen</p>
-     <p>Das Spiegeln des Archivs muss in zwei Stufen erfolgen. Der erste 
-        Rsync-Lauf muss die Index-Dateien ignorieren. Die korrekten 
-	Exclude-Optionen für den ersten Rsync-Lauf lauten:</p>
-        <kbd>--exclude Packages* --exclude Sources* --exclude Release* --exclude InRelease --exclude i18n/* --exclude ls-lR*</kbd>
-     <p>In der ersten Stufe dürfen keine Dateien gelöscht werden.</p>
-     <p>Die zweite Stufe sollte die oben ausgeschlossenen Dateien übertragen
-        und Dateien löschen, die nicht mehr zum Spiegel gehören.</p>
-
-     <p>Begründung: Falls das Spiegeln in einer Stufe erfolgt, wird es Zeiträume
-        geben, während der die Indexdatei Dateien referenziert, die noch nicht
-	gespiegelt wurden.</p>
-  </li>
-
-   <li><p>Sie dürfen <q>pushes</q> NICHT während des Laufs ignorieren (beim
-          <a href="push_mirroring">Push-Spiegeln</a>).</p>
-       <p>Falls während des Spiegelsynchronisierens ein Push erhalten wird,
-          darf dieser NICHT ignoriert werden. Der gesamte 
-	  Synchronisationsprozess muss erneut durchlaufen werden.</p>
-       <p>Begründung: die meisten Implementierungen der Debian-Spiegelskripte
-          lassen den Spiegel in einem inkonsistenten Zustand, falls während
-	  des ersten Synchronisationslaufs ein zweiter Push erhalten wird. Es
-	  ist davon auszugehen, dass sich in naher Zukunft die Push-Frequenz
-	  erhöhen wird.</p>
-  </li>
-
-<li>Führen Sie rsync mit zumindest diesen Optionen aus: <kbd>--recursive
-    --times --links --hard-links --delete</kbd>.</li>
-
-<li>Falls Sie zusätzlichen Plattenplatz haben, verwenden Sie auch die
-    <kbd>--delete-after</kbd> Option, um einige der temporären
-    Aktualisierungsprobleme zu vermeiden.</li>
-
-<li>Nachdem rsync mit dem Spiegeln fertig ist, fügen Sie einen Zeitstempel
-    im <code>project/trace/</code>-Verzeichnis des Debian-Spiegels hinzu,
-    der nach ihrem Server benannt ist. Das heißt, dass Sie
-    <kbd>date -u &gt; .../debian/project/trace/<var>ihr.server</var></kbd>
-    aufrufen sollen, nachdem Ihr tägliches rsync beendet ist.</li>
-
-<li>Wir raten nachdrücklich vom Ausschluss der <tt>project/</tt>-, 
-    <tt>doc/</tt>- und anderer Unterverzeichnisse ab. Normalerweise sind
-    sie von geringfügiger Größe und dennoch nützlich für die Benutzer.
-    Insbesondere <tt>project/trace</tt> hilft sehr viel, falls es 
-    Spiegel-Probleme gibt.</li>
-</ul>
-
-
+<p>Verwenden Sie keine eigenen Skripte, und keine einzelnen rsync-Durchgänge.
+Die Nutzung von ftpsync stellt sicher, dass Aktualisierungen auf eine Art
+geschehen, durch die apt nicht gestört wird. Genau gesagt werden
+Übersetzungen, Inhalte und andere Metadaten in einer Reihenfolge verarbeitet,
+die sicherstellt, dass apt keine Validierungsfehler erhält, sollte ein
+Nutzer seine Paketliste aktualisieren, während eine Spiegel-Synchronisierung
+läuft. Außerdem werden trace-Dateien erstellt, die weitere Informationen
+enthalten, über die sich erkennen läßt, ob ein Spiegel-Server funktioniert,
+welche Architekturen er enthält und von wo er synchronisiert wird.</p>
 
 <toc-add-entry name="partial">Teilweises Spiegeln</toc-add-entry>
 
-<p>Aufgrund des bereits <a href="size">großen Umfangs des Debian-Archivs</a>
-bevorzugen es einige Leute, nur die Teile zu spiegeln, die sie auch benötigen.
-Wenn Sie etwas ausschließen wollen, sollten Sie Architekturen
-ausschließen.</p>
-
-<p>Mit dem empfohlenen <a href="https://ftp-master.debian.org/ftpsync.tar.gz">\
-   ftpsync</a> kann dies durch das Editieren der
-ARCH_EXCLUDE-Variable geschehen.</p>
-
-<p>Wir empfehlen Ihnen dringend, die <tt>project/</tt>-, <tt>doc/</tt>- und 
-weitere Unterverzeichnisse nicht auszuschließen. Üblicherweise sind
-diese nicht sehr groß und trotzdem für die Benutzer nützlich. Insbesondere
-<tt>project/trace</tt> hilft sehr, falls es Spiegel-Probleme gibt.</p>
-
-<p>Es können auch andere speziell geschriebene Skripte verwandt werden, aber
-   normalerweise sind diese nicht notwendig und werden auch für offizielle
-   Spiegel nicht empfohlen.
+<p>Aufgrund des <a href="size">großen Umfangs des Debian-Archivs</a>
+kann es angebracht sein, nur Teile des Archivs zu spiegeln.
+Öffentliche Spiegel sollten alle Zweige (Testing, Unstable, usw.) enthalten,
+aber die enthaltenen Architekturen können eingeschränkt werden.
+Die Konfigurationsdatei für ftpsync enthält für diesen Zweck die Einträge 
+ARCH_EXCLUDE und ARCH_INCLUDE.</p>
 
 <toc-add-entry name="when">Wann Spiegeln</toc-add-entry>
 
@@ -236,59 +150,37 @@ Spiegelliste aufgeführt werden.</p>
 täglich von cron aufrufen zu lassen. Weitere Informationen mit
 <kbd>man crontab</kbd>.</p>
 
-<p>Beachten Sie, falls ihre Site mit einem Push-Mechanismus angestoßen wird,
+<p>Beachten Sie: falls ihre Site mit einem Push-Mechanismus angestoßen wird,
 müssen Sie sich um all dies nicht kümmern.</p>
 
 <h3>Push-gesteuertes Spiegeln</h3>
 
 <p><q>Push</q>-Spiegeln ist eine Art des Spiegelns, die wir entwickelt haben, 
    um die Zeit zu minimieren, die es benötigt, bis Änderungen im Archiv die 
-   Spiegel erreichen. Der Server-Spiegel benutzt einen SSH-Auslöser, um dem 
+   Spiegel erreichen. Der Server-Spiegel benutzt einen SSH-Trigger, um dem 
    nachgeschalteten Spiegel mitzuteilen, dass er sein Archiv aktualisieren soll.
-   Das <q>Pushing</q> (dt. <q>Schieben</q>) ist normalerweise auf einen
-   sicheren Auslöser begrenzt, der keine variablen Daten akzeptiert und der
-   Rest des Spiegelprozesses ist ein einfaches <q>Pull</q> (dt. <q>Ziehen</q>),
-   wie dies auch mit einem Cron-Auftrag geschieht.</p>
-
-<p>Push-Spiegeln wird benötigt, um mehrere Server synchron zu halten (wie die
-   Server in DNS round-robin-Aliasen wie <tt>ftp.us.debian.org</tt>), und wir
-   verwenden es für unsere erst- und zweitrangigen Spiegel. Da diese Methode
-   aber ein bisschen mehr Aufwand beim Aufsetzen erfordert, wird sie gewöhnlich
-   für <q>private</q> Spiegel nicht verwendet.</p>
-
-<p>Für eine detaillierte Beschreibung, wie dieses funktioniert, warum es
+   Eine detaillierte Beschreibung, wie dieses funktioniert, warum es
    sicher ist und wie ein Push-Spiegel aufgesetzt wird, finden Sie <a
-   href="push_mirroring">in der kompletten Beschreibung</a>.</p>
+   href="push_mirroring">in der kompletten Beschreibung für Push-Spiegeln</a>.</p>
 
 
 <toc-add-entry name="settings">Empfohlene zusätzliche
   Einstellungen</toc-add-entry>
 
-<p>Wenn Sie planen, den Debian-Spiegel durch HTTP zur Verfügung zu
-stellen, fügen Sie bitte die folgenden Einstellungen zur
-Apache-Konfiguration (natürlich unter der Annahme, dass Sie Apache benutzen)
-im <code>&lt;Directory <var>/pfad/zu/ihrem/debian/spiegel</var>&gt;</code>-Block
-hinzu, wobei <var>/pfad/zu/ihrem/debian/spiegel</var> der tatsächliche
-Namen des Verzeichnisses sein sollte, indem sich ihr Spiegel befindet:</p>
+<p>Öffentliche Spiegel-Server sollten das Debian-Archiv über HTTP
+unter <code>/debian</code> zur Verfügung stellen.</p>
 
+<p>Desweiteren stellen Sie bitte sicher, dass Verzeichnis-Index
+(directory listings) aktiviert ist (mit vollständigen Dateinamen)
+und dass symbolischen Links gefolgt wird.
+
+Wenn Sie Apache verwenden, sollte etwas wie dies hier funktionieren:
 <pre>
+&lt;Directory <var>/pfad/zu/ihrem/debian/spiegel</var>&gt;
    Options +Indexes +SymlinksIfOwnerMatch
    IndexOptions NameWidth=* +SuppressDescription
+&lt;/Directory&gt;
 </pre>
-
-
-<p>Dies erlaubt Verzeichnis-Indizes und stellt sicher, dass Symlink-Verfolgung
-funktioniert. Die Dateinamen in den Verzeichnis-Indizes werden nicht
-abgeschnitten, und die (größtenteils nicht vorhandenen) Beschreibungen werden
-nicht angezeigt.</p>
-
-<p>In Apache 1.3.x kann die folgende Option hinzugefügt werden:</p>
-
-<pre>
-   DirectoryIndex .
-</pre>
-
-<p>Fügen Sie diese Option nicht bei Verwendung von Apache 2.x hinzu.</p>
 
 <toc-add-entry name="submit">Wie ein Spiegel zu der Spiegelliste hinzugefügt wird</toc-add-entry>
 
@@ -308,3 +200,26 @@ nicht angezeigt.</p>
    href="submit">einfaches Web-Formular</a> erfolgen.</p>
 
 <p>Probleme und Anfragen können Sie an <email mirrors@debian.org> schicken.</p>
+
+<toc-add-entry name="mailinglists">Mailinglisten</toc-add-entry>
+
+<p>Es gibt zwei öffentliche <a href="../MailingLists/">Mailinglisten</a> zu
+Themen über Debian-Spiegel,
+<a href="https://lists.debian.org/debian-mirrors-announce/">debian-mirrors-announce</a>
+und
+<a href="https://lists.debian.org/debian-mirrors/">debian-mirrors</a>.
+Wir raten jedem Spiegel-Betreuer, die Announcement-Liste zu abonnieren,
+da diese für wichtige Ankündigungen verwendet wird.
+Diese Liste ist moderiert und hat nur wenig Traffic. Die zweite Mailingliste
+ist für grundsätzliche Diskussionen gedacht und für alle offen.</p>
+
+<p>Falls Sie irgendwelche Fragen haben, die nicht auf diesen Web-Seiten
+beantwortet werden, können Sie uns über <email mirrors@debian.org> oder
+mittels IRC (#debian-mirrors auf <tt>irc.debian.org</tt>) kontaktieren.</p>
+
+<toc-add-entry name="private-mirror">Hinweise für private Spiegel</toc-add-entry>
+
+<p>Wenn Sie einen Spiegel für Ihre eigene Seite betreiben möchten und nur
+eine Teilmenge der Debian-Zweige benötigen (z.B. nur Stable), könnte
+<a href="https://packages.debian.org/stable/debmirror">debmirror</a>
+passend für Sie sein.</p>
