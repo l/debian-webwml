@@ -1,6 +1,6 @@
 #use wml::debian::template title="Configurazione di un server push"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.22" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.23" maintainer="Luca Monducci"
 
 <p>La configurazione di un server <q>push</q> consiste essenzialmente di
 due attività: la configurazione dell'accesso rsync (come per un normale
@@ -14,10 +14,9 @@ attivazione via ssh (per avviare il mirroring push).</p>
 
 <toc-add-entry name="rsync">Configurazione di rsync</toc-add-entry>
 
-<p>Installare <code>rsync</code> 2.1.1 o superiore. Se sul proprio
+<p>Installare <code>rsync</code>. Se sul proprio
 sito si utilizza Debian, è sufficiente installare il pacchetto
-<a href="https://packages.debian.org/stable/net/rsync">rsync</a>
-più recente.</p>
+<a href="https://packages.debian.org/stable/net/rsync">rsync</a>.</p>
 
 <p>Creare il file <code>rsyncd.conf</code> e inserirvi qualcosa di
 simile a questo:</p>
@@ -25,13 +24,13 @@ simile a questo:</p>
 <pre>
 uid = nobody
 gid = nogroup
-max connections = 25
+max connections = 90
 socket options = SO_KEEPALIVE
 
 [debian]
   path = /srv/debian/mirror
-  comment = The Debian Archive (~250 GB)
-  auth users = authorized_account1,authorized_account2,authorized_accountN
+  comment = The Debian Archive (https://www.debian.org/mirror/size)
+  auth users = *
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
 </pre>
@@ -40,21 +39,16 @@ socket options = SO_KEEPALIVE
 ogni sito verso cui si vuole effettuare il pushing:</p>
 
 <pre>
-authorized_account1:a_password
-authorized_account2:another_password
-authorized_accountN:password
+site1.example.com:una_password
+site2.example.com:unaltra_password
+site3.example.net:password
 </pre>
 
-<p>Con questo si è dato accesso ai mirror destinazione all'archivio
-sulla propria macchina.</p>
-
-<p>Per far avviare il demone rsync da inetd si deve aggiungere il servizio
-rsync nel file <code>/etc/services</code> (se non fosse già presente), in
-questo modo:</p>
-
-<pre>
-rsync           873/tcp
-</pre>
+<p>Adesso i mirror destinazione hanno accesso all'archivio sulla
+propria macchina. Per consentire l'accesso a tutti, non impostare
+<code>auth users</code> né <code>secrets file</code> in
+<code>rsyncd.conf</code>. Inoltre, in seguito, non sono necessari
+i file segreti.</p>
 
 <p>Per abilitare il demone da inetd, aggiungere quanto segue al proprio file
 <code>/etc/inetd.conf</code>:</p>
@@ -68,24 +62,21 @@ del file di configurazione dopo la modifica).</p>
 
 <toc-add-entry name="sshtrigger">Configurazione del meccanismo di attivazione con ssh</toc-add-entry>
 
-<p>Creare una nuova chiave ssh per l'account usato dal mirror Debian.
-Assicurarsi di non sovrascrivere la chiave ssh originale usando
-l'opzione -f, per esempio:</p>
+<p>Creare con <code>ssh-keygen</code> una nuova chiave ssh per l'account
+usato per eseguire l'aggiornamento del mirror Debian. Se già si dispone
+di una chiave per altri scopi, si può crearne una nuova e salvarla in un
+altro file usando <code>ssh-keygen -f ~/.ssh/identity.mysite</code></p>
+
+<p>Sul mirror destinazione sarà necessario aggiungere al file
+<code>~/.ssh/authorized_keys</code>:</p>
 
 <pre>
-ssh-keygen -f ~/.ssh/identity.mysite
+command="~/bin/ftpsync",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty &lt;contenuto di ~/.ssh/&lt;key&gt;.pub file&gt;
 </pre>
 
-<p>Assicurarsi che la nuova chiave pubblica (~/.ssh/identity.mysite.pub)
-contenga all'inizio questo, dove IPADDRESS è l'indirizzo IP del proprio
-mirror di origine:</p>
-
-<pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADDRESS"
-</pre>
-
-<p>Occorre configurare uno script che contatterà i mirror destinazione.
-Il tarball ftpsync contiene lo script <code>runmirrors</code> che si
+<p>Occorre configurare il processo di aggiornamento del mirror in modo da
+contattare i mirror destinazione alla conclusione di mirror-run.
+La suite ftpsync contiene lo script <code>runmirrors</code> che si
 occupa di tutte le operazioni. Semplicemente cambiando il proprio
 ftpsync.conf in modo da includere l'impostazione <code>HUB=true</code>,
 copiare <code>runmirrors.conf.sample</code> in <code>runmirrors.conf</code>
