@@ -1,0 +1,256 @@
+<define-tag pagetitle>Debian Installer Stretch RC 3 release</define-tag>
+<define-tag release_date>2017-04-10</define-tag>
+#use wml::debian::news
+
+<p>
+The Debian Installer <a
+href="https://wiki.debian.org/DebianInstaller/Team">team</a> is pleased to
+announce the third release candidate of the installer for Debian 9
+<q>Stretch</q>.
+</p>
+
+
+<h2>Improvements in this release</h2>
+
+<ul>
+  <li>anna:
+    <ul>
+      <li>Use SHA256 for verification (#856211).</li>
+    </ul>
+  </li>
+  <li>base-installer:
+    <ul>
+      <li>Log all debootstrap arguments.</li>
+      <li>Try harder to install apt-transport-https and ca-certificates
+        when they're needed (#855035).</li>
+      <li>Propagate local certificates using the same logic.</li>
+    </ul>
+  </li>
+  <li>brltty:
+    <ul>
+      <li>Fix baum driver restarting when typing too fast on Vario Ultra
+        device (#857558).</li>
+    </ul>
+  </li>
+  <li>choose-mirror:
+    <ul>
+      <li>Fix FTBFS with UTF-8 entities in mirror list, e.g. RE/Réunion
+        (#857545).</li>
+    </ul>
+  </li>
+  <li>clock-setup:
+    <ul>
+      <li>Only call sed on /etc/default/rcS to adjust UTC setting when
+        this file exists (#854924).</li>
+    </ul>
+  </li>
+  <li>debian-installer:
+    <ul>
+      <li>Bump Linux kernel version from 4.9.0-1 to 4.9.0-2.</li>
+      <li>Fix missing speech synthesis menu entries on some i386
+        images.</li>
+      <li>Make syslinux and EFI boot menus uniform, emphasizing
+        graphical entries.</li>
+      <li>Add speech synthesis entries for expert, rescue, and
+        automated install; and make shortcuts point to them.</li>
+    </ul>
+  </li>
+  <li>debian-installer-utils:
+    <ul>
+      <li>Propagate dot-containing options to target kernel command
+        line (#853855).</li>
+      <li>Set User-Agent to "debian-installer" when calling wget
+        (#850800).</li>
+    </ul>
+  </li>
+  <li>debootstrap:
+    <ul>
+      <li>Strip the arch-qualifier (#836525).</li>
+      <li>Instead of creating a /dev/ptmx → pts/ptmx symlink
+        unconditionally, try "mknod c 5 2" first, and fall back to a
+        symlink only if it fails. This should help with various tools
+        like pbuilder, sbuild, and schroot (#817236).</li>
+    </ul>
+  </li>
+  <li>fonts-android:
+    <ul>
+      <li>Fix support for Korean glyphs by shipping
+        DroidSansFallback.ttf instead of DroidSansFallbackFull.ttf in
+        the fonts-android-udeb package (#853921).</li>
+    </ul>
+  </li>
+  <li>grub2:
+    <ul>
+      <li>Make grub-install check for errors from efibootmgr
+        (#853234).</li>
+    </ul>
+  </li>
+  <li>installation-locale:
+    <ul>
+      <li>C.UTF-8.in: change LC_IDENTIFICATION to i18n:2012
+        (#837004).</li>
+    </ul>
+  </li>
+  <li>libdebian-installer:
+    <ul>
+      <li>Parse SHA256 fields in Packages files (#856210).</li>
+      <li>Parse SHA256 fields in Release files.</li>
+      <li>Update versions for changed symbols. Please note that
+        packages impacted by this change were checked within
+        Debian. Derivative distributions might want to double check
+        their packages.</li>
+    </ul>
+  </li>
+  <li>lilo-installer:
+    <ul>
+      <li>Fix sfdisk arguments (#855489).</li>
+    </ul>
+  </li>
+  <li>partman-auto-crypto:
+    <ul>
+      <li>Implement a preseedable way to skip disk erase
+        (#476388).</li>
+    </ul>
+  </li>
+  <li>rootskel:
+    <ul>
+      <li>Avoid registering options for non-modules (#853855). The
+        non-modules list is based on the kernel-command-line(7)
+        manpage.</li>
+      <li>Update gtk lowmem limits.</li>
+    </ul>
+  </li>
+  <li>screen:
+    <ul>
+      <li>Fix terminal garbage in Debian Installer over serial line
+        (#857808).</li>
+    </ul>
+  </li>
+</ul>
+
+
+<h2>Hardware support changes</h2>
+
+<ul>
+  <li>debian-installer:
+    <ul>
+      <li>Add support for ports which aren't scheduled to be released
+        by looking at an extra unreleased suite where patched or
+        port-specific components are made available, and use unstable
+        instead of testing as a base suite. This fixes the long
+        standing FTBFS on non-released ports (#852215). Please note
+        that other changes related to non-released ports are usually
+        not covered in release announcements.</li>
+      <li>Add fb-modules to some loongson-3 configurations
+        (#854553).</li>
+      <li>powerpc: Add virtio modules to cdrom/netboot images
+        (#767487).</li>
+    </ul>
+  </li>
+  <li>flash-kernel:
+    <ul>
+      <li>Add machine db entry for TI OMAP4 PandaBoard-ES
+        (#857205).</li>
+      <li>Add machine db entry for NETGEAR ReadyNAS Duo v2
+        (#855960).</li>
+      <li>Add machine db entry for Hardkernel ODROID-C2
+        (#845818).</li>
+    </ul>
+  </li>
+  <li>grub-installer:
+    <ul>
+      <li>Fix grub-xen installation in Xen environments
+        (#854082).</li>
+      <li>Use 'p' (not '-part') as multipath disk-partition separator.
+        This fixes the check of whether the boot file system is on
+        multipath.</li>
+      <li>Better handling of PReP partitions on ppc64el: prefer PReP
+        partition on the same disk as the boot file system
+        partition.</li>
+    </ul>
+  </li>
+  <li>hw-detect:
+    <ul>
+      <li>disk-detect: stop trying to load dm-emc (#852285).</li>
+      <li>disk-detect: match 'mpath[a-z]+' instead of 'mpath[0-9]+'
+        since multipath-tools changed behaviour regarding mpath device
+        names (#806713, #854565).</li>
+      <li>disk-detect: run update-dev before probing for devices
+        (#843895).</li>
+    </ul>
+  </li>
+  <li>libdebian-installer:
+    <ul>
+      <li>Add support for NETGEAR ReadyNAS Duo v2 (#855965).</li>
+    </ul>
+  </li>
+  <li>linux:
+    <ul>
+      <li>udeb: Add more USB host and dual-role drivers to usb-modules
+        (#856111).</li>
+      <li>udeb/arm64: Add ast to fb-modules (#820168).</li>
+      <li>udeb: Add bcache to md-modules (#718548).</li>
+    </ul>
+  </li>
+  <li>partman-base:
+    <ul>
+      <li>Update support for more recent output of 'multipath -l'.</li>
+      <li>Accept spaces in multipath WWID.</li>
+    </ul>
+  </li>
+  <li>partman-partitioning:
+    <ul>
+      <li>Fix resizing an NVMe device (#820818).</li>
+    </ul>
+  </li>
+  <li>systemd:
+    <ul>
+      <li>udev: Fix by-id symlinks for devices whose IDs contain
+        whitespace (#851164).</li>
+      <li>udev: Fix /dev/disk/by-path aliases for virtio disks
+        (#856558).</li>
+      <li>udev/s390x: Create persistent net names for virtio CCW
+        devices (#856559).</li>
+    </ul>
+  </li>
+  <li>u-boot:
+    <ul>
+      <li>armel: Support for openrd targets has been fixed and enabled
+        again (#856441). Please note that this needs to be enabled
+        again in debian-installer as well.</li>
+    </ul>
+  </li>
+</ul>
+
+
+<h2>Localization status</h2>
+
+<ul>
+  <li>75 languages are supported in this release.</li>
+  <li>Full translation for 15 of them.</li>
+</ul>
+
+
+<h2>Known issues in this release</h2>
+
+<p>
+See the <a href="$(DEVEL)/debian-installer/errata">errata</a> for
+details and a full list of known issues.
+</p>
+
+
+<h2>Feedback for this release</h2>
+
+<p>
+We need your help to find bugs and further improve the installer, so please
+try it. Installer CDs, other media and everything else you will need are
+available at our <a href="$(DEVEL)/debian-installer">web site</a>.
+</p>
+
+
+<h2>Thanks</h2>
+
+<p>
+The Debian Installer team thanks everybody who has contributed to this
+release.
+</p>
