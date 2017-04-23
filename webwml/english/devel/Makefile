@@ -10,6 +10,8 @@ SUBS=website join misc wnpp \
 
 include $(WMLBASE)/Make.lang
 
+leader.$(LANGUAGE).html: leader.wml $(TEMPLDIR)/template.wml \
+ $(ENGLISHSRCDIR)/devel/leader.data
 people.$(LANGUAGE).html: people.wml $(TEMPLDIR)/template.wml \
  $(ENGLISHSRCDIR)/devel/people.names
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml
