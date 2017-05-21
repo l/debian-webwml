@@ -10,7 +10,7 @@ LOCALEROOT = $(WMLBASE)/../locale
 
 DOMAINS = templates bugs blends cdimage consultants countries date distrib \
 	  doc l10n langs legal mailinglists newsevents organization \
-	  ports security stats vendors vote wnpp others
+	  partners ports security stats vendors vote wnpp others
 
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
 blends_FILES    = $(ENGLISHDIR)/blends/blend.defs \
@@ -42,6 +42,7 @@ newsevents_FILES = $(addprefix $(TEMPLDIR)/, \
   $(ENGLISHDIR)/News/news.rdf.in \
   $(ENGLISHDIR)/News/weekly/dwn-to-rdf.pl 
 organization_FILES = $(ENGLISHDIR)/intro/organization.data
+partners_FILES = $(ENGLISHDIR)/partners/partners.def
 ports_FILES     = $(ENGLISHDIR)/ports/menu.defs \
   $(shell export LC_COLLATE=C; echo $(ENGLISHDIR)/ports/*/menu.inc)
 security_FILES  = $(TEMPLDIR)/security.wml \
@@ -88,6 +89,7 @@ SOURCEFILES = \
   $(mailinglists_FILES)         \
   $(newsevents_FILES)           \
   $(organization_FILES)         \
+  $(partners_FILES)             \
   $(ports_FILES)                \
   $(security_FILES)             \
   $(stats_FILES)                \
@@ -144,6 +146,9 @@ $(ENGLISHDIR)/po/newsevents.pot: # $(newsevents_FILES)
 $(ENGLISHDIR)/po/organization.pot: # $(organization_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl organization $(organization_FILES) > $@
 
+$(ENGLISHDIR)/po/partners.pot: # $(ports_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl partners $(partners_FILES) > $@
+	
 $(ENGLISHDIR)/po/ports.pot: # $(ports_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl ports $(ports_FILES) > $@
 
