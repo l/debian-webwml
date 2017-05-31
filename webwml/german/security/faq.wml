@@ -1,14 +1,41 @@
 #use wml::debian::template title="Debian Sicherheits-FAQ"
-#use wml::debian::translation-check translation="1.88"
+#use wml::debian::translation-check translation="1.94"
 # $Id$
 # Translation: Gerfried Fuchs <alfie@debian.org>
 # Updated: Holger Wansing <linux@wansing-online.de>, 2011 + 2014.
 #include "$(ENGLISHDIR)/security/faq.inc"
 
-<p>Derzeit erreichen uns die folgenden Fragen etwas zu oft, deshalb wurden
-die Antworten dazu hier zusammengefasst.</p>
-
 <maketoc>
+
+<toc-add-entry name=buthow>Ich habe eine Sicherheitsankündigung über
+debian-security-announce erhalten, wie kann ich die verwundbaren Pakete
+aktualisieren?</toc-add-entry>
+
+<p>A: Wie es schon in der E-Mail mit der Sicherheitsankündigung steht,
+   sollten Sie die von der Verwundbarkeit betroffenen Pakete aktualisieren.
+   Sie können dies tun, indem Sie (nach dem Aktualisieren der Liste
+   verfügbarer Pakete mittels <tt>apt-get update</tt>) einfach jedes
+   Paket in Ihrem System mit <tt>apt-get upgrade</tt> aktualisieren.
+   Sie können aber auch nur ein bestimmtes Paket aktualisieren,
+   indem Sie <tt>apt-get install <i>Paket</i></tt> aufrufen.</p>
+
+<p>Die Ankündigungs-E-Mail erwähnt das Quellpaket, in dem die
+   Verwundbarkeit aufgetreten ist. Daher sollten Sie alle Binärpakete
+   aktualisieren, die aus diesem Quellpaket erstellt werden.
+   Um herauszubekommen, welche Binärpakete aktualisiert werden
+   müssen, rufen Sie
+   <tt>https://packages.debian.org/src:<i>Quellpaket-Name</i></tt> auf
+   und klicken auf <i>[Zeige ... Binärpakete]</i> für die
+   Distribution, die Sie aktualisieren wollen.</p>
+
+<p>Es kann auch notwendig sein, einen Service oder laufenden Prozess
+   neu zu starten. Der Befehl
+   <a href="https://manpages.debian.org/checkrestart"><tt>checkrestart</tt></a>,
+   der im Paket
+   <a href="https://packages.debian.org/debian-goodies">debian-goodies</a>
+   enthalten ist, kann dabei helfen, herauszufinden, welche Services
+   oder Prozesse dies sind.</p>
+
 
 <toc-add-entry name=signature>Die Signatur eurer Ankündigungen kann nicht
    korrekt verifiziert werden!</toc-add-entry>
@@ -84,25 +111,6 @@ die Antworten dazu hier zusammengefasst.</p>
    lassen.</p>
 
 
-<toc-add-entry name=localremote>Was bedeutet <q>local (remote)</q> (lokal
-   (aus der Ferne))?</toc-add-entry>
-<p>A: Einige Ankündigungen decken Verwundbarkeiten ab, die nicht mit dem klassischen
-   Schema von lokalen Verwundbarkeiten und Verwundbarkeiten aus der Ferne
-   identifiziert werden
-   können. Einige Verwundbarkeiten können nicht aus der Ferne ausgenutzt werden,
-   d.h. sie beziehen sich nicht auf einen Daemon, der auf einer Netzwerkschnittstelle
-   horcht. Falls sie durch spezielle Dateien ausgenutzt werden können, die
-   über das Netz bereit gestellt werden, der verwundbare Dienst aber nicht
-   permanent mit dem Netz verbunden ist, schreiben wir in diesen Fällen
-   <q>local (remote)</q>.
-</p>
-
-<p>Diese Verwundbarkeiten liegen irgendwo zwischen lokalen und solchen aus der
-   Ferne und decken oft Archive ab, die über das Netz bereitgestellt werden
-   könnten, z.B. E-Mail-Anhänge oder Dateien von einer Download-Seite.
-</p>
-
-
 <toc-add-entry name=version>Die Versionsnummer für ein Paket zeigt an, dass
    ich immer noch eine verwundbare Version verwende!</toc-add-entry>
 <p>A: Anstatt auf ein neues Release zu aktualisieren, portieren wir die
@@ -134,7 +142,7 @@ die Antworten dazu hier zusammengefasst.</p>
    dazu die Builds für i386 oder amd64 noch nicht vorhanden sind.</p>
 
 
-<toc-add-entry name=unstable>Wie wird die Sicherheit für <tt>Unstable</tt> 
+<toc-add-entry name=unstable>Wie wird die Sicherheit für <tt>Unstable</tt>
    gehandhabt?</toc-add-entry>
 <p>A: Die Sicherheit für Unstable wird primär durch die Paketbetreuer
    bewerkstelligt, nicht durch das Debian-Sicherheitsteam. Obwohl das
@@ -177,22 +185,25 @@ die Antworten dazu hier zusammengefasst.</p>
    veröffentlichen.</p>
 
 
-<toc-add-entry name=sidversionisold>Die Ankündigung sagt, dass Unstable in 
+<toc-add-entry name=sidversionisold>Die Ankündigung sagt, dass Unstable in
      Version 1.2.3-1 korrigiert sei, aber 1.2.5-1 ist in Unstable. Was ist
      da los?</toc-add-entry>
 
 <p>A: Wir versuchen, die erste Version in Unstable anzugeben, bei der das
-   Problem behoben wurde. Manchmal hat der Betreuer in der Zwischenzeit noch 
+   Problem behoben wurde. Manchmal hat der Betreuer in der Zwischenzeit noch
    neuere Versionen hochgeladen. Vergleichen Sie die Version in Unstable mit
    der angegebenen Version. Falls erstere identisch oder höher ist als die zweite,
-   sollten Sie vor der Verwundbarkeit geschützt sein.</p>
+   sollten Sie vor der Verwundbarkeit geschützt sein.
+   Wenn Sie ganz sicher gehen wollen, können Sie das Changelog des Pakets
+   mit <tt>apt-get changelog Paketname</tt> überprüfen und nach dem
+   Eintrag suchen, der die Fehlerkorrektur erwähnt.</p>
 
 
 <toc-add-entry name=mirror>Wieso gibt es keine offiziellen Spiegel-Server für
    security.debian.org?</toc-add-entry>
 <p>A: Tatsächlich gibt es diese. Es existieren mehrere offizielle Spiegel, die
    als <acronym lang="en" title="Domain Name System">DNS</acronym>-Alias
-   implementiert sind. Der Zweck von security.debian.org besteht darin, 
+   implementiert sind. Der Zweck von security.debian.org besteht darin,
    Sicherheitsaktualisierungen so
    schnell und einfach wie möglich zur Verfügung zu stellen.</p>
 
@@ -355,7 +366,7 @@ die Antworten dazu hier zusammengefasst.</p>
    stattdessen zusätzliche Informationen zu Dingen mit, die auf bugtraq
    gemeldet wurden.</p>
 
-<p>Eine gute Art mit der Sicherheitsarbeit zu beginnen ist es, beim 
+<p>Eine gute Art mit der Sicherheitsarbeit zu beginnen ist es, beim
    Debian Sicherheits-Tracker zu helfen (<a
    href="https://security-tracker.debian.org/tracker/data/report">Anleitung</a>).</p>
 
@@ -382,7 +393,7 @@ die Antworten dazu hier zusammengefasst.</p>
 
 <toc-add-entry name=composing>Wie setzt sich das Sicherheitsteam
    zusammen?</toc-add-entry>
-<p>A: Das Debian-Sicherheitsteam besteht aus <a href="../intro/organization">\
+<p>A: Das Debian-Sicherheitsteam besteht aus <a href="../intro/organization#security">\
    mehreren Beauftragten und Unterstützern</a>. Das Sicherheitsteam selbst
    bestimmt die Leute, die dem Team beitreten.</p>
 
@@ -459,3 +470,26 @@ die Antworten dazu hier zusammengefasst.</p>
    dem unter <a
    href="http://people.redhat.com/kseifrie/CVE-OpenSource-Request-HOWTO.html">\
    CVE OpenSource Request HOWTO</a> beschriebenen Prozedere zu folgen.</p>
+
+
+<h1>Veraltete Debian Sicherheits-FAQ</h1>
+
+<toc-add-entry name=localremote>Was bedeutet <q>local (remote)</q> (lokal
+   (aus der Ferne))?</toc-add-entry>
+<p>
+   <b>Das Feld <i>Problem type</i> in DSA-Mails wird seit April 2014 nicht mehr verwendet.</b><br/>
+   A: Einige Ankündigungen decken Verwundbarkeiten ab, die nicht mit dem klassischen
+   Schema von lokalen Verwundbarkeiten und Verwundbarkeiten aus der Ferne
+   identifiziert werden
+   können. Einige Verwundbarkeiten können nicht aus der Ferne ausgenutzt werden,
+   d.h. sie beziehen sich nicht auf einen Daemon, der auf einer Netzwerkschnittstelle
+   horcht. Falls sie durch spezielle Dateien ausgenutzt werden können, die
+   über das Netz bereit gestellt werden, der verwundbare Dienst aber nicht
+   permanent mit dem Netz verbunden ist, schreiben wir in diesen Fällen
+   <q>local (remote)</q>.
+</p>
+
+<p>Diese Verwundbarkeiten liegen irgendwo zwischen lokalen und solchen aus der
+   Ferne und decken oft Archive ab, die über das Netz bereitgestellt werden
+   könnten, z.B. E-Mail-Anhänge oder Dateien von einer Download-Seite.
+</p>
