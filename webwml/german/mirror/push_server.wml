@@ -1,6 +1,6 @@
 #use wml::debian::template title="Einrichten eines Push-Spiegels"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.22"
+#use wml::debian::translation-check translation="1.25"
 # $Id$
 # Translation update: Holger Wansing <linux@wansing-online.de>, 2012.
 
@@ -17,9 +17,9 @@ Beschreibung des Push-Spiegelns</a>.)</small></p>
 
 <toc-add-entry name="rsync">rsync einrichten</toc-add-entry>
 
-<p>Installieren Sie <code>rsync</code> 2.1.1 oder neuer. Wenn Ihr
-Rechner unter Debian läuft, installieren Sie einfach das neueste
-<a href="https://packages.debian.org/stable/net/rsync">rsync</a>-Paket.</p>
+<p>Installieren Sie <code>rsync</code>. Wenn Ihr
+Rechner unter Debian läuft, installieren Sie einfach das
+<a href="https://packages.debian.org/stable/rsync">rsync</a>-Paket.</p>
 
 <p>Erzeugen Sie die Datei <code>rsyncd.conf</code> und schreiben Sie
 etwas Ähnliches wie das Folgende hinein:</p>
@@ -27,13 +27,13 @@ etwas Ähnliches wie das Folgende hinein:</p>
 <pre>
 uid = nobody
 gid = nogroup
-max connections = 25
+max connections = 50
 socket options = SO_KEEPALIVE
 
 [debian]
   path = /srv/debian/mirror
-  comment = The Debian Archive (~250 GB)
-  auth users = autorisierter_Zugang1,...,autorisierter_ZugangN
+  comment = The Debian Archive (https://www.debian.org/mirror/size)
+  auth users = *
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
 </pre>
@@ -43,23 +43,21 @@ socket options = SO_KEEPALIVE
 Spiegeln einleiten:</p>
 
 <pre>
-autorisierter_Zugang1:ein_Passwort
-autorisierter_ZugangN:ein_weiteres_Passwort
+site1.example.com:ein_Passwort
+site2.example.com:ein_weiteres_Passwort
+site3.example.net:Passwort
 </pre>
 
 <p>Sie haben jetzt den in der Hierarchie tiefergelegenen Spiegeln
-Zugriff zu Ihrem Rechner gewährt.</p>
+Zugriff zu Ihrem Rechner gewährt. Wenn Sie den rsync-Zugriff
+für jedermann ermöglichen wollen, überspringen Sie die
+Einstellungen für <code>auth users</code> und <code>secrets file</code>
+in der Datei <code>rsyncd.conf</code>. Sie benötigen dann auch
+die oben genannte Datei für Passwörter (<code>/etc/rsyncd/debian.secrets</code>)
+nicht.</p>
 
 <p>Sie möchten wahrscheinlich den rsync-Daemon von inetd aufrufen
-lassen. Um dies zu erledigen, müssen Sie den rsync-Dienst in die
-Datei <code>/etc/services</code> eintragen (falls er dort noch nicht
-steht), ungefähr wie folgt:</p>
-
-<pre>
-rsync           873/tcp
-</pre>
-
-<p>Um den Daemon per inetd zu starten, fügen Sie das Folgende zu
+lassen. Um den Daemon zu starten, fügen Sie das Folgende zu
 Ihrer Datei <code>/etc/inetd.conf</code> hinzu:</p>
 
 <pre>
@@ -74,25 +72,24 @@ ihm mitzuteilen, dass die Konfiguration neu eingelesen werden soll.)
 <toc-add-entry name="sshtrigger">Einrichten des SSH-Auslöser-Mechanismus</toc-add-entry>
 
 <p>Erzeugen Sie einen neuen SSH-Schlüssel für den Zugang, den Sie
-verwenden, um Debian zu spiegeln. Stellen Sie sicher, dass Sie den
-eigentlichen SSH-Schlüssel nicht überschreiben, indem Sie die Option
--f verwenden, beispielsweise:</p>
-
-<pre>
-ssh-keygen -f ~/.ssh/identity.meinRechner
-</pre>
-
-<p>Stellen Sie sicher, dass der neue öffentliche Schlüssel
-(~/.ssh/identity.meinRechner.pub) Folgendes am Dateianfang enthält, wobei 
-   IPADDRESS die IP-Adresse Ihres Quellspiegels ist:</p>
-
-<pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADDRESS"
-</pre>
+verwenden, um Debian zu spiegeln, mittels <code>ssh-keygen</code>.
+Wenn Ihr Zugang bereits einen Schlüssel für andere Zwecke enthält,
+sollten Sie einen neuen Schlüssel erzeugen und in einer anderen
+Datei speichern, indem Sie <code>ssh-keygen -f ~/.ssh/identity.mysite</code>
+aufrufen.</p>
 
 <p>
-Sie müssen ein Skript einrichten, das die tiefergelegenen Spiegel kontaktiert.
-Das ftpsync-Tarball-Archiv enthält das Skript <code>runmirrors</code>, welches alle
+Die in der Hierarchie tiefergelegenen Spiegel müssen nun
+<pre>
+command="~/bin/ftpsync",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty &lt;Inhalt von Ihrer Datei ~/.ssh/&lt;key&gt;.pub&gt;
+</pre>
+zu ihrer Datei <code>~/.ssh/authorized_keys</code> hinzufügen.
+</p>
+
+<p>
+Sie müssen den Spiegelprozess so einrichten, dass die tiefergelegenen
+Spiegel kontaktiert werden, wenn Ihr Spiegel fertig aktualisiert wurde.
+Die ftpsync-Suite enthält das Skript <code>runmirrors</code>, welches alle
 nötigen Aktionen für Sie erledigt. Ändern Sie einfach Ihre ftpsync.conf, so dass Sie
 die Einstellung <code>HUB=true</code> enthält, kopieren Sie
 <code>runmirrors.conf.sample</code> nach <code>runmirrors.conf</code> und
