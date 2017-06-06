@@ -30,7 +30,7 @@ use warnings;
 BEGIN {
 	use base qw( Exporter );
 
-	our $VERSION = sprintf "%d", q$Revision$ =~ /(\d+)/g;
+	our $VERSION = sprintf "%s", q$Revision$ =~ /([0-9.]+)/;
 	our @EXPORT_OK = qw( uniq read_file );
 	our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 }
