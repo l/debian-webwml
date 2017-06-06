@@ -52,7 +52,7 @@ use warnings;
 BEGIN {
 	use base qw( Exporter );
 
-	our $VERSION = sprintf "%d", q$Revision$ =~ /(\d+)/g;
+	our $VERSION = sprintf "%s", q$Revision$ =~ /([0-9.]+)/;
 	our @EXPORT_OK = qw( 
 	                     &vcs_cmp_rev     &vcs_count_changes
 	                     &vcs_get_topdir 
@@ -796,5 +796,3 @@ sub svn_get_depth
 	# field at the beginning
 	return $num - 1;
 }
-
-
