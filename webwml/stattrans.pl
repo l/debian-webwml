@@ -359,7 +359,7 @@ sub alioth_cvs_file_url {
     my ($path) = @_;
 
     return
-        sprintf( 'http://anonscm.debian.org/viewvc/webwml/webwml/%s', $path );
+        sprintf( 'https://anonscm.debian.org/viewvc/webwml/webwml/%s', $path );
 }
 
 sub alioth_cvs_log_url {
