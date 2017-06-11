@@ -180,7 +180,17 @@ sub getwmlfiles
 	    }
 	}
 	if ($transcheck->maintainer()) {
+	    # Escape HTML special characters to make the resulting page valid.
+	    # This is needed for maintainers who use their e-mail address
+	    # within angle brackets.
+	    my %_escape_table = (
+		'&' => '&amp;', '>' => '&gt;', '<' => '&lt;',
+		q{"} => '&quot;', q{'} => '&#39;',
+		q{`} => '&#96;', '{' => '&#123;',
+		'}' => '&#125;'
+	    );
 	    $maintainer{"$lang/$file"} = $transcheck->maintainer();
+	    $maintainer{"$lang/$file"} =~ s/([&><"'`{}])/$_escape_table{$1}/ge;
 	}
 	$count++;
 	$sizes{$file} = (stat "".($original{"english/$file"}||"english")."/".$file)[7];
