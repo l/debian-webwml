@@ -1,111 +1,76 @@
 #use wml::debian::template title="Erläuterungen zum Push-Spiegeln"
-#use wml::debian::translation-check translation="1.19"
+#use wml::debian::translation-check translation="1.24"
 # Translator: Martin Schulze <joey@debian.org>
 # Updated: Holger Wansing <linux@wansing-online.de>, 2012.
 
 <p>Push-Spiegeln ist eine Form des Spiegelns, die
 die Zeit minimiert, die benötigt wird, damit Änderungen im
 Archiv auf den Spiegeln erscheinen. Der Server-Spiegel benutzt einen
-Auslöser-Mechanismus, um den Spiegel zu informieren, dass es aktualisiert
+Auslöser-Mechanismus, um den Spiegel zu informieren, dass er aktualisiert
 werden muss.</p>
 
-<p>Push-Spiegeln bedeutet etwas größeren Aufwand beim Einrichten, da die
+<p>Push-Spiegeln bedeutet größeren Aufwand beim Einrichten, da die
 Verwalter der beiden betroffenen Spiegel Informationen austauschen müssen.
 Der Vorteil besteht darin, dass der in der Hierarchie höhergelegene Spiegel
 den Spiegel-Prozess selbst anstoßen kann, sobald sein Archiv aktualisiert
-wurde. Dadurch werden Änderungen im Archiv extrem schnell propagiert.</p>
-
+wurde. Dadurch werden Änderungen im Archiv schnell propagiert.</p>
 
 <h2>Beschreibung der Methode</h2>
 
-<p>Zuerst etwas Hintergrund zu ssh. Ssh erlaubt Personen, sich auf
-eine sichere Weise auf entfernten Rechnern einzuloggen. Dabei werden
-keine Passwörter im Klartext übertragen und bei späteren Verbindungen
-zum gleichen Rechner ist sichergestellt, dass es der gleiche Rechner
-ist. Dieses verhindert viele <q>Mann-in-der-Mitte</q>-Angriffe.</p>
-
-<p>Eine Fähigkeit, die SSH mitbringt, besteht in der Möglichkeit eines
-Benutzers, den öffentlichen Identitätsschlüssel (public key) eines Benutzers
-auf einer anderen Maschine zu nehmen und auf dem eigenen Rechner zu einer
-Datei autorisierter Schlüssel hinzuzufügen. Voreingestellt ist, dass der
-Benutzer der anderen Maschine (der den privaten Identitätsschlüssel hat, der
-zu dem öffentlichen passt) von da an die Privilegien genießt, sich unter
-Ihrem Account einzuloggen. Es ist jedoch möglich, Text zu dem
-autorisierten Schlüssel hinzuzufügen, der den Zugang des anderen Benutzers
-beschränkt.</p>
-
-<p>Um den Spiegel zu schützen, ist dem Schlüssel vom höhergelegenen Spiegel
-Text hinzugefügt, so dass die Person, die dadurch Zugang zum Spiegel erhält
-nur eines darf &ndash; das Programm auf Ihrem Rechner zu starten, das den Spiegel
-aktualisiert. Selbst falls jemand (ein böser Dritter) in der Lage sein
-sollte, den Schlüssel zu knacken, könnte er nur das Spiegel-Programm auf
-Ihrem Rechner starten. Sie müssen sich keine Gedanken darüber machen, dass
-das Programm mehrfach parallel läuft, da es eine Lock-Datei verwendet.</p>
-
-<p>Auf der anderen Seite des Servers kann rsync so konfiguriert werden, dass
-beschränkt wird, wer einen bestimmten Bereich spiegeln darf, geschützt mit
-Benutzername und Passwort. Diese sind komplett unabhängig von
-<kbd>/etc/passwd</kbd>, so dass ein Push-Spiegel sich keine Sorgen darüber
-machen muss, anderen Zugang zum Rechner zu geben. Es ist so konfiguriert,
-dass Benutzername und Passwort im Klartext übertragen werden. Das sollte
-jedoch kein Problem sein, da das Schlimmste, das passieren kann, darin
-besteht, dass ein Dritter die Möglichkeit erhält, Debian von dem Rechner zu
-spiegeln.</p>
-
+<p>Der Auslöser-Mechanismus wird über ssh realisiert. Der Push-Server
+meldet sich über ssh und Public-Key-Authentifizierung im
+Spiegel-Benutzerkonto des tiefergelegenen Spiegels an. Der Schlüssel
+ist so konfiguriert, dass diese Aktion ausschließlich einen
+Spiegel-Aktualisierungslauf anstoßen kann, andere Befehle sind nicht
+möglich. Der tiefergelegene Spiegel startet dann ftpsync, um
+das Archiv ganz normal mittels rsync zu aktualisieren.
+<br />
+Der Austausch von öffentlichen Schlüsseln sowie der potenzielle
+Zugriff auf nicht öffentlich verfügbare rsync-Server erfordert
+Koordination zwischen dem Spiegel-Betreiber und den höhergelegenen
+Quellen.</p>
 
 <h2>Aufsetzen eines Push-Client-Spiegels</h2>
-
-<p>Am besten wird es so eingerichtet, dass der Account eines herkömmlichen
-Benutzers verwendet wird, nicht root. Der Inhalt des öffentlichen
-SSH-Schlüssels, der Ihnen vom höhergelegenen Spiegel gegeben wird, sollte
-in <kbd>~&lt;user&gt;/.ssh/authorized_keys</kbd> abgelegt werden.</p>
 
 <p>
 Um ein Push-Spiegel für das FTP-Archiv zu werden, müssen Sie das Spiegeln
 mit unserem Standardskriptsatz <a href="ftpmirror#how">ftpsync</a>
-einrichten. Kopieren Sie ftpsync.conf.sample nach <code>ftpsync.conf</code>
-und modifizieren Sie sie, so dass sie zu Ihrem System sowie zu den Werten,
-die vom höhergelegenen Spiegel bereitgestellt werden, passt.
+einrichten.
+<br />
+Sobald dies funktioniert, fügen Sie den öffentlichen ssh-Schlüssel
+Ihres höhergelegenen Spiegels in die Datei
+<code>~&lt;Benutzer&gt;/.ssh/authorized_keys</code> ein. Dabei müssen
+Sie die Einschränkung <code>command="~/bin/ftpsync</code> hinzufügen.
+(Eventuell ist ftpsync bei Ihnen in einem anderen Verzeichnis
+installiert, das müssen Sie dann entsprechend anpassen.)
 </p>
 
 <h2>Primäre Push-Spiegel</h2>
 
 <p>Primäre Push-Spiegel, die auch als Tier-1-Spiegel bezeichnet werden,
-sind die Push-Spiegel, denen es gestattet ist, von unserem Haupt-Archiv zu
+sind die Push-Spiegel, die direkt von Debians internem syncproxy-Netzwerk
 spiegeln.</p>
 
 <p>Falls Ihr Server <strong>sehr</strong> gut angebunden ist (sowohl sehr
 gute Bandbreite hat als auch an wichtige Backbones angeschlossen
 ist) und Sie willens sind, andere Server von Ihrem spiegeln zu lassen,
 möchten Sie uns das vielleicht mitteilen, damit wir überlegen können,
-Ihren Rechner als Push-Server zu verwenden. Erwarten Sie dieses
-jedoch bitte nicht in naher Zukunft, da wir bereits eine relativ
-große Zahl an Tier-1-Spiegeln haben.</p>
-
-<p>Falls Ihr Rechner ein primärer Push-Spiegel für das FTP-Archiv wird,
-   benötigen Sie eine der folgenden Dateien:</p>
-<ul>
-  <li><a href="id_rsa.pub.ftp-master">öffentlicher SSH2-Schlüssel, verwendet von
-      ftp-master.debian.org</a></li>
-  <li><a href="id_rsa.pub.syncproxy.eu">öffentlicher SSH2-Schlüssel, verwendet 
-      von syncproxy.eu.debian.org</a></li>
-  <li><a href="id_rsa.pub.syncproxy.wna">öffentlicher SSH2-Schlüssel, verwendet 
-      von syncproxy.wna.debian.org</a></li>
-</ul>
-
-<p>Falls Ihr Rechner ein primärer Push-Spiegel für die Webseiten wird,
-   benötigen Sie den <a href="id_rsa.pub.www-master">öffentlichen 
-   SSH2-Schlüssel, verwendet von www-master.debian.org</a>.</p>
+Ihren Rechner als Push-Server zu verwenden. Bitte kontaktieren Sie
+das Debian-Mirror-Team für weitere Informationen zur Einrichtung.
+Beachten Sie allerdings, dass wir nicht alle Anfragen akzeptieren
+können, als primärer Push-Server eingebunden zu werden, da wir
+bereits eine relativ große Zahl an Tier-1-Spiegeln haben.</p>
 
 <h2>Einrichten eines Push-Server-Spiegels</h2>
 
 <p>Angesichts der großen Anzahl von Spiegeln und der Größe des
-Debian-Archivs ist es nicht machbar, dass alle Spiegel das Haupt-Archiv als
+Debian-Archivs ist es nicht machbar, dass alle Spiegel das interne
+syncproxies-Netzwerk von Debian als
 Quelle nehmen. Es ist viel effizienter, die Last auf die Anzahl der
 Push-Spiegel zu verteilen, die über den Globus verteilt sind.</p>
 
-<p>Push-Spiegel sollten direkt das Hauptarchiv per Push-Spiegel
-spiegeln (oder einen anderen Push-Server) und sie sollten das gesamte
-Debian-Archiv enthalten.</p>
-
-<p>Lesen Sie auch die <a href="push_server">Details zum Einrichten eines Push-Servers</a>.</p>
+<p>Daher sind einige der primären Push-Spiegel wiederum selbst
+Push-Server für ihre jeweils tiefergelegenen Spiegel. Wenn Sie
+Ihren Spiegel als Push-Server für Ihre tiefergelegenen Spiegel
+einrichten möchten, lesen Sie die
+<a href="push_server">Details zum Einrichten eines Push-Servers</a>.</p>
