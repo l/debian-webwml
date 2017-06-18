@@ -3,7 +3,9 @@
 
 WMLBASE=.
 CUR_DIR=
-SUBS=
+SUBS=Bugs CD MailingLists News Pics banners blends consultants devel \
+distrib doc events intro international legal logos mirror misc partners \
+ports releases reports security users volatile vote women y2k derivatives
 
 all install:: install-locale
 
