@@ -1,0 +1,53 @@
+#use wml::debian::translation-check translation="1.2" maintainer="Jean-Pierre Giraud"
+<define-tag description>Mise à jour de sécurité pour LTS</define-tag>
+<define-tag moreinfo>
+<p>L'équipe Qualys Security a découvert deux vulnérabilités dans le code
+d'itinérance du client OpenSSH, une implémentation du protocole SSH.</p>
+
+<p>L'itinérance de SSH permet à un client, dans le cas d'une déconnexion
+imprévue, de se reconnecter plus tard, à condition que le serveur le
+permette aussi.</p>
+
+<p>Le serveur OpenSSH ne prend pas en charge l'itinérance, à la différence
+du client OpenSSH (même si cela n'est pas documenté) et cela est activé par
+défaut.</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-0777">CVE-2016-0777</a>
+
+<p>Une fuite d'informations (divulgation de mémoire) peut être exploitée
+par un serveur SSH véreux pour forcer un client divulguer de données
+sensibles à partir de la mémoire du client, y compris, par exemple, des
+clés privées.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2016-0778">CVE-2016-0778</a>
+
+<p>Un dépassement de tampon (menant à une fuite de descripteur de fichier),
+peut aussi être exploité par un serveur SSH, mais à cause d'un autre bogue
+dans le code, cela peut éventuellement ne pas être exploitable, et
+seulement dans certaines conditions (pas dans la configuration par défaut),
+lors de l'utilisation de ProxyCommand, ForwardAgent ou ForwardX11.</p></li>
+
+</ul>
+
+<p>Cette mise à jour de sécurité désactive complètement le code
+d'itinérance du client OpenSSH.</p>
+
+<p>Il est aussi possible de désactiver l'itinérance en ajoutant l'option
+(non documentée) <q>UseRoaming no</q> au fichier global /etc/ssh/ssh_config,
+à la configuration de l'utilisateur ~/.ssh/config, ou en passant
+l'instruction -oUseRoaming=no en ligne de commande.</p>
+
+<p>Les utilisateurs avec des clés privées sans phrase de passe,
+particulièrement dans des configurations non interactives (tâches
+automatiques utilisant ssh, scp, rsync+ssh etc.) devraient mettre à jour
+leurs clés s'ils se sont connectés à un serveur SSH non fiable.</p>
+
+<p>Plus de détails sur la manière d'identifier une attaque et les moyens de
+la réduire sont disponibles dans l'annonce de Qualys Security.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2016/dla-387.data"
+# $Id$
