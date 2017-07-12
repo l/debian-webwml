@@ -1,0 +1,161 @@
+#use wml::debian::translation-check translation="1.2" maintainer="Jean-Pierre Giraud"
+<define-tag description>Mise à jour de sécurité pour LTS</define-tag>
+<define-tag moreinfo>
+<p>Plusieurs problèmes de sécurité ont été découverts dans ntp :</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-5146">CVE-2015-5146</a>
+
+<p>Un défaut a été découvert dans la façon dont ntpd traite certains paquets de
+configuration à distance. Un attaquant pourrait utiliser un paquet contrefait
+pour l'occasion afin de provoquer un plantage de ntpd, si :</p>
+
+<ul>
+<li>la configuration à distance de ntpd est activée ;</li>
+<li>l'attaquant connaît le mot de passe de configuration ;</li>
+<li>l'attaquant a accès à un ordinateur de confiance pour réaliser la
+configuration à distance.</li>
+</ul>
+
+<p>Veuillez noter que la configuration à distance est désactivée par défaut
+dans NTP.</p></li></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-5194">CVE-2015-5194</a>
+
+<p>ntpd pourrait planter à cause d'une variable non initialisée lors du
+traitement de commandes de configuration logconfig malformées.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-5195">CVE-2015-5195</a>
+
+<p>ntpd quitte avec une erreur de segmentation lorsqu'un type de statistique
+qui n'a pas été activé à la compilation (par exemple timingstats) est
+référencé par la commande de configuration des statistiques ou celle de
+filegen.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-5219">CVE-2015-5219</a>
+
+<p>Le programme sntp pourrait se bloquer dans une boucle infinie à la
+réception d'un paquet NTP contrefait, à cause de la conversion de la valeur
+de précision dans le paquet vers double.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-5300">CVE-2015-5300</a>
+
+<p>ntpd n'implémente pas correctement l'option -g :</p>
+
+<p>Normalement, ntpd quitte avec un message pour le journal système si le
+décalage (<q>offset</q>) dépasse le seuil de panique qui est 1000 secondes
+par défaut. Cette option permet de régler le temps à n'importe quelle valeur
+sans restriction ; cependant, cela ne peut arriver qu'une seule fois. Si le
+seuil est dépassé après cela, ntpd quittera avec un message pour le journal
+ système. Cette option peut être utilisée avec les options -q et -x.</p>
+
+<p>ntpd pourrait en fait décaler l'horloge de plusieurs fois le seuil de
+panique si sa discipline d'horloge n'avait pas assez de temps pour atteindre
+l'état de synchronisation et y rester pour au moins une mise à jour. Si un
+attaquant de type homme du milieu (<q>MITM</q>) pouvait contrôler le trafic
+NTP dès le lancement de ntpd (ou peut-être 15 à 30 minutes après), il
+pourrait empêcher le client d'atteindre l'état de synchronisation et le
+forcer à décaler son horloge de n'importe quelle durée, autant de fois que
+désiré, ce qui pourrait être utilisé par des attaquants pour faire expirer
+des certificats, etc.</p>
+
+<p>Cela est contraire à ce que dit la documentation. Normalement, il est
+supposé qu'un attaquant MITM peut décaler l'horloge de plus que le seuil de
+panique seulement une fois quand ntpd démarre et, pour faire un ajustement
+plus important, l'attaquant doit le diviser en de multiples petites étapes
+prenant chacune 15 minutes, ce qui est lent.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7691">CVE-2015-7691</a>, <a href="https://security-tracker.debian.org/tracker/CVE-2015-7692">CVE-2015-7692</a>, <a href="https://security-tracker.debian.org/tracker/CVE-2015-7702">CVE-2015-7702</a>
+
+<p>Le correctif pour 
+<a href="https://security-tracker.debian.org/tracker/CVE-2014-9750">CVE-2014-9750</a> 
+est incomplet : trois problèmes ont été découverts dans les vérifications de
+longueur de valeur dans ntp_crypto.c, où un paquet avec des opérations
+autokey particulières contenant des données malveillantes, n'était pas
+toujours complètement validé. Recevoir de tels paquets peut faire planter
+ntpd.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7701">CVE-2015-7701</a>
+
+<p>Un défaut de fuite de mémoire a été découvert dans CRYPTO_ASSOC de ntpd.
+Si ntpd était configuré pour utiliser l'authentification autokey, un
+attaquant pourrait envoyer des paquets à ntpd qui, après plusieurs jours
+d'attaque continue, pourraient le rendre à court de mémoire.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7703">CVE-2015-7703</a>
+
+<p>Miroslav Lichvar de Red Hat a découvert que la commande :config peut être
+utilisée pour régler les chemins de pidfile et driftfile sans aucune
+restriction. Un attaquant distant pourrait utiliser ce défaut pour écraser
+un fichier sur le système de fichiers avec un fichier contenant le pid du
+processus ntpd (immédiatement) ou la dérive actuelle estimée de l'horloge
+système (en intervalles horaires). Par exemple :</p>
+<pre>
+ntpq -c ':config pidfile /tmp/ntp.pid'
+ntpq -c ':config driftfile /tmp/ntp.drift'
+</pre>
+<p>Dans Debian, ntpd est configuré pour ne pas avoir les droits du
+superutilisateur, ce qui limite l'impact de ce problème.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7704">CVE-2015-7704</a>
+
+<p>Si ntpd, en tant que client NTP, reçoit un paquet <q>baiser de la mort</q>
+(<q>Kiss-of-Death (KoD)</q>) du serveur pour réduire son intervalle
+d’interrogation automatique (<q>polling</q>), il ne vérifie pas si
+l’estampille temporelle d'origine dans la réponse correspond à l’estampille
+temporelle transmise dans sa requête. Un attaquant externe peut envoyer un
+paquet KoD contrefait au client, ce qui augmentera son intervalle
+d’interrogation à une grande valeur et désactivera efficacement la
+synchronisation avec le serveur.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7850">CVE-2015-7850</a>
+
+<p>Une vulnérabilité de déni de service exploitable existe dans la
+fonctionnalité de configuration à distance de NTP. Un fichier de
+configuration contrefait pour l'occasion pourrait causer une boucle infinie,
+ayant pour résultat un déni de service. Un attaquant pourrait fournir un
+fichier de configuration malveillant pour déclencher cette vulnérabilité.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7851">CVE-2015-7851</a>
+
+<p>Il existe une vulnérabilité potentielle de traversée de répertoires dans
+la sauvegarde du fichier de configuration de ntpd dans VMS. Un chemin
+contrefait pour l'occasion pourrait provoquer une traversée de répertoires
+ayant éventuellement pour conséquence l'écrasement de fichiers. Un attaquant
+pourrait fournir un chemin malveillant pour déclencher cette vulnérabilité.</p>
+
+<p>Ce problème n'affecte pas Debian.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7852">CVE-2015-7852</a>
+
+<p>Une vulnérabilité potentielle due à un décalage d'entier existe dans la
+fonctionnalité cookedprint de ntpq. Un tampon contrefait pour l'occasion
+pourrait causer un dépassement de tampon, ayant éventuellement pour résultat
+l'écriture hors limites d'un octet nul.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7855">CVE-2015-7855</a>
+
+<p>decodenetnum() de NTP échoue avec une erreur d'assertion lors du
+traitement d'un paquet en mode 6 ou 7 contenant une valeur de donnée
+inhabituellement longue à la place d'une adresse réseau. Cela pourrait
+permettre à un attaquant authentifié de planter ntpd.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-7871">CVE-2015-7871</a>
+
+<p>Une erreur de logique de traitement d'erreur existe dans ntpd. Elle se
+manifeste par le traitement incorrect de condition d'erreur associé à
+certains paquets crypto-NAK. Un attaquant non authentifié externe peut
+forcer les processus ntpd sur les serveurs visés à s'apparier avec des
+sources de temps choisies par l'attaquant en transmettant des paquets
+crypto-NAK actifs symétriques à ntpd. Cette attaque contourne
+l'authentification habituellement requise pour établir un appariement et
+permet à un attaquant de faire des modifications arbitraires sur l'heure du
+système.</p></li>
+
+</ul>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2015/dla-335.data"
+# $Id$
