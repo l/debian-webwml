@@ -1,0 +1,32 @@
+#use wml::debian::translation-check translation="1.1" maintainer="Jean-Pierre Giraud"
+<define-tag description>Mise à jour de sécurité pour LTS</define-tag>
+<define-tag moreinfo>
+<p>Possibilité de déni de service dans logout() view by filling session store</p>
+
+<p>Auparavant, une session pouvait être créée lors d'un accès anonyme à la
+vue django.contrib.auth.views.logout (à condition qu'elle ne soit pas
+décorée avec django.contrib.auth.decorators.login_required comme c'est fait
+avec l'interface d'administration). Cela pourrait permettre à un attaquant
+de créer facilement plusieurs nouveaux enregistrements en envoyant des
+requêtes répétées, et éventuellement de saturer le stockage de session ou
+d'évincer les enregistrements de session d'autres utilisateurs.</p>
+
+<p>L'intergiciel django.contrib.sessions.middleware.SessionMiddleware a été
+modifié pour ne plus créer des enregistrements de session vide.</p>
+
+<p>Il a été assigné à cette partie du correctif le <a href="https://security-tracker.debian.org/tracker/CVE-2015-5963">CVE-2015-5963</a>.</p>
+
+<p>De plus, les méthodes contrib.sessions.backends.base.SessionBase.flush()
+et cache_db.SessionStore.flush() ont été modifiées pour éviter également la
+création d'une nouvelle session vide. Les responsables de dorsal de session
+tiers devraient vérifier si la même vulnérabilité est présente dans leur
+dorsal et la corriger le cas échéant.</p>
+
+<p>Il a été assigné à cette partie du correctif le <a href="https://security-tracker.debian.org/tracker/CVE-2015-5964">CVE-2015-5964</a>.</p>
+
+<p>Nous vous recommandons de mettre à jour vos paquets python-django.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2015/dla-301.data"
+# $Id$
