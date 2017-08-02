@@ -8,26 +8,26 @@ bogue de Fedora). Le problème original a déjà été signalé à
 partiellement le rapport de bogue amont ci-dessous :</p>
 
 <p>La méthode checkPassword() de python-kerberos était gravement non
-sécurisé dans les versions précédentes. Il exécutait (et exécute encore par
-défaut) un kinit (AS-REQ) pour demander à un centre de distribution de clé
-(KDC) un « Ticket Granting Ticket » (TGT) pour le principal de
-l'utilisateur donné, et interprète son succès ou son échec comme
-l'indication que le mot de passe est correct. Il ne vérifie pas, néanmoins,
-qu'il parle vraiment à un KDC de confiance : un attaquant peut simplement
-répondre plutôt avec un AS-REP qui correspond au mot de passe qu'il vient
-de vous donner.</p>
+sécurisé dans les versions précédentes. Elle exécutait (et exécute encore
+par défaut) un kinit (AS-REQ) pour demander à un centre de distribution de
+clés (KDC) un « Ticket Granting Ticket » (TGT) pour le commettant
+utilisateur donné, et interprète son succès ou son échec comme
+l'indication que le mot de passe est correct ou non. Il ne vérifie pas,
+néanmoins, qu'il parle vraiment à un KDC de confiance : un attaquant peut
+simplement répondre plutôt avec un AS-REP qui correspond au mot de passe
+qu'il vient de vous donner.</p>
 
 <p>Imaginez que vous êtes en train de vérifier un mot de passe en utilisant
 une authentification LDAP plutôt que Kerberos : vous utiliseriez, bien sûr,
 TLS en liaison avec LDAP pour vous assurer que vous parlez à un serveur
-LDAP de confiance véritable. La même exigence s'applique ici. kinit n'est
+LDAP de confiance véritable. La même exigence s'applique ici. Kinit n'est
 pas un service de vérification de mot de passe.</p>
 
 <p>La manière habituelle de faire est de prendre le TGT obtenu avec le mot
-passe de l'utilisateur, et ensuite d'obtenir un ticket pour un principal
+passe de l'utilisateur, et ensuite d'obtenir un ticket pour un commettant
 dont le vérificateur possède des clés (par exemple un serveur web traitant
 un formulaire de connexion nom d'utilisateur/mot de passe pourrait obtenir
-un ticket pour son propre principal HTTP/host@REALM), qu'il peut alors
+un ticket pour son propre commettant HTTP/host@REALM), qu'il peut alors
 vérifier. Notez que cela requiert que le vérificateur possède sa propre
 identité Kerberos, ce qui est imposé par la nature symétrique de Kerberos
 (tandis que dans le cas de LDAP, l'utilisation du chiffrement à clé
@@ -37,13 +37,13 @@ publique permet une vérification anonyme).</p>
 introduite pour la méthode checkPassword(). Mettre vérifier à « True » lors
 de l'utilisation de checkPassword() réalisera une vérification de KDC. Pour
 que cela fonctionne, il faut fournir un fichier krb5.keytab contenant les
-clés du service principal pour le service que vous vous voulez utiliser.</p>
+clés du commettant pour le service que vous vous voulez utiliser.</p>
 
 <p>Comme le fichier krb5.keytab par défaut dans /etc n'est normalement pas
 accessible aux utilisateurs et processus qui ne sont pas superutilisateurs,
 il faut s'assurer qu'un fichier krb5.keytab personnalisé contenant les
-bonnes clés principales est fourni à l'application qui utilise la variable
-d'environnement KRB5_KTNAME.</p>
+bonnes clésdes commettants est fourni à l'application qui utilise la
+variable d'environnement KRB5_KTNAME.</p>
 
 <p><b>Note</b> : dans Debian Squeeze(-lts), la prise en charge de la
 vérification de KDC est désactivée par défaut afin de ne pas casser les
