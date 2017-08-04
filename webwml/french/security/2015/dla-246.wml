@@ -1,0 +1,130 @@
+#use wml::debian::translation-check translation="1.2" maintainer="Jean-Pierre Giraud"
+<define-tag description>Mise à jour de sécurité pour LTS</define-tag>
+<define-tag moreinfo>
+<p>La mise à jour de linux-2.6 parue sous le nom de DLA-246-1 provoquait des
+régressions. Cette nouvelle mise à jour rectifie les correctifs défectueux
+appliqués dans la mise à jour et causant les problèmes. Voici, en référence,
+le texte de l'annonce originale.</p>
+
+<p>Cette mise à jour corrige les CVE décrits ci-dessous :</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2011-5321">CVE-2011-5321</a>
+
+<p>Jiri Slaby a découvert que tty_driver_lookup_tty() peut divulguer une
+référence au pilote tty. Un utilisateur local pourrait utiliser ce défaut
+pour planter le système.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2012-6689">CVE-2012-6689</a>
+
+<p>Pablo Neira Ayuso a découvert que des processus d'un espace utilisateur
+non privilégié peuvent envoyer des notifications contrefaites à d'autres
+processus. Un utilisateur local pourrait utiliser ce défaut pour un déni de
+service ou une augmentation de droits.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-3184">CVE-2014-3184</a>
+
+<p>Ben Hawkes a découvert que divers pilotes HID peuvent effectuer une
+lecture hors limite du tampon du descripteur de rapport, aboutissant
+éventuellement à un plantage si un HID avec un descripteur contrefait est
+connecté.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-8159">CVE-2014-8159</a>
+
+<p>Le sous-système InfiniBand/RDMA du noyau Linux ne nettoyait pas
+correctement les paramètres d'entrée en enregistrant des régions mémoire
+depuis l'espace utilisateur avec l'API (u)verbs. Un utilisateur local ayant
+accès à un périphérique /dev/infiniband/uverbsX pourrait utiliser ce défaut
+pour planter le système ou, éventuellement, augmenter ses droits sur le
+système.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-9683">CVE-2014-9683</a>
+
+<p>Dmitry Chernenkov a découvert qu'eCryptfs écrit au-delà de la fin du
+tampon alloué lors du décodage de noms de fichier chiffrés, résultant en un
+déni de service local.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2014-9728">CVE-2014-9728</a> / <a href="https://security-tracker.debian.org/tracker/CVE-2014-9729">CVE-2014-9729</a> / <a href="https://security-tracker.debian.org/tracker/CVE-2014-9730">CVE-2014-9730</a> / <a href="https://security-tracker.debian.org/tracker/CVE-2014-9731">CVE-2014-9731</a> / <a href="https://security-tracker.debian.org/tracker/CVE-2015-4167">CVE-2015-4167</a>
+
+<p>Carl Henrik Lunde a découvert une absence des vérifications de longueur
+nécessaires dans l'implémentation d'UDF. Un utilisateur local qui peut
+monter des périphériques pourrait utiliser ce défaut pour planter le
+système, divulguer des informations à partir du noyau ou éventuellement pour
+une augmentation de droits.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-1805">CVE-2015-1805</a>
+
+<p>Red Hat a découvert que les implémentations en lecture et en écriture du
+tube iovec peuvent faire deux itérations sur le vecteur iovec mais
+modifieront le vecteur iovec si bien que la seconde itération accède à une
+adresse mémoire erronée. Un utilisateur local pourrait utiliser ce défaut
+pour planter le système ou éventuellement pour augmenter ses droits. Cela
+peut aussi avoir pour conséquence une corruption de données et des fuites
+d'informations dans des tubes entre des processus non malveillants.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-2041">CVE-2015-2041</a>
+
+<p>Sasha Levin a découvert que le sous-système LLC exposait certaines
+variables comme des sysctl avec le mauvais type. Sur un noyau 64 bits, cela
+permettrait éventuellement une augmentation de droits depuis un processus
+ayant la capacité CAP_NET_ADMIN ; ce problème peut également conduire à une
+fuite d'information peu importante.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-2042">CVE-2015-2042</a>
+
+<p>Sasha Levin a découvert que le sous-système RDS exposait certaines
+variables comme des sysctl avec le mauvais type. Sur un noyau 64 bits, cela
+peut conduire à une fuite d'information peu importante.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-2830">CVE-2015-2830</a>
+
+<p>Andrew Lutomirski a découvert que lorsqu'une tâche 64 bits sur un noyau
+amd64 fait un appel système fork(2) ou clone(2) en utilisant int $0x80, le
+drapeau de compatibilité 32 bits est réglé (correctement) mais n'est pas
+retiré au retour de la fonction. Ainsi, à la fois seccomp et audit vont mal
+interpréter l'appel système suivant fait par la ou les tâches, menant
+éventuellement à une violation de la politique de sécurité.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-2922">CVE-2015-2922</a>
+
+<p>Modio AB a découvert que le sous-système IPv6 traiterait une déclaration
+de routeur n'indiquant pas de route mais juste une limite de sauts, ce qui
+pourrait ensuite être appliqué à l'interface l'ayant reçue. Cela peut
+conduire à la perte de connectivité IPv6 au-delà du réseau local.</p>
+
+<p>Ce problème peut être atténué en désactivant le traitement des
+déclarations de routeurs IPv6 si elles ne sont pas nécessaires :</p>
+<pre>
+sysctl net.ipv6.conf.default.accept_ra=0
+sysctl net.ipv6.conf.&lt;interface&gt;.accept_ra=0
+</pre></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-3339">CVE-2015-3339</a>
+
+<p>L'appel système execve(2) peut entrer en compétition avec des
+modifications d'attribut d'inode faits par chown(2). Bien que chown(2)
+nettoie les bits setuid/setgid d'un fichier s'il en change l'identifiant de
+son propriétaire, cette situation de compétition pourrait mener execve(2) à
+régler un uid/gid effectif pour le nouveau propriétaire, pouvant provoquer
+une augmentation de droits.</p></li>
+
+</ul>
+
+<p>Pour la distribution oldoldstable (Squeeze), ces problèmes ont été
+corrigés dans la version 2.6.32-48squeeze12.</p>
+
+<p>Pour la distribution oldstable (Wheezy), ces problèmes ont été corrigés
+dans la version 3.2.68-1+deb7u1 ou précédente de linux,sauf pour <a href="https://security-tracker.debian.org/tracker/CVE-2015-1805">CVE-2015-1805</a> et
+<a href="https://security-tracker.debian.org/tracker/CVE-2015-4167">CVE-2015-4167</a>qui seront corrigés prochainement.</p>
+
+<p>Pour la distribution stable (Jessie), ces problèmes ont été corrigés dans
+la version 3.16.7-ckt11-1 ou précédente de linux, sauf pour <a href="https://security-tracker.debian.org/tracker/CVE-2015-4167">CVE-2015-4167</a>
+qui sera corrigé plus tard.</p>
+
+<p>Nous vous recommandons de mettre à jour vos paquets linux-2.6.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2015/dla-246.data"
+# $Id$
