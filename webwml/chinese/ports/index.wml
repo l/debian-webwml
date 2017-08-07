@@ -1,0 +1,349 @@
+#use wml::debian::template title="移植"
+#include "$(ENGLISHDIR)/releases/info"
+#use wml::debian::toc
+#use wml::debian::translation-check translation="1.133"
+
+<toc-display/>
+
+<toc-add-entry name="intro">介绍</toc-add-entry>
+<p>
+如大多数人所知，<a href="https://www.kernel.org/">Linux</a>
+只是一个内核。而且长期以来，\
+Linux 内核只能在从 386 起的\
+英特尔 x86 系列机器上运行。
+</p>
+<p>
+但这不再是事实。Linux 内核现\
+已移植到庞大数量的架构中，这个列表还在不断增长。\
+我们紧随其后，将 Debian 发行版移植到了
+这些架构上。一般来说，开始过程比较\
+困难（要让 libc 和动态链接器正常工作），\
+然后是比较常规的，可能会有点冗长的工作，尝试在新架构下\
+重新编译所有的软件包。
+</p>
+<p>
+Debian 是一个操作系统（OS），而不是内核（实际上，它不仅仅\
+是一个操作系统，因为它包含数千个应用程序）。因此，\
+尽管大多数 Debian 移植都基于 Linux，但也有基于
+FreeBSD、NetBSD 和 Hurd 内核的移植。
+</p>
+
+<div class="important">
+<p>
+此页面所述工作正在进行。注意并不是所有的移植都建有\
+页面，大多数都在外部站点上。我们正在收集\
+所有移植的信息，便于与 Debian 网站一起进行\
+镜像。\
+更多的移植可能会<a href="https://wiki.debian.org/CategoryPorts">列在</a> wiki 上。
+</p>
+</div>
+
+<toc-add-entry name="portlist-released">官方移植列表</toc-add-entry>
+<br />
+
+<table class="tabular" summary="">
+<tbody>
+<tr>
+<th>移植</th>
+<th>架构</th>
+<th>描述</th>
+<th>状态</th>
+</tr>
+<tr>
+<td><a href="amd64/">amd64</a></td>
+<td>64 位 PC（amd64）</td>
+<td>首次正式发布于 Debian 4.0。移植到 64 位 x86
+处理器。目标是在此架构上支持 32 位和 64 位\
+用户空间。该移植支持AMD的 64 位 Opteron、Athlon 和 Sempron
+处理器，以及支持 Intel 64 的英特尔处理器，包括
+Pentium D 及各种 Xeon 和 Core 系列。</td>
+<td><a href="$(HOME)/releases/stable/amd64/release-notes/">已发布</a></td>
+</tr>
+<tr>
+<td><a href="arm/">arm64</a></td>
+<td>64 位 ARM（AArch64）</td>
+<td>ARM 架构的第 8 版包含 AArch64，一个新的 64 位\
+指令集。自 Debian 8.0以来，arm64 移植已包含在
+Debian 中，以支持 Applied Micro X-Gene、AMD Seattle 和 Cavium ThunderX
+等处理器上的新指令集。</td>
+<td><a href="$(HOME)/releases/stable/arm64/release-notes/">已发布</a></td>
+</tr>
+<tr>
+<td><a href="arm/">armel</a></td>
+<td>EABI ARM</td>
+<td>目前最古老的 Debian ARM 移植，支持与
+v4t 指令集兼容的小端序 ARM CPU。</td>
+<td><a href="$(HOME)/releases/stable/armel/release-notes/">已发布</a></td>
+</tr>
+<tr>
+<td><a href="arm/">armhf</a></td>
+<td>硬浮点 ABI ARM</td>
+<td>很多现代的 32 位 ARM 板和器件都配有一个浮点\
+单元（FPU），但是 Debian 的 armel 移植并没有充分\
+利用。armhf 移植开始改善这种情况，并且还\
+利用了较新的 ARM CPU 的其他功能。Debian armhf 移植\
+至少需要支持 Thumb-2 和 VFP3-D16 浮点\
+的 ARMv7 CPU。</td>
+<td><a href="$(HOME)/releases/stable/armhf/release-notes/">已发布</a></td>
+</tr>
+<tr>
+<td><a href="i386/">i386</a></td>
+<td>32 位 PC（i386）</td>
+<td>第一个架构，不是严格意义上的移植。Linux 最初\
+是为英特尔 386 处理器开发的，缩写由此而来。Debian
+支持英特尔（包括所有奔腾\
+系列和最近的 32 位模式的 Core Duo 机器）、AMD（K6，所有 Athlon
+系列，32 位模式的 Athlon64 系列）、Cyrix 及其他\
+制造商制造的所有 IA-32 处理器。</td>
+<td><a href="$(HOME)/releases/stable/i386/release-notes/">已发布</a></td>
+</tr>
+<tr>
+<td><a href="mips/">mips</a></td>
+<td>MIPS（大端序模式）</td>
+<td>首次正式发布于 Debian 3.0。Debian 正在移植\
+到 MIPS 架构中，用于 SGI 机器（debian-mips —
+大端序）和 Digital Decstations（debian-mipsel — 小端序）。</td>
+<td><a href="$(HOME)/releases/stable/mips/release-notes/">已发布</a></td>
+</tr>
+<tr>
+<td><a href="mips/">mipsel</a></td>
+<td>MIPS（小端序模式）</td>
+<td>首次正式发布于 Debian 3.0。Debian 正在移植\
+到 MIPS 架构中，用于 SGI 机器（debian-mips —
+大端序）和 Digital Decstations（debian-mipsel — 小端序）。</td>
+<td><a href="$(HOME)/releases/stable/mipsel/release-notes/">已发布</a></td>
+</tr>
+<tr>
+<td><a href="https://wiki.debian.org/mips64el">mips64el</a></td>
+<td>MIPS（64 位小端序模式）</td>
+<td>
+此移植为小端序，使用 N64 ABI、MIPS64r1 ISA 和硬件浮点。\
+Debian 9 发布之后成为正式版本的一部分。
+</td>
+<td><a href="$(HOME)/releases/stable/mips64el/release-notes/">已发布</a></td>
+</tr>
+<tr>
+<td><a href="powerpc/">ppc64el</a></td>
+<td>POWER7+，POWER8</td>
+<td>首次正式发布于 Debian 8.0。ppc64 的小端序移植，\
+使用新的 Open Power ELFv2 ABI。</td>
+<td><a href="$(HOME)/releases/stable/ppc64el/release-notes/">已发布</a></td>
+</tr>
+<tr>
+<td><a href="s390x/">s390x</a></td>
+<td>System z</td>
+<td>首次正式发布于 Debian 7.0。用于 IBM System z 大型机的 64 位用户界面。</td>
+<td><a href="$(HOME)/releases/stable/s390x/release-notes/">已发布</a></td>
+</tr>
+</tbody>
+</table>
+
+<toc-add-entry name="portlist-other">其他移植列表</toc-add-entry>
+<br />
+
+<table class="tabular" summary="">
+<tbody>
+<tr>
+<th>移植</th>
+<th>架构</th>
+<th>描述</th>
+<th>状态</th>
+</tr>
+<tr>
+<td><a href="alpha/">alpha</a></td>
+<td>Alpha</td>
+<td>首次正式发布于 Debian 2.1。
+它没有达到进入 Debian 6.0 <q>squeeze</q> 版的标准，
+随后被从存档中删除。
+</td>
+<td>已终止</td>
+</tr>
+<tr>
+<td><a href="arm/">arm</a></td>
+<td>OABI ARM</td>
+<td>该移植运行在各种嵌入式硬件上，如路由器或 NAS
+设备。arm 移植首次正式发布于 Debian 2.2，并\
+一直支持到 Debian 5.0，然后被 armel 替代。
+</td>
+<td>被 armel 替代</td>
+</tr>
+<tr>
+<td><a href="http://avr32.debian.net/">AVR32</a></td>
+<td>Atmel 32 位 RISC</td>
+<td>到 Atmel 的 32 位 RISC 架构，AVR32 的移植。</td>
+<td>已终止</td>
+</tr>
+<tr>
+<td><a href="hppa/">hppa</a></td>
+<td>HP PA-RISC</td>
+<td>首次正式发布 Debian 3.0 <q>woody</q>，这是到\
+惠普的 PA-RISC 架构的移植。\
+它没有达到进入 Debian 6.0 <q>squeeze</q> 版的标准，\
+随后被从存档中删除。
+</td>
+<td>已终止</td>
+</tr>
+<tr>
+<td><a href="hurd/">hurd-i386</a></td>
+<td>32 位 PC（i386）</td>
+<td>GNU Hurd 是由 GNU 组织组建的\
+新操作系统。\
+Debian GNU/Hurd 将\
+是一个（可能是第一个）GNU 操作系统。目前的项目\
+建立在 i386 架构之上。
+</td>
+<td>进行中</td>
+</tr>
+<tr>
+<td><a href="ia64/">ia64</a></td>
+<td>Intel Itanium IA-64</td>
+<td>首次正式发布 Debian 3.0。这是到英特尔的\
+第一个 64 位架构的移植。注意：不应与用于 Pentium 4 和
+Celeron 处理器的最新英特尔 64 位扩展混淆，\
+其称为 Intel 64; 对这些请参阅 AMD64 移植。由于\
+开发人员不足，ia64 从 Debian 8 版本中删除。</td>
+<td>已终止</td>
+</tr>
+<tr>
+<td><a href="kfreebsd-gnu/">kfreebsd-amd64</a></td>
+<td>64 位 PC（amd64）</td>
+<td>作为技术预览版首次正式发布 Debian 6.0，\
+为 Debian 发布的第一个非 Linux 移植。移植 Debian GNU
+系统到 FreeBSD 内核。自 Debian 8 以来，\
+不再是官方发布版的一部分。</td>
+<td>进行中</td>
+</tr>
+<tr>
+<td><a href="kfreebsd-gnu/">kfreebsd-i386</a></td>
+<td>32 位 PC（i386）</td>
+<td>作为技术预览版首次正式发布 Debian 6.0，\
+为 Debian 发布的第一个非 Linux 移植。移植 Debian GNU
+系统到 FreeBSD 内核。自 Debian 8 以来，\
+不再是官方发布版的一部分。</td>
+<td>进行中</td>
+</tr>
+<tr>
+<td><a href="http://www.linux-m32r.org/">m32</a></td>
+<td>M32R</td>
+<td>到瑞萨科技（Renesas Technology）32 位 RISC 微处理器的移植。</td>
+<td>死亡</td>
+</tr>
+<tr>
+<td><a href="m68k/">m68k</a></td>
+<td>Motorola 68k</td>
+<td>首次正式发布于 Debian 2.0。移植未能达到
+Debian 4.0 的发布标准，因此未包含在
+Etch 及更高版本中，并被移至 debian-ports。
+Debian m68k 移植运行在各种
+基于摩托罗拉 68k 系列处理器的计算机上，特别是
+Sun3 系列工作站、Apple Macintosh 个人
+电脑及 Atari 和 Amiga 个人电脑。</td>
+<td>进行中</td>
+</tr>
+<tr>
+<td><a href="netbsd/">netbsd-i386</a></td>
+<td>32 位 PC（i386）</td>
+<td>Debian 操作系统的一个移植，配有 apt、\
+dpkg 和 GNU 用户界面，连接到 NetBSD 内核。这个移植从未被发布，\
+并已被抛弃。</td>
+<td>死亡</td>
+</tr>
+<tr>
+<td><a href="netbsd/alpha/">netbsd-alpha</a></td>
+<td>Alpha</td>
+<td>Debian 操作系统的一个移植，配有 apt、\
+dpkg 和 GNU 用户界面，连接到 NetBSD 内核。这个移植从未被发布，\
+并已被抛弃。</td>
+<td>死亡</td>
+</tr>
+<tr>
+<td><a href="http://or1k.debian.net/">or1k</a></td>
+<td>OpenRISC 1200</td>
+<td>到 <a href="http://openrisc.net/">OpenRISC</a> 1200 开源 CPU 的一个移植。</td>
+<td>死亡</td>
+</tr>
+<tr>
+<td><a href="powerpc/">powerpc</a></td>
+<td>Motorola/IBM PowerPC</td>
+<td>首次正式发布于 Debian 2.2。该移植运行在许多
+Apple Macintosh PowerMac 机型，以及 CHRP 和 PReP 开放\
+架构机器上。自 Debian 9 起，不再是正式发布版的一部分。</td>
+<td>已终止</td>
+</tr>
+<tr>
+<td><a href="https://wiki.debian.org/PowerPCSPEPort">powerpcspe</a></td>
+<td>PowerPC Signal Processing Engine</td>
+<td>
+到低功耗 32 位 FreeScale 和 IBM "e500" CPU 上的“Signal Processing Engine”硬件移植。
+</td>
+<td>进行中</td>
+</tr>
+<tr>
+<td><a href="s390/">s390</a></td>
+<td>S/390 and zSeries</td>
+<td>首次正式发布于 Debian 3.0。对 IBM
+S/390 服务器的移植。在 Debian 8 时被 s390x 替代。</td>
+<td>被 s390x 替代</td>
+</tr>
+<tr>
+<td><a href="sparc/">sparc</a></td>
+<td>Sun SPARC</td>
+<td>首次正式发布于 Debian 2.1。该移植运行在 Sun
+UltraSPARC 系列工作站上，以及一些 sun4 架构\
+的继承者。自 Debian 8 以来，由于开发\
+人员不足，Sparc 不再是发布版的一部分。\
+但它即将被 Sparc64 替代。
+</td>
+<td>将被 sparc64 替代</td>
+</tr>
+<tr>
+<td><a href="https://wiki.debian.org/Sparc64">sparc64</a></td>
+<td>64 位 SPARC</td>
+<td>
+到 64 位 SPARC 处理器的移植。
+</td>
+<td>进行中</td>
+</tr>
+<tr>
+<td><a href="https://wiki.debian.org/SH4">sh4</a></td>
+<td>SuperH</td>
+<td>
+到日立 SuperH 处理器的移植。还支持开源的
+<a href="http://j-core.org/">J-Core</a> 处理器。
+</td>
+<td>进行中</td>
+</tr>
+<tr>
+<td><a href="https://wiki.debian.org/X32Port">x32</a></td>
+<td>使用 32 位指针的 64 位 PC</td>
+<td>
+X32 是使用 32 位指针的 amd64/x86_64 CPU ABI。\
+这个想法是使用较大的 x86_64 寄存器组，\
+同时又兼有 32 位指针的较小内存和缓存占用。
+</td>
+<td>进行中</td>
+</tr>
+</tbody>
+</table>
+
+
+
+<toc-add-entry name="various">类似移植的项目</toc-add-entry>
+
+<p><em>虽然他们的工作并不完全像是移植，但这似乎是一个介绍\
+他们的好地方。</em></p>
+
+<h3><a href="beowulf/">Debian Beowulf</a></h3>
+<p>
+Beowulf是在科学和数学领域中使用的大型\
+计算机的部分替代品。该项目旨在在
+Debian 机器上运行 Beowulf 群集，并将参与的<em>人们</em>以真正的\
+<a href="http://www.catb.org/~esr/writings/cathedral-bazaar/">集市</a>方法进行网络化。
+</p>
+
+
+<div class="warning">
+<p>以上许多计算机和处理器\
+名称是其制造商的商标和注册商标。\
+未经许可，不得使用。</p>
+</div>
