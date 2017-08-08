@@ -1,0 +1,40 @@
+#use wml::debian::translation-check translation="1.1" maintainer="Jean-Paul Guillonneau"
+<define-tag description>Mise à jour de sécurité pour LTS</define-tag>
+<define-tag moreinfo>
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2013-6441">CVE-2013-6441</a>
+
+<p>Le script de modèle lxc-sshd avait l’habitude de se monter lui-même comme
+/sbin/init dans le conteneur en utilisant un <q>bind-mount</q> modifiable.</p>
+
+<p>Cette mise à jour résout le problème en utilisant un <q>bind-mount</q>
+uniquement lisible, empêchant toute forme de dommage accidentel éventuel.</p>
+</li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-1335">CVE-2015-1335</a>
+
+<p>Lors du démarrage du conteneur, lxc règle l’arbre du système de fichiers
+initial du conteneur en créant beaucoup de montages, en se guidant sur le
+fichier de configuration.</p>
+
+<p>La configuration du conteneur est entre les mains de l’administrateur ou de
+l’utilisateur sur l’hôte, aussi nous n’essayons pas de protéger contre des
+entrées mauvaises. Cependant, puisque la cible de montage est dans le
+conteneur, il est possible que l’administrateur du conteneur pourrait
+rediriger le montage avec des liens symboliques. Cela pourrait contourner le
+propre démarrage du conteneur (c'est-à-dire, le confinement d’un conteneur de
+l’administrateur par la politique restrictive d’AppArmor, en redirigeant
+l’écriture requise vers /proc/self/attr/current), ou contourner la politique
+d’AppArmor (basée sur les chemins) en redirigeant, par exemple, /proc vers
+/mnt dans le conteneur.</p>
+
+<p>Cette mise à jour implémente une fonction safe_mount() empêchant lxc de
+réaliser des montages sur des liens symboliques.</p></li>
+
+</ul>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2016/dla-442.data"
+# $Id$
