@@ -1,0 +1,54 @@
+#use wml::debian::translation-check translation="1.2" maintainer="Jean-Pierre Giraud"
+<define-tag description>Mise à jour de sécurité pour LTS</define-tag>
+<define-tag moreinfo>
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-1798">CVE-2015-1798</a>
+
+<p>Lorsque ntpd est configuré pour utiliser une clé symétrique pour
+authentifier un serveur ou un pair NTP distant, il vérifie si le code
+d'authentification de message NTP (MAC) des paquets reçus est valable, mais
+pas si il y a réellement un MAC inclus. Les paquets sans MAC sont acceptés
+comme s'ils avaient un MAC valable. Cela permet à un attaquant de type
+« homme du milieu » d'envoyer des faux paquets qui sont acceptés par le
+client/pair sans avoir à connaître la clé symétrique. L'attaquant a besoin
+de connaître l'horodatage transmis du client pour qu'il corresponde dans la
+réponse contrefaite, et la fausse réponse doit atteindre le client avant la
+réponse authentique du serveur. L'attaquant n'a pas forcément besoin de
+relayer les paquets entre le client et le serveur.</p>
+
+<p>L'authentification autokey n'a pas ce problème dans la mesure où il y a
+une vérification qui réclame que l'identifiant de clé soit plus grand que
+NTP_MAXKEY, et elle échoue pour les paquets dépourvus de MAC.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-1799">CVE-2015-1799</a>
+
+<p>Un attaquant qui sait que les hôtes NTP A et B sont pairs entre eux
+(association symétrique) peut envoyer un paquet à l'hôte A avec l'adresse
+source de B qui réglera les variables d'état NTP sur A selon les valeurs
+envoyées par l'attaquant. L'hôte A enverra à sa prochaine interrogation de B
+un paquet avec l'horodatage d'origine qui ne correspond pas à l'horodatage
+transmis de B et le paquet sera rejeté. Si l'attaquant fait cela
+régulièrement pour les deux hôtes, ils ne seront pas capables de se
+synchroniser entre eux. C'est une attaque par déni de service connue,
+décrite sur la page
+<a href="https://www.eecis.udel.edu/~mills/onwire.html">https://www.eecis.udel.edu/~mills/onwire.html</a> .</p>
+
+<p>Selon le document, l'authentification NTP est censée protéger les
+associations symétriques de ces attaques, mais cela ne semble pas être le
+cas. Les variables d'état sont mises à jour même quand l'authentification
+échoue et les pairs envoient des paquets avec l'horodatage d'origine qui ne
+correspond pas avec l'horodatage transmis du côté du receveur.</p>
+
+<p>ntp-keygen sur les hôtes gros boutistes</p>
+
+<p>L'utilisation de ntp-keygen pour générer une clé MD5 sur des hôtes gros
+boutiste avait pour conséquence soit une boucle infinie, soit une clé
+choisie parmi seulement 93 clés possibles.</p></li>
+
+</ul>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2015/dla-192.data"
+# $Id$
