@@ -1,0 +1,90 @@
+#use wml::debian::translation-check translation="1.3" maintainer="Jean-Paul Guillonneau"
+<define-tag description>Mise à jour de sécurité pour LTS</define-tag>
+<define-tag moreinfo>
+<p>Plusieurs problèmes de sécurité ont été découverts dans Django :
+<a href="https://www.djangoproject.com/weblog/2015/jan/13/security/">
+https://www.djangoproject.com/weblog/2015/jan/13/security/</a></p>
+
+<p>Pour Debian 6 Squeeze, ils ont été corrigés dans la
+version 1.2.3-3+squeeze12 de python-django. Voici ce que les développeurs
+amont ont à dire à propos de ces problèmes :</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-0219">CVE-2015-0219</a>
+
+<p>– Usurpation d’en-tête WSGI à l’aide d’une combinaison de tiret bas et
+de tiret</p>
+
+<p>Lorsque des en-têtes HTTP sont placés dans la fonction <q>environ</q> de
+WSGI, ils sont standardisés en les convertissant en majuscules, en
+convertissant tous les tirets en tirets bas et en ajoutant le préfixe HTTP_.
+Par exemple, un en-tête X-Auth-User devient HTTP_X_AUTH_USER dans la fonction
+<q>environ</q> WSGI (et par conséquent aussi dans le dictionnaire
+request.META de Django).</p>
+
+<p>Malheureusement, cela signifie que la fonction <q>environ</q> de WSGI ne
+faisait pas de distinction entre les en-têtes contenant des tirets et ceux
+contenant des tirets bas : X-Auth-User et X-Auth_User deviennent tous les deux
+HTTP_X_AUTH_USER. Cela signifie que si un en-tête est utilisé dans un but
+sécuritaire (par exemple, transmettre des informations d’authentification à
+partir d’un mandataire frontal), même si le mandataire retire soigneusement
+toute valeur entrante pour X-Auth-User, un attaquant pourrait être capable de
+fournir un en-tête X-Auth_User header (avec un tiret bas) et de contourner
+cette protection.</p>
+
+<p>Dans le but d’empêcher de telles attaques, à la fois Nginx et Apache 2.4+
+retirent par défaut tous les en-têtes contenant des tirets bas pour les
+requêtes entrantes. Le serveur incorporé en développement de Django fait
+maintenant la même chose. Celui-ci n’est pas recommandé en production, mais
+uniformiser le comportement des serveurs de production courants réduit les
+possibilités de changement de comportement lors de déploiements.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-0220">CVE-2015-0220</a>
+
+<p>– Attaques XSS possibles à l’aide de redirections d’URL fournis par des
+utilisateurs</p>
+
+<p>Django dépend des saisies d’utilisateur dans certains cas (par exemple,
+django.contrib.auth.views.login() et i18n) pour rediriger l’utilisateur vers
+un URL lors d’un <q>succès</q>. Les vérifications de sécurité pour ces
+redirections (à savoir django.util.http.is_safe_url()) ne retirent pas les
+espaces de début dans les URL testés et de cette façon considèrent les URL
+tels que « \njavascript:... » sûrs. Si un développeur se fie à is_safe_url()
+pour fournir des cibles de redirections fiables et met un tel URL dans un
+lien, elles pourraient subir une attaque XSS. Ce bogue n’affecte pas
+actuellement Django, puisque cet URL est seulement mis dans l’en-tête de
+réponse Location et les navigateurs paraissent ignorer JavaScript ici.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2015-0221">CVE-2015-0221</a>
+
+<p>– Attaque par déni de service attaque contre django.views.static.serve</p>
+
+<p>Dans les anciennes versions de Django, la vue django.views.static.serve()
+lit les fichiers qu’il distribue en ligne à un certain moment. Par conséquent,
+un gros fichier sans nouvelle ligne pourrait conduire dans une utilisation de
+la mémoire égale à la taille de ce fichier. Un attaquant pourrait exploiter
+cela et lancer une attaque par déni de service en demandant de nombreux gros
+fichiers. Cette vue maintenant lit le fichier par morceaux pour prévenir d’un
+usage excessif de la mémoire.</p>
+
+<p>Notez, cependant, que cette vue a toujours transmis un avertissement qui
+n’est pas renforcé lors d’une utilisation en production, et devrait être
+seulement utilisée comme aide au développement. C’est peut-être le moment
+d’analyser votre projet et servir vos fichiers en production en utilisant un
+vrai serveur web frontal si vous ne le faites déjà.</p></li>
+
+</ul>
+
+<p>Notez que la version de Django utilisée dans Debian 6 Squeeze n’était pas
+affectée par <a href="https://security-tracker.debian.org/tracker/CVE-2015-0222">CVE-2015-0222</a>
+(déni de service de base de données avec ModelPlusieursChoiceField) puisque
+cette fonction n’existe pas dans cette version.</p>
+
+<p>Pour Debian 6 <q>Squeeze</q>, ces problèmes ont été corrigés dans la
+version 1.2.3-3+squeeze12 de python-django.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2015/dla-143.data"
+# $Id$
