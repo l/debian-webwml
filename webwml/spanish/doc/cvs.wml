@@ -1,0 +1,148 @@
+#use wml::debian::ddp title="Proyecto de documentación de Debian SVN"
+#use wml::debian::translation-check translation="1.41"
+#use wml::debian::toc
+
+<p>El proyecto de documentación de Debian almacena sus páginas web y gran parte del
+texto de los manuales en el servidor Debian Subversion <strong>svn.debian.org</strong> 
+y en el servidor Debian Git <strong>git.debian.org</strong>.
+svn.debian.org y git.debian.org son parte de la instalación Gforge en alioth.debian.org.
+Puede consultar la <a href="https://wiki.debian.org/Alioth">documentación de Alioth</a>
+para más información sobre el funcionamiento de este servicio.
+</p>
+
+<p>Cualquiera puede descargar los fuentes almacenados en el servidor SVN/Git. Solo los miembros
+del proyecto de documentación de Debian pueden actualizarlos.</p>
+
+<toc-display />
+
+<toc-add-entry name="access">Acceso a los fuentes en SVN</toc-add-entry>
+  
+<p>Puede utilizar una interfaz web para acceder a los ficheros individualmente y
+ver las modificaciones realizadas, en <url "https://anonscm.debian.org/viewvc/ddp/manuals/trunk/" /></p>
+
+<p>Para descargar un manual completo, el acceso directo al servidor SVN
+suele ser una opción mejor. Necesita el
+paquete <tt><a href="https://packages.debian.org/subversion">subversion</a></tt> en su
+máquina.</p>
+
+<h3>Conexión de forma anónima (sólo-lectura) al servidor SVN</h3>
+
+<p>Use esta orden para descargar todos los ficheros:</p>
+
+<p style="margin-left: 2em">
+  <code>svn co svn://svn.debian.org/svn/ddp/manuals/trunk manuals</code>
+</p>
+
+<p>Esto creará los directorios y descargará su contenido, recursivamente.</p>
+
+<p>Para actualizar su copia local con los cambios hechos por otros, entre
+en el directorio <strong>manuals</strong> y ejecute la orden:</p>
+
+<p style="margin-left: 2em">
+  <code>svn export --force svn://svn.debian.org/svn/ddp/manuals</code>
+</p>
+
+<h3>Conexión al servidor SVN con privilegios de actualización (svn)</h3>
+
+<p>Antes de acceder al servidor SVN por este método le han tenido que
+conceder acceso de escritura. Por favor, lea antes cómo <a
+href="#obtaining">solicitar</a> permiso de actualización.</p>
+
+<p>Use esta orden para descargar todos los ficheros:</p>
+
+<p style="margin-left: 2em">
+  <code>svn co svn+ssh://svn.debian.org/svn/ddp/manuals/trunk manuals</code>
+</p>
+
+<p>Esto creará los directorios y descargará su contenido, recursivamente.</p>
+
+<p>Para actualizar su copia local con los cambios hechos por otros, entre
+en el directorio <strong>manuals</strong> y ejecute la orden:</p>
+
+<p style="margin-left: 2em">
+  <code>svn update</code>
+</p>
+
+<h3>Conexión al servidor SVN con privilegios de actualización (git-svn)</h3>
+
+<p>Antes de acceder al servidor SVN por este método le han tenido que
+conceder acceso de escritura. Por favor, lea antes cómo <a
+href="#obtaining">solicitar</a> permiso de actualización.</p>
+
+<p>Use esta orden para descargar todos los ficheros:</p>
+
+<p style="margin-left: 2em">
+  <code>git svn clone -s -rHEAD svn+ssh://svn.debian.org/svn/ddp/manuals manuals</code>
+</p>
+
+<p>Esto creará los directorios y descargará su contenido, recursivamente, y también creará
+un repositorio local git, sin historial, que puede seguir al servidor SVN alioth.</p>
+
+<p>Para actualizar su copia local con los cambios hechos por otros, entre
+en el directorio <strong>manuals</strong> y ejecute la orden:</p>
+
+<p style="margin-left: 2em">
+  <code>git svn rebase</code>
+</p>
+
+<toc-add-entry name="obtaining">Obtención de privilegios de actualización</toc-add-entry>
+
+<p>Cualquiera que desee participar en la escritura de manuales puede obtener
+privilegios de actualización. Generalmente, solo pedimos que quien los solicita
+haya enviado previamente un par de parches útiles.</p> 
+
+<p>Una vez creada su cuenta en <a href="https://alioth.debian.org">Alioth</a>, 
+solicite privilegios de actualización pulsando en <q>Request to join</q> («solicitud de ingreso») en la
+parte inferior derecha de la página <url "https://alioth.debian.org/projects/ddp" />.  
+Asegúrese de incluir en la casilla para comentarios las razones por las que
+necesita acceso. A continuación envíe un correo electrónico a
+debian-doc@lists.debian.org exponiendo el historial de su trabajo en
+Debian.</p>
+
+<p>Una vez que su solicitud sea aprobada, formará parte del <a
+href="https://alioth.debian.org/projects/ddp">proyecto <q>ddp</q></a> (y del
+grupo Unix) en Alioth.</p>
+
+<hr />
+
+# Disabled (obsolete)
+# <toc-add-entry name="organization">Organization of files</toc-add-entry>
+# 
+# <p>This figure shows the structure of the CVS directory tree:
+# </p>
+# <div class="center">
+# <img src="dirtree.jpg" alt="DDP CVS directory tree" />
+# </div>
+# 
+# <p>Please note that the DDP web site is located in the webwml module of the
+# Debian CVS repository, to be integrated with the rest of the Debian web
+# pages.</p>
+# 
+# <hr />
+
+<toc-add-entry name="updates">Mecanismo de actualización automática</toc-add-entry>
+
+<p>Las páginas web que contienen el texto de los manuales se generan en
+www-master.debian.org como parte del proceso ordinario de generación del sitio web,
+proceso que tiene lugar cada cuatro horas.</p>
+
+<p>El «script» ejecuta la orden <kbd>svn export --force svn://svn.debian.org/svn/ddp/manuals</kbd> y, a continuación,
+<kbd>make -C trunk publish</kbd>.</p>
+
+<p>El «makefile» está configurado para generar cada subdirectorio (que contenga
+documentación en desarrollo), y para instalar los ficheros de cada subdirectorio
+existente bajo el directorio <code>doc/manuals/</code> del sitio web. Los «makefiles»
+de los subdirectorios se derivan del <code>manuals/standard.makefile</code>.</p>
+
+<p>Los ficheros de documentación generados por el «script» de actualización se encuentran en
+<a href="manuals/">https://www.debian.org/doc/manuals/</a>.</p>
+
+<p>Los ficheros de «log» generados por el «script» de actualización se encuentran en
+<url "https://www-master.debian.org/build-logs/ddp/" /></p>
+
+<p>Tenga en cuenta que este proceso genera de nuevo el directorio
+<code>/doc/manuals/</code>. El contenido del directorio <code>/doc/</code> se genera,
+bien a partir de <a href="/devel/website/desc">«webwml»</a>, bien con otros «scripts»,
+como los que extraen ciertos manuales de sus paquetes.</p>
+
+# <!-- Created: Mon Jul  6 19:58:09 BST 1998 -->
