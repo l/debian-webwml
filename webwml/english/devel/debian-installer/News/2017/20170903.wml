@@ -1,0 +1,197 @@
+<define-tag pagetitle>Debian Installer Buster Alpha 1 release</define-tag>
+<define-tag release_date>2017-09-03</define-tag>
+#use wml::debian::news
+
+<p>
+The Debian Installer <a
+href="https://wiki.debian.org/DebianInstaller/Team">team</a> is pleased to
+announce the first alpha release of the installer for Debian 10
+<q>Buster</q>.
+</p>
+
+
+<h2>Important notes for this release of the installer</h2>
+
+<ul>
+  <li>On the graphical installer side, a workaround has been applied
+    to retain the historical rendering, since the default rendering
+    changed heavily in recent fontconfig and freetype releases. It
+    isn't bit for bit identical to what we had in Stretch, but it
+    looks very close. Later, we'll need to figure out how to compare
+    both renderings (improvements, regressions, different issues,
+    etc.) for as many languages as possible. This is going to be
+    tracked in #873462.</li>
+  <li>Since mips64el has been suffering from toolchain issues for
+    several weeks (#871514), it was decided not to publish any images
+    for this architecture.</li>
+</ul>
+
+
+<h2>Improvements in this release</h2>
+
+<ul>
+  <li>debian-installer:
+    <ul>
+      <li>Build against buster.</li>
+      <li>Stop build-depending on *-pic libraries, due to the switch
+        to mklibs-copy.</li>
+      <li>Bump Linux kernel ABI from 4.9.0-3 to 4.12.0-1.</li>
+    </ul>
+  </li>
+  <li>network-console:
+    <ul>
+      <li>Create an sshd user to cope with privilege separation, which
+        became mandatory in recent OpenSSH releases.</li>
+    </ul>
+  </li>
+  <li>os-prober:
+    <ul>
+      <li>Fix EFI check for ID_PART_ENTRY_SCHEME: look for "dos"
+        instead of "msdos" (#817023).</li>
+    </ul>
+  </li>
+  <li>partman-auto-lvm:
+    <ul>
+      <li>Fix check by using -e instead of stat (#759553).</li>
+    </ul>
+  </li>
+  <li>partman-auto-raid:
+    <ul>
+      <li>Allow using a logical volume as /boot when
+        partman-auto-lvm/no_boot=true (See: #610377).</li>
+    </ul>
+  </li>
+  <li>partman-base:
+    <ul>
+      <li>For systems that are known to have their boot firmware on an
+        mmcblk device, protect the firmware area on all mmcblk devices
+        (and not only on mmcblk0) from being clobbered during guided
+        partitioning (#854822).</li>
+    </ul>
+  </li>
+  <li>partman-partitioning:
+    <ul>
+      <li>Make get_real_device() both simpler and more generic by
+        mimicking the linux kernel's disk_name function
+        (See: #820818).</li>
+    </ul>
+  </li>
+  <li>rescue:
+    <ul>
+      <li>Invoke search-path by absolute path in chroot_has
+        (#867564).</li>
+    </ul>
+  </li>
+  <li>rootskel:
+    <ul>
+      <li>Create /run on non-linux too, for screen support.</li>
+    </ul>
+  </li>
+  <li>rootskel-gtk:
+    <ul>
+      <li>Increase font size of mr_IN locale (#863952).</li>
+    </ul>
+  </li>
+  <li>systemd:
+    <ul>
+      <li>Fix missing 60-input-id.rules in udev-udeb, which breaks the
+        graphical version of the Debian Installer, as no key presses
+        or mouse events get processed (#872598).</li>
+    </ul>
+  </li>
+  <li>user-setup:
+    <ul>
+      <li>Cope with a different disabled root password ("!*") in
+        /etc/shadow as well as the normal unset one ("*"), fixing a
+        major bug in the live installer (#866206).</li>
+    </ul>
+  </li>
+  <li>win32-loader:
+    <ul>
+      <li>Replace all mirror URLs with deb.debian.org</li>
+    </ul>
+  </li>
+</ul>
+
+
+<h2>Hardware support changes</h2>
+
+<ul>
+  <li>debian-installer:
+    <ul>
+      <li>Drop orion5x-qnap images.</li>
+    </ul>
+  </li>
+  <li>flash-kernel:
+    <ul>
+      <li>Add a machine db entry for the Raspberry Pi 3 Model B
+        (#869488).</li>
+      <li>Add a machine db entry for the Firefly-RK3399.</li>
+      <li>Add a machine db entry for the Radxa Rock 2 Square
+        (#868166).</li>
+      <li>Add machine db entries for various sunxi-based systems that
+        are (at least partially) supported in kernel 4.12 and u-boot
+        v2017.07-rc3: Banana Pi BPI-M2-Plus, FriendlyArm NanoPi M1,
+        FriendlyARM NanoPi NEO Air, Lichee Pi Zero, NextThing
+        C.H.I.P. Pro, Xunlong Orange Pi Zero.</li>
+      <li>Add a machine db entry for the BeagleBone Green
+        (#866822).</li>
+    </ul>
+  </li>
+  <li>grub-installer:
+    <ul>
+      <li>Really add support for JBOD systems with a large number of
+        discs (#839894).</li>
+    </ul>
+  </li>
+  <li>libdebian-installer:
+    <ul>
+      <li>mips: Add support for checking the "isa" field, and use it
+        as fallback for unknown CPUs (#865425).</li>
+      <li>mips: Drop unsupported subarchitectures.</li>
+    </ul>
+  </li>
+  <li>linux:
+    <ul>
+      <li>[armhf] udeb: Replace imx-ipuv3-crtc with imxdrm in
+        fb-modules.</li>
+      <li>[armhf] udeb: Add sunxi_wdt to kernel-image (#866130).</li>
+      <li>udeb: Add dm-raid to md-modules (#868251).</li>
+      <li>[arm64,armhf] udeb: Ship usb3503 module in usb-modules,
+        needed for e.g. Arndale development boards (#865645).</li>
+    </ul>
+  </li>
+</ul>
+
+
+<h2>Localization status</h2>
+
+<ul>
+  <li>75 languages are supported in this release.</li>
+  <li>Full translation for 25 of them.</li>
+</ul>
+
+
+<h2>Known issues in this release</h2>
+
+<p>
+See the <a href="$(DEVEL)/debian-installer/errata">errata</a> for
+details and a full list of known issues.
+</p>
+
+
+<h2>Feedback for this release</h2>
+
+<p>
+We need your help to find bugs and further improve the installer, so please
+try it. Installer CDs, other media and everything else you will need are
+available at our <a href="$(DEVEL)/debian-installer">web site</a>.
+</p>
+
+
+<h2>Thanks</h2>
+
+<p>
+The Debian Installer team thanks everybody who has contributed to this
+release.
+</p>
