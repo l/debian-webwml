@@ -1,0 +1,210 @@
+#use wml::debian::translation-check translation="1.2" maintainer="Jean-Pierre Giraud"
+<define-tag pagetitle>Publication de l'installateur Debian Buster Alpha 1</define-tag>
+<define-tag release_date>2017-09-03</define-tag>
+#use wml::debian::news
+
+<p>
+L'<a href="https://wiki.debian.org/DebianInstaller/Team">équipe</a> du
+programme d'installation de Debian a le plaisir d'annoncer la parution
+de la première version alpha pour Debian 10 <q>Buster</q>.
+</p>
+
+
+<h2>Notes importantes pour cette version de l'installateur</h2>
+
+<ul>
+  <li>Du côté de l’installateur graphique, une solution de contournement a
+    été appliquée pour conserver la fonte historique, dans la mesure où la
+    fonte par défaut a beaucoup changé dans les versions récentes de
+    fontconfig et freetype. Elle n'est par identique bit à bit à ce qu'elle
+    était dans Stretch, mais elle lui ressemble beaucoup. Ultérieurement,
+    il faudra trouver comment comparer les deux fontes (améliorations,
+    régressions, problèmes divers, etc.) pour le plus grand nombre de
+    langues possibles. Cela pourra être suivi à l'adresse
+    <a href="https://bugs.debian.org/873462">n° 873462</a>.</li>
+  <li>Dans la mesure où mips64el souffre de problèmes de chaîne de
+    compilation depuis plusieurs semaines (<a href="https://bugs.debian.org/871514">n° 871514</a>),
+    il a été décidé de ne pas publier d'image pour cette architecture.</li>
+</ul>
+
+
+<h2>Améliorations dans cette version de l'installateur</h2>
+
+<ul>
+  <li>debian-installer :
+    <ul>
+      <li>construction avec Buster ;</li>
+      <li>arrêt de la dépendance de construction aux bibliothèques *-pic,
+        dû au passage à mklibs-copy ;</li>
+      <li>passage de l'ABI du noyau Linux de 4.9.0-3 à 4.12.0-1.</li>
+    </ul>
+  </li>
+  <li>network-console :
+    <ul>
+      <li>création d'un utilisateur sshd pour prendre en compte la
+        séparation de droits qui est devenue obligatoire dans les versions 
+        récentes d'OpenSSH.</li>
+    </ul>
+  </li>
+  <li>os-prober :
+    <ul>
+      <li>correction de la vérification d'EFI pour ID_PART_ENTRY_SCHEME :
+        recherche de « dos » à la place de « msdos » (<a href="https://bugs.debian.org/817023">n° 817023</a>).</li>
+    </ul>
+  </li>
+  <li>partman-auto-lvm :
+    <ul>
+      <li>correction de la vérification en utilisant -e à la place de stat
+        (<a href="https://bugs.debian.org/759553">n° 759553</a>).</li>
+    </ul>
+  </li>
+  <li>partman-auto-raid :
+    <ul>
+      <li>permission d'utiliser un volume logique pour /boot lorsque
+        partman-auto-lvm/no_boot=true (voir : <a href="https://bugs.debian.org/610377">n° 610377</a>).</li>
+    </ul>
+  </li>
+  <li>partman-base :
+    <ul>
+      <li>pour les systèmes qui sont connus pour avoir leur micrologiciel
+        d'amorçage sur un périphérique mmcblk, protection du secteur du
+        micrologiciel sur tous les périphériques mmcblk (et pas seulement
+        sur mmcblk0) contre les attaques durant le partitionnement assisté
+        (<a href="https://bugs.debian.org/854822">n° 854822</a>).</li>
+    </ul>
+  </li>
+  <li>partman-partitioning :
+    <ul>
+      <li>imitation de la fonction disk_name du noyau Linux pour rendre
+        get_real_device() à la fois plus simple et plus générique
+        (voir : <a href="https://bugs.debian.org/820818">n° 820818</a>).</li>
+    </ul>
+  </li>
+  <li>rescue :
+    <ul>
+      <li>invocation du chemin de recherche par chemin absolu dans
+        chroot_has (<a href="https://bugs.debian.org/867564">n° 867564</a>).</li>
+    </ul>
+  </li>
+  <li>rootskel :
+    <ul>
+      <li>création de /run aussi sur les systèmes non Linux, pour la prise
+        en charge de screen.</li>
+    </ul>
+  </li>
+  <li>rootskel-gtk :
+    <ul>
+      <li>augmentation de la taille de police pour la locale mr_IN
+        (<a href="https://bugs.debian.org/863952">n° 863952</a>).</li>
+    </ul>
+  </li>
+  <li>systemd :
+    <ul>
+      <li>correction de l'absence de 60-input-id.rules dans udev-udeb, qui
+        casse la version graphique de l'installateur Debian, bien qu'il n'y
+        ait ni frappe de touche ni action de la souris
+        (<a href="https://bugs.debian.org/872598">n° 872598</a>).</li>
+    </ul>
+  </li>
+  <li>user-setup :
+    <ul>
+      <li>prise en compte d'un mot de passe superutilisateur désactivé
+        différent ("!*") dans /etc/shadow aussi bien que de celui qui n'est
+        configuré normalement ("*"), corrigeant un bogue majeur dans
+        l'installateur Live (<a href="https://bugs.debian.org/866206">n° 866206</a>).</li>
+    </ul>
+  </li>
+  <li>win32-loader :
+    <ul>
+      <li>remplacement de toutes les URL de miroir par deb.debian.org</li>
+    </ul>
+  </li>
+</ul>
+
+
+<h2>Modifications de la prise en charge matérielle</h2>
+
+<ul>
+  <li>debian-installer :
+    <ul>
+      <li>retrait des images orion5x-qnap.</li>
+    </ul>
+  </li>
+  <li>flash-kernel :
+    <ul>
+      <li>ajout d'une entrée dans la base de données de matériel pour le
+        Raspberry Pi 3 Model B (<a href="https://bugs.debian.org/869488">n° 869488</a>) ;</li>
+      <li>ajout d'une entrée dans la base de données de matériel pour le
+        Firefly-RK3399 ;</li>
+      <li>ajout d'une entrée dans la base de données de matériel pour le
+        Radxa Rock2 Square (<a href="https://bugs.debian.org/868166">n° 868166</a>) ;</li>
+      <li>ajout d'une entrée dans la base de données de matériel pour
+        divers systèmes basés sur sunxi qui sont (au moins en partie) pris
+        en charge dans le noyau 4.12 et u-boot v2017.07-rc3 : Banana Pi
+        BPI-M2-Plus, FriendlyArm NanoPi M1, FriendlyARM NanoPi NEO Air,
+        Lichee Pi Zero, NextThing C.H.I.P. Pro, Xunlong Orange Pi Zero ;</li>
+      <li>ajout d'une entrée dans la base de données de matériel pour le
+        BeagleBone Green (<a href="https://bugs.debian.org/866822">n° 866822</a>).</li>
+    </ul>
+  </li>
+  <li>grub-installer :
+    <ul>
+      <li>ajout réel de la prise en charge des systèmes JBOD avec un grand
+        nombre de disques (<a href="https://bugs.debian.org/839894">n° 839894</a>).</li>
+    </ul>
+  </li>
+  <li>libdebian-installer :
+    <ul>
+      <li>mips : ajout de la prise en charge de la vérification du champ
+        « isa », et son utilisation comme repli pour les processeurs
+        inconnus (<a href="https://bugs.debian.org/865425">n° 865425</a>) ;</li>
+      <li>mips : retrait des sous architectures non prises en charge.</li>
+    </ul>
+  </li>
+  <li>linux :
+    <ul>
+      <li>[armhf] udeb : remplacement de imx-ipuv3-crtc par imxdrm dans
+        fb-modules ;</li>
+      <li>[armhf] udeb : ajout de sunxi_wdt à kernel-image 
+        (<a href="https://bugs.debian.org/866130">n° 866130</a>) ;</li>
+      <li>udeb : ajout de dm-raid à md-modules (<a href="https://bugs.debian.org/868251">n° 868251</a>) ;</li>
+      <li>[arm64,armhf] udeb : fourniture du module usb3503 dans usb-modules,
+        nécessaire par exemple pour les cartes de développement Arndale
+        (<a href="https://bugs.debian.org/865645">n° 865645</a>).</li>
+    </ul>
+  </li>
+</ul>
+
+
+<h2>État de la localisation</h2>
+
+<ul>
+  <li>75 langues sont prises en charge dans cette version ;</li>
+  <li>La traduction est complète pour 25 de ces langues.</li>
+</ul>
+
+
+<h2>Problèmes connus dans cette version</h2>
+
+<p>
+Veuillez consulter les <a href="$(DEVEL)/debian-installer/errata">errata</a>
+pour plus de détails et une liste complète des problèmes connus.
+</p>
+
+
+<h2>Retours d'expérience pour cette version</h2>
+
+<p>
+Nous avons besoin de votre aide pour trouver des bogues et améliorer encore
+l'installateur, merci de l'essayer. Les CD, les autres supports d'installation,
+et tout ce dont vous pouvez avoir besoin sont disponibles sur notre
+<a href="$(DEVEL)/debian-installer">site web</a>.
+</p>
+
+
+<h2>Remerciements</h2>
+
+<p>
+L'équipe du programme d'installation Debian remercie toutes les personnes ayant
+pris part à cette publication.
+</p>
