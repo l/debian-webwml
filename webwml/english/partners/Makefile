@@ -19,12 +19,3 @@ index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/index.wml) \
      $(ENGLISHSRCDIR)/partners/index.include \
      $(ENGLISHSRCDIR)/partners/partners.def $(GETTEXTDEP)
 
-
-# there is no reason to translate the file partners-form.txt 
-# so don't modify the following
-ifeq "$(LANGUAGE)" "en"
-$(HTMLDIR)/partners-form.txt: partners-form.txt
-	install -m 664 -p $< $(HTMLDIR)
-
-install:: $(HTMLDIR)/partners-form.txt
-endif
