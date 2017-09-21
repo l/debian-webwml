@@ -1,0 +1,189 @@
+#use wml::debian::translation-check translation="1.2" mindelta="1"
+<define-tag description>säkerhetsuppdatering</define-tag>
+<define-tag moreinfo>
+<p>Flera sårbarheter har upptäckts i Linuxkärnan som kan leda till
+utökning av privilegier, överbelastning eller informationsläckage.</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-7518">CVE-2017-7518</a>
+
+	<p>Andy Lutomirski upptäckte att KVM kan drabbas av en felaktigt
+	debugantagandefel (#DB) som sker vid emulering av en syscall-instruktion.
+	En process i en gäst kan dra fördel av denna brist för utökning av
+	privilegier inuti en gäst.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-7558">CVE-2017-7558</a>
+    (endast Stretch)
+
+	<p>Stefano Brivio från Red Hat upptäckte att undersystemet SCTP är
+	mottagligt för en dataläckagesårbarhet på grund av en läsning utanför
+	gränserna, vilket tillåter att läcka upp till 100 icke initierade bytes
+	till användarrymden.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-10661">CVE-2017-10661</a>
+    (endast Jessie)
+
+	<p>Dmitry Vyukov från Google rapporterade att timerfd-funktionaliteten
+	inte hanterar vissa samverkande operationer på en enstaka filbeskrivare.
+	Detta tillåter en lokal angripare att orsaka en överbelastning eller
+	potentiellt köra godtycklig kod.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-11600">CVE-2017-11600</a>
+
+	<p>Bo Zhang rapporterade att undersystemet xfrm inte validerar en
+	av parametrarna till ett netlink-meddelande ordentligt. Lokala användare
+	med CAP_NET_ADMIN-möjligheten kan använda detta för att orsaka
+	en överbelastning eller potentiellt exekvera godtycklig kod.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-12134">CVE-2017-12134</a>
+    / #866511 / XSA-229
+
+	<p>Jan H. Schoenherr från Amazon upptäckte att när Linux kör i en
+	Xen PV-domän på ett X86-system kan det felaktigt slå samman
+	block I/O-förfrågningar. En felaktig eller illasinnad gäst kan trigga
+	detta fel i dom0 eller en PV-drivrutinsdomän, orsakandes en överbelastning
+	eller möjligen exekvering av godtycklig kod.</p>
+	
+	<p>Detta problem kan lidras genom att inaktivera sammanslagningar på
+	de underliggande back-end block-enheterna, t.ex.:
+        <code>echo 2 > /sys/block/nvme0n1/queue/nomerges</code></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-12146">CVE-2017-12146</a>
+    (endast Stretch)
+
+	<p>Adrian Salido från Google rapporterade en kapplöpningseffekt vid
+	åtkomst till <q>driver_override</q>-attributet från platformsenheter i
+	sysfs. Om icke priviligerade användare tillåts åtkomst till detta attribut,
+	kan detta tillåta dem att få rättigheter.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-12153">CVE-2017-12153</a>
+
+	<p>Bo Zhang rapporterade att cfg80211 (wifi)-undersystemet inte
+	validerar parametrar till ett netlinkmeddelande ordentligt. Lokala
+	användare med CAP_NET_ADMIN-möjligheten (i alla användarnamnrymder med
+	en wifienhet) kan använda detta för att orsaka en överbelastning.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-12154">CVE-2017-12154</a>
+
+	<p>Jim Mattson från Google rapporterade att KVM-implementationen för
+	Intel x86-processorer inte hanterar vissa nästlade hypervisorkonfigurationer
+	ordentligt. En illasinnad gäst (eller nästlad gäst i en passande
+	L1-supervisor) kunde använda detta för överbelastning.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-14106">CVE-2017-14106</a>
+
+	<p>Andrey Konovalov upptäckte att en användar-triggningsbar division
+	med noll i funktionen tcp_disconnect() kunde resultera i en lokal
+	överbelastning.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-14140">CVE-2017-14140</a>
+
+	<p>Otto Ebeling rapporterade att systemanropet move_pages() utförde
+	otillräcklig validering av UIDs från de anropande och målprocesserna,
+	vilket resulterar i en ofullständig ASLR-förbigång. Detta gjorde det
+	lättare för lokala användare att exploatera sårbarheter i program
+	som har installerats med set-UID-rättighetsbiten satt.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-14156">CVE-2017-14156</a>
+
+	<p><q>sohu0106</q> rapporterade ett informationsläckage i videodrivrutinen
+	atyfb. En lokal användare med åtkomst till en framebuffer-enhet som
+	hanterades av denna drivrutin kunde använda detta för att få åtkomst
+	till känslig information.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-14340">CVE-2017-14340</a>
+
+	<p>Richard Wareing upptäckte att XFS-implementationen tillåter skapandet
+	av filer med <q>realtime</q>-flaggan på ett filsystem utan
+	realtidsenheter, vilket kan resultera i en krasch (oops). En lokal
+	användare med åtkomst till ett XFS-filsystem som inte har en
+	realtidsenhet kan använda detta för överbelastning.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-14489">CVE-2017-14489</a>
+
+	<p>ChunYu Wang från Red Hat upptäckte att undersystemet iSCSI inte
+	validerar längden på ett netlink-meddelande ordentligt, vilket leder
+	till minneskorruption. En lokal användare med rättigheter att hantera
+	iSCSI-enheter kan utnyttja detta för överbelastning eller möjligen för
+	att exekvera godtycklig kod.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-14497">CVE-2017-14497</a>
+    (endast Stretch)
+
+	<p>Benjamin Poirier från SUSE rapporterade att vnet-huvuden inte
+	hanteras ordentligt inom funktionen tpacket_rcv() i raw packet
+	(af_packet)-funktionerna. En lokal användare med CAP_NET_RAW-möjligheter
+	kan dra fördel av denna brist för att orsaka env överbelastning
+	(buffertspill, och disk- och minneskorruption) eller annan åverkan.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000111">CVE-2017-1000111</a>
+
+	<p>Andrey Konovalov från Google rapporterade en kapplöpningseffekt i
+	raw packet (af_packet)-funktionaliteten. Lokala användare med
+	CAP_NET_RAW-möjligheter kan använda detta för överbelastning eller möjligen
+	för att exekvera godtycklig kod.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000112">CVE-2017-1000112</a>
+
+	<p>Andrey Konovalov från Google rapporterade en kapplöpningseffekt i
+	UDP Fragmentation Offload (UFO)-koden. En lokal användare kan använda
+	denna brist för överbelastning eller möjligen för att exekvera godtycklig
+	kod.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000251">CVE-2017-1000251</a>
+    / #875881
+
+	<p>Armis Labs upptäckte att undersystemet Bluetooth inte validerar
+	L2CAP-konfigurationssvar ordentligt, vilket leder till
+	stackbuffertspill. Detta är en av flera sårbarheter som döpts till
+	<q>Blueborne</q>. En angripare i närheten kan använda detta för att
+	orsaka en överbelastning eller möjligen exekvera godtycklig kod på ett
+	system med Bluetooth aktiverat.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000252">CVE-2017-1000252</a>
+    (endast Stretch)
+
+	<p>Jan H. Schoenherr från Amazon rapporterade att KVM-implementationen
+	för Intel X86-processorer inte validerar undantagsinjiceringsförfrågningar
+	ordentligt. En lokal användare med rättigheter att använda KVM kunde
+	använda detta för överbelastning.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000370">CVE-2017-1000370</a>
+
+	<p>Qualys Research Labs rapporterade att ett stort argument eller en stor
+	miljölista kan resultera i ASLR-förbigång för 32-bitars PIE-binärer.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000371">CVE-2017-1000371</a>
+
+	<p>Qualys Research Labs rapporterade att en stor argument
+	eller miljölista kan resultera i en stack/heap-kollision för 32-bitars
+	PIE-binärer.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000380">CVE-2017-1000380</a>
+
+	<p>Alexander Potapenko från Google rapporterade en kapplöpningseffekt i
+	ALSA (ljud) timer-drivrutinen, vilket leder till informationsläckage. En
+	lokal användare med rättigheter att få åtkomst till ljudenheter kunde
+	använda detta för att få känslig information.</p></li>
+
+</ul>
+
+<p>Debian inaktiverar icke priviligerade användarnamnrymd som standard, men om
+de är aktiverade (via kernel.unprivileged_userns_clone sysctl) så kan
+<a href="https://security-tracker.debian.org/tracker/CVE-2017-11600">CVE-2017-11600</a>, 
+<a href="https://security-tracker.debian.org/tracker/CVE-2017-14497">CVE-2017-14497</a> och 
+<a href="https://security-tracker.debian.org/tracker/CVE-2017-1000111">CVE-2017-1000111</a> 
+exploateras av alla lokala användare.</p>
+
+<p>För den gamla stabila utgåvan (Jessie) har dessa problem rättats
+i version 3.16.43-2+deb8u5.</p>
+
+<p>För den stabila utgåvan (Stretch) har dessa problem rättats i
+version 4.9.30-2+deb9u5.</p>
+
+<p>Vi rekommenderar att ni uppgraderar era linux-paket.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2017/dsa-3981.data"
