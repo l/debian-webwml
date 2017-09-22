@@ -1,0 +1,198 @@
+#use wml::debian::translation-check translation="1.2" maintainer="Jean-Pierre Giraud"
+<define-tag description>Mise à jour de sécurité</define-tag>
+<define-tag moreinfo>
+<p>Plusieurs vulnérabilités ont été découvertes dans le noyau Linux qui
+pourraient conduire à une augmentation de droits, un déni de service ou des
+fuites d'informations.</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-7518">CVE-2017-7518</a>
+
+<p>Andy Lutomirski a découvert que KVM est prédisposé à une erreur
+d'exception de débogage (#DB) incorrecte qui se produit lors de l'émulation
+d'une instruction d'appel système. Un processus dans un client peut tirer
+avantage de ce défaut pour une augmentation de droits dans le client.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-7558">CVE-2017-7558</a>
+(stretch only)
+
+<p>Stefano Brivio de Red Hat a découvert que le sous-système SCTP est
+prédisposé à une vulnérabilité de divulgation de données due à un défaut de
+lecture hors limites, permettant la divulgation de jusqu'à 100 octets non
+initialisés de l'espace utilisateur.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-10661">CVE-2017-10661</a>
+(jessie only)
+
+<p>Dmitry Vyukov de Google a signalé que la fonctionnalité timerfd ne gérait
+pas correctement certaines opérations simultanées sur un descripteur unique
+de fichier. Cela permet à un attaquant local de provoquer un déni de service
+ou éventuellement d'exécuter du code arbitraire.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-11600">CVE-2017-11600</a>
+
+<p>Bo Zhang a signalé que le sous-système xfrm ne valide pas correctement un
+des paramètres d'un message netlink. Des utilisateurs locaux dotés de la
+capacité CAP_NET_ADMIN peut utiliser cela pour provoquer un déni de service
+ou éventuellement pour exécuter du code arbitraire.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-12134">CVE-2017-12134</a>
+/ #866511 / XSA-229
+
+<p>Jan H. Schoenherr d'Amazon a découvert que lorsque Linux est exécuté dans
+un domaine de paravirtualisation (PV) Xen sur un système x86, il peut
+fusionner incorrectement les requêtes de bloc d'entrée et de sortie. Un
+client bogué ou malveillant peut déclencher de bogue dans dom0 ou un domaine
+de paravirtualisation, provoquant un déni de service ou éventuellement
+l'exécution de code arbitraire.</p>
+
+<p>Ce problème peut être atténué en désactivant les fusions sur les
+périphériques bloc dorsaux sous-jacents, par exemple :
+<code>echo 2 > /sys/block/nvme0n1/queue/nomerges</code></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-12146">CVE-2017-12146</a>
+(stretch only)
+
+<p>Adrian Salido de Google a signalé une situation de compétition dans
+l'accès à l'attribut <q>driver_override</q> pour les périphériques de
+plateforme dans sysfs. Si des utilisateurs non privilégiés ont
+l'autorisation d'accéder à cet attribut, cela pourrait leur permettre
+d'augmenter leurs droits.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-12153">CVE-2017-12153</a>
+
+<p>Bo Zhang a signalé que le sous-système cfg80211 (wifi) ne validait pas
+correctement les paramètres d'un message netlink. Des utilisateurs locaux
+dotés de la capacité CAP_NET_ADMIN (dans n'importe quel espace de nom avec
+un périphérique wifi) peuvent utiliser cela pour provoquer un déni de
+service.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-12154">CVE-2017-12154</a>
+
+<p>Jim Mattson de Google a signalé que l'implémentation de KVM pour les
+processeurs Intel x86 ne gérait pas correctement certaines configurations
+d'hyperviseur imbriqué. Un client malveillant (ou un client imbriqué dans un
+hyperviseur compatible L1) pourrait utiliser cela pour un déni de service.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-14106">CVE-2017-14106</a>
+
+<p>Andrey Konovalov a découvert qu'une division par zéro déclenchable par
+l'utilisateur dans la fonction tcp_disconnect() pourrait avoir pour
+conséquence un déni de service local.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-14140">CVE-2017-14140</a>
+
+<p>Otto Ebeling a signalé que l'appel système move_pages() réalisait une
+validation insuffisante des identifiants des processus appelant et cible,
+avec pour conséquence un contournement partiel d'ASLR. Cela facilite
+l'exploitation par des utilisateurs locaux de vulnérabilités dans des
+programmes installés avec le bit d'autorisation « set-ID » configuré.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-14156">CVE-2017-14156</a>
+
+<p><q>sohu0106</q> a signalé une fuite d'informations dans le pilote vidéo
+atyfb. Un utilisateur local doté d'un accès à un périphérique de framebuffer
+gérer par ce pilote pourrait utiliser cela pour obtenir des informations
+sensibles.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-14340">CVE-2017-14340</a>
+
+<p>Richard Wareing a découvert que l'implémentation de XFS permet la
+création de fichiers avec l'indicateur <q>realtime</q> sur un système de
+fichiers n'ayant aucun périphérique en temps réel, ce qui peut avoir pour
+conséquence un plantage (oops). Un utilisateur local doté d'un accès à un
+système de fichiers XFS qui n'a pas de périphérique en temps réel peut
+utiliser cela pour un déni de service.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-14489">CVE-2017-14489</a>
+
+<p>ChunYu Wang de Red Hat a découvert que le sous-système iSCSI ne valide
+pas correctement la longueur d'un message netlink, menant à une corruption
+de mémoire. Un utilisateur local avec les droits pour gérer les
+périphériques iSCSI peut utiliser cela pour un déni de service ou
+éventuellement pour exécuter du code arbitraire.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-14497">CVE-2017-14497</a>
+(stretch only)
+
+<p>Benjamin Poirier de SSE a signalé que les en-têtes vnet ne sont pas
+correctement gérés dans la fonction tpacket_rcv() de la fonctionnalité
+paquet brut (af_packet). Un utilisateur local avec la capacité CAP_NET_RAW
+peut tirer avantage de ce défaut pour provoquer un déni de service
+(dépassement de tampon et corruption de disque et de mémoire) ou avoir un
+autre impact.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000111">CVE-2017-1000111</a>
+
+<p>Andrey Konovalov de Google a signalé une situation de compétition dans la
+fonctionnalité paquet brut (af_packet). Des utilisateurs locaux avec la
+capacité CAP_NET_RAW peuvent utiliser cela pour un déni de service ou
+éventuellement pour exécuter du code arbitraire.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000112">CVE-2017-1000112</a>
+
+<p>Andrey Konovalov de Google a signalé un défaut de situation de
+compétition dans code de « DP Fragmentation Offload » (FO). Un utilisateur
+local peut utiliser ce défaut pour un déni de service ou éventuellement pour
+exécuter du code arbitraire.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000251">CVE-2017-1000251</a>
+/ #875881
+
+<p>Armis Labs a découvert que le sous-système Bluetooth ne validait pas
+correctement les réponses de configuration L2CAP, menant à un dépassement de
+tampon de pile. Cela est une des nombreuses vulnérabilités nommées
+<q>Blueborne</q>. Un attaquant proche peut utiliser cela pour provoquer un
+déni de service ou éventuellement pour exécuter du code arbitraire sur un
+système où Bluetooth est activé.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000252">CVE-2017-1000252</a>
+(stretch only)
+
+<p>Jan H. Schoenherr d'Amazon a signalé que l'implémentation de KVM pour les
+processeurs Intel x86 ne validait pas correctement les requêtes d'injection
+d'interruption. Un utilisateur local doté des droits pour utiliser KVM
+pourrait se servir de cela pour un déni de service.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000370">CVE-2017-1000370</a>
+
+<p>Qualys Research Labs a signalé qu'une longue liste d'arguments ou
+d'environnements peut avoir pour conséquence un contournement d'ASLR pour
+les exécutables PIE 32 bits.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000371">CVE-2017-1000371</a>
+
+<p>Qualys Research Labs a signalé qu'une longue liste d'arguments ou
+d'environnements peut avoir pour conséquence un conflit de pile ou de tas
+pour les exécutables PIE 32 bits.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000380">CVE-2017-1000380</a>
+
+<p>Alexander Potapenko de Google a signalé une situation de compétition dans
+le pilote temporisateur d'ALSA (son), menant à une fuite d'informations. Un
+utilisateur local doté des droits pour accéder aux périphériques de son
+pourrait utiliser cela pour obtenir des informations sensibles.</p></li>
+
+</ul>
+
+<p>Debian désactive par défaut les espaces de nom des utilisateurs non
+privilégiés, mais s'ils les activent (par le sysctl
+kernel.unprivileged_userns_clone) alors,
+<a href="https://security-tracker.debian.org/tracker/CVE-2017-11600">CVE-2017-11600</a>, 
+<a href="https://security-tracker.debian.org/tracker/CVE-2017-14497">CVE-2017-14497</a> et 
+<a href="https://security-tracker.debian.org/tracker/CVE-2017-1000111">CVE-2017-1000111</a> 
+peuvent être exploités par n'importe quel utilisateur local.</p>
+
+<p>Pour la distribution oldstable (Jessie), ces problèmes ont été corrigés
+dans la version 3.16.43-2+deb8u5.</p>
+
+<p>Pour la distribution stable (Stretch), ces problèmes ont été corrigés
+dans la version 4.9.30-2+deb9u5.</p>
+
+<p>Nous vous recommandons de mettre à jour vos paquets linux.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2017/dsa-3981.data"
+# $Id$
