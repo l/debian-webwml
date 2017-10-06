@@ -1,108 +1,66 @@
-#use wml::debian::template title="Push Mirroring"
-#use wml::debian::translation-check translation="1.19" maintainer="Diddier Hilarion"
+#use wml::debian::template title="Replicación pasiva"
+#use wml::debian::translation-check translation="1.24"
 
-<p>La replicación pasiva es una forma de replicar que reduce el tiempo que toman
+<p>La replicación pasiva es una forma de replicar que reduce el tiempo que tardan
 los cambios en el archivo en reflejarse en las réplicas. El servidor de origen usa
 un sistema de notificación para informar de inmediato a la réplica cliente que 
 necesita actualizarse.</p>
 
 
-<p>La replicación pasiva necesita un poco más de trabajo para configurarse dado
-que los administradores de los servidores de origen y destino deben intercambiar información. El
+<p>La replicación pasiva necesita más trabajo para configurarse dado que los administradores
+de los servidores de origen y destino deben intercambiar información. El
 beneficio es que la réplica de origen inicia la replicación inmediatamente después de
-que el archivo ha sido actualizado. Esto permite que los cambios en el archivo se propaguen
-extremadamente rápido.
+que el archivo ha sido actualizado. Esto permite que los cambios en el archivo se 
+propaguen rápido.
 </p>
 
 <h2>Explicación del método</h2>
 
-<p>Es necesario explicar de antemano algo acerca de ssh. Ssh permite conectarse con cuentas
-en diferentes máquinas de una manera segura. No sólo las contraseñas nunca se transmiten
-en claro, una vez se ha establecido la conexión a una máquina se garantiza
-que las conexiones futuras sean a la misma máquina. Esto previene muchos ataques de hombre
-en el medio.
-</p>
-
-<p>Una característica de ssh es la posibilidad de un usuario de tomar la llave pública
-de otro usuario en otra máquina y agregarla a un fichero de llaves autorizadas en su máquina.
-Por omisión, el otro usuario (quien posee la llave privada
-asociada con la llave pública que se le ha dado)
-tiene privilegios de inicio de sesión en su cuenta. Igualmente, se puede añadir un texto
-a una llave autorizada restringiendo así el tipo de acceso que tiene una persona que use esa llave.
-
-</p>
-
-<p>De esta forma, para proteger la réplica cliente, la llave provista por la réplica
-de origen tiene texto añadido con el fin de limitar a la persona que accede con su cuenta
-a hacer una sola cosa &mdash; iniciar el programa que actualiza su réplica.
-Incluso si alguien (un tercero malicioso) fuera capaz de romper la criptografía asociada a la llave,
-lo máximo que podría hacer sería iniciar el programa de réplica en su máquina. 
-Ni siquiera es necesario preocuparse por el hecho de que se ejecuten múltiples instancias del programa
-ya que se usa un fichero de bloqueo (lockfile).
-</p>
-
-<p>Se puede configurar rsync en el servidor de origen para restringir quién puede replicar
-una área determinada mediante un usuario y una contraseña. Estos son totalmente independientes de <kbd>/etc/passwd</kbd>,
-así un administrador de servidor de origen que hace réplicas push no tiene que preocuparse en darle acceso a otros a su máquina.
-Como está configurado actualmente, el usuario y la contraseña se transmiten en claro. Esto
-no debería significar ningún problema puesto que lo peor que puede pasar es que 
-un tercero obtenga la habilidad de replicar Debian de ese sitio.
+<p>Las notificaciones se realizan con ssh. El servidor de origen usa ssh para conectarse a la cuenta
+de réplica en el servidor de destino utilizando autenticación de clave pública. La clave se configura de forma que
+esta acción solo puede provocar la ejecución de un réplica, ninguna otra orden. A continuación,
+el servidor de destino ejecuta ftpsync para actualizar el archivo usando rsync, de la forma habitual.
+<br />
+El intercambio de las claves públicas y la posible necesidad de acceso a servidores rsync restringidos
+requiere coordinación entre quienes administran la réplica y el servidor de origen.
 </p>
 
 <h2>Configuración de una réplica pasiva cliente</h2>
 
-<p>Es mejor que esto se configure usando una cuenta de un usuario común, no usando root.
-El contenido de la llave pública ssh de la réplica de origen debe ponerse
-en <kbd>~&lt;user&gt;/.ssh/authorized_keys</kbd>.
-</p>
-
-<p>Para crear una réplica cliente del archivo FTP, es necesario configurar
+<p>Para crear una réplica cliente del archivo FTP es necesario configurar
 la réplica usando el conjunto estándar de scripts <a href="ftpmirror#how">ftpsync</a>.
-Copie ftpsync.conf.sample a <code>ftpsync.conf</code> y modifíquelo de acuerdo
-a su sistema y la información provista por el servidor de origen.
+<br />
+Una vez que eso funciona, añada la clave pública ssh del servidor de origen
+a su <code>~&lt;user&gt;/.ssh/authorized_keys</code> con una
+restricción <code>command="~/bin/ftpsync"</code> (o lo que corresponda, si tiene ftpsync en un directorio
+diferente).
 </p>
 
 <h2>Réplicas pasivas primarias (Push-Primary)</h2>
 
 <p>Las réplicas pasivas primarias (Push-Primary), también conocidas como réplicas de primer nivel (Tier-1),
-son las réplicas pasivas que tienen permitido replicar de nuestros archivos maestros.
+son las réplicas pasivas cliente que se sincronizan directamente con la red «syncproxy» interna
+de Debian.
 </p>
 
 <p>Si su servidor tiene <strong>muy</strong> buena conexión (muy buena tasa de transferencia
 y está conectado a alguna red troncal principal) y usted está dispuesto a permitir
-que otros servidores repliquen de su servidor, nos lo puede informar para que
-lo consideremos como una réplica de origen pasiva. Aunque no espere que esto suceda pronto
-ya que tenemos un buen número de réplicas de primer nivel (Tier-1).
+que otros servidores repliquen de su servidor, puede comunicárnoslo para que lo consideremos
+candidato a réplica pasiva de origen. Póngase en contacto con el equipo de réplicas de Debian para
+detalles de configuración. No obstante, tenga en cuenta que no podemos aceptar todas las solicitudes para albergar
+réplicas primarias puesto que ya tenemos un buen número de réplicas de primer nivel (Tier-1).
 </p>
 
-<p>Si su servidor va a ser una réplica pasiva primaria (Push-Primary) para el archivo FTP, necesitará
-uno de estos ficheros:</p>
-<ul>
-  <li><a href="id_rsa.pub.ftp-master">la llave pública SSH2 usada por
-      ftp-master.debian.org</a></li>
-  <li><a href="id_rsa.pub.syncproxy.eu">la llave pública SSH2 usada por
-      syncproxy.eu.debian.org</a></li>
-  <li><a href="id_rsa.pub.syncproxy.wna">la llave pública SSH2 usada por
-      syncproxy.wna.debian.org</a></li>
-</ul>
-
-<p>Si su servidor va a ser una réplica pasiva primaria (Push-Primary) para el sitio web, necesitará
-<a href="id_rsa.pub.www-master">la llave pública SSH2 usada por
-www-master.debian.org</a>.</p>
-	
 <h2>Configurando una réplica de origen pasiva </h2>
 
 <p>Dada la gran cantidad de réplicas y el tamaño del archivo de Debian, no es
-viable que todas las réplicas usen el archivo maestro como la fuente de la réplica
-de Debian (que es la réplica de origen). Es mucho más eficiente
-si la carga se distribuye entre un grupo de réplicas pasivas de origen
-distribuidas por todo el mundo.
+viable que todas las réplicas usen los «syncproxies» internos de Debian como la
+fuente de la réplica. Es mucho más eficiente distribuir
+la carga entre un grupo de réplicas pasivas repartidas por todo el mundo.
 </p>
 
-<p>Las réplicas pasivas de origen deben ser réplicas cliente del archivo maestro
-(o quizá de otra réplica pasiva), y deben contener una réplica completa del archivo
-completo de Debian.
-</p>
-
-<p>Vea los <a href="push_server">detalles de la configuración de una réplica pasiva de origen</a>.
+<p>Por lo tanto, un número de réplicas pasivas primarias son, a su vez, servidores de origen para
+sus servidores de destino. Si quiere configurar su servidor como una réplica de origen para
+sus servidores de destino, vea los <a href="push_server">detalles de configuración de una réplica
+pasiva de origen</a>.
 </p>
