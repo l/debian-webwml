@@ -1,0 +1,156 @@
+#use wml::debian::template title="CVS 사용"
+#use wml::debian::translation-check translation="1.30" maintainer="Sebul"
+
+<p>CVS는 여러 사람이 같은 자료를 동시에 관리하도록 돕는 프로그램입니다.
+모든 사용자는 주 저장소의 로컬 복사본을 만듭니다.
+로컬 사본은 동일한 컴퓨터 또는 전 세계에 있을 수 있습니다.
+사용자는 원하는 대로 로컬 사본을 수정할 수 있으며,
+수정된 자료가 준비되면 변경 사항을 기본 저장소로 다시 커밋합니다.</p>
+
+<p>읽기 전용 액세스의 경우 <a href="http://anonscm.debian.org/viewvc/webwml/webwml/">웹
+ 프론트엔드</a>를 쓸 수 있습니다.
+KDE의 <a href="https://packages.debian.org/cervisia">cervisia</a> 같은
+그래픽 CVS 클라이언트가 많습니다.
+이 문서는 명령 줄 프로그램 <code>cvs</code>로 워크 플로를 설명하며,
+다른 클라이언트들은 비슷한 기능을 제공합니다.</p>
+
+<p>CVS는 마지막 갱신 이후 메인 저장소의 복사본이 수정된 경우 파일을 커밋 할 수 없습니다.
+여전히 로컬 복사본을 업데이트 할 수 있으므로 일반적으로 문제가 되지 않습니다.
+수정 작업이 작업중인 작업과 다른 부분일 경우 변경 내용이 자동으로 병합됩니다.
+변경 사항이 작업중인 동일한 영역에 영향을 주는 경우,
+충돌이 있음을 경고하고 커밋하기 전에 문제를 해결하기 위해 파일을 편집해야 합니다.</p>
+
+<p>다음은 익명 액세스가 예제로 사용됩니다.
+저장소에 대한 쓰기 권한을 부여하는 다른 계정에 대한 액세스 권한이있는 경우
+해당 계정을 대신 사용해야 합니다.
+변경을 계획중인 경우 익명 사용자가 변경 사항을 커밋할 수 없으므로 계정을 시작해야합니다.
+<a
+href="#write-access"> 쓰기 액세스 섹션</a>에 자세한 내용이 있습니다.</p>
+
+<p>CVS를 쓰기 시작하려면  CVS 서버에 <code>login</code> 먼저 해야 합니다.</p>
+
+<pre>
+   cvs -d :pserver:anonymous@anonscm.debian.org:/cvs/webwml login
+</pre>
+
+<p>(여기서 암호는 엔터만 칩니다)</p>
+
+<p>wml 파일의 복사본을 로컬 컴퓨터에 체크 아웃하려면 다음을 사용해야 합니다</p>
+
+<pre>
+   cvs -d :pserver:anonymous@anonscm.debian.org:/cvs/webwml checkout webwml
+</pre>
+
+<p>페이지들의 부분집합을 체크 아웃할 수 있습니다:</p>
+
+<pre>
+   cvs -d :pserver:anonymous@anonscm.debian.org:/cvs/webwml checkout -l \\
+          webwml webwml/&lt;<var>language</var>&gt;
+   cvs -d :pserver:anonymous@anonscm.debian.org:/cvs/webwml checkout \\
+          webwml/Perl webwml/english/template webwml/&lt;<var>language</var>&gt;/Pics
+   cvs -d :pserver:anonymous@anonscm.debian.org:/cvs/webwml checkout \\
+          webwml/&lt;<var>language</var>&gt;/&lt;<var>path to desired files</var>&gt;
+</pre>
+
+<p>원하는 모든 하위 디렉토리나 파일에 대해 이 단계를 반복하십시오.
+두 번째 행에는 WML 파일에서 HTML을 만들려는 경우 필요한 모든 파일이 포함됩니다.
+이러한 부분적인 체크 아웃은 실제로 지원되지 않으므로, 위의 지침이 항상 동작하지는 않습니다.
+</p>
+
+<p>SSH를 통해 저장소에 대한 쓰기 권한을 얻으려면
+쉘 설정에 줄을 추가하여 CVS가 로그인을 위해 rsh 대신 SSH를 사용하도록 해야 할 수도 있습니다:
+</p>
+
+<pre>
+   export CVS_RSH=ssh
+</pre>
+
+<p>Alioth 계정을 가지고 있고, 관련
+<a
+href="https://alioth.debian.org/account/editsshkeys.php">\
+공개 SSH 키</a>가 함께 있다면, 다음과 같이 그것을 대신 사용할 수 있습니다:
+</p>
+
+<pre>
+   cvs -d :ext:username@cvs.debian.org:/cvs/webwml checkout webwml/english/doc
+</pre>
+
+<p>그 이후부터 <code>'-d :ext:...'</code>
+부분을 사용할 필요가 없습니다.
+며칠에 한 번씩 </p>
+
+<pre>
+   cvs update -d
+</pre>
+
+<p>로 변경된 저장소에서 파일을 검색하길 바랄 겁니다.
+
+<code>-d</code> 옵션은 새로운 디렉토리를 자동으로 추가합니다.
+또한 부분 체크 아웃을 수행한 경우 생략 된 모든 디렉토리를 체크 아웃합니다
+ &mdash; 이 경우
+<code>cvsup.py</code> 스크립트를 쓰는 게 좋습니다.</p>
+
+<p>
+<code>~/.cvsrc</code> 파일을 만들어서 옵션을 매번 입력하지 않길 바랄 수도 있습니다.
+예를 들어, 다음을 포함할 수 있습니다:</p>
+
+<pre>
+cvs -z9
+update -d -P
+diff -u
+</pre>
+
+<p>다음은 저장소에 대한 쓰기 권한이 있는 사람들을 위한 것입니다.
+한 페이지를 다 하면, 변경을 저장소에 커밋할 수 있습니다.
+</p>
+
+<pre>
+   cvs commit &lt;file&gt;.wml
+</pre>
+
+<p>또는</p>
+
+<pre>
+   cvs commit &lt;dir&gt;    ( &lt;dir&gt;의 모든 변경을 커밋)
+</pre>
+
+<p>또는</p>
+
+<pre>
+   cvs commit          (현 디렉토리 아래로 모든 변경을 커밋)
+</pre>
+
+<p>페이지를 처음 번역하는 사람이라면, 아래와 같이 하고</p>
+
+<pre>
+   cvs add &lt;file&gt;.wml
+</pre>
+
+<p>커밋해야 합니다. <code>cvs add</code>는 재귀적이 아니므로 
+디렉토리를 더한 다음 내용을 더해야 합니다.</p>
+
+<p>CVS에 대한 자세한 정보를 보려면, <code>info cvs</code>를 씁니다.</p>
+
+<p>
+ <code>Closes: #</code><var>nnnnnn</var> 를  커밋 로그 항목에 포함하면
+버그번호<code>#</code><var>nnnnnn</var> 이 커밋할 때 자동으로 닫힙니다.
+이것의 정확한 형식은
+<a href="$(DOC)/debian-policy/footnotes.html#f17">데비안 정책</a>과 같습니다.</p>
+
+<p>많은 데비안 웹사이트는 SSL을 지원하니, SSL을 지원하는 것에는 HTTPS 링크를 쓰세요.
+어떤 Debian/DebConf/SPI/기타 웹 사이트는 HTTPS를 지원하지 않거나 SPI에 의해서만 서명되며 
+데비안 외부의 브라우저가 신뢰할 수있는 SSL CA는 서명하지 않으므로,이 웹 사이트의 https: 버전 데비안을 사용하면 이해할 수없는 오류가 발생하지 않습니다.
+CVS 저장소는 HTTPS를 지원하거나 HTTPS를 지원하지 않는 데비안/DebConf/SPI 웹 사이트에 대한 HTTPS 링크를 포함하는 데비안 웹 사이트에 대한 일반 HTTP 링크를 포함하는 커밋을 거부하거나 SPI에 의해서만 서명된 인증서를 사용합니다.</p>
+
+<h3><a name="write-access">CVS 쓰기 액세스</a></h3>
+
+<p>
+<a href="$(DEVEL)/website/desc#help">돕는 방법</a>을 이미 알고, 
+웹 팀 또는 지역화 팀에 받아들여진 충분한 패치를 제공했다면, 웹사이트에 쓰기 권한을 얻을 수 있을 겁니다 : 
+ <a
+href="https://alioth.debian.org/project/request.php?group_id=1135">
+  Alioth <code>webwml</code> 프로젝트에 참여 요청 하세요</a> ( <a
+href="https://alioth.debian.org/account/register.php">Alioth
+계정 만들기</a> 계정을 갖고 있지 않은 경우).
+요청할 때는 유용한 것, 어떤 언어 또는 어떤 부분에서 작업할 것인지, 그리고 누가 여러분을 보증할지 등을 써 주세요.
+</p>
