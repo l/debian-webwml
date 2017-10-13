@@ -1,21 +1,33 @@
 #use wml::debian::template title="Registrera spegelinformation"
-#use wml::debian::translation-check translation="1.84"
+#use wml::debian::translation-check translation="1.86"
 #include "$(ENGLISHDIR)/mirror/submit.inc"
 
 <p>
 Om du vill registrera information om en spegel av Debian så
-kan du göra det med detta formulär.
-Det mesta av informationen som sänds in kommer visas i spegellistan.
-</p>
-
-<p>
-Det finns <a href="#examples">exempel</a>
-i slutet av sidan om du är osäker på hur du skall göra.
+kan du göra det med formuläret nedan. Information som tillhandahålls
+kommer att visas i spegellistan.
 </p>
 
 <p>
 Observera att alla speglar som anmäls skall följa
-<a href="ftpmirror">reglerna och riktlinjerna i vår dokumentation</a>.
+<a href="ftpmirror">reglerna och riktlinjerna i vår dokumentation</a>. 
+Speciellt gäller att du bör
+<ul>
+<li>använda <a href="ftpmirror#how">ftpsync</a> för att spegla Debian,</li>
+<li>välja en bra uppström (<strong>inte</strong> ett (http)-tjänstnamn som
+    <code>ftp.CC.debian.org</code>, inte DNS-round robins, inte CDNs),</li>
+<li>uppdatera fyra gånger per dag för att matcha arkivuppdateringsfrekvensen (
+eller ställa in triggers med uppström, eller använda <code>ftpsync-cron</code>
+varje timme för att övervaka din uppström för förändringar och initiar synkar).
+Utöver detta,</li>
+<li>måste din spegling ha en korrekt namngiven tracefil (ftpsync kommer att
+göra detta om MIRRORNAME är korrekt satt<),
+<li>bör köra touch på flaggfilerna <code>/Archive-Update-in-Progress-XXX</code> 
+och <code>/Archive-Update-Required-XXX</code> när lämpligt
+(återigen, ftpsync gör det åt dig) för att hjälpa speglingar nedströms från dig
+att synka korrekt.</li>
+</ul>
+</small>
 </p>
 
 <form-action "" archive-upstream https://cgi.debian.org/cgi-bin/submit_mirror.pl>
@@ -30,63 +42,29 @@ Nyanmälning av spegel
 Uppdatering av befintlig spegel
 </p>
 
-<p>
-Ange det namn under vilket du vill att spegeln skall listas i
-<em>Plats</em>-fältet.
-</p>
 
 <p>
-Plats: <input type="text" name="site" size="30">
+Speglingsnamn: <input type="text" name="site" size="30">
 </p>
-
-<p>
-Om servern har ytterligare namn anger du dem i <em>Alias</em>-fältet,
-avdelade med kommatecken (",").
-</p>
-
-<p>
-Alias: <input type="text" name="aliases" size="60">
-</p>
-
-<h2>Typer av speglar och hur de kan nås</h2>
 
 <p>Ange sökvägen till din Debianspegel i fälten nedan.
 Lämna irrelevanta fält blanka.
 </p>
 
 <table>
-<tablerow "Paketarkiv, via HTTP"           archive-http   30>
-<tablerow "Paketarkiv, via FTP"            archive-ftp    30>
-<tablerow "Paketarkiv, via rsync"          archive-rsync  30>
+<tablerowdef "Paketarkiv, via HTTP"           archive-http   30 "/debian" " <small>Vi rekommenderar <code>/debian</code> starkt.">
+<tablerowdef "Paketarkiv, via rsync"          archive-rsync  30 "debian" " <small>Om du erbjuder rsync, föreslås <code>debian</code> som modulnamn.</small>">
 
-<tablerow "Cd-/dvd-avbilder, via HTTP"     cdimage-http   30>
-<tablerow "Cd-/dvd-avbilder, via FTP"      cdimage-ftp    30>
-<tablerow "Cd-/dvd-avbilder, via rsync"    cdimage-rsync  30>
-<tablerow "Äldre Debianutgåvor, via HTTP"  old-http       30>
-<tablerow "Äldre Debianutgåvor, via FTP"   old-ftp        30>
-<tablerow "Äldre Debianutgåvor, via rsync" old-rsync      30>
+#<tablerow "Cd-/dvd-avbilder, via HTTP"     cdimage-http   30>
+#<tablerow "Cd-/dvd-avbilder, via rsync"    cdimage-rsync  30>
+#<tablerow "Äldre Debianutgåvor, via HTTP"  old-http       30>
+#<tablerow "Äldre Debianutgåvor, via rsync" old-rsync      30>
 </table>
 
 
 <h2>Information om spegeln</h2>
 
 <table>
-<tr-upstream-give "Huvudspegeln uppdateras från"           archive-upstream   30>
-<tr-upstream-take "Cd-/dvd-avbildningarna uppdateras från" cdimage-upstream   30>
-
-<tr>
-<td>Speglingsfrekvens:</td>
-<td>
-<select name="updates">
-<option value="never">Välj...</option>
-<option value="push">push-styrd</option>
-<option value="four">fyra gånger om dagen (nuvarande uppdateringsfrekvens för arkivet)</option>
-<option value="twice">två gånger om dagen</option>
-<option value="once">dagligen</option>
-<option value="lessoften">mer sällan</option>
-</select>
-</td>
-</tr>
 
 <tr>
 <td>Speglade arkitekturer</td>
@@ -100,23 +78,9 @@ Lämna irrelevanta fält blanka.
 <table>
 <tablerow "Namn på spegelansvarige"         maint_name    30>
 <tablerow "Öppen e-post för spegelansvarige" maint_email   30>
-<tr><td>&nbsp;</td><td>
-<small>
-Den öppna e-postadressen för spegelansvarig kommer vara tillgänglig för
-alla användare.
-</small>
-</td></tr>
 <tr><td>Spegelns land:  </td><td><select name="country">
 <countrylist>
 </select>
-</td></tr>
-<tablerow "Privat e-post för spegelansvarig (valfri)"  maint_private_email   30>
-<tr><td>&nbsp;</td><td>
-<small>
-Om du anger en privat adress kommer den endast vara tillgänglig för de som
-redigerar Debians spegellista, så att de kan kontakta dig med viktiga
-nyheter och/eller felrapporter.
-</small>
 </td></tr>
 <tablerow "Plats för spegel (valfri)"       location      30>
 <tablerow "Namn på sponsor (valfri)"        sponsor_name  30>
@@ -127,13 +91,6 @@ nyheter och/eller felrapporter.
 <td valign="top">Kommentarer (engelska):</td>
 <td><textarea name="comment" cols=40 rows=7></textarea></td>
 </tr></table>
-
-<p>Observera: om det finns mer än en sponsor lägger du till de andra i
-kommentarsfältet.
-Du kan även notera om spegeln uppdateras mindre ofta än
-en gång om dagen och hur
-snabb den är (dess maximala bandbredd).
-</p>
 
 <p><label>Jag har anmält mig till 
 <a href="https://lists.debian.org/debian-mirrors-announce/">mailinglistan
@@ -149,141 +106,9 @@ för tillkännagivanden</a>
 <p>
 Din spegel bör läggas in i listan inom några veckor, så fort en mänsklig
 operatör har verifierat den och lagt in den.
-Om det är några problem med de data du angivit kanske vi kontaktar dig.
+Om det är några problem med de data du angivit kommer vi att kontakta dig.
 </p>
 
 <p>Om du inte hör av oss inom tre månader kan du kontakta oss på
 <email mirrors@debian.org>.
 </p>
-
-<h2 id="examples">Exempel</h2>
-
-<p>Följande data skulle vara för en server som heter debian.example.com,
-vilken även kan nås som e1.example.com.
-Namnen är naturligtvis fingerade.
-</p>
-
-<div class="centerblock">
-<p>
- Plats: <code>debian.example.com</code><br>
- Alias: <code>e1.example.com</code>
-</p>
-</div>
-
-<p>Debianarkivspegeln ligger i /debian/-katalogen på webbservern:
-</p>
-
-<div class="centerblock">
-<p>
- Paketarkiv, via HTTP: <code>/debian/</code>
-</p>
-</div>
-
-<p>Detta är för ftp://debian.example.com/debian/:
-</p>
-
-<div class="centerblock">
-<p>
- Paketarkiv, via FTP: <code>/debian/</code>
-</p>
-</div>
-
-<p>Detta är katalogen som används för rsync-åtkomst,
-debian.example.com::debian/:
-</p>
-
-<div class="centerblock">
-<p>
- Paketarkiv, via rsync: <code>debian/</code>
-</p>
-</div>
-
-<p>Denna spegel uppdateras från ftp.xy.debian.org, så vi lägger till:
-</p>
-
-<div class="centerblock">
-<p>
- Spegeln uppdateras från: <code>ftp.xy.debian.org</code>
-</p>
-</div>
-
-<p>Nu information om den ansvarige:
-</p>
-
-<div class="centerblock">
-<p>
- Namn på spegelansvarige: <code>N. N.</code><br>
- Öppen e-post för spegelansvarige: <code>adress@här.example.com</code>
-</p>
-</div>
-
-<p>
-Adressen till den ansvariga visas vanligtvis inte i den öppna listan, men
-det är nödvändigt att ha en så att spegellisteredigerarna och användare kan
-kontakta dig om det uppstår problem.
-Vi ber dig ange en giltig adress.
-</p>
-
-<p>
-Den enda ytterligare information som behövs är landet.
-Till exempel:
-</p>
-
-<div class="centerblock">
-<p>
- Land: <code>Förenta staterna [US]</code><br>
-</p>
-</div>
-
-<p>
-Du kan om du vill även lägga till:</p>
-
-<div class="centerblock">
-<p>
-Privat e-postadress för spegelansvarige: <code>privat@adress.här</code><br>
-
-Plats för spegel (valfri): <code>Plats, regionnamn</code><br>
-Namn på sponsor (valfri): <code>Namn på spegelns sponsor</code><br>
-Webbadress för sponsor (valfri): <code>http://name.på.sponsor.tld/</code><br>
-Kommentar: <code>Övriga kommentarer som kan vara till hjälp för andra</code><br>
-</p>
-</div>
-
-<p>
-Här kan du ange en privat e-postadress som endast sänds till en utvald skara
-spegellisteredigererare, om du vill ge oss en mer direkt adress men inte
-vill publicera den.
-Du kan även ära spegelns sponsor och ge annan specifik information om din
-spegel.
-</p>
-
-<p>Följande exempel skulle beskriva spegeln på ftp.us.debian.org:
-
-<div class="centerblock">
-<p>
- Plats: <code>ftp.us.debian.org</code><br>
- Alias: <code>http.us.debian.org</code><br>
- Paketarkiv, via HTTP: <code>/debian/</code><br>
- Paketarkiv, via FTP: <code>/debian/</code><br>
- Paketarkiv, via rsync: <code>debian/</code><br>
- Namn på spegelansvarige: <code>John Doe</code><br>
- E-post för spegelansvarige: <code>abc@adress.här</code><br>
- Land: <code>Förenta staterna [US]</code>
-</p>
-</div>
-
-<p>Om du har kopior på gamla versioner av Debian, skulle din post se ut
-ungefär så här:
-</p>
-
-<div class="centerblock">
-<p>
- Plats: <code>archive.debian.org</code><br>
- Äldre Debianutgåvor, via HTTP: <code>/debian-archive/</code><br>
- Äldre Debianutgåvor, via FTP: <code>/debian-archive/</code><br>
- Äldre Debianutgåvor, via rsync: <code>debian-archive/</code><br>
- Namn på spegelansvarige: <code>Debians ftp-administratörer</code><br>
- E-post för spegelansvarige: <code>abc@adress.här</code><br>
- Land: <code>Förenta staterna [US]</code><br>
-</p>
-</div>
