@@ -1,17 +1,30 @@
 #use wml::debian::template title="Предоставить информацию о зеркале"
 #include "$(ENGLISHDIR)/mirror/submit.inc"
-#use wml::debian::translation-check translation="1.84" maintainer="Lev Lamberov"
+#use wml::debian::translation-check translation="1.85" maintainer="Lev Lamberov"
 
 <p>Если вы хотите предоставить информацию о зеркале Debian,
-вы можете сделать это, используя нижерасположенную форму.
-Большая часть предоставленной информации будет отображена в списке зеркал.
+вы можете сделать это, используя нижерасположенную форму. Предоставленная
+информация будет отображена в списке зеркал.
 </p>
 
-<p>Внизу страницы есть <a href="#examples">примеры</a>, если вы не уверены,
-как нужно заполнять.</p>
-
 <p>Учтите, что все официальные зеркала должны следовать <a
-href="ftpmirror">правилам и руководствам из нашей документации</a>.</p>
+href="ftpmirror">правилам и руководствам из нашей документации</a>. В
+частности,
+<ul>
+<li>для вашего зеркала Debian вам следует использовать <a href="ftpmirror#how">ftspync</a>,
+<li>выберите подходящий источник (<strong>не</strong> служебное имя (http) типа
+   <code>ftp.CC.debian.org</code>, не DNS-карусель, не сеть доставки данных),
+<li>обновляйтесь четыре раза в день, что соответствует частоте обновления архива (или
+   настройте активаторы, или запускайте каждый час задачу <code>ftpsync-cron</code> с целью
+   отслеживания изменений у источника и запуска синхронизации). Кроме того,
+<li>ваше зеркало должно содержать файл tracefile с соответствующим именем (утилита ftpsync сама
+   его создаст в случае, если переменная MIRRORNAME установлена в правильное значение),
+<li>когда это требуется, зеркало должно создавать файлы <code>/Archive-Update-in-Progress-XXX</code>
+   и <code>/Archive-Update-Required-XXX</code>
+   (опять же, ftspync сделает это за вас), чтобы помочь вашим нижележащим зеркалам
+   правильно синхронизироваться с вашим зеркалом.
+</ul>
+</small>
 
 <form-action "" archive-upstream https://cgi.debian.org/cgi-bin/submit_mirror.pl>
 
@@ -25,55 +38,24 @@ href="ftpmirror">правилам и руководствам из нашей д
 Обновление существующего зеркала
 </p>
 
-<p>Пожалуйста, включайте имя, под которым вы хотите, чтобы ваше зеркало было занесено
-в список, в поле <em>Сайт</em>.
-</p>
-
 <p>
-Сайт: <input type="text" name="site" size="30"></p>
-
-<p>Если сервер имеет другие имена, перечислите их в поле
-<em>Псевдонимы</em>, разделяя запятыми (,).
-</p>
-
-<p>
-Псевдонимы: <input type="text" name="aliases" size="60"></p>
-
-<h2>Типы зеркал и методы доступа к ним</h2>
+Имя зеркала: <input type="text" name="site" size="30"></p>
 
 <p>Введите пути к зеркалам Debian на вашем сайте в поля ниже.
 Оставьте не относящиеся к делу поля пустыми.</p>
 
 <table>
-<tablerow "Архив пакетов, через HTTP"             archive-http   30>
-<tablerow "Архив пакетов, через FTP"              archive-ftp    30>
-<tablerow "Архив пакетов, через rsync"            archive-rsync  30>
-<tablerow "Образы CD/DVD, через HTTP"             cdimage-http   30>
-<tablerow "Образы CD/DVD, через FTP"              cdimage-ftp    30>
-<tablerow "Образы CD/DVD, через rsync"            cdimage-rsync  30>
-<tablerow "Старые выпуски Debian, через HTTP"     old-http       30>
-<tablerow "Старые выпуски Debian, через FTP"      old-ftp        30>
-<tablerow "Старые выпуски Debian, через rsync"    old-rsync      30>
+<tablerowdef "Архив пакетов, через HTTP"   archive-http   30 "/debian" " <small>Настоятельно рекомендуем <code>/debian</code>.</small>">
+<tablerowdef "Архив пакетов, через rsync"  archive-rsync  30 "debian" " <small>Если вы предлагаете rsync, то рекомендуется использовать <code>debian</code> в качестве имени модуля.</small>">
+# <tablerow "Образы CD/DVD, через HTTP"      cdimage-http   30>
+# <tablerow "Образы CD/DVD, через rsync"     cdimage-rsync  30>
+# <tablerow "Старые выпуски Debian, через HTTP"  old-http     30>
+# <tablerow "Старые выпуски Debian, через rsync" old-rsync    30>
 </table>
 
 <h2>Информация о сайте зеркала</h2>
 
 <table>
-<tr-upstream-give "Основное зеркало обновляется с"          archive-upstream   30>
-<tr-upstream-take "Зеркало образов CD/DVD обновляется с"  cdimage-upstream   30>
-<tr>
-<td>Частота зеркалирования:</td>
-<td>
-<select name="updates">
-<option value="never">Выберите...</option>
-<option value="push">определяется push-триггером</option>
-<option value="four">четырежды в день (текущая частота обновления архива)</option>
-<option value="twice">дважды в день</option>
-<option value="once">ежедневно</option>
-<option value="lessoften">ещё реже</option>
-</select>
-</td>
-</tr>
 <tr>
 <td>Зеркалируемые архитектуры:
 <td>
@@ -85,22 +67,9 @@ href="ftpmirror">правилам и руководствам из нашей д
 <table>
 <tablerow "Имя сопровождающего сайта"               maint_name    30>
 <tablerow "Публичный e-mail сопровождающего сайта"              maint_public_email    30>
-<tr><td>&nbsp;</td><td>
-<small>
-Публичный электронный адрес сопровождающего зеркала будет доступен всем.
-</small>
-</td></tr>
 <tr><td>Страна сайта:  <td><select name="country">
 <countrylist>
 </select>
-<tablerow "Личный e-mail сопровождающего сайта (необязательно)"  maint_private_email   30>
-<tr><td>&nbsp;</td><td>
-<small>
-Если вы предоставили личный адрес, он будет доступен только редакторам списка
-зеркал Debian, чтобы они смогли связаться с вами по поводу новостей и/или
-сообщений об ошибках.
-</small>
-</td></tr>
 <tablerow "Местонахождение сайта (необязательно)"     location      30>
 <tablerow "Имя спонсора сайта (необязательно)"        sponsor_name  30>
 <tablerow "URL сайта спонсора (необязательно)"        sponsor_url   30>
@@ -110,11 +79,6 @@ href="ftpmirror">правилам и руководствам из нашей д
 <td valign="top">Комментарий:</td>
 <td><textarea name="comment" cols=40 rows=7></textarea></td>
 </tr></table>
-
-<p>Замечание: Если спонсоров больше, чем один, добавьте остальных в комментарий.
-Вы можете также указать, как часто обновляется, и
-насколько быстр сайт (его максимальную полосу пропускания).
-</p>
 
 <p><label>Я подписался на
 <a href="https://lists.debian.org/debian-mirrors-announce/">
@@ -128,124 +92,8 @@ href="ftpmirror">правилам и руководствам из нашей д
 </form>
 
 <p>Ваш сайт появится в списке в течение пары недель как только оператор
-проверит его и добавит в список. Мы можем написать вам по электронной
+проверит его и добавит в список. Мы напишем вам по электронной
 почте в случае каких-либо проблем с отправленной записью.</p>
 
 <p>Если в течение трёх месяцев вам никто не ответил, вы можете связаться
 с нами по адресу <email mirrors@debian.org>.</p>
-
-<h2><a name="examples">Примеры</a></h2>
-
-<p>Следующий пример будет для сервера, названного debian.example.com,
-который может также быть доступен как e1.example.com. Конечно, эти
-имена вымышлены.</p>
-
-<div class="centerblock">
-<p>
-Сайт: <code>debian.example.com</code><br>
-Псевдонимы: <code>e1.example.com</code>
-</p>
-</div>
-
-<p>Зеркало архивов Debian в директории /debian/ на веб-сервере:</p>
-
-<div class="centerblock">
-<p>
-Архив пакетов, через HTTP: <code>/debian/</code>
-</p>
-</div>
-
-<p>Далее для ftp://debian.example.com/debian/:</p>
-
-<div class="centerblock">
-<p>
-Архив пакетов, через FTP: <code>/debian/</code>
-</p>
-</div>
-
-<p>Это директория, используемая для доступа rsync, debian.example.com::debian/:</p>
-
-<div class="centerblock">
-<p>
-Архив пакетов, через rsync: <code>debian/</code>
-</p>
-</div>
-
-<p>Это зеркало берёт обновления с ftp.xy.debian.org, так что добавим:</p>
-
-<div class="centerblock">
-<p>
-Зеркало обновляется с: <code>ftp.xy.debian.org</code>
-</p>
-</div>
-
-<p>Теперь для информации о сопровождающем:</p>
-
-<div class="centerblock">
-<p>
-Имя сопровождающего сайта: <code>Ivan Petrov</code><br>
-Публичный электронный адрес сопровождающего сайта: <code>address.goes@here.example.com</code>
-</p>
-</div>
-
-<p>Этот адрес сопровождающего не будет показан в публичных списках, но он
-необходим, чтобы редакторы списка зеркал и пользователи могли связаться с
-вами в случае проблем. Пожалуйста, вводите правильный адрес.</p>
-
-<p>Другой частью необходимой и информации является страна.
-Например:</p>
-
-<div class="centerblock">
-<p>
-Страна: <code>United States [US]</code><br>
-</p>
-</div>
-
-<p>Также вы можете на своё усмотрение добавить:</p>
-
-<div class="centerblock">
-<p>
-Личный электронный адрес сопровождающего сайта (необязательно): <code>private@address.here</code><br>
-Местонахождение сайта (необязательно): <code>Место, название региона</code><br>
-Имя спонсора сайта (необязательно): <code>Имя спонсора сайта</code><br>
-URL спонсора сайта (необязательно): <code>http://name.of.sponsor.tld/</code><br>
-Комментарий: <code>Любые заметки, которые, как вам кажется, могут быть полезны
-другим</code><br>
-</p>
-</div>
-
-<p>Здесь вы можете ввести личный электронный адрес, который будет послан только
-немногим редакторам списка зеркал, в случае, если вы хотите дать нам более
-прямой адрес, но очень беспокоитесь об его публикации.
-Также вы можете отдать должное спонсору сайта и дать другую специфичную
-для вашего сайта информацию.</p>
-
-<p>Следующий пример опишет зеркало на ftp.us.debian.org:</p>
-
-<div class="centerblock">
-<p>
-Сайт: <code>ftp.us.debian.org</code><br>
-Псевдонимы: <code>http.us.debian.org</code><br>
-Архив пакетов, через HTTP: <code>/debian/</code><br>
-Архив пакетов, через FTP: <code>/debian/</code><br>
-Архив пакетов, через rsync: <code>debian/</code><br>
-Имя сопровождающего сайта: <code>John Doe</code><br>
-Email сопровождающего сайта: <code>abc@address.goes.here</code><br>
-Страна: <code>United States [US]</code>
-</p>
-</div>
-
-<p>Если вы сопровождаете копии старых версий Debian, ваша запись будет выглядеть
-примерно так:</p>
-
-<div class="centerblock">
-<p>
-Сайт: <code>archive.debian.org</code><br>
-Старые выпуски Debian, через HTTP: <code>/debian-archive/</code><br>
-Старые выпуски  Debian, через FTP: <code>/debian-archive/</code><br>
-Старые выпуски Debian, через rsync: <code>debian-archive/</code><br>
-Имя сопровождающего сайта: <code>Debian FTP admins</code><br>
-Email сопровождающего сайта: <code>abc@address.goes.here</code><br>
-Страна: <code>United States [US]</code><br>
-</p>
-</div>
