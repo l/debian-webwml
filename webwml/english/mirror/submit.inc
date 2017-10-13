@@ -8,48 +8,16 @@
 </define-tag>
 
 <define-tag form-action>
-<form method=post action="%2" onsubmit="giveau('%1')">
+<form method=post action="%2">
 </define-tag>
 
 <define-tag tablerow>
 	<tr><td>%0: </td><td><input type="text" name="%1" id="%1" size="%2"></td></tr>
 </define-tag>
 
-<define-tag tr-upstream-give>
-  <tr><td>%0: </td><td><input type="text" name="%1" id="%1" size="%2" onchange="giveau('%1')"></td></tr>
+<define-tag tablerowdef>
+	<tr><td>%0: </td><td><input type="text" name="%1" id="%1" size="%2" value="%3">%4</td></tr>
 </define-tag>
-
-<define-tag tr-upstream-take>
-  <tr><td>%0: </td><td>
-  <input type="text" name="%1" id="%1" size="%2">
-  <label><input id="cb_%1" name="cb_%1" type="checkbox" onclick="takeau('%1')">&nbsp;<em><sameastheabove></em></label>
-  </td></tr>
-</define-tag>
-
-<script type="text/javascript">
-function takeau(element) {
-  au = document.getElementById('archive-upstream');
-  cbn = 'cb_' + element;
-  cbe = document.getElementById(cbn);
-  xu = document.getElementById(element);
-  if (cbe.checked) {
-    xu.style.color = "#b0b0b0";
-    xu.style.backgroundColor = "#e0e0e0";
-    xu.value = au.value;
-  } else {
-    xu.style.color = "#000000";
-    xu.style.backgroundColor = "#ffffff";
-  }
-}
-function giveau(element) {
-  au = document.getElementById('archive-upstream');
-  cu = document.getElementById('cdimage-upstream');
-  cuc = document.getElementById('cb_cdimage-upstream');
-  if (cuc.checked) {
-    cu.value = au.value;
-  }
-}
-</script>
 
 #include "$(ENGLISHDIR)/releases/sid/archive.data"
 #include "$(ENGLISHDIR)/releases/arches.data"

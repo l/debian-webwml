@@ -2,15 +2,28 @@
 #include "$(ENGLISHDIR)/mirror/submit.inc"
 
 <p>If you would like to submit information about a mirror of Debian,
-you can do so using the form below.
-Most information provided will be displayed in the mirror list.
+you can do so using the form below.  Information provided will be displayed in
+the mirror list.
 </p>
 
-<p>There are <a href="#examples">examples</a> at the bottom of the page in
-case you aren't sure how to proceed.</p>
-
 <p>Please note that all submitted mirrors should follow the
-<a href="ftpmirror">rules and guidelines laid out in our documentation</a>.</p>
+<a href="ftpmirror">rules and guidelines laid out in our documentation</a>.  In
+particular,
+<ul>
+<li>you should be using <a href="ftpmirror#how">ftspync</a> to mirror Debian,
+<li>pick a good upstream (<strong>not</strong> a (http) service name like
+    <code>ftp.CC.debian.org</code>, not DNS round robins, not CDNs),
+<li>update four times a day to match the archive update frequency (or set up
+    triggers with upstream, or use <code>ftpsync-cron</code> hourly to monitor
+    your upstream for changes and initiate syncs).  Furthermore,
+<li>your mirror must have an approrpriately named tracefile (ftpsync will do
+    that if MIRRORNAME is set correctly),
+<li>should touch <code>/Archive-Update-in-Progress-XXX</code> and
+    <code>/Archive-Update-Required-XXX</code> flagfiles when appropriate
+    (again, ftspync will do that for you) to help mirrors downstream of
+    you to sync correctly.
+</ul>
+</small>
 
 <form-action "" archive-upstream https://cgi.debian.org/cgi-bin/submit_mirror.pl>
 
@@ -24,53 +37,24 @@ New mirror submission
 Update of an existing mirror
 </p>
 
-<p>Please include the name under which you wish the mirror to be listed in
-the <em>Site</em> field.</p>
-
 <p>
-Site: <input type="text" name="site" size="30"></p>
-
-<p>If the server has other names, list them in the <em>Aliases</em> field,
-separated with commas (,).
-</p>
-
-<p>Aliases: <input type="text" name="aliases" size="60"></p>
-
-<h2>Types of mirrors and methods of accessing them</h2>
+Mirror name: <input type="text" name="site" size="30"></p>
 
 <p>Enter the paths to the Debian mirror on your site in the fields below.
 Leave non-relevant fields blank.</p>
 
 <table>
-<tablerow "Packages archive, over HTTP"   archive-http   30>
-<tablerow "Packages archive, over FTP"    archive-ftp    30>
-<tablerow "Packages archive, over rsync"  archive-rsync  30>
-<tablerow "CD/DVD images, over HTTP"      cdimage-http   30>
-<tablerow "CD/DVD images, over FTP"       cdimage-ftp    30>
-<tablerow "CD/DVD images, over rsync"     cdimage-rsync  30>
-<tablerow "Old Debian releases, over HTTP"  old-http     30>
-<tablerow "Old Debian releases, over FTP"   old-ftp      30>
-<tablerow "Old Debian releases, over rsync" old-rsync    30>
+<tablerowdef "Packages archive, over HTTP"   archive-http   30 "/debian" " <small>We strongly recommend <code>/debian</code>.</small>">
+<tablerowdef "Packages archive, over rsync"  archive-rsync  30 "debian" " <small>If you offer rsync, <code>debian</code> is suggested as module name.</small>">
+# <tablerow "CD/DVD images, over HTTP"      cdimage-http   30>
+# <tablerow "CD/DVD images, over rsync"     cdimage-rsync  30>
+# <tablerow "Old Debian releases, over HTTP"  old-http     30>
+# <tablerow "Old Debian releases, over rsync" old-rsync    30>
 </table>
 
 <h2>Information about the mirror site</h2>
 
 <table>
-<tr-upstream-give "Main mirror is updated from"          archive-upstream   30>
-<tr-upstream-take "CD/DVD image mirror is updated from"  cdimage-upstream   30>
-<tr>
-<td>Frequency of mirroring:</td>
-<td>
-<select name="updates">
-<option value="never">Please select...</option>
-<option value="push">push-triggered</option>
-<option value="four">four times a day (current archive update frequency)</option>
-<option value="twice">twice a day</option>
-<option value="once">daily</option>
-<option value="lessoften">less often</option>
-</select>
-</td>
-</tr>
 <tr>
 <td>Mirrored architectures:
 <td>
@@ -82,22 +66,9 @@ Leave non-relevant fields blank.</p>
 <table>
 <tablerow "Name of site maintainer"         maint_name    30>
 <tablerow "Public e-mail of site maintainer"              maint_public_email    30>
-<tr><td>&nbsp;</td><td>
-<small>
-The public mirror maintainer e-mail address will be available to all users.
-</small>
-</td></tr>
 <tr><td>Country of site:  <td><select name="country">
 <countrylist>
 </select>
-<tablerow "Private e-mail of site maintainer (optional)"  maint_private_email   30>
-<tr><td>&nbsp;</td><td>
-<small>
-If you submit a private address, it will be available only to Debian mirror
-list editors, in order for them to contact you with important news and/or
-bug reports.
-</small>
-</td></tr>
 <tablerow "Location of site (optional)"     location      30>
 <tablerow "Name of site sponsor (optional)" sponsor_name  30>
 <tablerow "URL of site sponsor (optional)"  sponsor_url   30>
@@ -107,11 +78,6 @@ bug reports.
 <td valign="top">Comment:</td>
 <td><textarea name="comment" cols=40 rows=7></textarea></td>
 </tr></table>
-
-<p>Note: if there is more than one sponsor, add the others in the comment.
-You may also want to note if the mirror gets updated less frequently than
-once a day, and how fast the site is (its maximum bandwidth).
-</p>
 
 <p><label>I have subscribed to the
 <a href="https://lists.debian.org/debian-mirrors-announce/">
@@ -125,123 +91,9 @@ announcements mailing list</a>
 </form>
 
 <p>Your site should appear on the list within a couple of weeks, as soon as a
-human operator verifies it and includes it. We might email you in case of any
+human operator verifies it and includes it. We will email you in case of any
 problems with the submitted entry.</p>
 
 <p>If you don't get any feedback within three months, you can contact us at
 <email mirrors@debian.org>.</p>
 
-<h2><a name="examples">Examples</a></h2>
-
-<p>The following submission would be for a server called debian.example.com,
-which can also be reached using e1.example.com. These names are fictional,
-of course.</p>
-
-<div class="centerblock">
-<p>
-Site: <code>debian.example.com</code><br>
-Aliases: <code>e1.example.com</code>
-</p>
-</div>
-
-<p>Debian archive mirror is in the /debian/ directory on the web server:</p>
-
-<div class="centerblock">
-<p>
-Packages archive, over HTTP: <code>/debian/</code>
-</p>
-</div>
-
-<p>This is for ftp://debian.example.com/debian/:</p>
-     
-<div class="centerblock">
-<p>
-Packages archive, over FTP: <code>/debian/</code>
-</p>
-</div>
-
-<p>This is the directory used for rsync access, debian.example.com::debian/:</p>
-
-<div class="centerblock">
-<p>
-Packages archive, over rsync: <code>debian/</code>
-</p>
-</div>
-
-<p>This mirror gets refreshed from ftp.xy.debian.org, so we'll add:</p>
-
-<div class="centerblock">
-<p>
-Mirror is updated from: <code>ftp.xy.debian.org</code>
-</p>
-</div>
-
-<p>Now for the maintainer information:</p>
-
-<div class="centerblock">
-<p>
-Name of site maintainer: <code>John Doe</code><br>
-Public e-mail of site maintainer: <code>address.goes@here.example.com</code>
-</p>
-</div>
-
-<p>This maintainer address will not generally be shown on the public lists,
-but it's necessary to have one so that the mirror list editors and users
-can contact you in case of problems. Please enter a correct address.</p>
-
-<p>The only other piece of information necessary is the country.
-For example:</p>
-
-<div class="centerblock">
-<p>
-Country: <code>United States [US]</code><br>
-</p>
-</div>
-
-<p>You could also optionally add:</p>
-
-<div class="centerblock">
-<p>
-Private e-mail of site maintainer (optional): <code>private@address.here</code><br>
-Location of site (optional): <code>Place, region name</code><br>
-Name of site sponsor (optional): <code>Site sponsor name</code><br>
-URL of site sponsor (optional): <code>http://name.of.sponsor.tld/</code><br>
-Comment: <code>Any notes you feel would help others</code><br>
-</p>
-</div>
-
-<p>Here you can enter a private e-mail address that will be sent only
-to a select few mirror list editors, in case you'd like to give us a
-more direct address but are weary of publishing it.
-You can also give credit to the site sponsor and give other specific
-information about your site.</p>
-
-<p>The following example would describe the mirror at ftp.us.debian.org:</p>
-
-<div class="centerblock">
-<p>
-Site: <code>ftp.us.debian.org</code><br>
-Aliases: <code>http.us.debian.org</code><br>
-Packages archive, over HTTP: <code>/debian/</code><br>
-Packages archive, over FTP: <code>/debian/</code><br>
-Packages archive, over rsync: <code>debian/</code><br>
-Name of site maintainer: <code>John Doe</code><br>
-Email of site maintainer: <code>abc@address.goes.here</code><br>
-Country: <code>United States [US]</code>
-</p>
-</div>
-
-<p>If you maintain copies of old versions of Debian, your entry would look
-something like this:</p>
-
-<div class="centerblock">
-<p>
-Site: <code>archive.debian.org</code><br>
-Old Debian releases, over HTTP: <code>/debian-archive/</code><br>
-Old Debian releases, over FTP: <code>/debian-archive/</code><br>
-Old Debian releases, over rsync: <code>debian-archive/</code><br>
-Name of site maintainer: <code>Debian FTP admins</code><br>
-Email of site maintainer: <code>abc@address.goes.here</code><br>
-Country: <code>United States [US]</code><br>
-</p>
-</div>
