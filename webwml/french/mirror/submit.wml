@@ -1,5 +1,5 @@
 #use wml::debian::template title="Entrer des informations concernant un miroir"
-#use wml::debian::translation-check translation="1.84" maintainer="Jean-Paul Guillonneau"
+#use wml::debian::translation-check translation="1.86" maintainer="Jean-Paul Guillonneau"
 #include "$(ENGLISHDIR)/mirror/submit.inc"
 
 #traducteurs :voir journal
@@ -9,11 +9,30 @@ formulaire ci-dessous. La plupart des informations fournies seront affichées
 dans la liste des miroirs.
 </p>
 
-<p>Il y a des <a href="#examples">exemples</a> en bas de la page au
-cas où vous ne seriez pas sûr de la façon de procéder.</p>
-
 <p>Veuillez noter que tous les miroirs officiels doivent suivre les <a
-href="ftpmirror">règles et les indications de notre documentation</a>.</p>
+href="ftpmirror">règles et les indications de notre documentation</a>. En
+particulier,
+<ul>
+<li>vous devriez utiliser <a href="ftpmirror#how">ftpsync</a> pour créer un
+miroir de Debian,
+<li>sélectionner une bonne source d’amont (<strong>pas</strong> un nom de
+service (HTTP) comme <code>ftp.CC.debian.org</code>, pas de round-robin DNS ni
+de CDN),
+<li>actualiser quatre fois par jour pour suivre la fréquence actuelle de mise
+à jour de l'archive (ou mettre au point des déclencheurs basés sur l’amont, ou
+utiliser une fois par heure <code>ftpsync-cron</code> pour surveiller les
+modifications de l’amont et lancer des synchronisations.
+</ul>
+<ul>
+<li>De plus,votre miroir doit avoir un fichier trace avec un nom pertinent
+(ftpsync réalise cela si MIRRORNAME est défini correctement),
+<li>votre miroir devrait créer des fichiers indicateurs
+<code>/Archive-Update-in-Progress-XXX</code> et
+<code>/Archive-Update-Required-XXX</code> lorsque cela est nécessaire (encore
+une fois, ftpsync le réalise pour vous) pour aider les miroirs en aval de vous
+à se synchroniser correctement.
+</ul>
+
 
 <form-action "" archive-upstream https://cgi.debian.org/cgi-bin/submit_mirror.pl>
 
@@ -27,89 +46,38 @@ Nouveau miroir
 Mise à jour d'un miroir existant
 </p>
 
-<p>Merci d'indiquer le nom sous lequel vous voulez voir apparaître le
-miroir dans le champ <em>Site</em>.</p>
-
 <p>
-Site : <input type="text" name="site" size="30">
-</p>
-
-<p>Si le serveur a d'autres noms,
-indiquez-les dans le champ <em>Alias</em>, en les séparant par des
-virgules (« , »).</p>
-
-<p>
-Alias : <input type="text" name="aliases" size="60">
-</p>
-
-<h2>Types des miroirs et moyens d'y accéder</h2>
+Nom du miroir : <input type="text" name="site" size="30"></p>
 
 <p>Entrez les chemins d'accès au miroir Debian de votre site dans les
 champs ci-dessous. Laissez en blanc les champs qui ne vous concernent
 pas.</p>
 
 <table>
-<tablerow "Archive des paquets, accès par HTTP "   archive-http   30>
-<tablerow "Archive des paquets, accès par FTP "    archive-ftp    30>
-<tablerow "Archive des paquets, accès par rsync "  archive-rsync  30>
-<tablerow "Images de CD/DVD, accès par HTTP "	  cdimage-http   30>
-<tablerow "Images de CD/DVD, accès par FTP "	  cdimage-ftp    30>
-<tablerow "Images de CD/DVD, accès par rsync "	  cdimage-rsync  30>
-<tablerow "Anciennes versions de Debian, accès par HTTP "     old-http      30>
-<tablerow "Anciennes versions de Debian, accès par FTP "	     old-ftp	   30>
-<tablerow "Anciennes versions de Debian, accès par rsync "    old-rsync     30>
+<tablerowdef "Archive des paquets, accès par HTTP "   archive-http   30 "/debian" " <small>Nous recommendons fortement <code>/debian</code>.</small>">
+<tablerowdef "Archive des paquets, accès par FTP "    archive-ftp    30 "debian" " <small>Si vous proposez rsync, <code>debian</code> est suggéré comme nom de module.</small>">
+#<tablerow "Images de CD/DVD, accès par HTTP "	  cdimage-http   30>
+#<tablerow "Images de CD/DVD, accès par rsync "	  cdimage-rsync  30>
+#<tablerow "Anciennes versions de Debian, accès par HTTP "     old-http      30>
+#<tablerow "Anciennes versions de Debian, accès par rsync "    old-rsync     30>
 </table>
 
 <h2>Informations sur le site miroir</h2>
 
 <table>
-<tr-upstream-give "Archive principale mise à jour à partir de "          archive-upstream   30>
-<tr-upstream-take "Images de CD/DVD mises à jour à partir de "  cdimage-upstream   30>
 <tr>
-
-<td>Fréquence de mise à jour :</td>
-<td>
-<select name="updates">
-<option value="never">Veuillez sélectionner…</option>
-<option value="push">mise à jour par déclenchement (« push-triggered »)</option>
-<option value="four">quatre fois par jour (fréquence actuelle de mise à jour de l'archive)</option>
-<option value="twice">deux fois par jour</option>
-<option value="once">quotidienne</option>
-<option value="lessoften">moins souvent</option>
-</select>
-</td>
-</tr>
-<tr>
-
 <td>Architectures disponibles :
-<td>
 <label><input type=checkbox name=architectures id="allarch" value="ALL" onclick="allarches()"> <em>toutes (c'est-à-dire qu'aucune architecture n'est exclue)</em></label><br>
 <archlist>
-
 </td></tr>
 </table>
 
 <table>
 <tablerow "Nom du responsable du site "           maint_name    30>
 <tablerow "Courriel public du responsable du site "         maint_public_email   30>
-<tr><td> </td><td>
-<small>
-L'adresse publique de courriel du responsable sera accessible à tous les
-utilisateurs.
-</small>
-</td></tr>
 <tr><td>Pays du site :  <td><select name="country">
 <countrylist>
 </select>
-
-<tablerow "Courriel privé du responsable du site (optionnel) "  maint_private_email   30>
-<tr><td> </td><td>
-<small>
-Si vous indiquez une adresse privée, elle ne sera accessible
-qu'aux éditeurs de la liste des miroirs Debian, afin qu'ils puissent vous
-contacter en cas d'informations ou de problèmes importants.
-</small>
-</td></tr>
 <tablerow "Emplacement géographique du site (optionnel) "         location      30>
 <tablerow "Nom du sponsor du site (optionnel) "  sponsor_name  30>
 <tablerow "URL du sponsor du site (optionnel) "  sponsor_url   30>
@@ -119,12 +87,6 @@ contacter en cas d'informations ou de problèmes importants.
 <td valign="top">Commentaire :</td>
 <td><textarea name="comment" cols=40 rows=7></textarea></td>
 </tr></table>
-
-<p>
-Note : s'il y a plus d'un sponsor, ajoutez les autres dans le commentaire.
-Vous pouvez aussi indiquer si le miroir est mis à jour moins
-d'une fois par jour, et quelle est la bande passante (maximale) du site.
-</p>
 
 <p><label>
 Je me suis inscrit à la <a
@@ -139,131 +101,9 @@ liste de diffusion d'annonces</a>
 </form>
 
 <p>Votre site devrait apparaître dans la liste sous quelques semaines, dès
-qu'un intervenant l'aura vérifié et ajouté. Il est possible que nous vous
-contactions en cas de problèmes avec votre formulaire.</p>
+qu'un intervenant l'aura vérifié et ajouté. Vous serez contacté en cas de
+problèmes avec votre formulaire.</p>
 
 <p>Si vous n'obtenez aucun retour sous trois mois, veuillez nous contacter à
 l'adresse <email mirrors@debian.org>.</p>
-
-<h2><a name="examples">Exemples</a></h2>
-
-<p>Le formulaire suivant serait celui d'un serveur appelé debian.example.com,
-accessible également sous e1.example.com. Ces noms sont fictifs, bien
-sûr.</p>
-
-<div class="centerblock">
-<p>
-Site : <code>debian.example.com</code><br>
-Alias : <code>e1.example.com</code>
-</p>
-</div>
-
-<p>Le miroir de l'archive Debian est dans le répertoire /debian/ sur
-le serveur web :</p>
-
-<div class="centerblock">
-<p>
-Archive des paquets, accès par HTTP : <code>/debian/</code>
-</p>
-</div>
-
-<p>Ceci serait pour ftp://debian.example.com/debian/ :</p>
-
-<div class="centerblock">
-<p>
-Archive des paquets, accès par FTP : <code>/debian/</code>
-</p>
-</div>
-
-<p>Ceci indique le répertoire utilisé pour l'accès rsync,
-debian.example.com::debian/ :</p>
-
-<div class="centerblock">
-<p>
-Archive des paquets, accès par rsync : <code>debian/</code>
-</p>
-</div>
-
-<p>Ce miroir est mis à jour à partir de ftp.xy.debian.org, donc nous
-ajoutons :</p>
-
-<div class="centerblock">
-<p>
-Miroir mis à jour à partir de : <code>ftp.xy.debian.org</code>
-</p>
-</div>
-
-<p>Maintenant les informations relatives au responsable :</p>
-
-<div class="centerblock">
-<p>
-Nom du responsable du site : <code>John Doe</code><br>
-Courriel public du responsable du site : <code>mettre.adresse@ici.example.com</code>
-</p>
-</div>
-
-<p>L'adresse du responsable ne sera généralement pas affichée sur les
-listes publiques, mais elle reste nécessaire afin que les éditeurs de la
-liste des miroirs ainsi que les utilisateurs puissent le contacter en cas
-de problème. Merci d'entrer une adresse valable.</p>
-
-<p>La dernière information obligatoire concerne le pays, par
-exemple :</p>
-
-<div class="centerblock">
-<p>
-Pays : <code>États-Unis [US]</code><br>
-</p>
-</div>
-
-<p>Vous pouvez également ajouter :</p>
-
-<div class="centerblock">
-<p>
-Courriel privé du responsable du site (optionnel) : <code>privee@votre-adresse.ici</code><br>
-Emplacement géographique du site (optionnel) : <code>Ville, nom de la région</code><br>
-Nom du sponsor du site (optionnel) : <code>Nom du sponsor</code><br>
-URL du site du sponsor (optionnel) : <code>http://nom.du.sponsor.tld/</code><br>
-Commentaire : <code>toute information susceptible d'être utile</code><br>
-</p>
-</div>
-
-<p>
-Vous pouvez indiquer l'adresse privée accessible uniquement aux
-éditeurs de la liste des miroirs, dans le cas où vous voudriez
-nous donner un contact plus direct sans pour autant la publier.
-
-Vous pouvez également remercier le sponsor du site
-et donner des détails spécifiques à votre miroir.
-</p>
-
-<p>L'exemple ci-dessous décrirait le miroir ftp.us.debian.org :
-
-<div class="centerblock">
-<p>
-Site : <code>ftp.us.debian.org</code><br>
-Alias : <code>http.us.debian.org</code><br>
-Archive des paquets, accès par HTTP : <code>/debian/</code><br>
-Archive des paquets, accès par FTP : <code>/debian/</code><br>
-Archive des paquets, accès par rsync : <code>debian/</code><br>
-Nom du responsable du site : <code>John Doe</code><br>
-Courriel du responsable du site : <code>abc@mettre.adresse.ici</code><br>
-Pays : <code>États-Unis [US]</code>
-</p>
-</div>
-
-<p>Si vous maintenez des copies des anciennes versions de Debian, votre
-entrée devrait ressembler à quelque chose comme ceci :
-
-<div class="centerblock">
-<p>
-Site : <code>archive.debian.org</code><br>
-Anciennes versions de Debian, accès par HTTP : <code>/debian-archive/</code><br>
-Anciennes versions de Debian, accès par FTP : <code>/debian-archive/</code><br>
-Anciennes versions de Debian, accès par rsync : <code>debian-archive/</code><br>
-Nom du responsable du site : <code>Administrateurs du site FTP Debian</code><br>
-Courriel du responsable du site : <code>abc@mettre.adresse.ici</code><br>
-Pays : <code>États-Unis [US]</code>
-</p>
-</div>
 
