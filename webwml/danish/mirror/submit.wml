@@ -1,245 +1,98 @@
 #use wml::debian::template title="Registrér oplysninger om spejl"
-#use wml::debian::translation-check translation="1.84"
+#use wml::debian::translation-check translation="1.86"
 #include "$(ENGLISHDIR)/mirror/submit.inc"
 
 <p>Hvis du ønsker at indsende oplysninger om et Debian-filspejl, kan du gøre det
-ved hjælp af formularen herunder.  De fleste af de indsendte oplysninger vil 
-blive vist i filspejlslisten.</p>
+ved hjælp af formularen herunder.  De indsendte oplysninger vil blive vist i 
+filspejlslisten.</p>
 
-<p>Sidst på siden er der er et <a href="#examples">eksempel</a>, hvis du er 
-i tvivl om hvordan man gør.</p>
+<p>Bemærk at officielle filspejle bør følge de <a href="ftpmirror">regler og 
+retningslinjer, som er beskrevet i dokumentationen</a>; i særdeleshed</p>
 
-<p>Bemærk venligst at officielle filspejle bør følge de <a href="ftpmirror">\
-regler og retningslinjer som er beskrevet i dokumentationen</a>.</p>
+<ul>
+    <li>bør man anvende <a href="ftpmirror#how">ftpsync</a> for at spejle 
+	Debian,</li>
+    <li>vælge en god opstrøm (<strong>ikke</strong> en (http-)service så som 
+	<code>ftp.CC.debian.org</code>, ikke roundrobin-DNS'er, ikke 
+	CDN'er),</li>
+    <li>skal man opdatere fire gange i døgnet, så det svarer til arkivets 
+	opdateringsfrekvens (eller opsætte triggere i samarbejde med sin 
+	opstrøm, eller anvende <code>ftpsync-cron</code> en gang i timen for at 
+	overvåge ens opstrøm for ændringer, og igangsætte synkroniseringer).  
+	Yderligere,</li>
+    <li>skal filspejlet have en passende navngivet tracefil (ftpsync tager sig 
+	af det, hvis MIRRORNAME er opsat korrekt),</li>
+    <li>touch'e flagfilerne <code>/Archive-Update-in-Progress-XXX</code> og 
+        <code>/Archive-Update-Required-XXX</code>, når det er passende (igen, 
+	ftpsync gør det for dig) for at hjælpe ens nedenstrømsfilspejle med at 
+	synkronisere korrekt.</li>
+</ul>
+</small>
 
 <form-action "" archive-upstream https://cgi.debian.org/cgi-bin/submit_mirror.pl>
 
 
 <h2>Grundlæggende oplysninger</h2>
 
-<p>
-<input type="radio" name="submissiontype" value="new" checked>
+<p><input type="radio" name="submissiontype" value="new" checked>
 Ny registrering af filspejl
 &nbsp; &nbsp; &nbsp;
 <input type="radio" name="submissiontype" value="update">
-Opdatering af eksisterende filspejl
-</p>
+Opdatering af eksisterende filspejl</p>
 
-<p>Angiv det navn som du ønsker spejlet skal anføres under i feltet 
-<em>Sted</em>.</p>
+<p>Navn på filspejl: <input type="text" name="site" size="30"></p>
 
-<p>Sted: <input type="text" name="site" size="30"></p>
-
-<p>Hvis de server har andre navne angives de i feltet <em>Alias</em>, adskilt 
-af kommaer (,).</p>
-
-<p>Alias: <input type="text" name="aliases" size="60"></p>
-
-
-<h2>Spejltype og hvordan de tilgås</h2>
-
-<p>Angiv stierne til dit Debian-spejl i felterne herunder.  Lad felter som 
-ikke er relevante være tomme.</p>
+<p>Angiv i felterne herunder stierne til dit Debian-filspejl.  Udfyld ikke 
+irrlevante felter.</p>
 
 <table>
-<tablerow "Pakkearkiv, via HTTP"               archive-http   30>
-<tablerow "Pakkearkiv, via FTP"                archive-ftp    30>
-<tablerow "Pakkearkiv, via rsync"              archive-rsync  30>
-<tablerow "Cd/dvd-aftryk, via HTTP"            cdimage-http   30>
-<tablerow "Cd/dvd-aftryk, via FTP"             cdimage-ftp    30>
-<tablerow "Cd/dvd-aftryk, via rsync"           cdimage-rsync  30>
-<tablerow "Ældre Debian-udgivelser, via HTTP"  old-http       30>
-<tablerow "Ældre Debian-udgivelser, via FTP"   old-ftp        30>
-<tablerow "Ældre Debian-udgivelser, via rsync" old-rsync      30>
+    <tablerowdef "Pakkearkiv, over HTTP"   archive-http   30 "/debian" " <small>Vi anbefaler kraftigt <code>/debian</code>.</small>">
+    <tablerowdef "Pakkearkiv, over rsync"  archive-rsync  30 "debian" " <small>Hvis du tilbyder rsync, foreslås <code>debian</code> som modulnavn.</small>">
+#   <tablerow "CD/DVD images, over HTTP"      cdimage-http   30>
+#   <tablerow "CD/DVD images, over rsync"     cdimage-rsync  30>
+#   <tablerow "Old Debian releases, over HTTP"  old-http     30>
+#   <tablerow "Old Debian releases, over rsync" old-rsync    30>
 </table>
 
-
-<h2>Oplysninger om spejlet</h2>
+<h2>Oplysninger om filspejlet</h2>
 
 <table>
-<tr-upstream-give "Hovedspejlet opdateres fra"			archive-upstream   30>
-<tr-upstream-take "Cd-/dvd-aftryksspejlet opdateres fra"	cdimage-upstream   30>
-
 <tr>
-    <td>Spejlingshyppighed:</td>
-    <td>
-	<select name="updates">
-	    <option value="never">Vælg ...</option>
-	    <option value="push">push-aktiveret</option>
-	    <option value="four">fire gange dagligt (arkivets nuværende opdateringshyppighed)</option>
-	    <option value="twice">to gange dagligt</option>
-	    <option value="once">dagligt</option>
-	    <option value="lessoften">sjældnere</option>
-	</select>
-    </td>
-</tr>
-
-<tr>
-<td>Spejlede arkitekturer:</td>
+<td>Spejlede arkitekturer:
 <td>
-<label><input type="checkbox" name="arkitekturer" id="allarch" value="ALL" onclick="allarches()">&nbsp;<em>dem alle (dvs. ingen per-arkitektur udelukkelse foretages)</em></label><br>
+<label><input type=checkbox name=architectures id="allarch" value="ALL" onclick="allarches()">&nbsp;<em>dem alle (dvs. intet fravalg af enkeltarkitekturer)</em></label><br>
 <archlist>
 </td></tr>
 </table>
 
 <table>
-<tablerow "Navn på den ansvarlige for spejlet" maint_name    30>
-<tablerow "Offentlig e-mail-adresse tilhørende den ansvarlige"   maint_public_email   30>
-<tr><td>&nbsp;</td><td>
-<small>
-Den offentlige e-mail-adresse tilhørende filspejlsvedligeholderen vil være
-tilgængelig for alle brugere.</small>
-</td></tr>
-<tr><td>Spejlets land:  <td><select name="country">
+<tablerow "Navn på den ansvarlige for filspejlet"         maint_name    30>
+<tablerow "Den ansvarliges offentlige mailadresse"        maint_public_email    30>
+<tr><td>Filspjlets land:  <td><select name="country">
 <countrylist>
 </select>
-
-<tablerow "Privat e-mail-adresse tilhørende den ansvarlige (frivillig)"   maint_private_email   30>
-<tr><td>&nbsp;</td><td>
-<small>Hvis du indsender en privat adresse, vil denne kun være tilgængelig for
-Debians vedligeholdere af filspejlslisten, så de har mulighed for at kontakte 
-dig med vigtige nyheder og/eller fejlrapporter.</small>
-</td></tr>
-<tablerow "Placering af spejl (valgfri)"       location      30>
-<tablerow "Navn på sponsor (valgfri)"          sponsor_name  30>
-<tablerow "Webadresse til sponsor (valgfri)"   sponsor_url   30>
+<tablerow "Filspejlets placering (valgfrit)"              location      30>
+<tablerow "Navn på filspejlets sponsor (valgfrit)"        sponsor_name  30>
+<tablerow "URL til filspejlets sponsor (valgfrit)"        sponsor_url   30>
 </table>
 
-<table border=0><tr>
-<td valign="top">Kommentarer (på engelsk):</td>
-<td><textarea name="comment" cols=40 rows=7></textarea></td>
-</tr></table>
+<table>
+    <tr>
+	<td valign="top">Kommentar (på engelsk):</td>
+	<td><textarea name="comment" cols=40 rows=7></textarea></td>
+    </tr>
+</table>
 
-<p>Note: Hvis der er mere end en sponsor, tilføjes de øvrige i 
-kommentarfeltet. Du kan også angive om spejlet opdateres sjældnere end en gang
-dagligt samt hvor hurtigt det er (dets maksimale båndbredde).</p>
+<p><label>Jeg har tilmeldt mig annonceringspostlisten
+<a href="https://lists.debian.org/debian-mirrors-announce/"></a>
+<input type="checkbox" name="mlannounce"></label></p>
 
-<p><label>Jeg har tegnet abonnement på
-<a href="https://lists.debian.org/debian-mirrors-announce/">\
-annonceringspostlisten</a>
-<input type="checkbox" name="mlannounce"></label>
-</p>
-
-<p>
-<input type="submit" value="Indsend"> <input type="reset" value="Nulstil">
-</p>
+<p><input type="submit" value="Indsend"> <input type="reset" value="Tøm formular"></p>
 </form>
 
-<p>Inden for et par ugers tid vil dit spejl blive føjet til listen, så snart en
-person har kontrolleret og tilføjet det.  Hvis der er problemer med de 
-indsendte data, vil vi måske kontakte dig pr. e-mail.</p>
+<p>I løbet af et par uger forventes dit filspejl at blive medtaget på listen, så 
+snart nogen har kontrolleret og medtaget det.  Vi sender dig en mail, i fald der 
+er problemer med de indsendte oplysninger.</p>
 
-<p>Hvis du ikke modtager et svar i løbet af tre måneder, kan du kontakte os på 
-<email mirrors@debian.org>.</p>
-
-<h2 id="examples">Eksempler</h2>
-
-<p>Følgende oplysninger er vedrørende en server ved navn debian.eksempel.com,
-som også kan kontaktes som e1.eksempel.com. Navnene er naturligvis frit 
-opfundne.</p>
-
-<div class="centerblock">
-<p>
- Sted: <code>debian.eksempel.com</code><br />
- Alias: <code>e1.eksempel.com</code>
-</p>
-</div>
-
-<p>Debian-arkivspejlet ligger i mappen /debian/ på webserveren:</p>
-
-<div class="centerblock">
-<p>
- Pakkearkiv, via HTTP: <code>/debian/</code>
-</p>
-</div>
-
-<p>Dette er for ftp://debian.example.com/debian/:</p>
-
-<div class="centerblock">
-<p>
- Pakkearkiv, via FTP: <code>/debian/</code>
-</p>
-</div>
-
-<p>Denne mappe anvendes til rsync-adgang, debian.example.com::debian/:</p>
-
-<div class="centerblock">
-<p>
- Pakkearkiv, via rsync: <code>debian/</code>
-</p>
-</div>
-
-<p>Dette spejl opdateres fra ftp.xy.debian.org, så vi tilføjer:</p>
-
-<div class="centerblock">
-<p>
- Spejlet opdateres fra: <code>ftp.xy.debian.org</code>
-</p>
-</div>
-
-<p>Oplysninger om den ansvarlige:</p>
-
-<div class="centerblock">
-<p>
- Navn på den ansvarlige for spejlet: <code>John Doe</code><br />
- Offentlig e-mail-adresse tilhørende den ansvarlige: <code>adresse.angives@her.eksempel.com</code>
-</p>
-</div>
-
-<p>Den ansvarliges e-mail-adresse vil generelt ikke blive vist i offentlige 
-lister, men det er nødvendigt at have en, så vedligeholderne af filspejlslisten
-og brugerne kan kontakte dig i tilfælde af problemer.  Angiv en gyldig 
-adresse.</p>
-
-<p>Den eneste anden nødvendige oplysning er landet.  Eksempel:</p>
-
-<div class="centerblock">
-<p>Land: <code>Forenede Stater [US]</code><br /></p>
-</div>
-
-<p>Følgende bør angives, men er frivilligt:</p>
-
-<div class="centerblock">
-<p>
-Privat e-mail-adresse til den ansvarlige (frivillig): <code>privat@adresse.her</code><br />
-Stedets placering (frivillig): <code>Navn på sted, område</code><br />
-Steds sponsor (frivillig): <code>Navn på sponsor</code><br />
-URL til stedets sponsor (frivillig): <code>http://navn.på.sponsor.tld/</code><br />
-Kommentarer: <code>Øvrige kommentarer som kan være til hjælp for andre</code><br />
-</p>
-</div>
-
-<p>Her kan du angive en privat e-mail-adresse, der kun vil blive sendt til et
-begrænset antal vedligeholdere af filspejlslisten, i fald du ønsker at give os
-en mere direkte adresse, men ikke er meget for at offentliggøre den.  Du kan 
-også takke stedets sponsor eller oplyse andet specifikt om dit sted.</p>
-
-<p>Følgende eksempel beskriver spejlet på ftp.us.debian.org:</p>
-
-<div class="centerblock">
-<p>
- Sted: <code>ftp.us.debian.org</code><br />
- Alias: <code>http.us.debian.org</code><br />
- Pakkearkiv, via HTTP: <code>/debian/</code><br />
- Pakkearkiv, via FTP: <code>/debian/</code><br />
- Pakkearkiv, via rsync: <code>debian/</code><br />
- Navn på den ansvarlige for spejlet: <code>John Doe</code><br />
- E-mail-adresse tilhørende den ansvarlige: <code>abc@adresse.angives.her</code><br />
- Land: <code>Forenede Stater [US]</code>
-</p>
-</div>
-
-<p>Hvis du har kopier af gamle versioner af Debian, vil din post se nogenlunde
-sådan ud:</p>
-
-<div class="centerblock">
-<p>
- Sted: <code>archive.debian.org</code><br />
- Ældre Debian-udgivelser, via HTTP: <code>/debian-archive/</code><br />
- Ældre Debian-udgivelser, via FTP: <code>/debian-archive/</code><br />
- Ældre Debian-udgivelser, via rsync: <code>debian-archive/</code><br />
- Navn på den ansvarlige for spejlet: <code>Debians ftp-administratörer</code><br />
- E-mail-adresse tilhørende den ansvarlige: <code>abc@adresse.angives.her</code><br />
- Land: <code>Forenede Stater [US]</code><br />
-</p>
-</div>
+<p>Hvis du i løbet af tre måneder ikke modtager en tilbagemelding, kan du 
+kontakte os på engelsk på <email mirrors@debian.org>.</p>
