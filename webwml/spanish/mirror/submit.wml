@@ -1,18 +1,30 @@
 #use wml::debian::template title="Enviar información del sitio de réplica"
-#use wml::debian::translation-check translation="1.84" maintainer="Laura Arjona Reina"
+#use wml::debian::translation-check translation="1.86" maintainer="Laura Arjona Reina"
 #include "$(ENGLISHDIR)/mirror/submit.inc"
 
 <p>Si le gustaría enviar información acerca de un sitio de réplica de Debian
 (archivo FTP, web), puede hacerlo usando el formulario de abajo.
-La mayoría de la información proporcionada se mostrará en la lista de réplicas.
+La información proporcionada se mostrará en la lista de réplicas.
 </p>
 
-<p>Hay <a href="#examples">ejemplos</a> al final de la página en el caso de
-que no esté seguro de cómo proceder.</p>
-
-
 <p>Por favor, tenga en cuenta que todas las réplicas remitidas deberían seguir las
-<a href="ftpmirror">reglas y directrices expuestas en nuestra documentación</a>.</p>
+<a href="ftpmirror">reglas y directrices expuestas en nuestra documentación</a>.
+En particular, 
+<ul>
+<li>debería usar <a href="ftpmirror#how">ftpsync</a> para replicar Debian,
+<li>elija un buen origen (<strong>no</strong> un nombre de servicio (http) como
+    <code>ftp.CC.debian.org</code>, no round robins DNS, no CDNs,
+<li>actualice cuatro veces al día para concordar con la frecuencia de la actualización
+del archivo (o establezca disparadores con el origen, o use <code>ftpsync-cron</code>
+cada hora para monitorear su origen en busca de cambios e iniciar sincronización).
+Más aún, 
+<li>su réplica debe tener un fichero de traza apropiado (ftpsync lo hará por usted
+si MIRRORNAME está establecido correctamente),
+<li>debería tocar los archivos de señal <code>/Archive-Update-in-Progress-XXX</code> y
+    <code>/Archive-Update-Required-XXX</code> cuando sea apropiado (de nuevo, ftpsync
+    lo hará por usted) para ayudar a una sincronización correcta de las réplicas 
+    que dependen de la suya.
+</ul>
 
 <form-action "" archive-upstream https://cgi.debian.org/cgi-bin/submit_mirror.pl>
 
@@ -25,20 +37,8 @@ Remitir una réplica nueva
 Actualizar una réplica existente
 </p>
 
-<p>Por favor, incluya el nombre bajo el que desea que se liste la réplica en 
-   el campo <em>Sitio</em>.</p>
-
 <p>
-Sitio: <input type="text" name="site" size="30"></p>
-
-<p>Si el servidor tiene otros nombres, enumérelos en el campo <em>Alias</em>,
-separados por comas (,).
-</p>
-
-<p>Alias: <input type="text" name="aliases" size="60"></p>
-
-
-<h2>Tipos de sitios de réplica y métodos para acceder a ellos</h2>
+Nombre de la réplica: <input type="text" name="site" size="30"></p>
 
 <p>Introduzca las rutas a la réplica de Debian en su sitio en los campos
 inferiores. Deje en blanco los campos que no sean relevantes.</p>
@@ -48,35 +48,17 @@ inferiores. Deje en blanco los campos que no sean relevantes.</p>
 </define-tag>
 
 <table>
-<tablerow "Archivo de paquetes, sobre HTTP"           archive-http   30>
-<tablerow "Archivo de paquetes, sobre FTP"            archive-ftp    30>
-<tablerow "Archivo de paquetes, sobre rsync"          archive-rsync  30>
-<tablerow "Imágenes de CD/DVD, sobre HTTP"            cdimage-http   30>
-<tablerow "Imágenes de CD/DVD, sobre FTP"             cdimage-ftp    30>
-<tablerow "Imágenes de CD/DVD, sobre rsync"           cdimage-rsync  30>
-<tablerow "Versiones antiguas de Debian, sobre HTTP"  old-http       30>
-<tablerow "Versiones antiguas de Debian, sobre FTP"   old-ftp        30>
-<tablerow "Versiones antiguas de Debian, sobre rsync" old-rsync      30>
+<tablerow "Archivo de paquetes, sobre HTTP"           archive-http   30 "/debian" " <small>Recomendamos encarecidamente <code>/debian</code>.</small>">>
+<tablerow "Archivo de paquetes, sobre rsync"          archive-rsync  30 "debian" " <small>Si ofrece rsync, se sugiere <code>debian</code> como nombre del módulo.</small>">>
+#<tablerow "Imágenes de CD/DVD, sobre HTTP"            cdimage-http   30>
+#<tablerow "Imágenes de CD/DVD, sobre rsync"           cdimage-rsync  30>
+#<tablerow "Versiones antiguas de Debian, sobre HTTP"  old-http       30>
+#<tablerow "Versiones antiguas de Debian, sobre rsync" old-rsync      30>
 </table>
 
 <h2>Información sobre el sitio de réplica</h2>
 
 <table>
-<tr-upstream-give "La réplica principal se actualiza de"          archive-upstream   30>
-<tr-upstream-take "Las imágenes de CD/DVD se actualizan de"  cdimage-upstream   30>
-<tr>
-<td>Frecuencia de replicación:</td>
-<td>
-<select name="updates">
-<option value="never">Por favor, seleccione...</option>
-<option value="push">Activación por empuje</option>
- <option value="four">cuatro veces aldía (frecuencia actual de actualización del archivo)</option>
-<option value="twice">dos veces al día</option>
-<option value="once">diariamente</option>
-<option value="lessoften">con menos frecuencia</option>
-</select>
-</td>
-</tr>
 <tr>
 <td>Arquitecturas replicadas:
 <td>
@@ -88,22 +70,9 @@ inferiores. Deje en blanco los campos que no sean relevantes.</p>
 <table>
 <tablerow "Nombre del mantenedor del sitio"         maint_name    30>
 <tablerow "Correo electrónico público del mantenedor del sitio"        maint_public_email   30>
-<tr><td>&nbsp;</td><td>
-<small>
-La dirección de correo electrónico pública del mantenedor de la réplica se mostrará a todos los usuarios.
-</small>
-</td></tr>
 <tr><td>País del sitio:  <td><select name="country">
 <countrylist>
 </select>
-<tablerow "Correo electrónico privado del mantenedor del sitio (opcional)"        maint_private_email   30>
-<tr><td>&nbsp;</td><td>
-<small>
-Si remite una dirección privada, estará disponible sólo para los editores de
-la lista de réplicas de Debian, para contactar en caso de noticias importantes
-y/o informes de fallo.
-</small>
-</td></tr>
 <tablerow "Localización del sitio (opcional)"     location      30>
 <tablerow "Nombre del patrocinador del sitio (opcional)" sponsor_name  30>
 <tablerow "URL del patrocinador del sitio (opcional)"  sponsor_url   30>
@@ -113,10 +82,6 @@ y/o informes de fallo.
 <td valign="top">Comentario:</td>
 <td><textarea name="comment" cols=40 rows=7></textarea></td>
 </tr></table>
-
-<p>Aviso: si tiene más de un patrocinador, añada los otros en el comentario.
-También puede querer hacer constar que la réplica se actualiza menos de una vez al día y la velocidad del sitio (su máximo
-ancho de banda).</p>
 
 <p><label>Estoy suscrito a la 
 <a href="https://lists.debian.org/debian-mirrors-announce/">
@@ -131,128 +96,9 @@ lista de correo de anuncios</a>
 
 <p>Su sitio debería aparecer en la lista en un par de semanas, tan 
 pronto como un 
-operador humano lo verifique y añada. Podemos mandarle un correo
+operador humano lo verifique y añada. Le enviaremos un correo
 electrónico en caso de que haya problemas con la entrada enviada.</p>
 
 <p>Si no recibe noticias nuestras en tres meses, puede 
 contactar con nosotros en <email mirrors@debian.org>.</p>
-
-<h2><a name="examples">Ejemplos</a></h2>
-
-<p>Los siguientes envíos serían para un servidor llamado debian.ejemplo.com,
-que también se puede alcanzar usando e1.ejemplo.com. Estos son nombres
-ficticios, por supuesto.</p>
-
-<div class="centerblock">
-<p>
-Sitio: <code>debian.ejemplo.com</code><br>
-Alias: <code>e1.ejemplo.com</code>
-</p>
-</div>
-
-<p>La réplica del archivo de Debian está en el directorio /debian del servidor
-web:
-
-<div class="centerblock">
-<p>
-Archivo de paquetes, sobre HTTP: <code>/debian/</code>
-</p>
-</div>
-
-<p>Esto es para ftp://debian.ejemplo.com/debian/:</p>
-     
-<div class="centerblock">
-<p>
-Archivo de paquetes, sobre FTP: <code>/debian/</code>
-</p>
-</div>
-
-<p>Este es el directorio usado para el acceso mediante rsync,
-debian.ejemplo.com::debian/:</p>
-
-<div class="centerblock">
-<p>
-Archivo de paquetes, sobre rsync: <code>debian/</code>
-</p>
-</div>
-
-<p>Este sitio de réplica se refresca desde ftp.xy.debian.org, así que
-añadiremos:</p>
-
-<div class="centerblock">
-<p>
-La réplica se actualiza desde: <code>ftp.xy.debian.org</code>
-</p>
-</div>
-
-<p>Ahora la información del mantenedor:
-
-<div class="centerblock">
-<p>
-Nombre del mantenedor del sitio: <code>Juan Nadie</code><br>
-Correo electrónico público del mantenedor del sitio: <code>la.dirección@va.aquí.com</code>
-</p>
-</div>
-
-<p>Esta dirección del mantenedor generalmente no se mostrará en las listas públicas,
-pero es necesario tener una para que los editores de la lista y los usuarios
-puedan contactar con usted en caso de problemas. Por favor, introduzca una dirección correcta.</p>
-
-<p>La única otra información necesaria es el país.
-Por ejemplo:</p>
-
-<div class="centerblock">
-<p>
-País: <code>España [ES]</code><br>
-</p>
-</div>
-
-<p>Opcionalmente también puede añadir:</p>
-
-<div class="centerblock">
-<p>
-Dirección de correo electrónico privada del mantenedor del sitio (opcional): <code>privado@direccion.aqui</code><br>
-Ubicación del sitio (opcional): <code>Sitio, región</code><br>
-Nombre del patrocinador del sitio (opcional): <code>nombre del patrocinador del sitio</code><br>
-URL del patrocinador del sitio (opcional): <code>http://nombre.del.patrocinador.sa/</code><br>
-Comentario: <code>Cualquier nota que piense que ayudaría a otros</code><br>
-</p>
-</div>
-
-<p>Aquí puede introducir una dirección de correo electrónico privado que sólo se
-enviará a unos pocos editores de la lista, si le gustase darnos una 
-dirección más directa pero está harto de que la publiquen.
-También puede dar crédito al patrocinador del sitio y dar otra información 
-específica sobre su sitio.</p>
-
-
-<p>El siguiente ejemplo describiría el sitio de réplica de ftp.us.debian.org:</p>
-
-<div class="centerblock">
-<p>
-Sitio: <code>ftp.us.debian.org</code><br>
-Aliases: <code>http.us.debian.org</code><br>
-Archivo de paquetes, sobre HTTP: <code>/debian/</code><br>
-Archivo de paquetes, sobre FTP: <code>/debian/</code><br>
-Archivo de paquetes, sobre rsync: <code>debian/</code><br>
-Nombre del mantenedor del sitio: <code>John Doe</code><br>
-Correo electrónico del mantenedor del sitio: <code>la.dirección@va.aquí.com</code><br>
-País: <code>Estados Unidos [US]</code>
-</p>
-</div>
-
-<p>Si mantiene copias de versiones antiguas de Debian, su entrada sería
-similar a ésta:</p>
-
-<div class="centerblock">
-<p>
-Sitio: <code>archive.debian.org</code><br>
-Versiones antiguas de Debian, sobre HTTP: <code>/debian-archive/</code><br>
-Versiones antiguas de Debian, sobre FTP: <code>/debian-archive/</code><br>
-Versiones antiguas de Debian, sobre rsync: <code>debian-archive/</code><br>
-Nombre del mantenedor del sitio: <code>Debian administra el FTP</code><br>
-Correo electrónico del mantenedor del sitio: <code>la.dirección@va.aquí.com</code><br>
-País: <code>Estados Unidos [US]</code><br>
-</p>
-</div>
 
