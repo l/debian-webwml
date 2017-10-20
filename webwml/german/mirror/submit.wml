@@ -1,20 +1,36 @@
 #use wml::debian::template title="Spiegel-Informationen einreichen"
 #include "$(ENGLISHDIR)/mirror/submit.inc"
-#use wml::debian::translation-check translation="1.83"
+#use wml::debian::translation-check translation="1.87"
 # $Id$
 # Translator Martin Schulze <joey@debian.org>
 # Updated: Holger Wansing <linux@wansing-online.de>, 2011, 2012, 2016, 2017.
 
 <p>Falls Sie Informationen zu einem Spiegel von Debian einreichen möchten, 
-   können Sie das über das Formular weiter unten erledigen. Der Großteil der
-   angegebenen Informationen wird in der Spiegel-Liste angezeigt. Am Ende der 
-   Seite finden Sie
-<a href="#examples">Beispiele</a>, falls Sie unsicher sind, wie Sie fortfahren
-sollen.</p>
+   können Sie das über dieses Formular erledigen. Die
+   angegebenen Informationen werden in der Spiegel-Liste angezeigt.
+</p>
 
 <p>Bitte beachten Sie, dass alle eingereichten Spiegel die offiziellen <a 
    href="ftpmirror">Richtlinien, die in unserer Dokumentation dargelegt sind</a>,
-   befolgen sollten.</p>
+   befolgen sollten, speziell:
+</p>
+
+<ul>
+  <li>Sie sollten <a href="ftpmirror#how">ftpsync</a> zum Spiegeln verwenden;</li>
+  <li>Wählen Sie einen guten Upstream-Service-Namen (<strong>nicht</strong> http)
+      wie <code>ftp.CC.debian.org</code>, keine DNS Round-Robins, keine CDNs);</li>
+  <li>Damit die Update-Frequenz passt, aktualisieren Sie Ihren Spiegel viermal
+      am Tag (oder richten Sie Trigger zu Ihrem Upstream-Service ein, oder
+      verwenden Sie <code>ftpsync-cron</code> stündlich, um Ihren Upstream-Service
+      auf Änderungen und initiale Sync-Vorgänge zu überwachen). Desweiteren:</li>
+  <li>Ihr Spiegel muss eine passend benannte tracefile-Datei führen (ftpsync wird 
+      dies korrekt erledigen, wenn MIRRORNAME richtig eingestellt ist);</li>
+  <li>Ihr Spiegel sollte wenn erforderlich die Flagfiles
+      <code>/Archive-Update-in-Progress-XXX</code> und
+      <code>/Archive-Update-Required-XXX</code> mit <code>touch</code> erstellen,
+      (auch dies wird ftpsync für Sie erledigen); Sie helfen damit Spiegeln, die
+      sich von Ihrer Site synchronisieren, den Sync korrekt abzuwickeln.</li>
+</ul>
 
 <form-action "" archive-upstream https://cgi.debian.org/cgi-bin/submit_mirror.pl>
 
@@ -28,229 +44,62 @@ sollen.</p>
     Aktualisierung eines existierenden Spiegels
 </p>
 
-<p>Bitte geben Sie den Namen an, unter dem der Spiegel im <em>Site</em>-Feld
-   angezeigt werden soll.</p>
+<p>
+Spiegel-Site: <input type="text" name="site" size="30"></p>
 
-<p>Site: <input type="text" name="site" size="30"></p>
-
-<p>Falls der Server andere Namen hat, führen Sie diese im <em>Alias</em>-Feld
-   auf, durch Kommata (<q>,</q>) getrennt.</p>
-
-<p>Alias: <input type="text" name="aliases" size="60"></p>
-
-<h2>Arten des Spiegels und Zugriffsmethoden</h2>
-
-<p>Geben Sie den Pfad zum Debian-Spiegel auf Ihrem Rechner an. Lassen
-Sie die nichtrelevanten Felder leer.</p>
+<p>Bitte geben Sie die Pfade zum Debian-Spiegel Ihrer Site in die Felder unten ein.
+Lassen Sie unzutreffende Felder leer.</p>
 
 <table>
-<tablerow "Paket-Archiv, über HTTP"   archive-http   30>
-<tablerow "Paket-Archiv, über FTP"    archive-ftp    30>
-<tablerow "Paket-Archiv, über rsync"  archive-rsync  30>
-<tablerow "CD-/DVD-Images, über HTTP"          cdimage-http   30>
-<tablerow "CD-/DVD-Images, über FTP"           cdimage-ftp    30>
-<tablerow "CD-/DVD-Images, über rsync"         cdimage-rsync  30>
-<tablerow "Alte Debian-Versionen, über HTTP"  old-http     30>
-<tablerow "Alte Debian-Versionen, über FTP"   old-ftp      30>
-<tablerow "Alte Debian-Versionen, über rsync" old-rsync    30>
+<tablerowdef "Paket-Archiv, über HTTP"   archive-http   30 "/debian" " <small>Wir empfehlen dringend <code>/debian</code>.</small>">
+<tablerowdef "Paket-Archiv, über rsync"  archive-rsync  30 "debian" " <small>Wenn Sie rsync anbieten, wird <code>debian</code> als Modulname empfohlen.</small>">
+# <tablerow "CD-/DVD-Images, über HTTP"      cdimage-http   30>
+# <tablerow "CD-/DVD-Images, über rsync"     cdimage-rsync  30>
+# <tablerow "Alte Debian-Versionen, über HTTP"  old-http     30>
+# <tablerow "Alte Debian-Versionen, über rsync" old-rsync    30>
 </table>
 
 <h2>Informationen über den Spiegel-Server</h2>
 
 <table>
-<tr-upstream-give "Haupt-Spiegel aktualisiert von"         archive-upstream   30>
-<tr-upstream-take "CD-/DVD-Image-Spiegel aktualisiert von"  cdimage-upstream   30>
 <tr>
-<td>Spiegel-Frequenz:</td>
+<td>Gespiegelte Architekturen:
 <td>
-<select name="updates">
-<option value="never">Bitte auswählen...</option>
-<option value="push">ausgelöst durch Push</option>
-<option value="four">viermal täglich (derzeitiger Archiv-Aktualisierungstakt)</option>
-<option value="twice">zweimal täglich</option>
-<option value="once">täglich</option>
-<option value="lessoften">seltener</option>
-</select>
-</td>
-</tr>
-<tr>
-<td>Gespiegelte Architekturen:</td>
-<td>
-<label><input type=checkbox name=architectures id="allarch" value="ALL" onclick="allarches()">&nbsp;<em>alle (d.h. kein Ausschluss per Architektur wird vorgenommen)</em></label><br />
+<label><input type=checkbox name=architectures id="allarch" value="ALL" onclick="allarches()">&nbsp;<em>alle (d.h. kein Ausschluss bestimmter Architekturen)</em></label><br>
 <archlist>
 </td></tr>
 </table>
 
 <table>
 <tablerow "Name des Verantwortlichen"         maint_name    30>
-<tablerow "Öffentliche E-Mail des Verantwortlichen"     maint_public_email   30>
-<tr><td>&nbsp;</td><td>
-<small>
-Die öffentliche E-Mail-Adresse des Spiegel-Betreuers wird allen Benutzern zur
-Verfügung stehen.
-</small>
-</td></tr>
+<tablerow "Öffentliche E-Mail des Verantwortlichen"              maint_public_email    30>
 <tr><td>Land:  <td><select name="country">
 <countrylist>
 </select>
-<tablerow "Private E-Mail des Verantwortlichen (optional)"  maint_private_email
- 30>
-<tr><td>&nbsp;</td><td>
-<small>
-Falls Sie eine private Adresse angeben, wird diese nur für die Debian
-Spiegel-Editoren verfügbar sein, damit diese Sie über wichtige Nachrichten 
-und/oder Fehlerberichte informieren können.
-</small>
-</td></tr>
 <tablerow "Aufstellungsort (optional)"     location      30>
 <tablerow "Name des Site-Sponsors (optional)" sponsor_name  30>
 <tablerow "URL des Site-Sponsors (optional)"  sponsor_url   30>
 </table>
 
-<table border=0><tr>
+<table><tr>
 <td valign="top">Kommentar:</td>
-<td><textarea name="comment" cols="40" rows="7"></textarea></td>
+<td><textarea name="comment" cols=40 rows=7></textarea></td>
 </tr></table>
-
-<p>Beachten Sie: Bei mehreren Sponsoren tragen Sie diese bitte als
-   Kommentar ein. Sie können auch angeben, ob der Spiegel seltener als einmal
-   täglich aktualisiert wird, und wie schnell die Site ist (ihre maximale
-   Bandbreite).
-</p>
 
 <p><label>Ich habe die
 <a href="https://lists.debian.org/debian-mirrors-announce/">
-announcements-Mailingliste</a> abonniert
+mirrors-announcements-Mailingliste</a> abonniert
 <input type="checkbox" name="mlannounce"></label>
 </p>
 
 <p>
-<input type="submit" value="Submit"> <input type="reset" value="Formular zurücksetzen">
+<input type="submit" value="Abschicken"> <input type="reset" value="Formular zurücksetzen">
 </p>
 </form>
 
-<p>Ihr Rechner sollte in der Liste innerhalb einer Woche auftauchen, sobald ein
-   menschlicher Betreiber ihn überprüft und eingebunden hat.
-Wir werden Sie per E-Mail anschreiben, falls es Probleme mit dem Eintrag
-gibt.</p>
+<p>Ihre Site sollte innerhalb einer Woche in der Liste auftauchen, sobald jemand
+   ihn überprüft und eingebunden hat. Wir werden Sie per E-Mail anschreiben, falls
+   es Unklarheiten mit dem Eintrag gibt.</p>
 
 <p>Falls Sie innerhalb von zwei Wochen keine Rückmeldung bekommen, können Sie
    uns unter <email mirrors@debian.org> kontaktieren.</p>
-
-<h2><a name="examples">Beispiele</a></h2>
-
-<p>Der folgende Eintrag wäre für einen Server namens debian.example.com,
-der auch unter e1.example.com erreicht werden kann. Diese Namen sind
-natürlich rein fiktiv.</p>
-
-<div class="centerblock">
-<p>
-Site: <code>debian.example.com</code><br />
-Alias: <code>e1.example.com</code><br />
-</p>
-</div>
-
-<p>Der Debian-Archiv-Spiegel ist im /debian/-Verzeichnis auf dem Web-Server:</p>
-
-<div class="centerblock">
-<p>
-Paket-Archive, über HTTP: <code>/debian/</code>
-</p>
-</div>
-
-<p>Dies ist für ftp://debian.example.com/debian/:</p>
-     
-<div class="centerblock">
-<p>
-Paket-Archive, über FTP: <code>/debian/</code>
-</p>
-</div>
-
-<p>Dieses ist das Verzeichnis, das für rsync-Zugang benutzt wird,
-debian.example.com::debian/:</p>
-
-<div class="centerblock">
-<p>
-Paket-Archive, über rsync: <code>debian/</code>
-</p>
-</div>
-
-<p>Dieser Spiegel wird von ftp.xy.debian.org aktualisiert, also fügen wir
-Folgendes hinzu:</p>
-
-<div class="centerblock">
-<p>
-Spiegel aktualisiert von: <code>ftp.xy.debian.org</code>
-</p>
-</div>
-
-<p>Nun zu den Informationen des Verantwortlichen:</p>
-
-<div class="centerblock">
-<p>
-Name des Verantwortlichen: <code>Max Mustermann</code><br />
-Öffentliche E-Mail des Verantwortlichen: <code>abc@adresse.hier.hin</code>
-</p>
-</div>
-
-<p>Die Adresse des Verantwortlichen wird im Allgemeinen nicht auf den
-   öffentlichen Listen gezeigt, aber es ist notwendig, das eine existiert, damit
-   die Redakteure der Spiegel-Listen und Benutzer mit Ihnen im Problemfall
-   Kontakt aufnehmen können. Bitte geben Sie eine korrekte Adresse an.</p>
-
-<p>Die einzige weitere notwendige Information ist das Land, beispielsweise:</p>
-
-<div class="centerblock">
-<p>
-Land: <code>Vereinigte Staaten [US]</code><br />
-</p>
-</div>
-
-<p>Optional könnten Sie auch folgendes hinzufügen:</p>
-
-<div class="centerblock">
-<p>
-Private E-Mail des Verantwortlichen (optional): 
-  <code>private@adresse.hier</code><br />
-Aufstellungsort (optional): <code>Ort, Name der Region</code><br />
-Name des Site-Sponsors (optional): <code>Name des Site-Sponsors</code><br />
-URL des Site-Sponsors (optional): <code>http://name.des.sponsors.tld/</code><br />
-Kommentar: <code>Beliebige Bemerkungen &ndash; auf <b>englisch</b></code><br />
-</p>
-</div>
-
-<p>Hier können Sie eine private E-Mail-Adresse eingeben, die nur zu einigen
-   wenigen ausgewählten Spiegellisten-Redakteuren gesendet wird, falls Sie uns
-   eine direktere Adresse geben wollen, aber Sorge vor deren Veröffentlichung
-   haben. Sie können auch Ihren Dank an den Site-Sponsor ausdrücken und andere
-   spezielle Informationen über Ihre Site angeben.</p>
-
-<p>Das nächste Beispiel würde den Spiegel auf ftp.us.debian.org beschreiben:</p>
-
-<div class="centerblock">
-<p>
-Site: <code>ftp.us.debian.org</code><br />
-Alias: <code>http.us.debian.org</code><br />
-Paket-Archive, über HTTP: <code>/debian/</code><br />
-Paket-Archive, über FTP: <code>/debian/</code><br />
-Paket-Archive, über rsync: <code>debian/</code><br />
-Name des Verantwortlichen: <code>John Doe</code><br />
-E-Mail des Verantwortlichen: <code>abc@adresse.hier.hin</code><br />
-Land: <code>Vereinigte Staaten [US]</code>
-</p>
-</div>
-
-<p>Falls Sie Kopien von alten Debian-Versionen spiegeln, würde Ihr
-Eintrag so ähnlich aussehen wie der folgende:</p>
-
-<div class="centerblock">
-<p>
-Site: <code>archive.debian.org</code><br />
-Alte Debian-Versionen, über HTTP: <code>/debian-archive/</code><br />
-Alte Debian-Versionen, über FTP: <code>/debian-archive/</code><br />
-Alte Debian-Versionen, über rsync: <code>debian-archive/</code><br />
-Name des Verantwortlichen: <code>Debian FTP admins</code><br />
-E-Mail des Verantwortlichen: <code>abc@adresse.hier.hin</code><br />
-Land: <code>Vereinigte Staaten [US]</code><br />
-</p>
-</div>
