@@ -1,0 +1,175 @@
+#use wml::debian::template title="어떻게 www.debian.org 이 만들어 지는가"
+#use wml::debian::toc
+#use wml::debian::translation-check translation="1.38" maintainer="Sebul"
+
+<p>데비안 <em>&ldquo;웹트리&rdquo;</em>, 
+우리 웹 사이트를 구성하는 디렉토리와 파일의 모임,는
+www-master.debian.org 에 <tt>/org/www.debian.org/www</tt> 디렉토리 안에 있습니다.
+대부분의 페이지는 보통 정적 HTML 파일(즉 CGI 또는 PHP 같은 동적 스크립트로 만들어지지 않음)인데,
+왜냐면 웹 사이트는 미러되기 때문입니다.
+
+<p>사이트는 셋 중 한 방법으로 생성됩니다:
+<ul>
+  <li>그것의 대부분은 WML을 사용하여 만들어짐,
+<a href="$(DEVEL)/website/using_cvs"><q>webwml</q> CVS 트리</a>부터
+  <li>문서는 DocBook XML을 사용(DebianDoc SGML 사용은 점점 사라짐)하여 만들어지거나,
+<a href="$(DOC)/cvs"><q>ddp</q> Subversion 저장소</a>부터; 또는
+<a href="#scripts">cron scripts</a>을 써서, 해당 데비안 패키지부터
+  <li>사이트 일부는 다른 소스를 사용한 스크립트를 써서 만들어짐,
+예를 들어 메일링 리스트 (비)구독 페이지들
+</ul>
+
+<p>자동 업데이트는 (CVS 저장소와 다른 소스에서부터 웹트리까지) 하루에 여섯번 돕니다.
+
+<p>사이트에 기여하고 싶다면, <code>www/</code>에 항목을 단순히 더하거나 편집하지 <strong>마세요</strong>.
+<a href="mailto:webmaster@debian.org">웹 마스트</a>에게 먼저 연락하세요.
+
+<p>모든 파일과 디렉토리는 debwww 그룹에 속하며 그 그룹에서 쓸 수 있으르로,
+웹 팀은 웹 디렉토리 안의 파일을 변경할 수 있습니다.
+디렉토리에서 2775 모드는 그 디렉토리(여기서는 debwww 디렉토리) 아래에서 만들어지는 어떤 파일도
+그룹(여기서는 debwww)을  상속받음을 뜻합니다.
+debwww 그룹 안의 누구나  '<code>umask 002</code>' 를 설정하는 것이 기대되므로
+파일들은 그룹 쓰기 권한으로 만들어집니다.
+
+<toc-display />
+
+<hrline />
+
+
+<toc-add-entry name="look">룩 &amp; 필</toc-add-entry>
+
+<p>우리는 
+<a href="https://packages.debian.org/unstable/web/wml">WML</a>이
+페이지에 머리말과 꼬리말을 더하는 세부작업을 함으로써
+페이지들에 같은 모양과 느낌을 줍니다.
+처음 보면 wml 페이지가 HTML 처럼 보일지라도,
+HTML은 wml에 사용될 수 있는 추가 정보의 한 유형일 뿐입니다.
+파일에 다양한 필터를 돌려서 끝나면, 최종 제품은 참된 HTML 입니다.
+여러분에게 WML의 힘의 아이디어를 주려면,
+여러분이 페이지에 Perl 코드를 포함하여 여러분이 그것, 정말, 거의 모든 것,을 하도록 허용할 수
+있습니다.
+
+<p>그러나 WML은 여러분의 HTML 코드에 기본 타당성만 점검함(가끔 자동 수정)을 주의하세요.
+<a href="https://packages.debian.org/unstable/web/weblint">weblint</a>
+그리고 / 또는
+<a href="https://packages.debian.org/unstable/web/tidy">tidy</a>를 설치해서
+여러분의 HTML 코드 유효성을 검사할 수도 있습니다.
+
+<p>우리의 웹 페이지는 현재 <a href="http://www.w3.org/TR/html4/">HTML 4.01 Strict</a> 표준을 따릅니다.
+그러나, <a href="http://www.w3.org/TR/xhtml1/">XHTML</a>로 옮기려 하므로,
+모는 웹 에디터는  HTML을 소문자로 쓰고, 적절한 곳에 닫는 태그를 놓는 것 등으로 
+전환이 원활이 되게 할 것을 권합니다.
+
+<p>많은 페이지를 작업하는 누구나 WML을 설치해서
+결과가 원하는 것으로 만들어지는지 테스트할 수 있습니다.
+데비안을 돌리면,
+쉽게 <code>wml</code> 패키지를 설치할 수 있습니다.
+더 많은 정보를 위하여 <a href="using_wml">WML 사용하기</a> 페이지를 읽으세요.
+
+
+<toc-add-entry name="sources">소스</toc-add-entry>
+
+<p>The source for the web pages is stored under CVS. CVS is a version
+control system, which allows us to keep a log of which, who, when, and why changes
+occurred, etc. It is a safe way to control the concurrent editing of source
+files among multiple authors, which is crucial for us because the Debian web
+team is rather large in size.
+
+<p>If you are unfamiliar with this program, you will want to read the pages
+on <a href="using_cvs">using CVS</a>.
+
+<p>The topmost webwml directory in the CVS repository contains directories
+named after the languages the web site is in, two makefiles and several
+scripts. The translation directory names should be in English and lowercase
+(e.g. "german", not "Deutsch").
+
+<p>The more important of the two makefiles is Makefile.common, which, as its
+name says, contains some common rules which are applied by including this
+file in the other makefiles.
+
+<p>Each of the language directories contains makefiles, WML source files and
+subdirectories. The file and directory names do not differ in order to keep
+the links correct for all languages. The directories may also contain .wmlrc
+files which contain some information useful to WML.
+
+<p>The webwml/english/template directory contains special WML files that we
+call templates, because they can be referenced from all other files using the
+<code>#use</code> command.
+
+<p>In order for changes in the templates to propagate to the files which use
+them, the files have makefile dependencies on them. Since a vast majority of
+the files use the "template" template, by having a
+"<code>#use wml::debian::template</code>" line at the top, the generic
+dependency (the one for all files) is that very template. There are
+exceptions to this rule, of course.
+
+
+<toc-add-entry name="scripts">스크립트</toc-add-entry>
+
+<p>The scripts are mostly written in shell or Perl. Some of them are
+standalone, and some of them are integrated into WML source files.</p>
+
+<p>The sources for the main www-master rebuild scripts are in the
+<a href="https://anonscm.debian.org/cgit/debwww/cron.git/">debwww/cron
+Git repository</a>.
+</p>
+
+<p>The sources for the packages.debian.org rebuild scripts are in the
+<a href="https://anonscm.debian.org/cgit/webwml/packages.git">webwml/packages
+Git repository</a>.</p>
+
+
+<toc-add-entry name="help">돕는 방법</toc-add-entry>
+
+<p>
+We invite everyone interested to help us make the Debian site as good as
+it can be. If you have valuable information related to Debian that you think
+our pages are missing, <a href="mailto:debian-www@lists.debian.org">share it
+with us</a> and we'll see that it gets included.
+
+<p>We could always use help with designing pages (regarding graphics and
+layouts), and keeping our HTML clean, too. We regularly run the following
+checks on the whole web site:</p>
+
+<ul>
+  <li><a href="https://www-master.debian.org/build-logs/urlcheck/">URL check</a>
+  <li><a href="https://www-master.debian.org/build-logs/validate/">wdg-html-validator</a>
+  <li><a href="https://www-master.debian.org/build-logs/tidy/">tidy</a>
+</ul>
+
+<p>위 로그를 읽고 문제를 고치는 도옴은 언제나 환영합니다.</p>
+
+<p>현재 웹 사이트빌드 로그는
+<url "https://www-master.debian.org/build-logs/">에서 찾을 수 있습니다.</p>
+
+<p>여러분이 유창한 영어 사용자라면,
+우리의 페이지를 교정하고 모든 에러를 <a href="mailto:debian-www@lists.debian.org">우리</a>에게
+알려 주세요.
+
+<p>다른 언어 사용자라면, 페이지를 여러분의 언어로 번역하여 우리를 도울 수 있습니다.
+번역이 이미 되었지만, 문제가 있다면, <a href="translation_coordinators">\
+번역 코디네이터</a> 목록을 보고 여러분의 언어 지도자에게 그것을 고치는 것에 대해 얘기하세요.
+여러분 스스로 번역하고 싶으면, 더 많은 정부를 위하여 <a href="translating">that topic</a> 페이지를 보세요.
+
+<p><a href="todo">TODO 파일</a>도 있으니, 확인하세요.</p>
+
+<toc-add-entry name="nohelp">도움 <strong>안 되는</strong> 방법</toc-add-entry>
+
+<p><em>[Q] <var>멋진 웹 기능</var>을 www.debian.org 안에 넣고 싶은데,
+해도 되나요?</em>
+
+<p>[A] 아뇨. 우리는 www.debian.org 이 되도록 접근 가능하길 바라므로, 그래서
+<ul>
+    <li>특정 브라우저 "확장" 없음.
+    <li>오직 이미지에만 의존하면 안 됨. 이미지를 명확히 하는 데 쓸 수는 있지만,
+www.debian.org 의 정보는 lynx 같은 텍스트전용 브라우저를 통해서도 접근할 수 있어야 합니다.
+</ul>
+
+<p><em>[Q] 좋은 생각이 있습니다. FOO를 www.debian.org 의 HTTPD 에서 활성화할 수 있나요?</em>
+
+<p>[A] 아뇨.
+www.debian.org를 관리자들이 쉽게 미러하게 만들어 주기 위해, 특별한 HTTPD기능이 없습니다.
+아니, SSI도 아닙니다.
+예외는 컨텐트 협상을 위해 만들어집니다.
+왜냐면 그것이 여러 언어를 제공하는 유일한 강력한 방법이기 때문입니다.
+
