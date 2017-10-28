@@ -1,0 +1,96 @@
+#use wml::debian::template title="예시"
+#use wml::debian::translation-check translation="1.10" maintainer="Sebul"
+
+<h3>번역 시작하기 예시</h3>
+
+<p>한국어를 예시로 쓸 겁니다:
+
+<pre>
+   cvs checkout webwml/Makefile.common webwml/english
+   cd webwml
+   mkdir korean
+   cvs add korean
+   cd korean
+   cp ../english/.wmlrc ../english/Make.* .
+   echo '<protect>include $(subst webwml/french,webwml/english,$(CURDIR))/Makefile</protect>' &gt; Makefile
+   mkdir po
+   cvs add Make* .wmlrc po
+   cp Makefile po
+   make -C po init-po
+   cvs add po/Makefile po/*.ko.po
+</pre>
+
+<p><tt>.wmlrc</tt> 파일을 편집해서 아래와 같이 바꿈:
+<ul>
+  <li>'-D CUR_LANG=English' 를 '-D CUR_LANG=Korean' 으로
+  <li>'-D CUR_ISO_LANG=en' 를 '-D CUR_ISO_LANG=ko' 로
+  <li>'-D CUR_LOCALE=en_US' 를 '-D CUR_LOCALE=ko_KR.UTF-8' 로
+  <li>'-D CHARSET=utf-8' 로.<br>
+새 언어는 이 설정을 조정할 필요가 있을 수 있음.
+</ul>
+
+<p>Make.lang 을 편집하여 'LANGUAGE := en' 을 'LANGUAGE := ko' 로 바꿉니다.
+
+In case you are translating to a language which uses a multi-byte charset,
+you may have to change some other variables in that file, for more
+information read ../Makefile.common and perhaps other working examples
+(translations such as Chinese).
+
+<p>Go to french/po and translate entries in PO files.  This should be
+quite straightforward.
+
+<p>Always make sure you copy the Makefile to each directory you translate.
+This is necessary because the program <code>make</code> is used to convert
+the .wml files into HTML, and <code>make</code> uses Makefiles.
+
+<p>When you are done adding and editing pages, do a
+<pre>
+   cvs commit
+</pre>
+from the webwml directory. You can now start translating the pages.
+
+<h3>한 페이지 번역하기</h3>
+
+<p>social contract 의 번역이 이 예시로 쓰일 겁니다:
+
+<pre>
+   cd webwml
+   ./copypage.pl english/social_contract.wml
+   cd korean
+   cvs add social_contract.wml
+</pre>
+
+<p>This will automatically add the translation-check header, pointing to the 
+version of the original file which was copied. It also creates the destination 
+directory and Makefile, if missing.</p>
+
+<p>Edit social_contract.wml and translate the text. Do not try to translate
+any links or change them in any way - if you want to change anything,
+request it on the debian-www list. When done, type
+
+<pre>
+   cvs commit -m "short description of the changes you made" social_contract.wml
+</pre>
+
+<h3>새 디렉토리 더하는 예</h3>
+
+<p>이 예시는 한국어 번역에 intro/ 디렉토리를 더하는 것을 보여줌:
+
+<pre>
+   cd webwml/korean
+   mkdir intro
+   cvs add intro
+   cd intro
+   cp ../Makefile .
+</pre>
+
+새 디렉토리는 Makefile 을 갖고 CVS에 커밋되었는지 확인하세요.
+Make sure a new directory has the Makefile and that it's committed in CVS.
+그러지 않으면, make 돌릴 때 에러 날 겁니다.
+
+<pre>
+   cvs add Makefile
+   cd ..
+   cvs commit -m "added the intro dir to CVS" intro
+</pre>
+
