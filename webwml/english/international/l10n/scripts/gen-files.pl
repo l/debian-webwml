@@ -41,7 +41,7 @@ my $date = $data->get_date();
 my %popcon = ();
 if ($opt_s ne '' && -r $opt_s && open (POPCON, "< $opt_s")) {
         #  This file is in the same format as
-        #    http://popcon.debian.org/source/by_inst
+        #    https://popcon.debian.org/source/by_inst
         while (<POPCON>) {
                 next if m/^#/;
                 last unless m/^(\d+)\s+(\S+)/;
