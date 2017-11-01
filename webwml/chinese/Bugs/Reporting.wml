@@ -1,0 +1,488 @@
+#use wml::debian::template title="Debian 缺陷跟踪系统——报告缺陷" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.84" maintainer="Boyuan Yang"
+
+<h1>如何使用 reportbug 在 Debian 中报告 bug</h1>
+
+<a name="reportbug"></a>
+<p>我们强烈建议您在 Debian 中报告问题、缺陷与错误时使用
+<code><a
+href="https://packages.debian.org/stable/utils/reportbug">reportbug</a></code>
+程序。如需安装并启动它，您仅需运行：</p>
+
+<blockquote>
+ <p># <kbd>apt-get install reportbug</kbd><br/>
+    $ <kbd>reportbug</kbd></p>
+</blockquote>
+
+<p>该程序将引导您一步一步完成缺陷报告流程。</p>
+
+<p>如果您对 reportbug 提供的交互式功能有疑问或者其功能无法满足您的需求的话，
+请参考本文后面叙述的文档内容，或者在<a
+href="mailto:debian-user@lists.debian.org"> Debian 用户邮件列表（英文）</a>
+或 <a href="mailto:debian-chinese-gb@lists.debian.org">Debian 中文邮件列表</a>询问。</p>
+
+
+<h1>如何使用电子邮件向 Debian 报告 bug（reportbug 的高级用法）</h1>
+
+<h2>在您发送缺陷报告<strong>之前</strong>需要了解的东西</h2>
+
+<a name="whatpackage"></a>
+<h3>您的报告应当归属哪个软件包之下？</h3>
+<p>您需要知道您的缺陷报告应该针对哪一个软件包进行提交。请查看
+<a href="#findpkgver">这个例子</a>以了解您该如何获取这类信息。
+（您还可以通过这些信息了解到<a href="#filedalready">您的缺陷报告是否已经被其他人提交过了。</a>）
+</p>
+
+<p>如果您无法确定您的报告应该针对哪一个软件包提交，
+请向 <a href="mailto:debian-user@lists.debian.org">Debian
+用户邮件列表</a>发送邮件询问以得到建议。</p>
+
+<p>如果您遇到的问题并不仅仅和某个单一的软件包相关，而是和某些一般的 Debian
+服务有关的话，我们有一些 <a href="pseudo-packages">pseudo-packages</a>
+（即“伪软件包”）以及 <a href="../MailingLists/">邮件列表</a>。
+这些设施可以帮助你将相关的信息转递给我们。
+
+<a name="filedalready"></a>
+<h3>您的缺陷报告是否已被提交过了？</h3>
+<p>在提交报告之前，您应该检查您的缺陷报告是否已被他人提交过了。
+即，其他人已经提交了一份报告描述了相同的问题。
+如需查找某个软件包中已经被提交的问题报告列表，
+您可以使用< href="./#pkgreport">缺陷搜索表格中的“package”（软件包）选项</a>进行查找。
+如果已经存在一个编号为“#<var>&lt;number&gt;</var>”且与您遇到的问题相同的报告的话，
+您应该以向收件人为“<var>&lt;number&gt;</var>@bugs.debian.org”
+的电子邮件地址发送电子邮件以附加您的评论。此时请不要提交一个新的缺陷报告以避免重复。</p>
+
+<h3>请为不同的问题各自提交报告</h3>
+<p>请不要在单一的缺陷报告中描述多个不相关的问题。当这些问题分属不同的软件包时更是如此。
+请为每个问题提交各自独立的报告。</p>
+
+<h3>避免直接向上游提交报告</h3>
+<p>如果您已经在 Debian 中提交了一份报告，请不要将其副本原封不动地向上游再报告一份，
+因为这个问题很可能只在 Debian 中出现。如果真的必要的话，软件包维护者会帮忙将报告
+转发给上游。</p>
+
+<h2>使用电子邮件发送缺陷报告</h2>
+
+<p>您可以使用发送电子邮件的方式向 Debian 提交一份新的缺陷报告，
+下文将具体描述操作方法。您的电子邮件应当发往<a href="mailto:submit@bugs.debian.org">
+<code>submit@bugs.debian.org</code></a>，并采取后文中描述的特殊文本格式。
+<code>reportbug</code> 工具（<a href="#reportbug">参见前文</a>）实质上是自动帮助你
+撰写了合适格式的电子邮件并进行提交。可能的话，请尽量使用它！</p>
+
+<h3>信头</h3>
+<p>Like any e-mail you should include a clear, descriptive
+<code>Subject</code> line in your main mail header.  The subject you
+give will be used as the initial bug title in the tracking system, so
+please try to make it informative!</p>
+
+<p>If you'd like to send a copy of your bug report to additional recipients
+(such as mailing lists), you shouldn't use the usual e-mail headers, but
+<a href="#xcc">a different method, described below</a>.</p>
+
+<h3><a name="pseudoheader">伪信头（Pseudo-Headers）</a></h3>
+<p>The first part of the bug report are the pseudo-headers which contain
+information about what package and version your bug report applies to.
+The first line of the message body has to include a pseudo-header.
+It should say:</p>
+
+<pre>
+Package: &lt;packagename&gt;
+</pre>
+
+<p>Replace <code>&lt;packagename&gt;</code> with the <a href="#whatpackage">name of the package</a> which
+has the bug.</p>
+
+<p>The second line of the message should say:</p>
+
+<pre>
+Version: &lt;packageversion&gt;
+</pre>
+
+<p>Replace <code>&lt;packageversion&gt;</code> with the version of the package.
+Please don't include any text here other than the version itself, as the
+bug tracking system relies on this field to work out which releases are
+affected by the bug.</p>
+
+<p>You need to supply a correct <code>Package</code> line in the
+pseudo-header in order for the bug tracking system to deliver the message
+to the package's maintainer. See <a href="#findpkgver">this example</a> for
+information on how to find this information.</p>
+
+<p>For other valid pseudo-headers, see <a
+href="#additionalpseudoheaders">Additional pseudo-headers</a></p>
+
+<h3>The body of the report</h3>
+<p>Please include in your report:</p>
+
+<ul>
+<li>The <em>exact</em> and <em>complete</em> text of any error
+messages printed or logged.  This is very important!</li>
+<li>Exactly what you typed or did to demonstrate the problem.</li>
+<li>A description of the incorrect behavior: exactly what behavior
+you were expecting, and what you observed.  A transcript of an
+example session is a good way of showing this.</li>
+<li>A suggested fix, or even a patch, if you have one.</li>
+<li>Details of the configuration of the program with the problem.
+Include the complete text of its configuration files.</li>
+<li>The versions of any packages on which the buggy package depends.</li>
+<li>What kernel version you're using (type <code>uname -a</code>), your
+shared C library (type <code>ls -l /lib/libc.so.6</code> or
+<code>dpkg -s libc6 | grep ^Version</code>), and any other details about
+your Debian system, if it seems appropriate.  For example, if you had a
+problem with a Perl script, you would want to provide the version of the
+`perl' binary (type <code>perl -v</code> or <code>dpkg -s perl | grep
+^Version:</code>).</li>
+<li>Appropriate details of the hardware in your system.  If you're
+reporting a problem with a device driver please list <em>all</em> the
+hardware in your system, as problems are often caused by IRQ and I/O
+address conflicts.</li>
+<li>If you have <a
+href="https://packages.debian.org/stable/utils/reportbug">reportbug</a>
+ installed the output of
+ <code>reportbug -q --template -T none -s none -S normal -b --list-cc
+ none -q &lt;package&gt;</code>
+will also be useful, as it contains the output of maintainer specific
+scripts and version information.</li>
+</ul>
+
+<p>Include any detail that seems relevant &mdash; you are in very little danger
+of making your report too long by including too much information.  If
+they are small, please include in your report any files you were using
+to reproduce the problem. (If they are large, consider making them
+available on a publicly available website if possible.)</p>
+
+<p>For more advice on how to help the developers solve your problem,
+please read <a href="http://www.chiark.greenend.org.uk/~sgtatham/bugs.html">
+How to Report Bugs Effectively</a>.</p>
+
+
+<h2><a name="example">一个示例缺陷报告</a></h2>
+
+<p>A bug report with header and pseudo-header looks something like this:</p>
+
+<pre>
+  To: submit@bugs.debian.org
+  From: diligent@testing.linux.org
+  Subject: Hello says `goodbye'
+
+  Package: hello
+  Version: 1.3-16
+
+  When I invoke `hello' without arguments from an ordinary shell
+  prompt it prints `goodbye', rather than the expected `hello, world'.
+  Here is a transcript:
+
+  $ hello
+  goodbye
+  $ /usr/bin/hello
+  goodbye
+  $
+
+  I suggest that the output string, in hello.c, be corrected.
+
+  I am using Debian GNU/Linux 2.2, kernel 2.2.17-pre-patch-13
+  and libc6 2.1.3-10.
+</pre>
+
+
+<h2><a name="xcc">Sending copies of bug reports to other addresses</a></h2>
+
+<p>Sometimes it is necessary to send a copy of a bug report to somewhere
+else besides <code>debian-bugs-dist</code> and the package maintainer,
+which is where they are normally sent.</p>
+
+<p>You could do this by CC'ing your bug report to the other address(es),
+but then the other copies would not have the bug report number put in
+the <code>Reply-To</code> field and the <code>Subject</code> line.
+When the recipients reply they will probably preserve the
+<code>submit@bugs.debian.org</code> entry in the header and have their
+message filed as a new bug report.  This leads to many duplicated
+reports.</p>
+
+<p>The <em>right</em> way to do this is to use the
+<code>X-Debbugs-CC</code> header.  Add a line like this to your
+message's mail header:</p>
+<pre>
+ X-Debbugs-CC: other-list@cosmic.edu
+</pre>
+<p>This will cause the bug tracking system to send a copy of your report
+to the address(es) in the <code>X-Debbugs-CC</code> line as well as to
+<code>debian-bugs-dist</code>.</p>
+
+<p>If you want to send copies to more than one address, add them
+comma-separated in only one <code>X-Debbugs-CC</code> line.</p>
+
+<p>Avoid sending such copies to the addresses of other bug reports, as
+they will be caught by the checks that prevent mail loops. There is
+relatively little point in using <code>X-Debbugs-CC</code> for this
+anyway, as the bug number added by that mechanism will just be replaced
+by a new one; use an ordinary <code>CC</code> header instead.</p>
+
+<p>This feature can often be combined usefully with mailing
+<code>quiet</code> &mdash; see below.</p>
+
+<a name="additionalpseudoheaders"></a>
+<h1>Additional Pseudoheaders</h1>
+
+<h2><a name="severities">Severity levels</a></h2>
+
+<p>If a report is of a particularly serious bug, or is merely a feature
+request, you can set the severity level of the bug as you report
+it.  This is not required however, and the package maintainer will assign an
+appropriate severity level to your report even if you do not (or pick
+the wrong severity).</p>
+
+<p>To assign a severity level, put a line like this one in the
+<a href="#pseudoheader">pseudo-header</a>:</p>
+
+<pre>
+Severity: &lt;<var>severity</var>&gt;
+</pre>
+
+<p>Replace &lt;<var>severity</var>&gt; with one of the available severity
+levels, as described in the
+<a href="Developer#severities">advanced documentation</a>.</p>
+
+<h2><a name="tags">Assigning tags</a></h2>
+
+<p>You can set tags on a bug as you are reporting it. For example, if
+you are including a patch with your bug report, you may wish to set the
+<code>patch</code> tag. This is not required, however, and the developers
+will set tags on your report as and when it is appropriate.</p>
+
+<p>To set tags, put a line like this one in the
+<a href="#pseudoheader">pseudo-header</a>:</p>
+
+<pre>
+Tags: &lt;<var>tags</var>&gt;
+</pre>
+
+<p>Replace &lt;<var>tags</var>&gt; with one or more of the available tags,
+as described in the
+<a href="Developer#tags">advanced documentation</a>.
+Separate multiple tags with commas, spaces, or both.</p>
+
+<pre>
+User: &lt;<var>username</var>&gt;
+Usertags: &lt;<var>usertags</var>&gt;
+</pre>
+
+<p>Replace &lt;<var>usertags</var>&gt; with one or more usertags.
+Separate multiple tags with commas, spaces, or both. If you specify a
+&lt;<var>username</var>&gt;, that user's tags will be set. Otherwise,
+the e-mail address of the sender will be used as the username.</p>
+
+<h2>Setting Forwarded</h2>
+<pre>
+Forwarded: <var>foo@example.com</var>
+</pre>
+
+<p>
+will mark the newly submitted bug as forwarded to foo@example.com. See
+<a href="Developer#forward">Recording that you have passed on a bug
+report</a> in the developers' documentation for details.
+</p>
+
+<h2>Claiming ownership</h2>
+<pre>
+Owner: <var>foo@example.com</var>
+</pre>
+
+<p>
+will indicate that foo@example.com is now responsible for fixing this
+bug. See <a href="Developer#owner">Changing bug ownership</a> in the
+developers' documentation for details.
+</p>
+
+<h2>Source Package</h2>
+<pre>
+Source: <var>foopackage</var>
+</pre>
+
+<p>
+the equivalent of <code>Package:</code> for bugs present in the source
+package of foopackage; for most bugs in most packages you don't want
+to use this option.
+</p>
+
+<h2><a name="control">Control Commands</a></h2>
+<pre>
+Control: <var>control commands</var>
+</pre>
+
+<p>
+Allows for any of the commands which must be sent to
+<code>control@bugs.debian.org</code> to work when sent to <code>submit@bugs.debian.org</code> or
+<code>nnn@bugs.debian.org</code>. -1 initially refers to the current
+    bug (that is, the bug created by a mail to submit@ or the bug
+    messaged with nnn@). Please see <a href="server-control">the
+    server control documentation</a> for more information on the
+    control commands which are valid.</p>
+
+<p>For example, the following pseudoheader in a message  sent
+  to <code>12345@bugs.debian.org</code>:</p>
+
+<pre>
+Control: retitle -1 this is the title
+Control: severity -1 normal
+Control: summary -1 0
+Control: forward -1 https://bugs.debian.org/nnn
+</pre>
+
+<p>would cause 12345 to be retitled, its severity changed, summary set,
+and marked as forwarded.</p>
+
+
+
+<h2>X-Debbugs- headers</h2>
+<p>Finally, if your
+<acronym title="Mail User Agent" lang="en">MUA</acronym>
+doesn't allow you to edit the headers, you can
+set the various <code>X-Debbugs-</code> headers in the
+<a href="#pseudoheader">pseudo-headers</a>.</p>
+
+
+<h1>Additional information</h1>
+
+<h2>Different submission addresses (minor or mass bug reports)</h2>
+
+<p>If a bug report is minor, for example, a documentation typo or a trivial
+build problem, please adjust the severity appropriately and send it to
+<code>maintonly@bugs.debian.org</code> instead of <code>submit@bugs.debian.org</code>.
+<code>maintonly</code> will forward the report to the package maintainer
+only, it won't forward it to the BTS mailing lists.</p>
+
+<p>If you're submitting many reports at once, you should definitely use
+<code>maintonly@bugs.debian.org</code> so that you don't cause too much redundant
+traffic on the BTS mailing lists. Before submitting many similar bugs you
+may also want to post a summary on <code>debian-bugs-dist</code>.</p>
+
+<p>If wish to report a bug to the bug tracking system that's already been
+sent to the maintainer, you can use <code>quiet@bugs.debian.org</code>. Bugs sent to
+<code>quiet@bugs.debian.org</code> will not be forwarded anywhere, only filed.</p>
+
+<p>When you use different submission addresses, the bug tracking system will
+set the <code>Reply-To</code> of any forwarded message so that the replies
+will by default be processed in the same way as the original report. That
+means that, for example, replies to <code>maintonly</code> will go to
+<var>nnn</var><code>-maintonly@bugs.debian.org</code> instead of
+<var>nnn</var><code>@bugs.debian.org</code>, unless of course one overrides this
+manually.</p>
+
+
+<h2>Acknowledgements</h2>
+
+<p>Normally, the bug tracking system will return an acknowledgement to you
+by e-mail when you report a new bug or submit additional information to an
+existing bug. If you want to suppress this acknowledgement, include an
+<code>X-Debbugs-No-Ack</code> header or pseudoheader in your e-mail
+(the contents of this header do not matter). If you report a new bug
+with this header, you will need to check the web interface yourself to
+find the bug number.</p>
+
+<p>Note that this header will not suppress acknowledgements from the
+<code>control@bugs.debian.org</code> mailserver, since those acknowledgements may
+contain error messages which should be read and acted upon.</p>
+
+<h2>Spamfighting and missing mail</h2>
+
+<p>The bug tracking system implements a rather extensive set of rules
+  designed to make sure that spam does not make it through the BTS.
+  While we try to minimize the number of false positives, they do
+  occur. If you suspect your mail has triggered a false positive, feel
+  free to contact <code>owner@bugs.debian.org</code> for assistance.
+  Another common cause of mail not making it through to the BTS is
+  utilizing addresses which match procmail's FROM_DAEMON, which
+  includes mail from addresses like <code>mail@foobar.com</code>. If
+  you suspect your mail matches FROM_DAEMON,
+  see <a href="https://manpages.debian.org/cgi-bin/man.cgi?query=procmailrc">procmailrc(5)</a>
+  to verify, and then resend the mail using an address which does not
+  match FROM_DAEMON.</p>
+
+
+<h2>Bug reports against unknown packages</h2>
+
+<p>If the bug tracking system doesn't know who the maintainer of the
+relevant package is it will forward the report to
+<code>debian-bugs-dist</code> even if <code>maintonly</code> was used.</p>
+
+<p>When sending to <code>maintonly@bugs.debian.org</code> or
+<var>nnn</var><code>-maintonly@bugs.debian.org</code> you should make sure that
+the bug report is assigned to the right package, by putting a correct
+<code>Package</code> at the top of an original submission of a report,
+or by using <A href="server-control">the
+<code>control@bugs.debian.org</code> service</A> to (re)assign the report
+appropriately.</p>
+
+
+<h2><a name="findpkgver">Using <code>dpkg</code> to find the package and
+version for the report</a></h2>
+
+<p>When using <code>reportbug</code> to report a bug in a command, say
+<code>grep</code>, the following will automatically select the right package
+and let you write the report right away: <code>reportbug --file $(which
+grep)</code></p>
+
+<p>You can also find out which package installed it by using <code>dpkg
+--search</code>. You can find out which version of a package you have
+installed by using <code>dpkg --list</code> or <code>dpkg --status</code>.
+</p>
+
+<p>For example:</p>
+<pre>
+$ which apt-get
+/usr/bin/apt-get
+$ type apt-get
+apt-get is /usr/bin/apt-get
+$ dpkg --search /usr/bin/apt-get
+apt: /usr/bin/apt-get
+$ dpkg --list apt
+Desired=Unknown/Install/Remove/Purge/Hold
+| Status=Not/Installed/Config-files/Unpacked/Failed-config/Half-installed
+|/ Err?=(none)/Hold/Reinst-required/X=both-problems (Status,Err: uppercase=bad)
+||/ Name           Version        Description
++++-==============-==============-============================================
+ii  apt            0.3.19         Advanced front-end for dpkg
+$ dpkg --status apt
+Package: apt
+Status: install ok installed
+Priority: standard
+Section: base
+Installed-Size: 1391
+Maintainer: APT Development Team &lt;deity@lists.debian.org&gt;
+Version: 0.3.19
+Replaces: deity, libapt-pkg-doc (&lt;&lt; 0.3.7), libapt-pkg-dev (&lt;&lt; 0.3.7)
+Provides: libapt-pkg2.7
+Depends: libapt-pkg2.7, libc6 (&gt;= 2.1.2), libstdc++2.10
+Suggests: dpkg-dev
+Conflicts: deity
+Description: Advanced front-end for dpkg
+ This is Debian's next generation front-end for the dpkg package manager.
+ It provides the apt-get utility and APT dselect method that provides a
+ simpler, safer way to install and upgrade packages.
+ .
+ APT features complete installation ordering, multiple source capability
+ and several other unique features, see the Users Guide in
+ /usr/doc/apt/guide.text.gz
+
+</pre>
+
+<a name="otherusefulcommands"></a>
+<h2>其它有用的命令和软件包</h2>
+
+<p>
+The <kbd>querybts</kbd> tool, available from the same package as
+<a href="https://packages.debian.org/stable/utils/reportbug">reportbug</a>,
+provides a convenient text-based interface to the bug tracking system.</p>
+
+<p>Emacs users can also use the debian-bug command provided by the
+<code><a href="https://packages.debian.org/stable/utils/debian-el">\
+debian-el</a></code> package. When called with <kbd>M-x
+debian-bug</kbd>, it will ask for all necessary information in a
+similar way to <code>reportbug</code>.</p>
+
+<hr />
+
+#use "otherpages.inc"
+
+#use "$(ENGLISHDIR)/Bugs/footer.inc"
