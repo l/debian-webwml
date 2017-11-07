@@ -135,37 +135,35 @@ FIXME: this needs to be "translated" into git and hashes
 
 sub vcs_count_changes
 {
+	# FIXME: not sure if we need to handle the issue of wrong $rev1/$rev2 here
+	#        or the caller function will care.
+	#        Not sure if this function makes sense in a git context, either,
+    #        but just in case
+    
 	my $file = shift  or  return undef;
-	my $rev1 = shift || '1.1';
+	my $rev1 = shift || '';
 	my $rev2 = shift || 'HEAD';
 
-	$rev1 = '1.1'  if $rev1 eq 'n/a';
+	$rev1 = ''  if $rev1 eq 'n/a';
 
-	# find the version number of HEAD, if it was specified
-	if ( $rev2 eq 'HEAD' )
-	{
-		my %info = vcs_file_info( $file );
-		return -1  if  not %info;
-		$rev2 = $info{'cmt_rev'};
-	}
-
-	# for CVS, this is pretty easy: we simply compare the two version numbers
+	# for git, this is pretty easy: we simply compare the two version numbers
 	# note: we don't support branches (aren't used in the webwml repo anyway)
-	my @rev1 = split( /\./, $rev1 );
-	my @rev2 = split( /\./, $rev2 );
 
-	croak "non-similar revision numbers `$rev1' and `$rev2' (different branches?)"
-		if ( scalar @rev1 != scalar @rev2 );
-
-	# check that all but the last components of the version numbers match
-	# i.e., we can compare 2.0.1 and 2.0.17, but not 1.0.2 and 2.0.17
-	while ( @rev1 > 1 )
+	my $command = sprintf( 'git rev-list --count %s..%s %s', $rev1, $rev2, $file );
+	
+	open ( my $git, '-|', $command ) 
+		or croak("Error while executing `$command': $!");
+    my $text;
+	while ( my $line = <$git> )
 	{
-		croak "non-similar revision numbers (different branches?)"
-			unless  shift @rev1 == shift @rev2;
+		$text .= $line;
 	}
+	close( $git );
+	croak("Error while executing `$command': $!") unless WIFEXITED($?);
 
-	return $rev2[0] - $rev1[0];
+	# return the number of changes (or error text)
+
+	return $text;
 }
 
 
