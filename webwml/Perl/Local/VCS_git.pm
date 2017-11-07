@@ -371,7 +371,7 @@ Example use:
    my %diffs = vcs_get_diff( 'bas.wml' );
    
 
-FIXME: this needs to be "translated" into git and hashes
+FIXME: converted using git log format, probably does not work. Needs review and test
 
 =cut
 
@@ -384,31 +384,32 @@ sub vcs_get_diff
 	# hash to store the output
 	my %data;
 
-	my $command = sprintf( 'cvs -q diff %s %s -u %s 2> /dev/null', 
-		defined $rev1 ? "-r$rev1" : '', 
-		defined $rev2 ? "-r$rev2" : '', 
+	my $command = sprintf( 'git diff %s %s -u %s 2> /dev/null', 
+		defined $rev1 ? "$rev1" : '', 
+		defined $rev2 ? "$rev2" : '', 
 		$file );
 
 	# set the record separator for git diff output
-	local $/ = "\n" . ('=' x 67) . "\n";
+	# not sure if the below expression is correct
+	local $/ = "\n" . 'diff --git' . (.+) . "\n";
 
 	open( my $git, '-|', $command ) 
 		or croak("Couldn't run `$command': $!");
 
-	# the first "record" is bogusl
+	# the first "record" is bogus
 	<$git>;
 
-	# read the consequetive records
+	# read the consecutive records
 	while ( my $record = <$git> )
 	{
 		# remove the record separator from the end of the record
 		$record =~ s{ $/ \n? \Z }{}msx;
 
-		# remove the "Index:" line from the end of the record
-		$record =~ s{ ^Index: [^\n]+ \n+ \Z }{}msx;
+		# remove the "index" line from the beginning of the record
+		$record =~ s{ ^index [^\n] }{}msx;
 
-		# remove the first four lines
-		$record =~ s{ \A (?: .*? \n ){4} }{}msx;
+		# remove the first 2 lines
+		$record =~ s{ \A (?: .*? \n ){2} }{}msx;
 
 		# get the file name
 		if ( not $record =~ m{ \A --- \s+ ([^\t]+) \t }msx )
