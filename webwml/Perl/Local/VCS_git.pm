@@ -83,6 +83,9 @@ Takes two revision strings as arguments, and
 returns 1 if the first one is largest, 
 -1 if the second one is largest, 
 0 if they are equal
+
+FIXME: this needs to be "translated" into git and hashes
+
 =cut
 sub vcs_cmp_rev
 {
@@ -125,6 +128,8 @@ Example use:
 
    my $num1 = svn_count_changes( 'foo.c', 'r42', 'r70' );
    my $num2 = svn_count_changes( 'foo.c', 'r42', 'HEAD' );
+   
+FIXME: this needs to be "translated" into git and hashes
 
 =cut
 
@@ -293,6 +298,8 @@ of the log entries
 Example use:
 
    my @log_entries = vcs_get_log( 'foo.wml' );
+   
+FIXME: this needs to be "translated" into git and hashes
 
 =cut
 
@@ -365,6 +372,9 @@ Example use:
    my %diffs = vcs_get_diff( 'foo.wml', '1.4', '1.17' );
    my %diffs = vcs_get_diff( 'bla.wml', '1.8' );
    my %diffs = vcs_get_diff( 'bas.wml' );
+   
+
+FIXME: this needs to be "translated" into git and hashes
 
 =cut
 
@@ -419,6 +429,7 @@ sub vcs_get_diff
 
 
 # returns the respository
+# FIXME: this needs to be "translated" into git and hashes
 sub _get_repository
 {
 	open( my $fd, '<', 'CVS/Repository' )
@@ -443,6 +454,8 @@ and returns it (without writing anything in the current checked-out tree)
 Example use:
 
    my $text = vcs_get_file( 'foo.c', '1.12' );
+
+# FIXME: this needs to be "translated" into git and hashes
 
 =cut
 
