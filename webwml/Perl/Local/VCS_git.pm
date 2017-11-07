@@ -440,7 +440,7 @@ Example use:
 
    my $text = vcs_get_file( 'foo.c', '1.12' );
 
-FIXME: converted to use git checkouts. Assumes we provide in $file the complete path. Needs review and test
+FIXME: converted to use git show <commit>:<pathname>. Assumes we provide in $file the complete path. Needs review and test
 
 =cut
 
@@ -451,30 +451,20 @@ sub vcs_get_file
 
 	croak( "No such file: $file" ) unless -f $file;
 
-	#TODO: what happens if we're not in the root webwml dir?
 
-	my $command1 = sprintf( 'git -q checkout %s', $rev );
-    my $command2 = sprintf( 'cat %s',  $file );
-	my $command3 = sprintf( 'git -q checkout origin/master');
+	my $command = sprintf( 'git show %s:%s', 
+		$rev, $file );
 
 	my $text;
-	open ( my $git1, '-|', $command1 ) 
+	open ( my $git, '-|', $command1 ) 
 		or croak("Error while executing `$command1': $!");
-    close( $git1 );
-    open ( my $git2, '-|', $command2 ) 
-		or croak("Error while executing `$command2': $!");
-	while ( my $line = <$git2> )
+	while ( my $line = <$git> )
 	{
 		$text .= $line;
 	}
-	close( $git2 );
+	close( $git );
 	croak("Error while executing `$command': $!") unless WIFEXITED($?);
 	
-	# return to git master
-    open ( my $git3, '-|', $command3 ) 
-	or croak("Error while executing `$command3': $!");
-    close( $git3 );
-
 	# return the file
 	return $text;
 }
