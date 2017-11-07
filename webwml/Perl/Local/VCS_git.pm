@@ -126,8 +126,8 @@ The second and third argument specify the revision range
 
 Example use:
 
-   my $num1 = svn_count_changes( 'foo.c', 'r42', 'r70' );
-   my $num2 = svn_count_changes( 'foo.c', 'r42', 'HEAD' );
+   my $num1 = vcs_count_changes( 'foo.c', 'r42', 'r70' );
+   my $num2 = vcs_count_changes( 'foo.c', 'r42', 'HEAD' );
    
 FIXME: converted into git and hashes, needs review and test
 
@@ -175,7 +175,7 @@ The first argument is a name of a file or directory, and subsequent arguments
 form a hash of named options (see below).
 
 The function returns a hash, which for each filename contains
-Subversion status information:
+git status information:
 
   'type'       => type of the file ('d' directory, 'f' regular file, etc)
   'cmt_rev'    => revision in which latest change was made to this file
