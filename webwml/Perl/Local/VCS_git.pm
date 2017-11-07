@@ -297,14 +297,14 @@ Example use:
 
    my @log_entries = vcs_get_log( 'foo.wml' );
    
-FIXME: this needs to be "translated" into git and hashes
+FIXME: converted into git and hashes, needs review and test
 
 =cut
 
 sub vcs_get_log
 {
 	my $file = shift  or  return;
-	my $rev1 = shift || '0';
+	my $rev1 = shift || '';
 	my $rev2 = shift || '';
 
 	my @logdata;
@@ -312,28 +312,27 @@ sub vcs_get_log
 	# set the record separator for git log output
 	local $/ = "\n----------------------------\n";
 
-	my $command = sprintf( 'cvs log -r%s:%s %s', $rev1, $rev2, $file );
+	my $command = sprintf( 'git log %s..%s %s', $rev1, $rev2, $file );
 	open( my $git, '-|', $command ) 
 		or croak("Couldn't run `$command': $!");
-
-	# skip the first record (gives genral meta-info)
-	<$git>;
 
 	# read the consequetive records
 	while ( my $record = <$git> )
 	{
 		#print "==> $record\n";
 
-		# the first two lines of a record contains metadata that looks like this:
-		# revision 1.4
-		# date: 2008-09-18 16:21:31 +0200;  author: bas;  state: Exp;  lines: +212 -105;  commitid: aGcNZ0HjJeSEfgjt;
+		# the first 3 lines of a record contain metadata that looks like this:
+		# commit abcdefg435768938de
+        # Author: Jane Doe <email@example.com>
+        # Date:   Tue Nov 7 11:47:24 2017 +0100
 		
-		# first split off the first line
-		my ($metadata1,$metadata2,$logmessage) = split( /\n/, $record, 3 );
+		# first split off the record
+		my ($metadata1,$metadata2,$metadata3,$logmessage) = split( /\n/, $record, 4 );
 
-		my ($revision)     = $metadata1 =~ m{^revision (.+)};
-		my ($date,$author) = $metadata2 =~ m{^date: (.*?);  author: (.*?);  state: };
-
+		my ($revision)     = $metadata1 =~ m{^commit (.+)};
+		my ($author)       = $metadata2 =~ m{^Author: (.+)};
+		my ($date)         = $metadata3 =~ m{^Date: (.+)};
+		
 		croak( "Couldn't parse output of `$command'" ) 
 			unless  $revision and $date and $author;
 
@@ -345,8 +344,8 @@ sub vcs_get_log
 
 		push @logdata, {
 			'rev'     => $revision,
-			'date'    => $date,
 			'author'  => $author,
+            'date'    => $date,
 			'message' => $logmessage,
 		};
 	}
