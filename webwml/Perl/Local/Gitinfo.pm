@@ -9,19 +9,19 @@
 
 =head1 NAME
 
-Local::Cvsinfo - retrieve CVS related informations from a checked out copy
+Local::Gitinfo - retrieve git related informations from a checked out copy
 
 =head1 SYNOPSIS
 
- use Local::Cvsinfo;
- my $cvs = Local::Cvsinfo->new();
- $cvs->readinfo('.', recursive => 1, verbose => 1 );
- my $top = $cvs->topdir();
- my $rev = $cvs->revision('foo/bar');
+ use Local::Gitinfo;
+ my $git = Local::Gitinfo->new();
+ $git->readinfo('.', recursive => 1, verbose => 1 );
+ my $top = $git->topdir();
+ my $rev = $git->revision('foo/bar');
 
 =head1 DESCRIPTION
 
-This module retrieves CVS related informations from a checked out
+This module retrieves git related informations from a checked out
 working directory, by scanning the F<CVS/*> files found within.
 
 =head1 METHODS
@@ -30,7 +30,7 @@ working directory, by scanning the F<CVS/*> files found within.
 
 =cut
 
-package Local::Cvsinfo;
+package Local::Gitinfo;
 use Carp;
 use strict;
 
@@ -38,7 +38,7 @@ use strict;
 
 This is the constructor.
 
-   my $cvs = Local::Cvsinfo->new();
+   my $git = Local::Gitinfo->new();
 
 =cut
 
@@ -70,8 +70,8 @@ arrays containing Perl regular expressions, the former specifies
 directory to skip in recursive mode (C<CVS> directories are always
 skipped), and the latter specifies which files do match (default: all).
 
-   $cvs->options(recursive => 1, matchfile => [ '\.c$' ]);
-   while (($key, $val) = each %{$cvs->options()}) {
+   $git->options(recursive => 1, matchfile => [ '\.c$' ]);
+   while (($key, $val) = each %{$git->options()}) {
        print $key . ":" . $val . "\n";
    }
 
@@ -103,8 +103,8 @@ directory and informations on entries defined within are internally
 stored, unless this entry has been discarded by an C<skipdir> attribute.
 Optional remaining arguments are a hash array overriding global options.
 
-   $cvs->readinfo("src");
-   $cvs->readinfo("src", recursive => 1);
+   $git->readinfo("src");
+   $git->readinfo("src", recursive => 1);
 
 =cut
 
@@ -238,9 +238,9 @@ sub _skippable {
 
 Clear all data set by previous call to C<readinfo>.
 
-   $cvs->readinfo("src");
-   $cvs->reset();
-   $cvs->readinfo("doc");
+   $git->readinfo("src");
+   $git->reset();
+   $git->readinfo("doc");
 
 =cut
 
@@ -252,10 +252,10 @@ sub reset {
 
 =item topdir
 
-Return relative path of the top directory CVS checked out copy.
+Return relative path of the top directory git checked out copy.
 This path is the one when C<readinfo> was called.
 
-   my $root = $cvs->topdir();
+   my $root = $git->topdir();
 
 =cut
 
@@ -268,7 +268,7 @@ sub topdir {
 
 Remove an entry from the file list.
 
-   $cvs->removefile("src/main.c");
+   $git->removefile("src/main.c");
 
 =cut
 
@@ -282,7 +282,7 @@ sub removefile {
 Return a reference to the list of directories contained in current
 working directory.
 
-   foreach (@{$cvs->dirs()}) {
+   foreach (@{$git->dirs()}) {
         print "Found directory: $_\n";
    }
 
@@ -297,7 +297,7 @@ sub dirs {
 
 Return a reference to file list.
 
-   foreach (@{$cvs->files()}) {
+   foreach (@{$git->files()}) {
         print "Found file: $_\n";
    }
 
@@ -310,11 +310,11 @@ sub files {
 
 =item revision
 
-First argument is a filename.  If there is no more argument, the CVS
+First argument is a filename.  If there is no more argument, the git
 revision of this file is returned, otherwise it is set to the 2nd
 argument.
 
-   my $rev = $cvs->revision("src/foo.c");
+   my $rev = $git->revision("src/foo.c");
 
 =cut
 
@@ -332,7 +332,7 @@ First argument is a filename.  If there is no more argument, the latest
 commit date of this file is returned (in a format similar to the
 C<date> command output), otherwise it is set to the 2nd argument.
 
-   my $date = $cvs->date("src/foo.c");
+   my $date = $git->date("src/foo.c");
 
 =cut
 
@@ -350,7 +350,7 @@ First argument is a filename.  If there is no more argument, the keyword
 substitution method (see the B<-k> flag of the C<cvs> command) for this
 file is returned, otherwise it is set to the 2nd argument.
 
-   my $kflag = $cvs->keyword("src/foo.c");
+   my $kflag = $git->keyword("src/foo.c");
 
 =cut
 
