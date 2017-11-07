@@ -129,7 +129,7 @@ Example use:
    my $num1 = svn_count_changes( 'foo.c', 'r42', 'r70' );
    my $num2 = svn_count_changes( 'foo.c', 'r42', 'HEAD' );
    
-FIXME: this needs to be "translated" into git and hashes
+FIXME: converted into git and hashes, needs review and test
 
 =cut
 
