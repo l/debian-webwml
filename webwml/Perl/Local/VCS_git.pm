@@ -8,11 +8,11 @@
 
 =head1 NAME
 
-Local::VCS_CVS - generic wrapper around version control systems -- CVS version
+Local::VCS_git - generic wrapper around version control systems -- CVS version
 
 =head1 SYNOPSIS
 
- use Local::VCS_CVS;
+ use Local::VCS_git;
  use Data::Dumper;
 
  my %info = vcs_path_info( '.', recursive => 1, verbose => 1 );
@@ -32,11 +32,11 @@ of latest change, author, etc) for checked-out object in a working directory.
 
 =cut
 
-package Local::VCS_CVS;
+package Local::VCS_git;
 
 use 5.008;
 
-use Local::Cvsinfo;
+use Local::Gitinfo;
 use File::Basename;
 use File::Spec::Functions qw( rel2abs splitdir catfile rootdir catdir );
 use File::stat;
@@ -219,12 +219,12 @@ sub vcs_path_info
 
 	$dir = rel2abs( $dir );
 
-	# use Local::Cvsinfo to do the actual work in CVS
-	my $cvs = Local::Cvsinfo->new();
+	# use Local::Gitinfo to do the actual work in CVS
+	my $cvs = Local::Gitinfo->new();
 	$cvs->readinfo( $dir, recursive => $recurse, matchfile => [$match_pat] );
 	my $files = $cvs->files;
 
-	# construct a nice hash from the data we received from Cvsinfo
+	# construct a nice hash from the data we received from Gitinfo
 	my %data;
 	for my $file (keys %{$cvs->{FILES}})
 	{
@@ -495,7 +495,7 @@ sub vcs_get_topdir
 {
 	my $file = shift || '.';
 
-	my $cvs = Local::Cvsinfo->new();
+	my $cvs = Local::Gitinfo->new();
 	$cvs->readinfo( $file );
 	my $root = $cvs->topdir()
 		or croak ("Unable to determine top-level directory");
