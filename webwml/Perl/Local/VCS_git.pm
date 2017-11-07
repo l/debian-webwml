@@ -8,7 +8,7 @@
 
 =head1 NAME
 
-Local::VCS_git - generic wrapper around version control systems -- CVS version
+Local::VCS_git - generic wrapper around version control systems -- git version
 
 =head1 SYNOPSIS
 
@@ -23,7 +23,7 @@ Local::VCS_git - generic wrapper around version control systems -- CVS version
 
 =head1 DESCRIPTION
 
-This module retrieves CVS info (such as revision of latest change, date
+This module retrieves git info (such as revision of latest change, date
 of latest change, author, etc) for checked-out object in a working directory.
 
 =head1 METHODS
@@ -169,7 +169,7 @@ sub vcs_count_changes
 
 =item vcs_path_info
 
-Return CVS information and status about a tree of files.
+Return git information and status about a tree of files.
 
 The first argument is a name of a file or directory, and subsequent arguments
 form a hash of named options (see below).
@@ -213,20 +213,20 @@ sub vcs_path_info
 	_debug "Match pattern is '$match_pat'" if defined $match_pat;
 	_debug "Skip pattern is  '$skip_pat'"  if defined $skip_pat;
 
-	# $cvs->readinfo expects a matchfile input;  if nothing is specified, we
+	# $git->readinfo expects a matchfile input;  if nothing is specified, we
 	# pass a pattern that matches everything
 	$match_pat ||= '.'; 
 
 	$dir = rel2abs( $dir );
 
-	# use Local::Gitinfo to do the actual work in CVS
-	my $cvs = Local::Gitinfo->new();
-	$cvs->readinfo( $dir, recursive => $recurse, matchfile => [$match_pat] );
-	my $files = $cvs->files;
+	# use Local::Gitinfo to do the actual work in git
+	my $git = Local::Gitinfo->new();
+	$git->readinfo( $dir, recursive => $recurse, matchfile => [$match_pat] );
+	my $files = $git->files;
 
 	# construct a nice hash from the data we received from Gitinfo
 	my %data;
-	for my $file (keys %{$cvs->{FILES}})
+	for my $file (keys %{$git->{FILES}})
 	{
 		# we return relative paths, so strip off the dir name
 		my $file_rel = $file;
@@ -236,8 +236,8 @@ sub vcs_path_info
 		next if  $skip_pat  and  $file_rel =~ m{$skip_pat};
 
 		$data{$file_rel} = {
-			'cmt_rev'  => $cvs->{FILES}->{$file}->{'REV'},
-			'cmt_date' => str2time( $cvs->{FILES}->{$file}->{'DATE'} ),
+			'cmt_rev'  => $git->{FILES}->{$file}->{'REV'},
+			'cmt_date' => str2time( $git->{FILES}->{$file}->{'DATE'} ),
 			'type'     => _typeoffile $file,
 		};
 	}
@@ -307,18 +307,18 @@ sub vcs_get_log
 
 	my @logdata;
 
-	# set the record separator for cvs log output
+	# set the record separator for git log output
 	local $/ = "\n----------------------------\n";
 
 	my $command = sprintf( 'cvs log -r%s:%s %s', $rev1, $rev2, $file );
-	open( my $cvs, '-|', $command ) 
+	open( my $git, '-|', $command ) 
 		or croak("Couldn't run `$command': $!");
 
 	# skip the first record (gives genral meta-info)
-	<$cvs>;
+	<$git>;
 
 	# read the consequetive records
-	while ( my $record = <$cvs> )
+	while ( my $record = <$git> )
 	{
 		#print "==> $record\n";
 
@@ -348,7 +348,7 @@ sub vcs_get_log
 			'message' => $logmessage,
 		};
 	}
-	close( $cvs );
+	close( $git );
 
 	return reverse @logdata;
 }
@@ -385,17 +385,17 @@ sub vcs_get_diff
 		defined $rev2 ? "-r$rev2" : '', 
 		$file );
 
-	# set the record separator for cvs diff output
+	# set the record separator for git diff output
 	local $/ = "\n" . ('=' x 67) . "\n";
 
-	open( my $cvs, '-|', $command ) 
+	open( my $git, '-|', $command ) 
 		or croak("Couldn't run `$command': $!");
 
 	# the first "record" is bogusl
-	<$cvs>;
+	<$git>;
 
 	# read the consequetive records
-	while ( my $record = <$cvs> )
+	while ( my $record = <$git> )
 	{
 		# remove the record separator from the end of the record
 		$record =~ s{ $/ \n? \Z }{}msx;
@@ -415,7 +415,7 @@ sub vcs_get_diff
 
 		$data{$file} = $record;
 	}
-	close( $cvs );
+	close( $git );
 
 	return %data;
 }
@@ -465,13 +465,13 @@ sub vcs_get_file
 	local $/ = ('=' x 67) . "\n";
 
 	my $text;
-	open ( my $cvs, '-|', $command ) 
+	open ( my $git, '-|', $command ) 
 		or croak("Error while executing `$command': $!");
-	while ( my $line = <$cvs> )
+	while ( my $line = <$git> )
 	{
 		$text .= $line;
 	}
-	close( $cvs );
+	close( $git );
 	croak("Error while executing `$command': $!") unless WIFEXITED($?);
 
 	# return the file
@@ -495,9 +495,9 @@ sub vcs_get_topdir
 {
 	my $file = shift || '.';
 
-	my $cvs = Local::Gitinfo->new();
-	$cvs->readinfo( $file );
-	my $root = $cvs->topdir()
+	my $git = Local::Gitinfo->new();
+	$git->readinfo( $file );
+	my $root = $git->topdir()
 		or croak ("Unable to determine top-level directory");
 
 	# TODO: add some check that this really is the top level dir
