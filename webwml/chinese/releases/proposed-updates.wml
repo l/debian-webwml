@@ -1,0 +1,41 @@
+#use wml::debian::template title="<q>proposed-updates</q>（拟议更新）机制"
+#include "$(ENGLISHDIR)/releases/info"
+#use wml::debian::translation-check translation="1.10" maintainer="Boyuan Yang"
+
+<p>所有对已发布的、稳定版本<q>stable</q>（和旧稳定版本<q>oldstable</q>）
+中软件的更新都会在被接受进入软件仓库之前经过额外的一个测试阶段。
+每次对稳定（或旧的稳定）发布版本进行的更新被称作一次小版本更新
+（<q>point release</q>）。</p>
+
+<p>对小版本更新进行准备的机制被称作拟议更新（<q>proposed-updates</q>）机制。
+更新的软件包经由一个单独的队列进行上传，该队列被称为<code>p-u-new</code>
+（或者<code>o-p-u-new</code>）。被接受之后，它们会进入拟议更新仓库
+（<q>proposed-updates</q>）或旧稳定版本的拟议更新仓库（<q>oldstable-proposed-updates</q>）。
+</p>
+
+<p>如需经由 APT 使用这些软件包，您可以在 <code>sources.list</code>
+文件中添加下面的几行配置：</p>
+
+<pre>
+  \# 拟议作为下一个小版本更新的软件
+  deb http://ftp.us.debian.org/debian <current_release_name>-proposed-updates main contrib non-free
+</pre>
+
+<p>请注意，所有正式的 <a href="$(HOME)/mirror/list">/debian/ 镜像站点</a>
+都提供了该仓库，您无需选择特定的站点。上面选择的 ftp.us.debian.org
+仅仅作为一个示例。</p>
+
+<p>仅当 Debian 开发者配置将软件包上传到<q>proposed-updates</q>（或<q>oldstable-proposed-updates</q>）
+，或者<q>stable</q>（或<q>oldstable</q>）仓库中时，该软件包才能最终到达 proposed-updates
+仓库。
+开发者参考手册的<a href="$(HOME)/doc/manuals/developers-reference/pkgs.html#upload-stable">\
+上传流程</a>部分描述了这部分内容。</p>
+
+<p>请注意，来自 <a href="$(HOME)/security/">security.debian.org</a>
+的软件包会自动复制到 p-u-new（或 o-p-u-new）队列中。
+同时，直接上传到 proposed-updates（或 oldstable-proposed-updates）中的软件包
+不受 Debian 安全团队的监控。</p>
+
+<p>当前处在 p-u-new（或 o-p-u-new）队列中的软件包列表可以在
+<url "https://release.debian.org/proposed-updates/stable.html">
+（或 <url "https://release.debian.org/proposed-updates/oldstable.html">）查看。</p>
