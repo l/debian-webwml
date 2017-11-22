@@ -10,8 +10,24 @@ GETTEXTFILES += security.mo
 
 include $(WMLBASE)/Make.lang
 
+ifndef SUBLANG
+INDEXPAGE  := index.$(LANGUAGE).html
+DSARDF     := dsa.$(LANGUAGE).rdf
+DSALONGRDF := dsa-long.$(LANGUAGE).rdf
+DSAALLRDF := dsa-all.$(LANGUAGE).rdf
+DESTDSARDF     := $(HTMLDIR)/$(DSARDF)
+DESTDSALONGRDF := $(HTMLDIR)/$(DSALONGRDF)
+else
+INDEXPAGE  := $(sort $(foreach i,$(SUBLANG),$(subst index,index.$(LANGUAGE)-$(i),index.html)))
+DSARDF     := $(sort $(foreach i,$(SUBLANG),$(subst dsa,dsa.$(LANGUAGE)-$(i),dsa.rdf)))
+DSALONGRDF := $(sort $(foreach i,$(SUBLANG),$(subst dsa-long,dsa-long.$(LANGUAGE)-$(i),dsa-long.rdf)))
+DSAALLRDF := $(sort $(foreach i,$(SUBLANG),$(subst dsa-all,dsa-all.$(LANGUAGE)-$(i),dsa-all.rdf)))
+DESTDSARDF     := $(patsubst %.rdf,$(HTMLDIR)/%.rdf,$(DSARDF))
+DESTDSALONGRDF := $(patsubst %.rdf,$(HTMLDIR)/%.rdf,$(DSALONGRDF))
+endif
 
-index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/dsa-*.wml) \
+
+$(INDEXPAGE): index.wml $(wildcard $(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(CUR_YEAR)/dla-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.data) \
@@ -19,6 +35,17 @@ index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dla-*.data) \
   $(TEMPLDIR)/release_info.wml \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list_security.wml $(GETTEXTDEP)
+
+ifeq "$(LANGUAGE)" "zh"
+	@echo -n "Processing $(<F): "
+	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:index.zh-$$1.html,g') \
+          $(shell egrep '^-D (CUR_|CHAR)' ../../.wmlrc) \
+          $(ENGLISHSRCDIR)/$(CUR_DIR)/index.wml
+	  @$(GENERATE_ZH_VARIANTS) index html
+else
+	$(WML) $(shell egrep '^-D (CUR_|CHAR)' ../../.wmlrc) \
+          $(ENGLISHSRCDIR)/$(CUR_DIR)/index.wml
+endif
 
 pam-auth.$(LANGUAGE).html: pam-auth.wml \
   $(ENGLISHSRCDIR)/security/pam-auth.wml
@@ -36,20 +63,6 @@ crossreferences.$(LANGUAGE).html:: $(ENGLISHSRCDIR)/security/ref-table.inc \
 clean::
 	rm -f $(DSARDF) $(DSALONGRDF)
 	rm -f ref-table.inc
-
-ifndef SUBLANG
-DSARDF     := dsa.$(LANGUAGE).rdf
-DSALONGRDF := dsa-long.$(LANGUAGE).rdf
-DSAALLRDF := dsa-all.$(LANGUAGE).rdf
-DESTDSARDF     := $(HTMLDIR)/$(DSARDF)
-DESTDSALONGRDF := $(HTMLDIR)/$(DSALONGRDF)
-else
-DSARDF     := $(sort $(foreach i,$(SUBLANG),$(subst dsa,dsa.$(LANGUAGE)-$(i),dsa.rdf)))
-DSALONGRDF := $(sort $(foreach i,$(SUBLANG),$(subst dsa-long,dsa-long.$(LANGUAGE)-$(i),dsa-long.rdf)))
-DSAALLRDF := $(sort $(foreach i,$(SUBLANG),$(subst dsa-all,dsa-all.$(LANGUAGE)-$(i),dsa-all.rdf)))
-DESTDSARDF     := $(patsubst %.rdf,$(HTMLDIR)/%.rdf,$(DSARDF))
-DESTDSALONGRDF := $(patsubst %.rdf,$(HTMLDIR)/%.rdf,$(DSALONGRDF))
-endif
 
 $(DSARDF): $(ENGLISHDIR)/security/dsa.rdf.in \
   $(wildcard $(CUR_YEAR)/dsa-*.wml) \
@@ -131,5 +144,3 @@ cleandest::
 	rm -f $(map)
 
 endif
-
-
