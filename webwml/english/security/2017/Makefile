@@ -25,14 +25,12 @@ ifeq "$(LANGUAGE)" "zh"
 	@echo -n "Processing $(<F): "
 	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:index.zh-$$1.html,g') \
           $(shell egrep '^-D (CUR_|CHAR)' ../../.wmlrc) \
-          $(ENGLISHDIR)/security/2017/index.wml
-	@$(GENERATE_ZH_VARIANTS) index html
+          $(ENGLISHSRCDIR)/$(CUR_DIR)/index.wml
+	  @$(GENERATE_ZH_VARIANTS) index html
 else
 	$(WML) $(shell egrep '^-D (CUR_|CHAR)' ../../.wmlrc) \
-            $(ENGLISHDIR)/security/2017/index.wml
+          $(ENGLISHSRCDIR)/$(CUR_DIR)/index.wml
 endif
-	
-
 
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/security.wml \
   $(ENGLISHSRCDIR)/$(CUR_DIR)/%.data $(GETTEXTDEP)
