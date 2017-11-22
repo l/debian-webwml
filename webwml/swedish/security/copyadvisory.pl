@@ -221,6 +221,7 @@ while (<SRC>)
 	s/\(wheezy\)/(Wheezy)/;
 	s/\(jessie\)/(Jessie)/;
 	s/\(stretch\)/(Stretch)/;
+	s/\(buster\)/(Buster)/;
 	s/\(sid\)/(Sid)/;
 	s/Refer to Debian (<.*>)?bug #([0-9]+)</Se Debians $1felrapport $2</;
 	s/(of|from) the Debian Security Audit (Project|Team)/från Debians säkerhetsgranskningsprojekt/i;
@@ -243,6 +244,8 @@ while (<SRC>)
 	s/doing an update, updates for lower priority issues will normally not/så kommer uppdateringar för problem med lägre prioritet inte släppas/;
 	s/be released for all kernels at the same time. Rather, they will be/samtidigt för alla kärnor på samma gång. Istället kommer dom att släppas/;
 	s/released in a staggered or "leap-frog" fashion.<\/p>/i större klumpar.<\/p>/;
+	s/\<p\>For the detailed security status of (.*) please refer to/<p>För detaljerad säkerhetsstatus om $1 vänligen se/;
+	s/its security tracker page at\:/dess säkerhetsspårare på/;
 	print DST $_;
 }
 
