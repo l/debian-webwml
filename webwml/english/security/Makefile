@@ -40,11 +40,10 @@ ifeq "$(LANGUAGE)" "zh"
 	@echo -n "Processing $(<F): "
 	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:index.zh-$$1.html,g') \
           $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
-          $(ENGLISHSRCDIR)/$(CUR_DIR)/index.wml
-	  @$(GENERATE_ZH_VARIANTS) index html
+          $(<F)
+	@$(GENERATE_ZH_VARIANTS) index html
 else
-	$(WML) $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
-          $(ENGLISHSRCDIR)/$(CUR_DIR)/index.wml
+	$(WML) $(<F)
 endif
 
 pam-auth.$(LANGUAGE).html: pam-auth.wml \
