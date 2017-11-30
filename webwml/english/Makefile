@@ -14,11 +14,13 @@ clean:: clean-locale
 include $(WMLBASE)/Make.lang
 
 ifndef SUBLANG
+INDEXPAGE = index.$(LANGUAGE).html
 SITEMAP = sitemap.$(LANGUAGE).html
 DESTSITEMAP = $(HTMLDIR)/$(SITEMAP)
 SEARCHXML = search.$(LANGUAGE).xml
 DESTSEARCHXML =  $(HTMLDIR)/$(SEARCHXML)
 else
+INDEXPAGE = $(sort $(foreach i,$(SUBLANG),$(subst index,index.$(LANGUAGE)-$(i),index.html)))
 SITEMAP = $(sort $(foreach i,$(SUBLANG),\
 	$(patsubst %.wml,%.$(LANGUAGE)-$(i).html,sitemap.wml)))
 DESTSITEMAP = $(patsubst %.html,$(HTMLDIR)/%.html,$(SITEMAP))
@@ -26,13 +28,20 @@ SEARCHXML = $(sort $(foreach i,$(SUBLANG),$(subst search,search.$(LANGUAGE)-$(i)
 DESTSEARCHXML = $(patsubst %.xml,$(HTMLDIR)/%.xml,$(SEARCHXML))
 endif
 
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml $(GETTEXTDEP) \
+$(INDEXPAGE): index.wml $(TEMPLDIR)/mainpage.wml $(GETTEXTDEP) \
 		$(wildcard News/$(CUR_YEAR)/[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/[0-9]*.wml) \
      		$(wildcard News/$(CUR_YEAR)/[0-9]*.title) \
 		$(wildcard security/$(CUR_YEAR)/dsa-[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-[0-9]*.wml) \
 		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
 		$(TEMPLDIR)/release_info.wml $(TEMPLDIR)/release_images.wml
+ifeq "$(LANGUAGE)" "zh"
+	@echo -n "Processing $(<F): "
+	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:index.zh-$$1.html,g') \
+          $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) index.wml
+	@$(GENERATE_ZH_VARIANTS) index html
+else
 	$(WML) index.wml
+endif
 
 $(SITEMAP): $(ENGLISHDIR)/sitemap.wml $(TEMPLDIR)/card.wml \
   $(TEMPLDIR)/links.tags.wml $(TEMPLDIR)/template.wml $(GETTEXTDEP) \
