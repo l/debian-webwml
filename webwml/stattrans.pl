@@ -788,7 +788,7 @@ print HTMLI "</table>\n";
 print HTMLI '<h2><gettext domain="stats">Translated templates (PO files)</gettext></h2>'."\n";
 printf HTMLI "<p><stats_strings %d></p>\n",$po_total{'total'};
 
-print HTMLI '<table summary="<gettext domain="stats">PO Translation Statistics</gettext>"class="stattrans">'."\n";
+print HTMLI '<table summary="<gettext domain="stats">PO Translation Statistics</gettext>" class="stattrans">'."\n";
 print HTMLI "<colgroup span=\"1\"width=\"28%\">\n";
 print HTMLI "</colgroup>";
 print HTMLI "<colgroup span=\"6\" width=\"12%\">\n";
