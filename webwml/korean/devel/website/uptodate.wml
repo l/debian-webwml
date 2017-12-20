@@ -1,0 +1,95 @@
+#use wml::debian::template title="웹 사이트 번역을 최신으로 유지하기"
+#use wml::debian::translation-check translation="1.18" maintainer="Sebul"
+
+<P>웹 사이트는 정적이 아니므로, 원본의 어떤 버전이 참고하는 것인지 추적하는 것이 좋고,
+이 정보를 사용하여 마지막 번역 후 어느 페이지가 바뀌었는지 확인한다.
+이 정보는 문서의 꼭대기(다른 "use" 헤더 아래)에 아래 형식으로 들어간다:
+
+<pre>
+\#use wml::debian::translation-check translation="X.x"
+</pre>
+
+<P>
+여기서 <var>X.x</var> 는 원본(영어)의 CVS 버전 번호.
+이 번호를 아래 형식으로 되어 있는 CVS/Entries 를 찾아서 얻을 수 있다:
+<code>/file_name/X.x/date//</code>.
+영어 소스 디렉토리에서 <kbd>cvs status file_name</kbd> 를 돌려서 그것을 얻을 수도 있다.
+webwml 디렉토리에서 <kbd>copypage.pl</kbd> 스크립트를 쓰면, 이 행은 자동으로 더해진다.
+
+<P>어떤 번역은 꽤 빨리 업데이트 되지 않을 수도 있으므로, 원본 언어(영어)도 그렇지만, 이것은 쓸만하다.
+내용 협상에 의해, 번역된 언어의 독자는 중요한 정보, 원문의 새 버전에 소개된,를 놓칠 수 있습니다.
+<code>translation-check</code> 템플릿은 , 여러분의 번역이 오래되었는지 확인하고,
+그것에 대해 사용자에게 적절한 메시지를 출력할 코드를 포함합니다.
+
+<P><code>#use</code> 행에 쓸 수 있는 추가적인 파라메터가 있습니다:
+
+<dl>
+ <dt><code>original="<var>language</var>"</code>
+ <dd>여기서 <var>language</var> 는 여러분이 번역을 시작할 언어의 이름, 만약 영어가 아니라면,입니다.
+이름은 CVS안의 최고수준 서브디렉토리에 대응해야 하며,
+<code>languages.wml</code> 템플릿 안의 이름입니다.
+
+ <dt><code>mindelta="<var>number</var>"</code>
+ <dd>which defines the maximum difference in CVS revisions before the
+ translation is considered aged.
+ The default value is <var>1</var>.
+ For less important pages, set it to <var>2</var>, which means that two
+ changes need to be made before it is
+ considered making the translation aged.
+
+ <dt><code>maxdelta="<var>number</var>"</code>
+ <dd>which defines the maximum difference in CVS revisions before the
+ translation is considered to be outdated.
+ The default value is <var>5</var>.
+ For very important pages, set it to be less.
+ A value of <var>1</var> means that every change is considered making the
+ translation outdated.
+</dl>
+
+<p>This also enables us to have <a href="stats/">translation statistics</a>,
+a report of all outdated translations together with helpful links to
+the differences between files, as well as a list of pages that haven't
+been translated at all.
+This is intended to help translators and to attract new people to help.
+</p>
+
+<p>
+To avoid presenting our users with information that is too outdated,
+translations that have not been updated within six months from when the
+original page was changed will be purged automatically.
+Please see the
+<a href="https://www.debian.org/devel/website/stats/">list of outdated
+translations</a> to find which pages are in danger of being purged.
+</p>
+
+<P>Additionally, the script <kbd>check_trans.pl</kbd> is available in the
+webwml/ directory, which will show you a report on pages needing updates:
+
+<pre>
+check_trans.pl <var>language</var>
+</pre>
+
+<P>where <var>language</var> is the directory name that contains your
+translation, e.g. "swedish".
+
+<P>Pages that lack translation will be shown as
+"<code>Missing <var>filename</var></code>", and pages that are not up to
+date with the original will be shown as
+"<code>NeedToUpdate <var>filename</var> to version <var>x.y</var></code>".
+
+<P>If you want to see what the exact changes are, you can get the
+differences by adding <kbd>-d</kbd> command line option to the above
+command. Please note that this can take a while since it can include
+several accesses to the CVS server.
+
+<P>If you want to ignore warnings on missing pages (for instance old news
+items), you can create a file called <code>.transignore</code> in the
+directory where you want to suppress the warnings, listing each file that
+you are not going to translate, with one name per line.
+
+<p>
+A similar script for keeping track of the translations of the mailing lists
+descriptions is also available.
+Please read the comments in the <code>check_desc_trans.pl</code> script for
+documentation.
+</p>
