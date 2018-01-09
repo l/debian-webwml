@@ -1,0 +1,150 @@
+#use wml::debian::translation-check translation="1.1" mindelta="1"
+<define-tag description>säkerhetsuppdatering</define-tag>
+<define-tag moreinfo>
+<p>Flera sårbarheter har upptäckts i Linuxkärnan som kan leda
+till utökning av privilegier, överbelastning eller informationsläckage.</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-5754">CVE-2017-5754</a>
+
+	<p>Flera forskare har upptäckt en sårbarhet i Intelprocessorer, vilket
+	tillåter en angripare som kontrollerar en icke privilegierad
+	process att läsa från godtyckliga adresser, inklusive från kärnan
+	och alla andra processer som körs på systemet.</p>
+	
+	<p>Denna specifika attack kallas Meltdown och adresseras i
+	Linuxkärnan för arkitekturen Intel x86-64 genom en patchuppsättning
+	som kallas Kernel Page Table Isolation, som påtvingar en nästan
+	fullständig separation mellan kärnan och adresskartor i userspace och
+	förhindrar därmed angreppet. Denna lösning kan har prestandainverkan
+	och kan inaktiveras vid uppstart genom att lägga till
+	<code>pti=off</code> till kärnans kommandorad.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-8824">CVE-2017-8824</a>
+
+	<p>Mohamed Ghannam upptäckte att DCCP-implementationen inte
+	hanterar resurser korrekt när en socket kopplas ifrån och
+	ansluts igen, vilket potentiellt kan leda till en användning efter
+	frigörning. En lokal användare kunde utnyttja detta för överbelastning
+	(krasch eller datakorruption) eller möjligen för utökning av privilegier.
+	På system som inte redan har dccp-modulen laddad kan detta lindras genom
+	att inte ladda den:
+    <code>echo >> /etc/modprobe.d/disable-dccp.conf install dccp false</code></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-15868">CVE-2017-15868</a>
+
+	<p>Al Viro upptäckte att implementationen av Bluebooth Network
+	Encapsulation Protocol (BNEP) inte validerade typen av den andra
+	socketen som skickades til BNEPCONNADD ioctl(), vilket kunde
+	leda till minneskorruption. En lokal användare med möjligheten
+	CAP_NET_ADMIN kan utnyttja detta för överbelastning (krasch
+	eller datakorruption) eller möjligen för utökning av privilegier.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-16538">CVE-2017-16538</a>
+
+	<p>Andrey Konovalov rapporterade att media-drivrutinen dvb-usb-lmedm04
+	inte hanterar några fellägen korrekt under initiering. En fysiskt
+	närvarande användare med en speciellt designad USB-enhet kan utnyttja
+	detta för att orsaka en överbelastning (krasch).</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-16939">CVE-2017-16939</a>
+
+	<p>Mohamed Ghannam rapporterade (genom Beyond Security's SecuriTeam
+	Secure Disclosure program) att IPsec (xfrm)-implementationen
+	inte hanterar några felläggen korrekt vid dumpning av
+	policy-information genom netlink. En lokal användare med
+	CAP_NET_ADMIN-möjligheten kan utnyttja detta för överbelastning
+	(krasch eller datakorruption) eller möjligen för utökning av
+	privilegier.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-17448">CVE-2017-17448</a>
+
+	<p>Kevin Cernekee upptäckte att undersystemet netfilter tillät
+	användare med CAP_NET_ADMIN-möjligheten i någon användarnamnrymd,
+	inte bara root-namnrymden, att aktivera och inaktivera
+	anslutningsspårningshjälpare. Detta kunde leda till överbelastning,
+	överträdelse av nätverkssäkerhetspolicyn, eller annan åverkan.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-17449">CVE-2017-17449</a>
+
+	<p>Kevin Cernekee upptäckte att undersystemet netlink tillät
+	användare med CAP_NET_ADMIN-möjligheten i någon användarnamnrymd
+	att övervaka netlink-trafik i alla nätnamnrymder, inte bara de
+	som ägs av den användarnamnrymden. Detta kunde leda till
+	exponering av känslig information.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-17450">CVE-2017-17450</a>
+
+	<p>Kevin Cernekee upptäckte att modulen xt_osf tillät användare
+	med CAP_NET_ADMIN-möjligheten i alla användarnamnrymder att modifiera
+	den global OS-fingeravtryckslistan.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-17558">CVE-2017-17558</a>
+
+	<p>Andrey Konovalov rapporterade att USB-kärnan inte hanterar några
+	fellägen korrekt under initiering. En fysiskt närvarande användare
+	med en speciellt skapad USB-enhet kan utnyttja detta för att orsaka en
+	överbelastning (krasch eller minneskorruption), eller möjligen
+	för utökning av privilegier.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-17741">CVE-2017-17741</a>
+
+	<p>Dmitry Vyukov rapporterade att KVM-implementationen för x86 kunde
+	skriva över data från minne vid emulering av en MMIO-skrivning om
+	kvm_mmio tracepoint var aktiverat. En virtuell gästmaskin kan ha
+	möjlighet att utnyttja detta för att orsaka en överbelastning (krasch).</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-17805">CVE-2017-17805</a>
+
+	<p>Dmitry Vyukov rapporterade att KVM-implementationen för x86 kunde
+	skriva över data från minne vid emulering av en MMIO-skrivning om
+	kvm_mmio tracepoint var aktiverat. En virtuell gästmaskin kan ha
+	möjlighet att utnyttja detta för att orsaka en överbelastning (krasch).</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-17806">CVE-2017-17806</a>
+
+	<p>Man har upptäckt att HMAC-implementationen kunde användas med
+	en underliggande hash-algoritm som kräver en nyckel, vilket inte
+	var tänkt. En lokal användare kunde utnyttja detta för att orsaka
+	en överbelastning (krasch eller minneskorruption), eller möjligen
+	för privilegieeskalering.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-17807">CVE-2017-17807</a>
+
+	<p>Eric Biggers upptäckte att undersystemet KEYS saknade en kontroll för
+	skrivrättigheter när den lade till nycklar till en process
+	standardnyckelring. En lokal användare kunde utnyttja detta för att
+	orsaka en överbelastning eller för att få åtkomst till känslig
+	information.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000407">CVE-2017-1000407</a>
+	
+	<p>Andrew Honig rapporterade att KVM-implementationen för
+	Intel-processorer tillät direkt åtkomst till värd-I/O port 0x80,
+	vilket inte är säkert i allmänhet. På några system tillåter
+	detta en gäst-VM att orsaka en överbelastning (krasch) av
+	värden.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000410">CVE-2017-1000410</a>
+
+	<p>Ben Seri rapporterade att Bluetooth-undersystemet inte
+	hanterar korta EFS-informationselement i L2CAP-meddelanden korrekt. En
+	angripare som kan kommunicera över Bluetooth kunde använda detta för
+	att få känslig information från kärnan.</p></li>
+
+</ul>
+
+<p>För den gamla stabila utgåvan (Jessie) har dessa problem rättats
+i version 3.16.51-3+deb8u1.</p>
+
+<p>Vi rekommenderar att ni uppgraderar era linux-paket.</p>
+
+<p>För detaljerad säkerhetsstatus om linux vänligen se dess säkerhetsspårare
+på:
+<a href="https://security-tracker.debian.org/tracker/linux">\
+https://security-tracker.debian.org/tracker/linux</a></p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2018/dsa-4082.data"
