@@ -1,0 +1,154 @@
+#use wml::debian::translation-check translation="1.1" maintainer="Jean-Pierre Giraud"
+<define-tag description>Mise à jour de sécurité</define-tag>
+<define-tag moreinfo>
+<p>Plusieurs vulnérabilités ont été découvertes dans le noyau Linux qui
+pourraient conduire à une augmentation de droits, un déni de service ou à
+des fuites d'informations.</p>
+
+<ul>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-5754">CVE-2017-5754</a>
+
+<p>Plusieurs chercheurs ont découvert une vulnérabilité dans les
+processeurs Intel, permettant à un attaquant contrôlant un processus non
+privilégié de lire la mémoire à partir d'adresses arbitraires, y compris à
+partir du noyau et de tous les autres processus en cours d’exécution sur le
+système.</p>
+
+<p>Cette attaque particulière a été appelée Meltdown et est traitée dans le
+noyau Linux pour l'architecture Intel x86-64 par un ensemble de correctifs
+nommés « Kernel Page Table Isolation », imposant une séparation presque
+complète entre les mappages d'adresses du noyau et de l'espace utilisateur
+et empêchant l'attaque. Cette solution peut avoir un impact en termes de
+performance, et elle peut être désactivée lors de l'amorçage en passant le
+code <code>pti=off</code> sur la ligne de commande du noyau.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-8824">CVE-2017-8824</a>
+
+<p>Mohamed Ghannam a découvert que l'implémentation de DCCP ne gérait pas
+correctement les ressources quand une socket est déconnectée et
+reconnectée, menant éventuellement à une utilisation de mémoire après
+libération. Un utilisateur local pourrait utiliser cela pour un déni de
+service (plantage ou corruption de données) ou éventuellement pour une
+augmentation de droits. Sur les systèmes qui n'ont pas déjà chargé le
+module dccp, cela peut être atténué en le désactivant :
+<code>echo >> /etc/modprobe.d/disable-dccp.conf install dccp false</code></p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-15868">CVE-2017-15868</a>
+
+<p>Al Viro a découvert que l'implémentation du protocole d'encapsulation de
+réseau Bluebooth (BNEP) ne validait pas le type de la seconde socket passée
+à la fonction BNEPCONNADD ioctl(), ce qui pourrait conduire à une
+corruption de mémoire. Un utilisateur local doté de la capacité
+CAP_NET_ADMIN peut utiliser cela pour un déni de service (plantage ou
+corruption de données) ou éventuellement pour une augmentation de droits.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-16538">CVE-2017-16538</a>
+
+<p>Andrey Konovalov a signalé que le pilote média dvb-usb-lmedm04 ne gérait
+pas correctement certaines conditions d'erreur durant l'initialisation. Un
+utilisateur physiquement présent, avec un périphérique USB spécialement
+conçu, peut utiliser cela pour provoquer un déni de service (plantage).</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-16939">CVE-2017-16939</a>
+
+<p>Mohamed Ghannam a signalé (à travers le programme SecuriTeam Secure
+Disclosure de Beyond Security) que l'implémentation d'IPsec (xfrm) ne
+gérait pas correctement certaines causes d'échec lors du vidage
+d'informations de politique à travers netlink. Un utilisateur local doté de
+la capacité CAP_NET_ADMIN peut utiliser cela pour un déni de service
+(plantage ou corruption de données) ou éventuellement pour augmentation de
+droits.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-17448">CVE-2017-17448</a>
+
+<p>Kevin Cernekee a découvert que le sous-système netfilter permettait à
+des utilisateurs dotés de la capacité CAP_NET_ADMIN dans n'importe quel
+espace de noms, et pas seulement dans l'espace de noms du superutilisateur,
+d'activer et de désactiver les assistants de suivi de connexion. Cela
+pourrait conduire à un déni de service, une violation de la politique de
+sécurité de réseau, ou avoir d'autres conséquences.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-17449">CVE-2017-17449</a>
+
+<p>Kevin Cernekee a découvert que le sous-système netlink permettait à des
+utilisateurs dotés de la capacité CAP_NET_ADMIN dans n'importe quel espace
+de noms de surveiller le trafic netlink dans tous les espaces de noms
+réseau, et pas seulement ceux appartenant à l'espace de noms de cet
+utilisateur. Cela pourrait conduire à la divulgation d'informations
+sensibles.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-17450">CVE-2017-17450</a>
+
+<p>Kevin Cernekee a découvert que le module xt_osf permettait à des
+utilisateurs doté de la capacité CAP_NET_ADMIN dans tout espace de noms de
+modifier la liste globale d'empreintes d'OS.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-17558">CVE-2017-17558</a>
+
+<p>Andrey Konovalov a signalé que le noyau USB ne gérait pas correctement
+certaines conditions d'erreur durant l'initialisation. Un utilisateur
+physiquement présent, avec un périphérique USB spécialement conçu, peut
+utiliser cela pour provoquer un déni de service (plantage ou corruption de
+mémoire), ou éventuellement une augmentation de droits.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-17741">CVE-2017-17741</a>
+
+<p>Dmitry Vyukov a signalé que l'implémentation de KVM pour x86 pourrait
+lire des données de la mémoire au-delà des limites lors de l'émulation
+d'une écriture MMIO si le point de trace de kvm_mmio était activé. Une
+machine virtuelle cliente pourrait être capable d'utiliser cela pour
+provoquer un déni de service (plantage).</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-17805">CVE-2017-17805</a>
+
+<p>Certaines implémentations du chiffrement par bloc Salsa20 ne géraient
+pas les entrées de longueur nulle. Un utilisateur local pourrait utiliser
+cela pour provoquer un déni de service (plantage) ou éventuellement avoir
+un autre impact de sécurité.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-17806">CVE-2017-17806</a>
+
+<p>L'implémentation de HMAC pourrait être utilisée avec un algorithme de
+hachage sous-jacent qui requiert une clé, ce qui n'était pas voulu. Un
+utilisateur local pourrait utiliser cela pour provoquer un déni de service
+(plantage ou corruption de mémoire), ou éventuellement pour une
+augmentation de droits.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-17807">CVE-2017-17807</a>
+
+<p>Eric Biggers a découvert que le sous-système KEYS ne vérifiait pas les
+droits d'écriture lors de l'addition de clés à un trousseau par défaut d'un
+processus. Un utilisateur local pourrait utiliser cela pour provoquer un
+déni de service ou pour obtenir des informations sensibles.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000407">CVE-2017-1000407</a>
+
+<p>Andrew Honig a signalé que l'implémentation de KVM pour les processeurs
+Intel permettait un accès direct au port d'E/S 0x80 de l'hôte, ce qui n'est
+généralement pas sûr. Sur certains systèmes, cela permet à un client VM de
+provoquer un déni de service (plantage) de l'hôte.</p></li>
+
+<li><a href="https://security-tracker.debian.org/tracker/CVE-2017-1000410">CVE-2017-1000410</a>
+
+<p>Ben Seri a signalé que le sous-système Bluetooth ne gérait pas
+correctement les éléments courts d'information d'ESF dans les messages de
+L2CAP. Un attaquant capable de communiquer à travers Bluetooth pourrait
+utiliser cela pour obtenir des informations sensibles du noyau.</p></li>
+
+</ul>
+
+<p>Pour la distribution oldstable (Jessie), ces problèmes ont été corrigés
+dans la version 3.16.51-3+deb8u1.</p>
+
+<p>Nous vous recommandons de mettre à jour vos paquets linux.</p>
+
+<p>Pour disposer d'un état détaillé sur la sécurité de linux, veuillez
+consulter sa page de suivi de sécurité à l'adresse :
+<a href="https://security-tracker.debian.org/tracker/linux">\
+https://security-tracker.debian.org/tracker/linux</a></p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2018/dsa-4082.data"
+# $Id$
