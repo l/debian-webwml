@@ -1,0 +1,325 @@
+#use wml::debian::common_tags
+#use wml::debian::links.tags
+#use wml::debian::template title="<sitemap>" BARETITLE=true
+#include "$(ENGLISHDIR)/releases/info"
+#include "$(ENGLISHDIR)/MailingLists/mklist.tags"
+#use wml::debian::translation-check translation="1.56" maintainer="Sebul"
+
+# Don't translate this file, it will only make you look stupid.
+
+#   title_of return values contain tags processed during pass 2,
+#   and ePerl will fail if double quotes are in expanded text.
+#   For this reason, tag content must be protected
+<define-tag escape endtag=required>\
+  <protect pass=3>%body</protect>\
+</define-tag>
+
+<perl>
+sub title_of {
+  my ($page) = @_;
+
+# special cases
+  if ($page eq "https://lists.debian.org/") { return "<escape><mailarchives></escape>" }
+  if ($page eq "https://lists.debian.org/users.html") { return "<escape><listarchives_users></escape>" }
+  if ($page eq "https://lists.debian.org/devel.html") { return "<escape><listarchives_devel></escape>" }
+  if ($page eq "https://lists.debian.org/i18n.html") { return "<escape><listarchives_i18n></escape>" }
+  if ($page eq "https://lists.debian.org/ports.html") { return "<escape><listarchives_ports></escape>" }
+  if ($page eq "https://lists.debian.org/bugs.html") { return "<escape><listarchives_bugs></escape>" }
+  if ($page eq "https://lists.debian.org/misc.html") { return "<escape><listarchives_misc></escape>" }
+  if ($page eq "$(SEARCH)") { return "<escape><search></escape>" }
+  if ($page eq "https://db.debian.org/") { return "<escape><developerdb></escape>" }
+  if ($page eq "News/weekly/") { return "<escape><debianweeklynews></escape>" }
+  if ($page eq "News/project/") { return "<escape><debianprojectnews></escape>" }
+  if ($page eq "doc/manuals/debian-faq/") { return "<escape><debian_faq></escape>" }
+  if ($page eq "doc/debian-policy/") { return "<escape><policy_manual></escape>" }
+  if ($page eq "doc/manuals/developers-reference/") { return "<escape><devel_reference></escape>" }
+  if ($page eq "doc/manuals/maint-guide/") { return "<escape><new_maint_guide></escape>" }
+  if ($page eq "https://bugs.debian.org/release-critical/") { return "<escape><rc_bugs></escape>" }
+  if ($page eq "https://lintian.debian.org/") { return "<escape><lintian></escape>" }
+  if ($page eq "MailingLists/subscribe") { return "<escape><subscribe_title></escape>" }
+  if ($page eq "MailingLists/unsubscribe") { return "<escape><unsubscribe_title></escape>" }
+  if ($page eq "https://wiki.debian.org/DebianEdu") { return "<escape><debian-edu_title></escape>" }
+  if ($page eq "https://alioth.debian.org/") { return "<escape><alioth></escape>" }
+  if ($page eq "https://qa.debian.org/") { return "<escape><qa_group></escape>" }
+  if ($page eq "https://packages.qa.debian.org/") { return "<escape><pts></escape>" }
+  if ($page eq "https://qa.debian.org/developer.php") { return "<escape><ddpo></escape>" }
+
+  $page =~ s/^(.+)#(.+)$/$1/; # remove anchors (will handle this later)
+  $page =~ s,/stable/,/<current_release_name>/,;
+  $page =~ s,/testing/,/<current_testing_name>/,;
+  if ($page =~ /\/$/) { $page .= "index.wml" } else { $page .= ".wml" };
+#  print STDERR "page: $page\n"; return;
+  $page = "$ENGLISHDIR/$page" unless (-f $page);
+  die "$page doesn't exist!\n" unless (-f $page);
+  my $title = `egrep '^#use .* title=' $page `; chomp $title;
+  $title =~ s/^#use .* title="(.+?)("\s.*$|"$|"\e.*$)/$1/;
+<protect pass=2>
+  if ($title eq '<pagetitle>') {
+    $title = `egrep '^<define-tag pagetitle>.*</define-tag>' $page `; chomp $title;
+    $title =~ s/^<define-tag pagetitle>(.+?)<\/define-tag>/$1/;
+  }
+</protect>
+  die "can't find a title in $page!\n" unless (($title) || ($title eq ""));
+  return $title;
+}
+</perl>
+
+<define-tag linkto whitespace=delete>
+<a href="%0"><:= title_of("%0") :></a>
+</define-tag>
+
+<ul>
+<li><a href="#aboutdebian"><aboutdebian/></a></li>
+<li><a href="#gettingdebian"><gettingdebian/></a></li>
+<li><a href="#support"><support/></a></li>
+<li><a href="#development"><development/></a></li>
+<li><a href="#misc"><misc/></a></li>
+</ul>
+
+<hrline>
+
+<div id="main">
+
+<div class="card" id="aboutdebian">
+  <h2><aboutdebian/></h2>
+  <div>
+  <div class="lefthalf"> 
+  <ul>
+  <li><linkto "intro/about">
+  <li><linkto "social_contract">
+  <li><linkto "code_of_conduct">
+  <li><linkto "intro/free">
+  <li><linkto "intro/why_debian">
+  </ul>
+
+  <ul>
+  <li><linkto "intro/organization">
+  <li><linkto "donations">
+  <li><linkto "contact">
+  </ul>
+  </div>
+  <div class="righthalf">
+  <ul>
+  <li><linkto "intro/cn">
+  </ul>
+
+  <ul>
+  <li><linkto "News/">
+  <li><linkto "News/project/">
+  <li><linkto "events/">
+  </ul>
+
+  <ul>
+  <li><linkto "partners/">
+  <li><linkto "mirror/sponsors">
+  </ul>
+  </div>
+  </div>
+</div>
+<div class="card" id="gettingdebian">
+  <h2><gettingdebian/></h2>
+  <div>
+  <div class="lefthalf"> 
+  <ul>
+  <li><linkto "releases/">
+  <li><linkto "releases/stable/">
+  <li><linkto "releases/testing/">
+  </ul>
+
+  <ul>
+  <li><linkto "distrib/packages">
+  </ul>
+
+  <ul>
+  <li><linkto "distrib/">
+  <li><linkto "distrib/netinst">
+  <li><linkto "CD/netinst/">
+  </ul>
+  </div>
+  <div class="righthalf">
+  <ul>
+  <li><linkto "CD/">
+  <li><linkto "CD/faq/">
+  <li><linkto "CD/vendors/">
+  <li><linkto "CD/">
+  </ul>
+
+  <ul>
+  <li><linkto "CD/http-ftp/">
+  <li><linkto "CD/jigdo-cd/">
+  </ul>
+  </div>
+  </div>
+</div>
+<div class="card" id="support">
+  <h2><support/></h2>
+  <div>
+  <div class="lefthalf"> 
+  <ul>
+  <li><linkto "support">
+  <li><linkto "international/">
+  <li><linkto "consultants/">
+  <li><linkto "distrib/pre-installed">
+  </ul>
+
+  <ul>
+  <li><linkto "doc/">
+  <li><linkto "doc/manuals/debian-faq/">
+  <li><linkto "doc/books">
+  <li><linkto "doc/ddp">
+  <li><linkto "doc/user-manuals">
+  <li><linkto "doc/devel-manuals">
+  <li><linkto "doc/misc-manuals">
+  </ul>
+  </div>
+  <div class="righthalf">
+  <ul>
+  <li><linkto "security/">
+  <li><linkto "security/audit/">
+  </ul>
+
+  <ul>
+  <li><linkto "MailingLists/">
+  <li><linkto "MailingLists/debian-announce">
+  <li><linkto "MailingLists/subscribe">
+  <li><linkto "MailingLists/unsubscribe">
+  </ul>
+
+  <ul>
+  <li><linkto "https://lists.debian.org/">
+  <li><linkto "https://lists.debian.org/users.html">
+  <li><linkto "https://lists.debian.org/devel.html">
+  <li><linkto "https://lists.debian.org/i18n.html">
+  <li><linkto "https://lists.debian.org/ports.html">
+  <li><linkto "https://lists.debian.org/bugs.html">
+  <li><linkto "https://lists.debian.org/misc.html">
+  </ul>
+  </div>
+  </div>
+</div>
+<div class="card" id="development">
+  <h2><development/></h2>
+  <div>
+  <div class="lefthalf"> 
+  <ul>
+  <li><linkto "Bugs/">
+  <li><linkto "Bugs/Reporting">
+  <li><linkto "Bugs/server-control">
+  <li><linkto "Bugs/server-request">
+  <li><linkto "Bugs/Developer">
+  <li><linkto "https://bugs.debian.org/release-critical/">
+  </ul>
+
+  <ul>
+  <li><linkto "doc/debian-policy/">
+  <li><linkto "doc/manuals/developers-reference/">
+  <li><linkto "doc/manuals/maint-guide/">
+  </ul>
+
+  <ul>
+  <li><linkto "ports/">
+  <li><linkto "ports/alpha/">
+  <li><linkto "ports/amd64/">
+  <li><linkto "ports/arm/">
+  <li><linkto "ports/hppa/">
+# <li><linkto "ports/i386/">
+  <li><linkto "ports/ia64/">
+  <li><linkto "ports/m68k/">
+  <li><linkto "ports/mips/">
+  <li><linkto "ports/powerpc/">
+  <li><linkto "ports/s390/">
+  <li><linkto "ports/sparc/">
+  </ul>
+
+  <ul>
+  <li><linkto "https://qa.debian.org/">
+  <li><linkto "https://lintian.debian.org/">
+  <li><linkto "https://packages.qa.debian.org/">
+  <li><linkto "https://qa.debian.org/developer.php">
+  </ul>
+  </div>
+  <div class="righthalf">
+  <ul>
+  <li><linkto "devel/">
+  <li><linkto "devel/constitution">
+  <li><linkto "devel/people">
+  <li><linkto "devel/developers.loc">
+  <li><linkto "https://db.debian.org/">
+  <li><linkto "devel/join/">
+  <li><linkto "devel/misc/">
+  </ul>
+
+  <ul>
+  <li><linkto "devel/join/newmaint">
+  <li><linkto "devel/wnpp/">
+  <li><linkto "devel/website/">
+  <li><linkto "devel/website/translating">
+  </ul>
+
+  <ul>
+  <li><linkto "https://alioth.debian.org/">
+  </ul>
+
+  <ul>
+  <li><linkto "devel/debian-jr/">
+  <li><linkto "devel/debian-med/">
+  <li><linkto "https://wiki.debian.org/DebianEdu">
+  <li><linkto "devel/debian-desktop/">
+  <li><linkto "devel/debian-lex/">
+  <li><linkto "devel/debian-nonprofit/">
+  <li><linkto "devel/debian-accessibility/">
+  </ul>
+
+  <ul>
+  <li><linkto "vote/">
+  <li><linkto "vote/howto_proposal">
+  <li><linkto "vote/howto_follow">
+  </ul>
+  </div>
+  </div>
+</div>
+<div class="card" id="misc">
+  <h2><misc/></h2>
+  <div>
+  <div class="lefthalf"> 
+  <ul>
+  <li><linkto "mirror/">
+  <li><linkto "mirror/size">
+  <li><linkto "mirror/submit">
+  <li><linkto "mirror/ftpmirror">
+  <li><linkto "CD/mirroring/">
+  <li><linkto "mirror/list">
+
+  </ul>
+  </div>
+  <div class="righthalf">
+
+  <ul>
+  <li><linkto "logos/">
+  <li><linkto "banners/">
+  <li><linkto "CD/artwork/">
+  </ul>
+
+  <ul>
+  <li><linkto "misc/merchandise">
+  <li><linkto "misc/related_links">
+  </ul>
+
+  <ul>
+  <li><linkto "misc/awards">
+  </ul>
+  <ul>
+  <li><linkto "ports/hurd/">
+  <li><linkto "ports/netbsd/">
+  <li><linkto "ports/kfreebsd-gnu/">
+  </ul>
+  <ul>
+  <li><linkto "ports/beowulf/">
+  <li><linkto "misc/laptops/">
+  </ul>
+  </div>
+  </div>
+</div>
+
+<p><strong><linkto "$(SEARCH)"></strong></p>
+</div>
