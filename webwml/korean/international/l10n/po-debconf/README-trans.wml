@@ -1,0 +1,162 @@
+#use wml::debian::template title="L10n Debconf templates with PO files &mdash; Hints for translators"
+#include "$(ENGLISHDIR)/international/l10n/dtc.def"
+#use wml::debian::translation-check translation="1.10" maintainer="Sebul"
+
+<p>
+#include "$(ENGLISHDIR)/international/l10n/po-debconf/menu.inc"
+</p>
+
+<h2>General notes for translators.</h2>
+
+<ol>
+  <li>
+         Before starting a translation, always check with your fellow
+         translators on debian-l10n-&lt;<em>language</em>&gt;@lists.debian.org
+         (if such a list does exist) to make sure that noone is currently
+         working on the same translation, and read current bugreports
+         against the package you are going to translate to see if a
+         translation has already been reported.
+  </li>
+
+  <li>
+         If you want to update a translation, please always contact the
+         previous translator in order to prevent duplication of work.
+         Mail addresses can be found in the PO file.
+  </li>
+
+  <li>
+         To start a new translation, copy the <tt>templates.pot</tt> file
+         into <tt><em>xx</em>.po</tt>, where <em>xx</em> is the
+         <a href="http://www.loc.gov/standards/iso639-2/php/code_list.php">ISO
+         code</a> of your language.  Then specify in the first
+         <tt>msgstr</tt> the charset used for translated strings, and
+         also put any useful piece of information.
+  </li>
+  <li>
+         Any general text editor can be used to work on PO files, and
+         there are some specific tools like
+         <a href="https://packages.debian.org/unstable/text/gtranslator">\
+         gtranslator</a> or
+         <a href="https://packages.debian.org/unstable/devel/kbabel">\
+         kbabel</a> which can be helpful if you are not familiar
+         with PO files.
+         <a href="https://packages.debian.org/unstable/devel/gettext">\
+         Gettext</a>
+         <a href="http://www.gnu.org/software/gettext/manual/html_node/gettext_toc.html">\
+         documentation</a> contains explanations about the PO file format,
+         and you must read at least the
+         <a href="http://www.gnu.org/software/gettext/manual/html_node/gettext_35.html#SEC35">\
+         Filling in the Header Entry</a> and
+         <a href="http://www.gnu.org/software/gettext/manual/html_node/gettext_9.html#SEC9">\
+         The Format of PO Files</a> sections.
+  </li>
+
+  <li>
+         When you have finished your translation, always reread your
+         file at least once to correct all meaning, spelling, grammar,
+         typo and other mistakes.  (Maybe your PO editor does include
+         a spellchecker or a translation helper like acheck).
+         Next run
+         <pre>
+            msgfmt -c -v -o /dev/null <em>YOUR_LANGUAGE_CODE</em>.po
+         </pre>
+         to check that your file is valid and will be integrated
+         without trouble.
+         Depending on your language team policy, you may also send
+         your translation to your dedicated l10n list so that it gets
+         reviewed.
+  </li>
+
+  <li>
+         When your translation is finished and valid, file a
+         <a href="$(HOME)/Bugs/Reporting">bugreport</a>
+         against the package being translated, severity
+         <a href="$(HOME)/Bugs/Developer#severities">wishlist</a>.  Tag
+         your report with <tt>l10n</tt> and <tt>patch</tt>
+         <a href="$(HOME)/Bugs/Developer#tags">marks</a>,
+         add <tt><protect>[INTL:</protect><em>xx</em>]</tt> (where
+         <em>xx</em> is the
+         <a href="http://www.loc.gov/standards/iso639-2/php/code_list.php">ISO
+         code</a> of your language) to the subject to help further
+         searches, ask politely that your translation gets included,
+         give maintainer instructions on what to do with this file (e.g.
+         <strong>Please copy the attachment into debian/po/cs.po</strong>) and do
+         not forget to attach your translation.  This step can be very
+         easily performed with the
+         <a href="https://packages.debian.org/unstable/utils/reportbug">\
+         reportbug</a> utility.
+  </li>
+</ol>
+
+<h2>Notes specific to po-debconf</h2>
+
+<ol>
+  <li>
+         The field name is displayed in comments before <tt>msgid</tt>.
+         <tt>Default</tt> values are special for debconf, because when
+         template type is <tt>Select</tt> or <tt>Multiselect</tt>, they
+         must <strong>not</strong> be translated, but their values may
+         be changed (in rare circumstances) to another string listed in
+         the English <tt>Choices</tt> field.  For this reason,
+         developers should use <tt>DefaultChoice</tt> instead of
+         <tt>Default</tt> in order to prevent confusion.
+         <strong>This is a po-debconf extension.</strong>
+         In the generated templates file, <tt>Default</tt> will of course be
+         printed, since debconf does not define this <tt>DefaultChoice</tt>
+         field.
+  </li>
+
+  <li>
+         Because instructions for translators may be inserted by
+         developers, you must ensure that the tool you are using
+         is able to display (without corruption) these comments.
+         See for instance instructions to handle language selection
+         in the
+         <a href="https://packages.debian.org/unstable/misc/geneweb">\
+         geneweb</a> package.
+  </li>
+
+  <li>
+         Sometimes msgids are identical whereas msgstr could have
+         different values.  In order to make msgids unique, some
+         special text can be inserted at the end of the string, more
+         precisely any sequence of
+         <ul>
+             <li>a left square bracket: <tt>[</tt></li>
+             <li>a space</li>
+             <li>zero or more occurrences of any character except left
+             square bracket, right square bracket and newline</li>
+             <li>a right square bracket: <tt>]</tt></li>
+         </ul>
+         at the end of string is removed from <tt>msgid</tt> strings.
+         It also applies to <tt>msgstr</tt> strings, so that translators can
+         insert an empty string.
+  </li>
+
+  <li>
+         Lines are wrapped by debconf, except when they begin with a
+         space.  Such lines are often used to format lists, but each
+         frontend has its own limitations.  It seems that such lines
+         must not exceed 72 characters in order to be displayed
+         reasonably well on all frontends.
+  </li>
+
+  <li>
+         The <tt>podebconf-display-po</tt> script (from po-debconf &gt;= 0.8.3)
+         is able to show your translation as it will be displayed by
+         debconf at configuration time.  Run
+         <pre>
+            podebconf-display-po -fdialog debian/po/<em>YOUR_LANG_CODE</em>.po
+         </pre>
+         to have a rough idea on how your translation will look like.
+         But this only works for basic configuration files, rendering
+         may be altered if complex operations (like heavy use of text
+         substitution) are performed.  Available debconf frontends
+         (which can be selected by the <tt>-f</tt> flag) are listed in
+         debconf(7).
+  </li>
+</ol>
+
+<podebconf-langs-short>
+
+#include "$(ENGLISHDIR)/international/l10n/date.gen"
