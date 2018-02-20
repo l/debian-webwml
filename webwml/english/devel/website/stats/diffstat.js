@@ -114,7 +114,7 @@ function diffstat_pretty(diff_or_error) {
 //   element: the element which is populated with the diffstat information
 function setDiffstat(path, r1, r2, element) {
 	// does not send CORS:
-	// var base = "http://anonscm.debian.org/viewvc/webwml/webwml/";
+	// var base = "https://anonscm.debian.org/viewvc/webwml/webwml/";
 	var base = "http://webwml.alioth.debian.org/cgi-bin/anoncvs-cors/";
 	var lang = "english";
 	var url = base + lang + "/" + path + "?r1=" + r1 + "&r2=" + r2 + "&view=patch";
