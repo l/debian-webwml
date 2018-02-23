@@ -1,13 +1,31 @@
-#use wml::debian::template title="Enviando Informação de um Espelho"
-#use wml::debian::translation-check translation="1.71" translation_maintainer="Felipe Augusto van de Wiel (faw)"
+#use wml::debian::template title="Enviando Informações sobre um Espelho"
+#use wml::debian::translation-check translation="1.87" translation_maintainer="Tassia Camoes Araujo"
 #include "$(ENGLISHDIR)/mirror/submit.inc"
 
 <p>Se você deseja enviar informações sobre um espelho do Debian, você pode
-fazer isto usando o formulário abaixo.
-A maioria das informações fornecidas será exibida na lista de espelhos.</p>
+fazer isto usando o formulário abaixo. As informações fornecidas serão exibidas
+na lista de espelhos.</p>
 
 <p>Por favor, observe que todos os espelhos enviados devem seguir as
-<a href="ftpmirror">regras e definições presentes em nossa documentação</a>.</p>
+<a href="ftpmirror">regras e definições presentes em nossa documentação</a>. Em
+particular,
+</p>
+<ul>
+<li>Você deve usar <a href="ftpmirror#how">ftpsync</a> para espelhar o Debian,
+<li>escolha um boa fonte (<strong>não</strong> um serviço (http) com nome, por
+    exemplo, <code>ftp.CC.debian.org</code>, nem DNS round robins, nem CDNs),
+<li>atualize quatro vezes por dia para corresponder à frequência de atualização
+    do repositório (ou configure gatilhos na fonte ou use
+    <code>ftpsync-cron</code> uma vez a cada hora para monitorar sua fonte por
+    mudanças e iniciar o processo de sincronização). Além disso,
+<li>seu espelho deve ter um arquivo tracefile nomeado apropriadamente (ftpsync
+    vai resolver isso se MIRRORNAME estiver corretamente configurado).
+<li>deve criar os arquivos de sinalização
+    <code>/Archive-Update-in-Progress-XXX</code> e
+    <code>/Archive-Update-Required-XXX</code> quando apropriado
+    (novamente, ftpsync fará isso pra você) para ajudar espelhos que usem o seu
+    como fonte a espelharem corretamente.
+</ul>
 
 <form-action "" archive-upstream https://cgi.debian.org/cgi-bin/submit_mirror.pl>
  
@@ -15,21 +33,21 @@ A maioria das informações fornecidas será exibida na lista de espelhos.</p>
 
 <p>
 <input type="radio" name="submissiontype" value="new" checked>
-New mirror submission (Envio de novo espelho)
+Cadastro de novo espelho
 &nbsp; &nbsp; &nbsp;
 <input type="radio" name="submissiontype" value="update">
-Update of an existing mirror (Atualização de um espelho existente)
+Atualização de um espelho existente
 </p>
 
 <p>
-Site: <input type="text" name="site" size="30"></p>
+Nome do espelho: <input type="text" name="site" size="30"></p>
 
-<p>Entre com o endereço do espelho Debian em seu site nos campos abaixo.
-Deixe os campos não necessários em branco.</p>
+<p>Insira o endereço do espelho Debian em seu site nos campos abaixo.
+Deixe os campos irrelevantes em branco.</p>
 
 <table>
-<tablerowdef "Packages archive, over HTTP"   archive-http   30 "/debian" " <small>We strongly recommend <code>/debian</code>.</small>">
-<tablerowdef "Packages archive, over rsync"  archive-rsync  30 "debian" " <small>If you offer rsync, <code>debian</code> is suggested as module name.</small>">
+<tablerowdef "Repositório de pacotes, sobre HTTP"   archive-http   30 "/debian" " <small>Nós recomendamos fortemente o <code>/debian</code>.</small>">
+<tablerowdef "Repositório de pacotes, sobre rsync"  archive-rsync  30 "debian" " <small>Se você oferece rsync, sugerimos <code>debian</code> como nome de módulo.</small>">
 # <tablerow "CD/DVD images, over HTTP"      cdimage-http   30>
 # <tablerow "CD/DVD images, over rsync"     cdimage-rsync  30>
 # <tablerow "Old Debian releases, over HTTP"  old-http     30>
@@ -53,17 +71,9 @@ Deixe os campos não necessários em branco.</p>
 <tr><td>País do site:  <td><select name="country">
 <countrylist>
 </select>
-<tablerow "E-mail privado do responsável pelo site (opcional)"  maint_private_email   30>
-<tr><td>&nbsp;</td><td>
-<small>
-Se você enviar um endereço privado, ele ficará disponível somente para os
-editores da lista de espelhos Debian, para que eles possam contatá-lo com
-notícias importantes e/ou relatórios de problemas.
-</small>
-</td></tr>
 <tablerow "Localização do site (opcional)"     location      30>
 <tablerow "Nome do patrocinador do site (opcional)" sponsor_name  30>
-<tablerow "URL do site patrocinador (opcional)"  sponsor_url   30>
+<tablerow "URL do patrocinador do site (opcional)"  sponsor_url   30>
 </table>
 
 <table><tr>
@@ -71,9 +81,9 @@ notícias importantes e/ou relatórios de problemas.
 <td><textarea name="comment" cols=40 rows=7></textarea></td>
 </tr></table>
 
-<p><label>I have subscribed to the
+<p><label>Eu me inscrevi na
 <a href="https://lists.debian.org/debian-mirrors-announce/">
-announcements mailing list</a>
+lista de emails para anúncios</a>
 <input type="checkbox" name="mlannounce"></label>
 </p>
 
@@ -82,10 +92,10 @@ announcements mailing list</a>
 </p>
 </form>
 
-<p>Seu site poderá aparecer na lista dentro de uma semana, assim que um
-operador humano verificá-lo e incluí-lo. Nós podemos enviar um e-mail para
+<p>Seu site deve aparecer na lista dentro de algumas semanas, assim que um
+operador humano verificá-lo e incluí-lo. Nós enviaremos um e-mail para
 você em caso de algum problema com as informações fornecidas.</p>
 
-<p>Se você não receber nenhum retorno dentro de duas semanas, você pode
+<p>Se você não receber nenhum retorno dentro de três meses, você pode
 nos contatar em <email mirrors@debian.org>.</p>
 
