@@ -1,0 +1,312 @@
+#use wml::debian::template title="데비안 &ldquo;테스트&rdquo; 배포" BARETITLE=true
+#include "$(ENGLISHDIR)/releases/info"
+#use wml::debian::translation-check translation="1.40" maintainer="Sebul"
+
+<p>데비안 테스트 배포에 대한 기본적인, 사용자 지향 정보는,
+<a href="$(DOC)/manuals/debian-faq/ch-ftparchives#s-testing">데비안 FAQ</a>를 보세요.</p>
+
+<p>일반 사용자와 테스트 개발자 모두에게 중요한 것은, 테스트의 보안 업데이트는
+<strong>보안팀에서 다루지 않는다</strong>는 겁니다. 자세한 정보는
+<a href="../security/faq#testing">보안 팀 FAQ</a>를 보세요.</p>
+
+<p>이 페이지는 데비안 개발자에게 중요한 <q>테스트</q> 측면을 주로 다룹니다.
+</p>
+
+<h2><q>테스트</q>가 어떻게 동작하나</h2>
+
+<p><q>테스트</q> 배포는 자동 생성 배포입니다. 그것은 <q>불안정</q> 배포본에서
+스크립트 집합에 의해 릴리스 심각한 버그 없을 것 같은 패키지로 이동하려고 생성됩니다.
+다른 패키지의 종속성을 보장하는 방법으로 그렇게 합니다.
+</p>
+
+<p>(특정 버전의) 패키지는 아래 기준을 모두 만족하면 테스트로 옮깁니다:</p>
+
+<ol>
+  <li>업로드 긴급성에 따라10, 5 또는 2일 동안 불안정해야 합니다;</li>
+
+  <li>전에 불안정한 상태로 컴파일된 모든 아키텍처에서 컴파일 되고 최신이어야합니다;</li>
+
+  <li>현재 <q>테스트</q> 버전에 해당되지 않는 릴리스 심각 버그가 없어야 합니다
+(  <a href="#faq">자세한 내용</a>) 참조;</li>
+
+  <li>모든 종속성은 <q>테스트</q> 패키지에서 이미 만족<em>하거나</em>,
+<em>또는</em> 같은 시간에 설치되는 패키지 그룹에 의해 만족하여야 합니다;
+</li>
+
+  <li>패키지 설치 연산을 <q>테스트</q>에 넣을 때 현재 <q>테스트</q>인 패키지가 깨지지 않아야 합니다
+(  <a href="#faq">더 많은 정보</a>.)</li>
+</ol>
+
+<p>첫 세가지를 만족하는 패키지를 <q>Valid Candidate</q>라 합니다.</p>
+
+<p>업데이트 스크립트는 언제 각 패키지가 <q>불안정</q>에서 <q>테스트</q>로 가는지 보여줍니다.
+출력은 두 가지 입니다:</p>
+
+<ul>
+  <li>The <a href="https://release.debian.org/britney/update_excuses.html">\
+      update excuses</a>
+      [<a href="https://release.debian.org/britney/update_excuses.html.gz">\
+      gzipped</a>]:
+      list of all candidate package versions and the basic status of their
+      propagation into <q>testing</q>; this is somewhat shorter and nicer than
+  </li>
+  <li>The <a href="https://release.debian.org/britney/update_output.txt">\
+      update output</a>
+      [<a href="https://release.debian.org/britney/update_output.txt.gz">\
+      gzipped</a>]:
+      the complete, rather crude output of the <q>testing</q> scripts as they
+      recurse through the candidates
+  </li>
+</ul>
+
+<h2><a name="faq">자주 묻는 질문 답변</a></h2>
+
+# Note to translators: these two first items are almost the same as
+# https://www.debian.org/doc/manuals/developers-reference/pkgs#faq
+
+<h3><q>릴리스 심각 버그는 무엇이고,어떻게 계산하나요?</q></h3>
+
+<p>All bugs of some higher severities are by default considered
+<em><a href="https://bugs.debian.org/release-critical/">release-critical</a></em>;
+currently, these are <strong>critical</strong>, <strong>grave</strong> and
+<strong>serious</strong> bugs.</p>
+
+<p>Such bugs are presumed to have an impact on the chances that the package
+will be released with the stable release of Debian: in general, if a package
+has open release-critical bugs filed on it, it won't get into <q>testing</q>, and
+consequently won't be released in <q>stable</q>.</p>
+
+<p>
+The <q>testing</q> bug count are all release-critical bugs which
+are marked to apply to <tt>package/version</tt> combinations
+that are available in <q>testing</q>for a release architecture.
+</p>
+
+
+<h3><q>다른 패키지를 깰 수 있는<q>테스트</q>를 어떻게 설치하나요?</q></h3>
+
+<p>The structure of the distribution archives is such that they can only
+contain one version of a package; a package is defined by its name. So, when
+the source package <tt>acmefoo</tt> is installed into <q>testing</q>, along with
+its binary packages <tt>acme-foo-bin</tt>, <tt>acme-bar-bin</tt>,
+<tt>libacme-foo1</tt> and <tt>libacme-foo-dev</tt>, the old version is
+removed.</p>
+
+<p>However, the old version may have provided a binary package with an old
+soname of a library, such as <tt>libacme-foo0</tt>. Removing the old
+<tt>acmefoo</tt> will remove <tt>libacme-foo0</tt>, which will break any
+packages which depend on it.</p>
+
+<p>Evidently, this mainly affects packages which provide changing sets of
+binary packages in different versions (in turn, mainly libraries). However,
+it will also affect packages upon which versioned dependencies have been
+declared of the ==, &lt;= or &lt;&lt; varieties.</p>
+
+<p>When the set of binary packages provided by a source package change in
+this way, all the packages that depended on the old binaries will have to be
+updated to depend on the new binaries instead. Because installing such a
+source package into <q>testing</q> breaks all the packages that depended on it in
+<q>testing</q>, some care now has to be taken: all the depending packages must be
+updated and ready to be installed themselves so that they won't be broken,
+and, once everything is ready, manual intervention by the release manager or
+an assistant is normally required.</p>
+
+<p>If you are having problems with complicated groups of packages like this,
+contact debian-devel or debian-release for help.</p>
+
+<h3><q>I still don't understand! The <q>testing</q> scripts say that this
+package is a valid candidate, but it still hasn't gone into
+<q>testing</q>.</q></h3>
+
+<p>This tends to happen when in some way, directly or indirectly, installing
+the package will break some other package.</p>
+
+<p>Remember to consider your package's dependencies. Suppose your package
+depends on libtool, or libltdl<var>X</var>. Your package won't go into
+<q>testing</q> until the right version of libtool is ready to go in with it.</p>
+
+<p>In turn, that won't happen until installing libtool doesn't break things
+already in <q>testing</q>. In other words, until all other packages which depend
+on libltdl<var>Y</var> (where <var>Y</var> is the earlier version) have been
+recompiled, and all their release critical bugs are gone, etc, none of these
+packages will enter <q>testing</q>.</p>
+
+<p>This is where the <a href="https://release.debian.org/britney/update_output.txt">\
+textual output</a>
+[<a href="https://release.debian.org/britney/update_output.txt.gz">gzipped</a>]
+is useful: it gives hints (albeit very terse ones) as to which packages
+break when a valid candidate is added to <q>testing</q> (see the <a
+href="$(DOC)/manuals/developers-reference/pkgs#details">\
+Developer's Reference for more details</a>).
+</p>
+
+<h3><q>Why is it sometimes hard to get <kbd>Architecture: all</kbd> packages
+into <q>testing</q>?</q></h3>
+
+<p>If the <kbd>Architecture: all</kbd> package is to be installed, it must
+be possible to satisfy its dependencies on <strong>all</strong>
+architectures. If it depends on certain packages which only compile on a
+limited set of Debian's architectures, then it can't do that.</p>
+
+<p>However, for the time being, <q>testing</q> will ignore <kbd>Architecture:
+all</kbd> packages' installability on non-i386 architectures. (<q>It's a
+gross hack and I'm not really happy to have made it, but there you go.</q>
+&mdash;aj)</p>
+
+<h3><q>내 패키지는 오래되서 어떤 아키텍처에서 중단되었습니다. 무엇을 하나요?
+</q></h3>
+
+<p>Check the status of your package in the
+<a href="https://buildd.debian.org/build.php">build log database</a>.
+If the package doesn't build, it will be marked as <em>failed</em>;
+investigate the build logs and fix any of the problems that are caused
+by your package's sources.</p>
+
+<p>If you happen to notice that some architectures have built the new
+version of your package, but it isn't showing up in <q>testing</q> scripts output,
+then you just have to be a bit more patient until the respective buildd
+maintainer uploads the files to the Debian archive.</p>
+
+<p>If you notice that some architectures haven't built your new version of
+the package at all, despite the fact you uploaded a fix for an earlier
+failure, the reason is probably that it's marked as waiting for dependencies
+(Dep-Wait). You can also see the list of these so-called
+<a href="https://buildd.debian.org/stats/">wanna-build states</a> to make
+sure.</p>
+
+<p>These problems usually get fixed eventually, but if you've been waiting
+for a longer period of time (say, two weeks or more), notify the respective
+port buildd maintainer if such an address is documented on the
+<a href="$(HOME)/ports/">port web page</a>, or the mailing list of the
+port.</p>
+
+<p>If you have explicitly dropped the architecture from the Architecture list
+in the control file, and the package has been built for that architecture
+before, you will need to request that the old binary package for this
+architecture be removed from the archive before your package can transition to
+testing.  You need to file a bug against <q>ftp.debian.org</q> requesting removal of
+the dropped architecture's packages from the unstable archive.  Generally the
+relevant porting list should be informed as a matter of courtesy.</p>
+
+<h3><q>Are there any exceptions? I'm sure <tt>acmefoo</tt> has just made
+it into <q>testing</q> despite not satisfying all of the requirements.</q></h3>
+
+<p>The release manager can override the rules in two ways:</p>
+
+<ul>
+  <li>They can decide that the breakage caused by the installation of a new
+      library will make things better rather than worse, and let it go in
+      along with its flotilla of dependents.</li>
+  <li>They can also manually remove packages from <q>testing</q> that would be
+      broken, so that new stuff can be installed.</li>
+</ul>
+
+<h3><q>실제적이고, 간단하지 않은 예를 제공할 수 있나요?</q></h3>
+
+<p>Here's one: when the source package <tt>apache</tt> is installed into
+<q>testing</q>, along with its binary packages <tt>apache</tt>,
+<tt>apache-common</tt>, <tt>apache-dev</tt> and <tt>apache-doc</tt>, the
+old version is removed.</p>
+
+<p>However, all Apache module packages depend on <code>apache-common (&gt;=
+<var>something</var>), apache-common (&lt;&lt; <var>something</var>)</code>,
+so this change breaks all of those dependencies. Consequently, all Apache
+modules need to be recompiled against the new version of Apache in order
+for <q>testing</q> to be updated.</p>
+
+<p>Let's elaborate on this a bit further: after all of the modules have been
+updated in unstable to work with a new Apache, the <q>testing</q> scripts try
+<tt>apache-common</tt> and find out that it breaks all the Apache modules
+because they have <code>Depends: apache-common (&lt;&lt; <var>the current
+version</var>)</code>, and then try <tt>libapache-<var>foo</var></tt> to find
+out that it doesn't install because it has <code>Depends: apache-common (&gt;=
+<var>the new version</var>)</code>.</p>
+
+<p>However, later they'll apply a different logic (sometimes prompted by a
+manual intervention): they'll ignore the fact <tt>apache-common</tt> breaks
+stuff, and keep going with things that work; if it still doesn't work after
+we've done everything we can, too bad, but maybe it <strong>will</strong>
+work. Later they'll try all the random <tt>libapache-<var>foo</var></tt>
+packages and see that they indeed work.</p>
+
+<p>After everything's been tried, they check how many packages have been
+broken, work out if that's better or worse than what there was originally
+and either accept everything or forget about it. You'll see this in
+<tt>update_output.txt</tt> on <q><code>recur:</code></q> lines.</p>
+
+<p>For example:</p>
+
+<pre>
+         recur: [<var>foo</var> <var>bar</var>] <var>baz</var>
+</pre>
+
+<p>basically says <q>having already found that <var>foo</var> and
+<var>bar</var> make things better, I'm now trying <var>baz</var> to
+see what happens, even though that breaks things</q>. The lines of
+<tt>update_output.txt</tt> that start with <q><code>accepted</code></q> indicate
+things that appear to make things better, and <q><code>skipped</code></q> lines make
+things worse.</p>
+
+<h3><q><tt>update_output.txt</tt> 파일은 읽을 수 없습니다!</q></h3>
+
+<p>그건 질문이 아닙니다. ;-)</p>
+
+<p>예를 듭니다:</p>
+
+<pre>
+ skipped: cln (0) (150+4)
+     got: 167+0: a-40:a-33:h-49:i-45
+     * i386: ginac-cint, libginac-dev
+</pre>
+
+<p>This means that if <tt>cln</tt> goes into <q>testing</q>, <tt>ginac-cint</tt>
+and <tt>libginac-dev</tt> become uninstallable in <q>testing</q> on i386.
+Note that the architectures are checked in alphabetical order and only the
+problems on the first architecture with problems are shown &mdash; that's why
+the alpha architecture is shown so often.</p>
+
+<p>The <q>got</q> line includes the number of problems in <q>testing</q> on the
+different architectures (until the first architecture where a problem is
+found &mdash; see above). The <q>i-45</q> means that if <tt>cln</tt> would go into
+<q>testing</q>, there would be 45 uninstallable packages on i386. Some of the
+entries above and below <tt>cln</tt> show there were 43 uninstallable
+packages in <q>testing</q> on i386 at the time.</p>
+
+<p>The <q>skipped: cln (0) (150+4)</q> line means that there are still 150
+packages to go through after this package until this check of all packages
+is completed, and that 4 packages have been found already that won't be
+planned to be upgraded because they would break dependencies. The <q>(0)</q> is
+irrelevant, you can safely ignore it.</p>
+
+<p>Note that there are several checks of all packages in one <q>testing</q>
+script run.</p>
+
+<p><em>Jules Bean 는 처음에 자주 묻고 답하는 것을 모았습니다.</em></p>
+# Created: Sat Dec  8 12:44:29 GMT 2001
+
+<h2>추가 정보</h2>
+
+<p>The following pages provide additional information about the current state
+of testing and the migration of packages from unstable to testing:</p>
+
+<ul>
+<li>Statistics on binary packages that are out of date for
+<a href="https://release.debian.org/britney/testing_outdate.txt">testing</a>,
+<a href="https://release.debian.org/britney/stable_outdate.txt">stable</a>
+<li>Dependency problems in
+<a href="https://qa.debian.org/debcheck.php?list=INDEX&amp;dist=testing">testing</a>,
+<a href="https://qa.debian.org/debcheck.php?list=INDEX&amp;dist=stable">stable</a>
+<li>Nice <a href="https://release.debian.org/migration/">web front-end</a> to
+help you find out why packages are being held out of testing
+</ul>
+
+<p>You might be interested in reading an older
+<a href="https://lists.debian.org/debian-devel-0008/msg00906.html">explanation
+email</a>. Its only major flaw is that it doesn't take the package pool
+into account, because that was implemented by James Troup after it was
+written.</p>
+
+<p>The testing code is available from
+<a href="https://release.debian.org/britney/update_out_code/">ftp-master</a>.</p>
+
+<p><em>Anthony Towns takes credit for the implementation of testing.</em></p>
