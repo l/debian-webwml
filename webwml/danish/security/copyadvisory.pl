@@ -169,8 +169,11 @@ while (<SRC>)
 	s/\(squeeze\)/(squeeze)/;
 	s/\(wheezy\)/(wheezy)/;
 	s/\(jessie\)/(jessie)/;
+	s/\(stretch\)/(stretch)/;
 	s/\(sid\)/(sid)/;
 	s/Refer to Debian (<.*>)?bug #([0-9]+)</Se Debians $1fejl nummer $2</;
+	s/\<p\>For the detailed security status of (.*) please refer to/<p>For detaljeret sikkerhedsstatus vedrørende $1, /;
+        s/its security tracker page at\:/se dens sikkerhedssporingsside på\: /;
 
 	print DST $_;
 }
