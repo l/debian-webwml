@@ -80,8 +80,15 @@ while (<SRC>)
 {
 	next if /\$Id/;
 
+        # Header
+        s/security update/обновление безопасности/;
+
+        # Starting
 	s/^(<p>)?A problem has been discovered in\b/$1Была обнаружена проблема в/;
 	s/\bdiscovered a problem in\b/обнаружил проблему в/;
+        s/It was discovered that/Было обнаружено, что/;
+
+        # We recommend
 	s/We recommend that you upgrade your (.*) package immediately/Рекомендуется немедленно обновить пакет $1/;
 	s/We recommend that you upgrade your (.*) packages immediately/Рекомендуется немедленно обновить пакеты $1/;
         s/We recommend that you upgrade your (.*) and (.*) packages/Рекомендуется обновить пакеты $1 и $2/;
@@ -91,6 +98,8 @@ while (<SRC>)
 	s/We recommend that you update your (.*) packages immediately/Рекомендуется немедленно обновить пакеты $1/;
 	s/We recommend that you update your (.*) packages/Рекомендуется обновить пакеты $1/;
 	s/We recommend that you update your (.*) package/Рекомендуется обновить пакет $1/;
+
+        # Vulnerabilities
 	s/buffer overflows?/переполнение буфера/;
 	s/integer overflow/переполнение целых чисел/;
 	s/directory traversal/обход каталога/;
@@ -104,15 +113,21 @@ while (<SRC>)
 	s/>remote exploit</>удалённая уязвимость</;
 	s/>missing input sanitising</>отсутствие очистки входных данных</;
 	s/missing input validation/отсутствие очистки входных данных/;
-	s/Several vulnerabilities/Несколько уязвимостей/;
-	s/several vulnerabilities/несколько уязвимостей/;
-	s/multiple vulnerabilities/многочисленные уязвимости/;
-	s/security update/обновление безопасности/;
-	s/>several</>несколько</;
-	s/>multiple</>многочисленные</;
 	s/>the execution of arbitrary code</>выполнение произвольного кода</;
 	s/>execution of arbitrary code</>выполнение произвольного кода</;
 	s/>information disclosure</>раскрытие информации</;
+	s/privilege escalation/повышений привилегий/;
+	s/cross site/межсайтовый/;
+	s/heap overflow/переполнение динамической памяти/;
+
+        # Several/Multiple
+	s/Several vulnerabilities/Несколько уязвимостей/;
+	s/several vulnerabilities/несколько уязвимостей/;
+	s/multiple vulnerabilities/многочисленные уязвимости/;
+	s/>several</>несколько</;
+	s/>multiple</>многочисленные</;
+
+        # Fixed in
 	s/This has been fixed in version/Эта уязвимость была исправлена в версии/;
 	s/this problem has been fixed in/эта проблема была исправлена в/;
 	s/this problem has been fixed$/эта проблема была исправлена/;
@@ -131,6 +146,8 @@ while (<SRC>)
 	s/\bin version\b/в версии/;
 	s/of the Debian package/пакета Debian/;
 	s/upstream version/версии из основной ветки разработки/;
+
+        # For the [..]
 	s/([Ff])or the old stable distribution/В предыдущем стабильном выпуске/;
 	s/([Ff])or the oldstable distribution/В предыдущем стабильном выпуске/;
 	s/([Ff])or the old stable/В предыдущем стабильном/;
@@ -143,33 +160,36 @@ while (<SRC>)
 	s/([Ff])or the Debian unstable distribution/В нестабильном выпуске Debian/;
 	s/([Ff])or the unstable distribution/В нестабильном выпуске/;
 	s/([Ff])or the unstable/В нестабильном/;
-	s/current stable distribution/текущем стабильном выпуске/;
 	s/For the upcoming stable distribution/В готовящемся стабильном выпуске/;
+	s/For the testing distribution/В тестируемом выпуске/;
+
+        # Some other phrases related to fixing
+	s/current stable distribution/текущем стабильном выпуске/;
 	s/unstable distribution/нестабильном выпуске/;
 	s/([Tt])he old stable distribution/Предыдущий стабильный выпуск/;
 	s/([Tt])he oldstable distribution/Предыдущий стабильный выпуск/;
 	s/^stable distribution/стабильный выпуск/;
 	s/^unstable distribution/нестабильный выпуск/;
 	s/does(?: not|n't) contain a(?:ny)? ([^ ]) package/пакет $1 отсутствует/;
-	s/For the testing distribution/В тестируемом выпуске/;
 	s/testing distribution/тестируемом выпуске/;
-	s/privilege escalation/повышений привилегий/;
-	s/cross site/межсайтовый/;
-	s/heap overflow/переполнение динамической памяти/;
 	s/\bis not affected by this problem/не подвержен данной проблеме/;
 	s/does not contain ([[:word:]]*) packages?/пакет $1 отсутствует/;
 	s/does not contain a(?:ny)? ([[:word:]]*) packages/пакеты $1 отсутствуют/;
 	s/does not contain a(?:ny)? ([[:word:]]*) package/пакет $1 отсутствует/;
 	s/this problem will be fixed soon/эта проблема будет исправлена позже/;
+
+        # Distributions codenames
 	s/\(potato\)/(potato)/;
 	s/\(woody\)/(woody)/;
-	s/\(sarge\)/(sarge)/;
+	s/\(sarpge\)/(sarge)/;
 	s/\(lenny\)/(lenny)/;
 	s/\(squeeze\)/(squeeze)/;
 	s/\(wheezy\)/(wheezy)/;
 	s/\(jessie\)/(jessie)/;
 	s/\(stretch\)/(stretch)/;
 	s/\(sid\)/(sid)/;
+
+        # Security tracker link
 	s/\<p\>For the detailed security status of (.*) please refer to/<p>С подробным статусом поддержки безопасности $1 можно ознакомиться на/;
         s/its security tracker page at\:/соответствующей странице отслеживания безопасности по адресу\: /;
 
