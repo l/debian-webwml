@@ -191,7 +191,9 @@ while (<SRC>)
 
         # Security tracker link
 	s/\<p\>For the detailed security status of (.*) please refer to/<p>С подробным статусом поддержки безопасности $1 можно ознакомиться на/;
-        s/its security tracker page at\:/соответствующей странице отслеживания безопасности по адресу\: /;
+        s/its security tracker page at\:/соответствующей странице отслеживания безопасности по адресу/;
+        s/\<p\>For the detailed security status of (.*) please refer to its/<p>С подробным статусом поддержки безопасности $1 можно ознакомиться на/;
+        s/security tracker page at\:/соответствующей странице отслеживания безопасности по адресу/;
 
 	print DST $_;
 }
