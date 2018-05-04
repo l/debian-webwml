@@ -519,11 +519,11 @@ sub process {
 		}
 		else {
 			unlink("$opt_l/$type/gen/main-$_.exc")
-				|| die ("Unable to delete main-$_.exc\n");
+				|| warn ("Unable to delete main-$_.exc - $!\n");
 			unlink("$opt_l/$type/gen/contrib-$_.exc")
-				|| die ("Unable to delete contrib-$_.exc\n");
+				|| warn ("Unable to delete contrib-$_.exc - $!\n");
 			unlink("$opt_l/$type/gen/non-free-$_.exc")
-				|| die ("Unable to delete non-free-$_.exc\n");
+				|| warn ("Unable to delete non-free-$_.exc - $!\n");
 		}
 	}
 	# @po_langs must be updated since it's used in write_langs
