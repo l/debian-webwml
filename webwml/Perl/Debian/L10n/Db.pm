@@ -260,7 +260,9 @@ sub read {
                                 $entry->{$_} = \@list;
                         }
                 }
+                if (defined $entry) {
                 $self->{data}->{$entry->{Package}} = $entry;
+                }
                 last if $last_item;
         }
         close DB;
