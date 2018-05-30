@@ -9,7 +9,7 @@
 #  * compress: which type of compression you want to have (NOT YET IMPLEMENTED)
 #  Remaining keys have numeric value, which tells when to send info:
 #  * summary:  a summary of which documents are outdated
-#  * logs:     the cvs log' between the translated and current versions
+#  * logs:     the commit logs between the translated and current versions
 #  * diff:     idem with diff
 #  * file:     add current version of translated file
 
