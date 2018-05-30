@@ -14,6 +14,9 @@
 # Externals
 use Getopt::Std;
 use vars qw($opt_s);
+use FindBin;
+use lib "$FindBin::Bin/../../../Perl";
+use Local::VCS;
 
 # Get command line
 if (getopts('s:'))
@@ -34,7 +37,6 @@ unless ($year && $issue)
 $srcdir = "../../../english/News/weekly/$year/$issue";
 $srcfile= "$srcdir/index.wml";
 $srcfile= $opt_s if $opt_s;
-$cvsfile= "$srcdir/CVS/Entries";
 $yeardir= "./$year";
 $dstdir = "./$year/$issue";
 $dstfile= "$dstdir/index.wml";
@@ -46,25 +48,12 @@ die "File $dstfile already exists\n"     if     -e $dstfile;
 mkdir $yeardir, 0755                     unless -d $yeardir;
 mkdir $dstdir, 0755                      unless -d $dstdir;
 
-# Retrieve the CVS version number
-if ($opt_s)
+my $VCS = Local::VCS->new();
+my %file_info = $VCS->file_info($srcfile);
+$revision = $file_info{'cmt_rev'};
+unless ($revision)
 {
-	$revision = '1.0';
-}
-else
-{
-	open CVS, $cvsfile
-		or die "Could not read $cvsfile ($!)\n";
-
-	while (<CVS>)
-	{
-		if (m[^/index\.wml/([0-9]*\.[0-9]*)/]o)
-		{
-			$revision = $1;
-		}
-	}
-
-	close CVS;
+	die "Could not get revision number - bug in script?\n";
 }
 
 # Open the files
@@ -73,12 +62,6 @@ open SRC, $srcfile
 
 open DST, ">$dstfile"
 	or die "Could not create $dstfile ($!)\n";
-
-unless ($revision)
-{
-	print "Could not get revision number\n";
-	$revision = '1.1';
-}
 
 # Copy the file, translate date and some other stuff, and insert the
 # revision number

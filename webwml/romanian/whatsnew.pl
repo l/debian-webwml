@@ -17,6 +17,8 @@ $odir   = "english";
 $tdir   = "romanian";
 $nodir  = "nodir";
 
+die "Unsupported since the move to git\n";
+
 &usage;
 
 if ($ARGV[0]) { $rdir = $ARGV[0]; };

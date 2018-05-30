@@ -13,6 +13,10 @@
 # Get command line
 $number = $ARGV[0];
 
+use FindBin;
+use lib "$FindBin::Bin/../../Perl";
+use Local::VCS;
+
 # Check usage.
 unless ($number)
 {
@@ -36,7 +40,6 @@ $srcdir = "../../english/security/$year";
 die "Unable to locate English version of advisory $number.\n"
 	if ! -d $srcdir;
 $srcfile= "$srcdir/$number.wml";
-$cvsfile= "$srcdir/CVS/Entries";
 $dstdir = "./$year";
 $dstfile= "$dstdir/$number.wml";
 
@@ -45,32 +48,20 @@ die "File $srcfile does not exist\n"     unless -e $srcfile;
 die "File $dstfile already exists\n"     if     -e $dstfile;
 mkdir $dstdir, 0755                      unless -d $dstdir;
 
-# Open the files
-open CVS, $cvsfile
-	or die "Could not read $cvsfile ($!)\n";
+my $VCS = Local::VCS->new();
+my %file_info = $VCS->file_info($srcfile);
+$revision = $file_info{'cmt_rev'};
+unless ($revision)
+{
+	die "Could not get revision number - bug in script?\n";
+}
 
+# Open the files
 open SRC, $srcfile
 	or die "Could not read $srcfile ($!)\n";
 
 open DST, ">$dstfile"
 	or die "Could not create $dstfile ($!)\n";
-
-# Retrieve the CVS version number
-while (<CVS>)
-{
-	if (m[^/$number\.wml/([0-9]*\.[0-9]*)/]o)
-	{
-		$revision = $1;
-	}
-}
-
-close CVS;
-
-unless ($revision)
-{
-	print "Could not get revision number - bug in script?\n";
-	$revision = '1.1';
-}
 
 # Insert the revision number
 print DST qq'#use wml::debian::translation-check translation="$revision" mindelta="1"\n';

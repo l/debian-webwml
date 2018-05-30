@@ -7,7 +7,7 @@
 # Todo
 # - Make a regexp that is enough generic to catch lines like that to be able to use $translation for theses lines instead of s//// '<p>For the <distrib_release> distribution (<distrib_name>) this problem has been fixed in version <version>.</p>' => 
 # - Split translation of "For the ... distribution" and "this problem" in 2 part ?? Not yet sure that it's a good idea even if it would reduce number of s///
-# - Take DSA from URL (https://cvs.debian.org/*checkout*/webwml/english/security/<YEAR>/dsa-<ID>.wml)
+# - Take DSA directly from the from the website repository
 #   or from local copy. use -Y for year and -n for dsa numner, assume -Y as current year if not provided.
 #   Check for ../../english/security/<YEAR>/dsa-<ID>.wml if not found, download it
 # - Save translated DSA instead of print to STDOUT. As to be saved in <YEAR>/dsa-<ID>.wml

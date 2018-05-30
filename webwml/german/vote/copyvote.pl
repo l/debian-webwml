@@ -14,6 +14,9 @@
 
 use Date::Manip;
 use Encode 'decode_utf8';
+use FindBin;
+use lib "$FindBin::Bin/../../Perl";
+use Local::VCS;
 
 # Get command line
 $number = $ARGV[0];
@@ -94,7 +97,6 @@ foreach $vf (@vfiles)
 
 # Create needed file and directory names
 $srcfile= "$srcdir/$vf";
-$cvsfile= "$srcdir/CVS/Entries";
 $dstdir = "./$year";
 $dstfile= "$dstdir/$vf";
 
@@ -103,43 +105,24 @@ die "File $srcfile does not exist\n"     unless -e $srcfile;
 die "File $dstfile already exists\n"     if     -e $dstfile;
 mkdir $dstdir, 0755                      unless -d $dstdir;
 
-# Open the files
-open CVS, $cvsfile
-	or die "Could not read $cvsfile ($!)\n";
+my $VCS = Local::VCS->new();
+my %file_info = $VCS->file_info($srcfile);
+$revision = $file_info{'cmt_rev'};
+unless ($revision)
+{
+	die "Could not get revision number - bug in script?\n";
+}
 
+# Open the files
 open SRC, $srcfile
 	or die "Could not read $srcfile ($!)\n";
 
 open DST, ">$dstfile"
 	or die "Could not create $dstfile ($!)\n";
 
-# Retrieve the CVS version number
-$revision="";
-while (<CVS>)
-{
-#print "$_ :: $vf\n";
-#if (m[^/$number\.wml/([0-9]*\.[0-9]*)/]o)
-	if (m(^/$vf/([0-9]*\.[0-9]*)/))
-	{
-		$revision = $1;
-#	print "Found $revision\n";
-	}
-}
-
-close CVS;
-
-unless ($revision)
-{
-	print "Could not get revision number for $vf - bug in script?\n";
-	$revision = '1.1';
-}
-
-
 # Insert the revision number
 print DST qq'#use wml::debian::acronyms\n';
 print DST qq'#use wml::debian::translation-check translation="$revision"\n';
-print DST qq'# \$I';                                        # Too fool CVS
-print DST qq'd: $vf,v 1.1 $year/11/02 21:15:10 jseidel Exp \$\n';
 print DST qq'# Translator: $TRANSLATOR <$EMAIL> $dheute\n\n';
 
 
