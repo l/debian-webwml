@@ -39,4 +39,19 @@ sub import
 	}
 }
 
+sub new
+{
+	if ( -d 'CVS' )
+	{
+		require Local::VCS_CVS;
+		return Local::VCS_CVS->new(@_);
+	}
+	# fall back to git
+	else
+	{
+		require Local::VCS_git;
+		return Local::VCS_git->new(@_);
+	}
+}    
+
 42;

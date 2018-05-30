@@ -33,7 +33,7 @@ package Webwml::TransIgnore;
 
 use Carp;
 use File::Spec::Functions;
-use Local::VCS  qw{ vcs_get_topdir };
+use Local::VCS;
 
 use strict;
 use warnings;
@@ -64,7 +64,8 @@ sub new
 	bless ($self, $class);
 
 	# determine the root dir
-	my $root = shift || vcs_get_topdir('.');
+	my $VCS = Local::VCS->new();
+	my $root = shift || $VCS->get_topdir('.');
 
 	# Read global .transignore file
 	$self->_read($root);

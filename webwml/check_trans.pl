@@ -175,17 +175,19 @@ sub verbose;
 	# -s allows the user to restrict processing to a subtree
 	my $subdir = $OPT{'s'} || undef;
 
+	my $VCS = Local::VCS->new();
+
 	# Global .transignore
-	my $transignore = Webwml::TransIgnore->new( vcs_get_topdir );
+	my $transignore = Webwml::TransIgnore->new($VCS->get_topdir());
 
 	# first get a list with revision information from all files in english...
-	my %english_revs = vcs_path_info( $english_path,
+	my %english_revs = $VCS->path_info( $english_path,
 		'recursive' => 1,
 		'match_pat' => $file_pattern,
 		'skip_pat'  => '^template/'
 	);
 	# ... and in the translation
-	my %translation_revs = vcs_path_info( $language_path,
+	my %translation_revs = $VCS->path_info( $language_path,
 		'recursive' => 1,
 		'match_pat' => $file_pattern,
 		'skip_pat'  => '^template/'
@@ -234,7 +236,7 @@ sub verbose;
 				$file_orig  = catfile( $original_lang, $file );
 
 				# and find the correct revision info for this file
-				$revinfo_orig = { vcs_file_info( $file_orig ) };
+				$revinfo_orig = { $VCS->file_info( $file_orig ) };
 			}
 		}
 
@@ -277,6 +279,7 @@ sub verbose;
 
 		# determine the status of the file
 		my ($status,$str,$rev_transl,$maintainer,$maxdelta) = check_file(
+			$VCS,
 			$file,
 			$orig, $transl,
 			$revinfo_orig, $revinfo_transl,
@@ -314,6 +317,7 @@ sub verbose;
 		if ( $OPT{'l'}  and  $status == ST_NEEDSUPDATE )
 		{
 			my $log = get_log(
+				$VCS,
 				$file_orig,
 				$rev_transl,
 				$revinfo_orig->{'cmt_rev'},
@@ -325,6 +329,7 @@ sub verbose;
 		if ( $OPT{'d'}  and  $status == ST_NEEDSUPDATE )
 		{
 			my $diff = get_diff(
+				$VCS,
 				$file_orig,
 				$rev_transl,
 				$revinfo_orig->{'cmt_rev'},
@@ -336,6 +341,7 @@ sub verbose;
 		if ( $OPT{'T'}  and  $status == ST_NEEDSUPDATE )
 		{
 			my $diff = get_diff_txt(
+				$VCS,
 				$file_orig,
 				$rev_transl,
 				$revinfo_orig->{'cmt_rev'},
@@ -383,7 +389,7 @@ sub verbose;
 				$maxdelta ||= $translators{maxdelta}{maxdelta} || 5;
 
 				my $delta;
-				$delta = vcs_count_changes( $file_orig, $rev_transl, 'HEAD' );
+				$delta = $VCS->count_changes( $file_orig, $rev_transl, 'HEAD' );
 
 				if ( $delta >= $maxdelta )
 				{
@@ -401,7 +407,7 @@ sub verbose;
 
 	}
 
-	send_email( \%emails_to_send, \%translators, $language, 
+	send_email( $VCS, \%emails_to_send, \%translators, $language, 
 		$OPT{'n'}, $OPT{'M'}, $OPT{'g'} );
 
 	exit 0;
@@ -447,6 +453,7 @@ sub handle_INT
 #==
 sub send_email
 {
+	my $VCS         = shift;
 	my $emails      = shift  or  die("No emails specified");
 	my $translators = shift  or  die("No translators specified");
 	my $lang        = shift  or  die("No language specified");
@@ -582,7 +589,7 @@ sub send_email
 
 				my $filename = catfile( 'english', $file->{'file'} );
 				my $rev      = $file->{'last_trans_rev'};
-				my $diff     = get_diff( $filename, $rev, 'HEAD' );
+				my $diff     = get_diff( $VCS, $filename, $rev, 'HEAD' );
 				$msg->attach(
 					'Type'	   => 'TEXT',
 					'Filename' => "$filename.diff",
@@ -609,7 +616,7 @@ sub send_email
 				my $filename  = catfile( 'english', $file->{'file'} );
 				my $filename2 = catfile( $lang,     $file->{'file'} );
 				my $rev       = $file->{'last_trans_rev'};
-				my $tdiff    =  get_diff_txt( $filename, $rev, 'HEAD',
+				my $tdiff    =  get_diff_txt( $VCS, $filename, $rev, 'HEAD',
 					$filename2 );
 				$msg->attach(
 					'Type'	   => 'TEXT',
@@ -637,7 +644,7 @@ sub send_email
 
 				my $filename  = catfile( 'english', $file->{'file'} );
 				my $rev       = $file->{'last_trans_rev'};
-				my $log       = get_log( $filename, $rev, 'HEAD' );
+				my $log       = get_log( $VCS, $filename, $rev, 'HEAD' );
 				my $part = MIME::Lite->new(
 					'Type'     => 'TEXT',
 					'Filename' => "$filename.log",
@@ -732,13 +739,14 @@ sub get_revision_age
 #==
 sub get_log
 {
+	my $VCS = shift;
 	my $file = shift or die("No file specified for diff");
 	my $rev1 = shift;
 	my $rev2 = shift;
 
 	die("NO such file `$file'") unless -e $file;
 
-	my @log = vcs_get_log( $file, $rev1, $rev2 );
+	my @log = $VCS->get_log( $file, $rev1, $rev2 );
 
 	# remove the first item of the log, because we only want
 	# to see when changed in the (left-open) range (rev1,rev2]
@@ -769,13 +777,14 @@ sub get_log
 #==
 sub get_diff
 {
+	my $VCS = shift;
 	my $file = shift or die("No file specified for diff");
 	my $rev1 = shift;
 	my $rev2 = shift;
 
 	die("NO such file `$file'") unless -e $file;
 
-	my %diffs = vcs_get_diff( $file, $rev1, $rev2 );
+	my %diffs = $VCS->get_diff( $file, $rev1, $rev2 );
 
 	# just glue all diffs together and return it as a big string
 	my $difftxt = join( '', values %diffs );
@@ -788,6 +797,7 @@ sub get_diff
 #==
 sub get_diff_txt
 {
+	my $VCS = shift;
 	my $english_file = shift or die("No file specified");
 	my $rev1         = shift or die("No revision specified");
 	my $rev2         = shift or die("No revision specified");
@@ -797,7 +807,7 @@ sub get_diff_txt
 	die("No such file $transl_file")  unless -e $transl_file;
 
 	# Get old revision file
-	my @english_txt = split( "\n", vcs_get_file( $english_file, $rev1 ) );
+	my @english_txt = split( "\n", $VCS->get_file( $english_file, $rev1 ) );
 
 	# Get translation file
 	my $transl_txt = read_file( $transl_file )
@@ -805,7 +815,7 @@ sub get_diff_txt
 	my @transl_txt = split( "\n", $transl_txt );
 
 	# Get diff lines
-	my @diff_txt = split( "\n", get_diff( $english_file, $rev1, $rev2 ) );
+	my @diff_txt = split( "\n", get_diff( $VCS, $english_file, $rev1, $rev2 ) );
 
 	# do the matching
 	my $txt = Local::WmlDiffTrans::find_trans_parts(
@@ -1041,6 +1051,7 @@ sub read_translators
 #==
 sub check_file
 {
+	my $VCS             = shift;
 	my $file            = shift;
 	my $orig            = shift;
 	my $lang            = shift;
@@ -1104,7 +1115,7 @@ sub check_file
 		else
 		{
 			# check the revisions to see if they're up to date
-			my $cmp = vcs_cmp_rev( $translation_last_change,
+			my $cmp = $VCS->cmp_rev( $file_orig, $translation_last_change,
 				$orig_last_change );
 
 			if ( $cmp == 0 ) # revisions equal

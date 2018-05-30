@@ -34,7 +34,7 @@ the list of languages in which Debian web site is translated.
 package Webwml::Langs;
 
 use Carp;
-use Local::VCS 'vcs_get_topdir';
+use Local::VCS;
 
 use strict;
 use warnings;
@@ -52,13 +52,14 @@ determined from VCS meta-info.
 sub new {
 	my $proto = shift;
 	my $class = ref($proto) || $proto;
+	my $VCS = Local::VCS->new();
 	my $root;
 	if (@_)
 	{
 		$root = shift;
 	} else
 	{
-		$root = vcs_get_topdir;
+		$root = $VCS->get_topdir();
 	}
 	my $self = _read($root);
 	bless ($self, $class);
@@ -72,7 +73,7 @@ sub new {
 # TODO: or rather define the lnaguages in a module, and include those in
 #       languages.wml
 sub _read {
-	my $root = shift || vcs_get_topdir;
+	my $root = shift || Local::VCS->get_topdir();
 
 	open( my $file, '<', "$root/english/template/debian/languages.wml")
 		or croak ("Unable to read $root/english/template/debian/languages.wml");

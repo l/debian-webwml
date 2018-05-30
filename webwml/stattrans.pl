@@ -22,14 +22,15 @@ use Getopt::Std;
 
 #    These modules reside under webwml/Perl
 use lib ($0 =~ m|(.*)/|, $1 or ".") ."/Perl";
-use Local::Cvsinfo;
+#use Local::Cvsinfo;
+use Local::VCS ':all';
 use Webwml::Langs;
 use Webwml::TransCheck;
 use Webwml::TransIgnore;
 use Debian::L10n::Db ('%LanguageList');
 use Net::Domain qw(hostfqdn);
+use Data::Dumper;
 use JSON;
-
 
 $| = 1;
 
@@ -59,32 +60,51 @@ $opt_p =~ s/$/\$/g;
            'hit_file'=> $opt_f,
 	   );
 
+my $VCSHOST = "salsa";
+my $VCSBASE = "https://salsa.debian.org/webmaster-team/webwml/test_webwml_cvs2git";
+if (-d "$config{'wmldir'}/CVS") {
+    $VCSHOST = "alioth";
+    $VCSBASE = "https://anonscm.debian.org/viewvc/webwml/webwml";
+}
+
 my $l = Webwml::Langs->new($opt_w);
 my %langs = $l->name_iso();
+my $VCS = Local::VCS->new();
+$VCS->cache_repo();
 
 my $transignore = Webwml::TransIgnore->new($opt_w);
 
-my $cvs = Local::Cvsinfo->new();
-$cvs->options(
-        recursive => 1,
-        matchfile => [ $config{'wmlpat'} ],
-        skipdir   => [ "template" ],
-);
-$cvs->readinfo("$config{'wmldir'}/english");
+chdir($config{'wmldir'}) or die "Can't chdir to $config{'wmldir'}: $!\n";
+
+#my $cvs = Local::Cvsinfo->new();
+#$cvs->options(
+#        recursive => 1,
+#        matchfile => [ $config{'wmlpat'} ],
+#        skipdir   => [ "template" ],
+#);
+#$cvs->readinfo("$config{'wmldir'}/english");
+my %rev_info = $VCS->path_info("english",
+			     'recursive' => 1,
+			     'match_pat' => $config{'wmlpat'},
+			     'skip_pat'  => "(template|/devel/website/stats/)");
+my $cnt = scalar(keys %rev_info);
+#print "found $cnt english files using wmlpat $config{'wmlpat'}\n";
 foreach (@{$transignore->global()}) {
-        $cvs->removefile("$config{'wmldir'}/english/$_");
+#        $cvs->removefile("$config{'wmldir'}/english/$_");
+	delete $rev_info{"english/$_"};
 }
 
-my $altcvs = Local::Cvsinfo->new();
-$altcvs->options(
-        recursive => 1,
-        matchfile => [ $config{'wmlpat'} ],
-        skipdir   => [ "template" ],
-);
+#print "found $cnt english files\n";
+
+#y $altcvs = Local::Cvsinfo->new();
+#altcvs->options(
+#       recursive => 1,
+#       matchfile => [ $config{'wmlpat'} ],
+#       skipdir   => [ "template" ],
+#;
 
 $max_versions = 5;
 $min_versions = 1;
-
 
 $date = strftime "%a %b %e %H:%M:%S %Y %z", localtime;
 
@@ -96,16 +116,16 @@ my %sizes;
 
 print "Loading the coordination status databases\n" if ($config{verbose});
 my %status_db = ();
-opendir (DATADIR, "$opt_w/english/international/l10n/data")
-	or die "Cannot open directory $opt_w/english/international/l10n/data: $!\n";
+opendir (DATADIR, "english/international/l10n/data")
+	or die "Cannot open directory english/international/l10n/data: $!\n";
 foreach (readdir (DATADIR)) {
 	# Only check the status files
 	next unless ($_ =~ m/^status\.(.*)$/);
 	my $l = $1;
 	next if (!defined $LanguageList{uc $l});
-	if (-r "$opt_w/english/international/l10n/data/status.$l") {
+	if (-r "english/international/l10n/data/status.$l") {
 		$status_db{$LanguageList{uc $l}} = Debian::L10n::Db->new();
-		$status_db{$LanguageList{uc $l}}->read("$opt_w/english/international/l10n/data/status.$l", 0);
+		$status_db{$LanguageList{uc $l}}->read("english/international/l10n/data/status.$l", 0);
 	}
 }
 closedir (DATADIR);
@@ -134,28 +154,40 @@ sub linklist {
 sub getwmlfiles
 {
     my $lang = shift;
-    my $dir = "$config{'wmldir'}/$lang";
-    my $cutfrom = length ($config{'wmldir'})+length($lang)+2;
+    my $dir = "$lang";
+#    my $cutfrom = length ($config{'wmldir'})+length($lang)+2;
     my $count = 0;
     my $size = 0;
     my $is_english = ($lang eq "english")?1:0;
     my ( $file, $v );
     my @listfiles;
+    my %altrev_info;
 
-    print "$lang " if ($config{verbose});
     if (! -d "$dir") {
       print "$0: can't find $dir! Skipping ...\n";
       return;
     }
     if ($is_english) {
-        @listfiles = @{$cvs->files()};
+#        @listfiles = @{$cvs->files()};
+        @listfiles = sort keys(%rev_info);
     } else {
-        $altcvs->reset();
-        $altcvs->readinfo($dir);
-        @listfiles = @{$altcvs->files()};
+	%altrev_info = $VCS->path_info($dir,
+				       'recursive' => 1,
+				       'match_pat' => $config{'wmlpat'},
+				       'skip_pat'  => "template");
+        @listfiles = sort keys(%altrev_info);
+#        $altcvs->reset();
+#        $altcvs->readinfo($dir);
+#        @listfiles = @{$altcvs->files()};
     }
-    foreach my $f (@listfiles) {
-	$file = substr ($f, $cutfrom);
+#    print "cutfrom is $cutfrom\n";
+#    print "Looking at @listfiles\n";
+#    open (LIST, ">$config{'htmldir'}/$lang.list")
+#	|| die "Can't open $config{'htmldir'}/$lang.list";
+    foreach my $file (@listfiles) {
+#	print LIST "$file\n";
+#	$file = substr ($f, $cutfrom);
+#	print "looking at $file\n";
 	next if $transignore->is_global($file);
 	$files{$file} = 1;
 	$wmlfiles{$lang} .= " " . $file;
@@ -165,17 +197,19 @@ sub getwmlfiles
 	    $original{"$lang/$file"} ||= $transcheck->original();
 	}
 	if ($is_english) {
-	    $version{"$lang/$file"} = $cvs->revision($f);
+	    #$version{"$lang/$file"} = $cvs->revision($f);
+	    $version{"$lang/$file"} = $rev_info{"$file"}{'cmt_rev'};
 	} else {
-	    $version{"$lang/$file"} = $altcvs->revision($f);
+	    $version{"$lang/$file"} = $altrev_info{"$file"}{'cmt_rev'};
+#	    $version{"$lang/$file"} = $altcvs->revision($f);
 	    if (!$transcheck->revision()) {
 	        $transcheckenglish = Webwml::TransCheck->new("english/$file");
 		if (!$transcheckenglish->revision() and (-e "english/$file")) {
-		    $transversion{"$lang/$file"} = "1.1";
+		    $transversion{"$lang/$file"} = $VCS->get_oldest_revision("english/$file");
 		    $original{"$lang/$file"} = "english";
 		} else {
 		    $original{"english/$file"} = $lang;
-		    $transversion{"english/$file"} ||= "1.1";
+		    $transversion{"english/$file"} = $VCS->get_oldest_revision("$lang/$file");
 		}
 	    }
 	}
@@ -196,9 +230,13 @@ sub getwmlfiles
 	$sizes{$file} = (stat "".($original{"english/$file"}||"english")."/".$file)[7];
 	$size += $sizes{$file};
     }
+#    close LIST;
     $wmlfiles{$lang} .= " ";
     $wml{$lang} = $count;
     $wml_s{$lang} = $size;
+    if ($config{verbose}) {
+	print "  $lang: $count wml files, $size bytes\n";
+    }
 }
 
 sub get_color
@@ -214,35 +252,26 @@ sub get_color
 
 sub check_translation
 {
-    my ($translation, $version, $file) = @_;
+    my ($translation, $version, $file, $orig_file) = @_;
+
     my ( @version_numbers, $major_number, $last_number );
-    my ( @translation_numbers, $major_translated_number, $last_translated_number );
+#    print "  check_translation: looking at translation $translation, english version $version, file $file, orig_file $orig_file\n";
 
     if ( $version && $translation ) {
-	@version_numbers = split /\./,$version;
-	$major_number = $version_numbers[0];
-	$last_number = pop @version_numbers;
-	die "Invalid CVS revision for $file: $version\n"
-	    unless ($major_number =~ /\d+/ && $last_number =~ /\d+/);
-
-	@translation_numbers = split /\./,$translation;
-	$major_translated_number = $translation_numbers[0];
-	$last_translated_number = pop @translation_numbers;
-	die "Invalid translation revision for $file: $translation\n"
-	    unless ($major_translated_number =~ /\d+/ && $last_translated_number =~ /\d+/);
-
 	# Here we compare the original version with the translated one and print
 	# a note for the user if their first or last numbers are too far apart
 	# From translation-check.wml
-
-	if ( $major_number != $major_translated_number ) {
-	    return '<gettext domain="stats">This translation is too out of date</gettext>';
-	} elsif ( $last_number - $last_translated_number < 0 ) {
-	    return '<gettext domain="stats">Wrong translation version</gettext>';
-	} elsif ( $last_number - $last_translated_number >= $max_versions ) {
-	    return '<gettext domain="stats">This translation is too out of date</gettext>';
-	} elsif ( $last_number - $last_translated_number >= $min_versions ) {
-	    return '<gettext domain="stats">The original is newer than this translation</gettext>';
+	my $version_diff = $VCS->count_changes($orig_file, $version, $translation);
+	if (!defined $version_diff) {
+	    print "check_translation: error from count_changes for orig_file $orig_file, file $file\n";
+	} else {
+	    if ($version_diff < 0) {
+		return '<gettext domain="stats">Wrong translation version</gettext>';
+	    } elsif ( $version_diff >= $max_versions ) {
+		return '<gettext domain="stats">This translation is too out of date</gettext>';		
+	    } elsif ( $version_diff >= $min_versions ) {
+		return '<gettext domain="stats">The original is newer than this translation</gettext>';
+	    }
 	}
     } elsif ( !$version && $translation) {
 	return '<gettext domain="stats">The original no longer exists</gettext>';
@@ -250,12 +279,12 @@ sub check_translation
     return "";
 }
 
-print "Collecting data in: " if ($config{'verbose'});
+print "Collecting data:\n" if ($config{'verbose'});
 if ($opt_l) {
   getwmlfiles ($opt_l);
   getwmlfiles ('english');
 } else {
-  foreach $lang (keys %langs) {
+  foreach $lang (sort keys %langs) {
     getwmlfiles ($lang);
   }
 }
@@ -278,11 +307,11 @@ foreach $lang (@search_in) {
     $percent_po_t{'total'}{$lang} = 0;
     $percent_po_f{'total'}{$lang} = 0;
     $percent_po_u{'total'}{$lang} = 100;
-    if (! -d "$opt_w/$lang/po") {
-      print "$0: can't find $opt_w/$lang/po! Skipping ...\n";
+    if (! -d "$lang/po") {
+      print "$0: can't find $lang/po! Skipping ...\n";
       next;
     }
-    my @status = qx,LC_ALL=C make -C $opt_w/$lang/po stats 2>&1,;
+    my @status = qx,LC_ALL=C make -C $lang/po stats 2>&1,;
     foreach $line (@status) {
         chomp $line;
         next if($line =~ /make: (Enter|Leav)ing directory/);
@@ -355,6 +384,7 @@ my @filenames = sort $file_sorter keys %files;
 my $nfiles = scalar @filenames;
 $nsize += $sizes{$_} foreach (@filenames);
 
+# 'u' == 'unidiff', 'h' == 'colored diff'
 my $firstdifftype;
 my $seconddifftype;
 if ($config{'difftype'} eq 'u') {
@@ -365,36 +395,52 @@ if ($config{'difftype'} eq 'u') {
     $seconddifftype = 'u';
 }
 
-sub alioth_cvs_file_url {
+sub vcs_log_url {
     my ($path) = @_;
 
-    return
-        sprintf( 'https://anonscm.debian.org/viewvc/webwml/webwml/%s', $path );
+    if ($VCSHOST == "alioth") {
+	return "$VCSBASE/$path";
+    } elsif ($VCSHOST == "salsa") {
+	return "$VCSBASE/commits/master/$path";
+    } else {
+	die "Unknown/unsupported VCSHOST $VCSHOST - ABORT\n";
+    }
 }
 
-sub alioth_cvs_log_url {
-    my ($path) = @_;
-
-    return alioth_cvs_file_url($path);
-}
-
-sub alioth_cvs_diff_url {
+sub vcs_diff_url {
     my ( $path, $r1, $r2, $diff_format ) = @_;
 
-    return alioth_cvs_file_url($path)
-        . sprintf( '?r1=%s&amp;r2=%s&amp;diff_format=%s', $r1, $r2, $diff_format );
+    if ($VCSHOST == "alioth") {
+	return "$VCSBASE/$path/?r1=$r1&amp;r2=$r2&amp;diff_format=$diff_format";
+    } elsif ($VCSHOST == "salsa") {
+	return "$VCSBASE/BROKEN_DIFF_SUPPORT_FIXME/$path";
+    } else {
+	die "Unknown/unsupported VCSHOST $VCSHOST - ABORT\n";
+    }
 }
 
-sub alioth_cvs_view_url {
+sub vcs_view_url {
     my ($path) = @_;
 
-    return alioth_cvs_file_url($path) . '?view=markup';
+    if ($VCSHOST == "alioth") {
+	return "$VCSBASE/$path?view=markup";
+    } elsif ($VCSHOST == "salsa") {
+	return "$VCSBASE/blob/master/$path";
+    } else {
+	die "Unknown/unsupported VCSHOST $VCSHOST - ABORT\n";
+    }
 }
 
-sub alioth_cvs_raw_url {
+sub vcs_raw_url {
     my ($path) = @_;
 
-    return alioth_cvs_file_url($path) . '?view=co';
+    if ($VCSHOST == "alioth") {
+	return "$VCSBASE/$path?view=co";
+    } elsif ($VCSHOST == "salsa") {
+	return "$VCSBASE/raw/master/$path";
+    } else {
+	die "Unknown/unsupported VCSHOST $VCSHOST - ABORT\n";
+    }
 }
 
 print "Creating files: " if ($config{'verbose'});
@@ -419,7 +465,7 @@ foreach $lang (@search_in) {
 		$translated_s{$lang} += $sizes{$file};
                 $orig = $original{"$lang/$file"} || "english";
                 # Outdated translations
-                $msg = check_translation ($transversion{"$lang/$file"}, $version{"$orig/$file"}, "$lang/$file");
+                $msg = check_translation ($transversion{"$lang/$file"}, $version{"$orig/$file"}, "$lang/$file", "$orig/$file");
                 if (length ($msg) or (($todo ne '<td></td><td></td><td></td>') and ($transversion{"$lang/$file"} ne $version{"$orig/$file"}))) {
                     $o_body .= "<tr>";
                     if (($file !~ /\.wml$/)
@@ -444,10 +490,10 @@ foreach $lang (@search_in) {
 		      if (defined $status_db{$lang}) {
                        if ($transversion{"$lang/$file"} ne ''){
 			$o_body .= sprintf '<td><a title=\'<gettext domain="stats">Unified diff</gettext>\' href="%s">%s&nbsp;→&nbsp;%s</a> ',
-				alioth_cvs_diff_url( "$orig/$file", $transversion{"$lang/$file"}, $version{"$orig/$file"}, 'u' ),
+				vcs_diff_url( "$orig/$file", $transversion{"$lang/$file"}, $version{"$orig/$file"}, 'u' ),
 				$transversion{"$lang/$file"}, $version{"$orig/$file"};
 			$o_body .= sprintf '<a title=\'<gettext domain="stats">Colored diff</gettext>\' href="%s">%s&nbsp;→&nbsp;%s</a> ',
-				alioth_cvs_diff_url( "$orig/$file", $transversion{"$lang/$file"}, $version{"$orig/$file"}, 'h' ),
+				vcs_diff_url( "$orig/$file", $transversion{"$lang/$file"}, $version{"$orig/$file"}, 'h' ),
 				$transversion{"$lang/$file"}, $version{"$orig/$file"};
 			$o_body .= "$statspan</td>";
 		       } else {
@@ -455,16 +501,16 @@ foreach $lang (@search_in) {
 		       }
 		      } else {
 		        $o_body .= sprintf "<td><a href=\"%s\">%s\&nbsp;->\&nbsp;%s</a></td>",
-					   alioth_cvs_diff_url( "$orig/$file", $transversion{"$lang/$file"}, $version{"$orig/$file"}, $firstdifftype ),
+					   vcs_diff_url( "$orig/$file", $transversion{"$lang/$file"}, $version{"$orig/$file"}, $firstdifftype ),
 					   $transversion{"$lang/$file"}, $version{"$orig/$file"};
 		        $o_body .= sprintf "<td><a href=\"%s\">%s\&nbsp;->\&nbsp;%s</a></td>",
-					   alioth_cvs_diff_url( "$orig/$file", $transversion{"$lang/$file"}, $version{"$orig/$file"}, $seconddifftype ),
+					   vcs_diff_url( "$orig/$file", $transversion{"$lang/$file"}, $version{"$orig/$file"}, $seconddifftype ),
 					   $transversion{"$lang/$file"}, $version{"$orig/$file"};
 		      }
 		    }
-		    $o_body .= sprintf "<td><a title=\"%s\" href=\"%s#rev%s\">[L]</a></td>", $msg, alioth_cvs_log_url("$orig/$file"), $version{"$orig/$file"};
-                    $o_body .= sprintf "<td><a href=\"%s\">[V]</a>\&nbsp;", alioth_cvs_view_url("$lang/$file");
-                    $o_body .= sprintf "<a href=\"%s\">[F]</a></td>", alioth_cvs_raw_url("$lang/$file");
+		    $o_body .= sprintf "<td><a title=\"%s\" href=\"%s#rev%s\">[L]</a></td>", $msg, vcs_log_url("$orig/$file"), $version{"$orig/$file"};
+                    $o_body .= sprintf "<td><a href=\"%s\">[V]</a>\&nbsp;", vcs_view_url("$lang/$file");
+                    $o_body .= sprintf "<a href=\"%s\">[F]</a></td>", vcs_raw_url("$lang/$file");
                     $o_body .= sprintf "<td align=center>%s</td>", $maintainer{"$lang/$file"} || "";
 		    $o_body .= $todo if (defined $status_db{$lang});
                     $o_body .= "</tr>\n";
@@ -546,7 +592,7 @@ foreach $lang (@search_in) {
 	    printf HTML "#use wml::debian::template title=\"<:=\$trans{\$CUR_ISO_LANG}{%s}:>\"\n", $lang;
 	    print HTML "#use wml::debian::toc\n";
         printf HTML qq|<define-tag transstatslink><a href="%s">webwml-stattrans</a></define-tag>\n|,
-            alioth_cvs_view_url('stattrans.pl');
+            vcs_view_url('stattrans.pl');
         print HTML "<define-tag createdwith><address>\n";
         print HTML '<gettext domain="stats">Created with <transstatslink></gettext>';
         print HTML "</address></define-tag>\n";
@@ -688,7 +734,7 @@ open (HTMLI, ">$config{'htmldir'}/index.wml")
 print HTMLI "#use wml::debian::stats_tags\n";
 printf HTMLI "#use wml::debian::template title=\"%s\"\n\n", $config{'title'};
 printf HTMLI qq|<define-tag transstatslink><a href="%s">webwml-stattrans</a></define-tag>\n|,
-       alioth_cvs_view_url('stattrans.pl');
+       vcs_view_url('stattrans.pl');
 print HTMLI "<define-tag createdwith><address>\n";
 print HTMLI '<gettext domain="stats">Created with <transstatslink></gettext>';
 print HTMLI "</address></define-tag>\n";

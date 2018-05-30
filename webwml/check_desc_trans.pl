@@ -90,15 +90,17 @@ my $directory = catdir( 'MailingLists' , 'desc' );
 my $srcdir    = catdir( 'english', $directory );
 my $destdir   = catdir( $language, $directory );
 
-# read svn info about files in source dir
-my %revision_info = vcs_path_info( $srcdir, 'recursive' => 1 );
+my $VCS = Local::VCS->new();
+
+# read VCS info about files in source dir
+my %revision_info = $VCS->path_info( $srcdir, 'recursive' => 1 );
 
 # read the translation-check files in dest dir
 my %transcheck = read_transcheck( $destdir );
 
 # check all files
 my ($nr_uptodate,$nr_old,$nr_needtrans,$nr_obsolete,$nr_error) = 
-	check_all( $language, $directory, \%transcheck, \%revision_info );
+	check_all( $VCS, $language, $directory, \%transcheck, \%revision_info );
 
 # print results
 print "\nResults:\n";
@@ -160,6 +162,7 @@ sub read_transcheck
 # check all translations
 sub check_all
 {
+	my $VCS     = shift;
 	my $lang    = shift  or  die("No language specified");
 	my $dir     = shift  or  die("No directory specified");
 	my $files   = shift  or  die("No transcheck files specified");
@@ -202,7 +205,7 @@ sub check_all
 		if ( -e $file_english and -e $file_transl )
 		{
 			# needs update
-			if ( vcs_cmp_rev( $files->{$file}, $revinfo->{$file}->{'cmt_rev'} ) == -1 )
+			if ( $VCS->cmp_rev( $file_english, $files->{$file}, $revinfo->{$file}->{'cmt_rev'} ) == -1 )
 			{
 				$nr_old++;
 				print color('blue'), $file_transl, color('reset');
@@ -210,7 +213,7 @@ sub check_all
 					$files->{$file}, $revinfo->{$file}->{'cmt_rev'};
 			}
 			# translated file is too new
-			elsif ( vcs_cmp_rev( $files->{$file}, $revinfo->{$file}->{'cmt_rev'} ) == -1 )
+			elsif ( $VCS->cmp_rev( $file_english, $files->{$file}, $revinfo->{$file}->{'cmt_rev'} ) == -1 )
 			{
 				$nr_error++;
 				print color('blue'), $file_transl, color('reset');

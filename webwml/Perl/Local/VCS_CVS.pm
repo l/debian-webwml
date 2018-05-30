@@ -15,7 +15,8 @@ Local::VCS_CVS - generic wrapper around version control systems -- CVS version
  use Local::VCS_CVS;
  use Data::Dumper;
 
- my %info = vcs_path_info( '.', recursive => 1, verbose => 1 );
+ my $VCS = Local::VCS->new();
+ my %info = $VCS->path_info( '.', recursive => 1, verbose => 1 );
  print Dumper($info{'foo.wml'});
 
  my %info2 = svn_file_info( 'foo.wml' );
@@ -52,17 +53,49 @@ use warnings;
 BEGIN {
 	use base qw( Exporter );
 
-	our $VERSION = sprintf "%s", q$Revision$ =~ /([0-9.]+)/;
+	our $VERSION = "1.14";
 	our @EXPORT_OK = qw( 
-	                     &vcs_cmp_rev     &vcs_count_changes
-	                     &vcs_get_topdir 
-	                     &vcs_path_info   &vcs_file_info
-	                     &vcs_get_log     &vcs_get_diff
-	                     &vcs_get_file
+			     &new
 	                   );
 	our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 }
 
+
+=item new
+
+This is the constructor.
+
+   my $VCS = Local::VCS->new();
+
+=cut
+
+sub new {
+        my $proto = shift;
+        my $class = ref($proto) || $proto;
+        my $self  = {
+		CACHE    => {},
+        };
+        bless ($self, $class);
+        return $self;
+}
+
+sub cache_file {
+    my $self = shift;
+    my $file = shift;
+    
+    if ($self->{CACHE}{"$file"}) {
+	print "$file is already cached...\n";
+	return;
+    }
+    print "Adding $file to cache\n";
+    $self->{CACHE}{"$file"} = 1;
+    return;
+}
+
+sub cache_repo {
+    my $self = shift;    
+    # Does nothing here...
+}    
 
 # handling debugging
 my $DEBUG = 0;
@@ -78,17 +111,19 @@ sub _debug
 sub _typeoffile;
 
 
-=item vcs_cmp_rev
+=item cmp_rev
 
-Compare two revision strings.
+Compare two revision strings for a given file
 
-Takes two revision strings as arguments, and 
-returns 1 if the first one is largest, 
--1 if the second one is largest, 
+Takes the file path and two revision strings as arguments, and 
+returns 1 if the first one is newer, 
+-1 if the second one is newer, 
 0 if they are equal
 =cut
-sub vcs_cmp_rev
+sub cmp_rev
 {
+	my $self = shift;
+	my $file = shift || ""; # unused here
 	my $a = shift || '0';
 	my $b = shift || '0';
 
@@ -117,7 +152,7 @@ sub vcs_cmp_rev
 	croak "Internal error: this should never be executed";
 }
 
-=item vcs_count_changes
+=item count_changes
 
 Return the number of changes to particular file between two revisions
 
@@ -131,8 +166,9 @@ Example use:
 
 =cut
 
-sub vcs_count_changes
+sub count_changes
 {
+	my $self = shift;
 	my $file = shift  or  return undef;
 	my $rev1 = shift || '1.1';
 	my $rev2 = shift || 'HEAD';
@@ -142,7 +178,7 @@ sub vcs_count_changes
 	# find the version number of HEAD, if it was specified
 	if ( $rev2 eq 'HEAD' )
 	{
-		my %info = vcs_file_info( $file );
+		my %info = $self->file_info( $file );
 		return -1  if  not %info;
 		$rev2 = $info{'cmt_rev'};
 	}
@@ -167,7 +203,7 @@ sub vcs_count_changes
 }
 
 
-=item vcs_path_info
+=item path_info
 
 Return CVS information and status about a tree of files.
 
@@ -190,7 +226,7 @@ Optional remaining arguments are a hash array with options:
 
 Example uses:
 
-   my %info1 = $vcs_path_info( 'src' );
+   my %info1 = $path_info( 'src' );
    my %info2 = $readinfo( 'src', recursive => 1 );
    my %info3 = $readinfo( 'src', recursive => 1, match_pat => '\.c$' );
 
@@ -198,8 +234,9 @@ Example uses:
 
 # todo: verbose
 
-sub vcs_path_info
+sub path_info
 {
+	my $self = shift;
 	my ($dir,%options) = @_;
 
 	croak("No file or directory specified") unless $dir;
@@ -245,7 +282,7 @@ sub vcs_path_info
 	return %data;
 }
 
-=item vcs_file_info
+=item file_info
 
 Return VCS information and status about a single file
 
@@ -260,12 +297,13 @@ the specified file:
 
 Example use:
 
-   my %info = $vcs_file_info( 'foo.wml' );
+   my %info = $file_info( 'foo.wml' );
 
 =cut
 
-sub vcs_file_info
+sub file_info
 {
+	my $self = shift;
 	my $file = shift or carp("No file specified");
 	my %options = @_;
 
@@ -274,7 +312,7 @@ sub vcs_file_info
 	my ($basename,$dirname) = fileparse( rel2abs $file );
 
 	# note: for some weird reason, the file is returned as '.'
-	my %info = vcs_path_info( $dirname, 'recursive' => 0 );
+	my %info = $self->path_info( $dirname, 'recursive' => 0 );
 
 	if ( not ( exists $info{$basename} and $info{$basename} ) )
 	{
@@ -285,7 +323,7 @@ sub vcs_file_info
 	return %{ $info{$basename} };
 }
 
-=item vcs_get_log
+=item get_log
 
 Return the log info about a specified file
 
@@ -295,12 +333,13 @@ of the log entries
 
 Example use:
 
-   my @log_entries = vcs_get_log( 'foo.wml' );
+   my @log_entries = get_log( 'foo.wml' );
 
 =cut
 
-sub vcs_get_log
+sub get_log
 {
+	my $self = shift;
 	my $file = shift  or  return;
 	my $rev1 = shift || '0';
 	my $rev2 = shift || '';
@@ -353,7 +392,7 @@ sub vcs_get_log
 	return reverse @logdata;
 }
 
-=item vcs_get_diff
+=item get_diff
 
 Returns a hash of (filename,diff) pairs containing the unified diff between two version of a (number of) files.
 
@@ -365,14 +404,15 @@ modified) version is diffed against the latest checked in version.
 
 Example use:
 
-   my %diffs = vcs_get_diff( 'foo.wml', '1.4', '1.17' );
-   my %diffs = vcs_get_diff( 'bla.wml', '1.8' );
-   my %diffs = vcs_get_diff( 'bas.wml' );
+   my %diffs = get_diff( 'foo.wml', '1.4', '1.17' );
+   my %diffs = get_diff( 'bla.wml', '1.8' );
+   my %diffs = get_diff( 'bas.wml' );
 
 =cut
 
-sub vcs_get_diff
+sub get_diff
 {
+	my $self = shift;
 	my $file = shift  or  return;
 	my $rev1 = shift;
 	my $rev2 = shift;
@@ -388,6 +428,7 @@ sub vcs_get_diff
 	# set the record separator for cvs diff output
 	local $/ = "\n" . ('=' x 67) . "\n";
 
+#	print "$command\n";
 	open( my $cvs, '-|', $command ) 
 		or croak("Couldn't run `$command': $!");
 
@@ -401,17 +442,17 @@ sub vcs_get_diff
 		$record =~ s{ $/ \n? \Z }{}msx;
 
 		# remove the "Index:" line from the end of the record
-		$record =~ s{ ^Index: [^\n]+ \n+ \Z }{}msx;
+#		$record =~ s{ ^Index: [^\n]+ \n+ \Z }{}msx;
 
-		# remove the first four lines
-		$record =~ s{ \A (?: .*? \n ){4} }{}msx;
+		# remove the first three lines
+		$record =~ s{ \A (?: .*? \n ){3} }{}msx;
 
-		# get the file name
-		if ( not $record =~ m{ \A --- \s+ ([^\t]+) \t }msx )
-		{
-			croak("Parse error in output of `$command'");
-		}
-		my $file = $1;
+#		# get the file name
+#		if ( not $record =~ m{ \A --- \s+ ([^\t]+) \t }msx )
+#		{
+#			croak("Parse error in output of `$command'");
+#		}
+#		my $file = $1;
 
 		$data{$file} = $record;
 	}
@@ -433,7 +474,7 @@ sub _get_repository
 	return $repo;
 }
 
-=item vcs_get_file
+=item get_file
 
 Return a particular revision of a file
 
@@ -445,12 +486,13 @@ and returns it (without writing anything in the current checked-out tree)
 
 Example use:
 
-   my $text = vcs_get_file( 'foo.c', '1.12' );
+   my $text = get_file( 'foo.c', '1.12' );
 
 =cut
 
-sub vcs_get_file
+sub get_file
 {
+	my $self = shift;
 	my $file = shift or croak("No file specified");
 	my $rev  = shift or croak("No revision specified");
 
@@ -478,7 +520,67 @@ sub vcs_get_file
 	return $text;
 }
 
-=item vcs_get_topdir
+=item get_oldest_revision
+
+Return the version of the oldest version of a file
+
+The first argument is a name of a file.
+
+This function finds the oldest revision of a file that is known in the
+repository and returns it.
+
+Example use:
+
+   my $rev = get_oldest_revision( 'foo.c');
+
+=cut
+
+sub get_oldest_revision
+{
+	my $self = shift;
+	my $file = shift or croak("No file specified");
+
+	croak( "No such file: $file" ) unless -f $file;
+
+	return '1.1'; # earliest possible revision of any file, easy!
+}
+
+=item next_revision
+
+Given a file path and a current revision of that file, move backwards
+or forwards through the commit history and return a related revision.
+
+Takes three arguments: the file path, the start revision and an
+integer to specify which direction to move *and* how far. A negative
+number specifies backwards in history, a positive number specifies
+forwards.
+
+Example use:
+
+   my $rev = next_revision( 'foo.c', '72f6700577c79e6d284fbeac44366f6aa357d56d', -1);
+
+Returns the requested revision if it exists, otherwise *undef*
+
+=cut
+sub next_revision
+{
+	# For the file we're looking at, we can easily generate an
+	# array (list) of all the commit hashes. Then we can see where
+	# in that list the specified revision lies.
+	#
+	# FIXME: Only deals with simple moves backwards/forwards along the trunk
+
+	my $self = shift;
+	my $file = shift or return undef;
+	my $rev1 = shift or return undef;
+	my $move = shift or return undef;
+
+	my $newrev = $rev1;
+	$newrev =~ s/(\d+)$/($1 + $move)/e;
+	return $newrev;
+}
+
+=item get_topdir
 
 Return the top dir of the webwml repository
 
@@ -487,12 +589,13 @@ If it is not specified, by default the current directory is used.
 
 Example use:
 
-   my $dir = vcs_get_topdir( 'foo.c' );
+   my $dir = get_topdir( 'foo.c' );
 
 =cut
 
-sub vcs_get_topdir
+sub get_topdir
 {
+	my $self = shift;
 	my $file = shift || '.';
 
 	my $cvs = Local::Cvsinfo->new();
@@ -552,247 +655,3 @@ Free Software Foundation.
 # ignore for now, I will get rid of it as the rewrite progresses
 # -- Bas.
 __END__
-
-
-
-=item svn_diff
-
-Return diff for the specified file 
-
-The first argument is a name of a file.
-The second argument is the revision against which to take the diff (use undef for HEAD)
-If a thrird argument is present, it signifies that hte use want a diff between
-the version specified in the second agument and the one in the third argument
-
-Example use:
-
-   # get diff of local changes against head
-   my $diff1 = $svn_diff( 'foo.c' );
-   # get diff of local changes against revision 12
-   my $diff2 = $svn_diff( 'foo.c', 'r12' );
-   # get diff between version 11 and 12 of the file
-   my $diff1 = $svn_diff( 'foo.c', 'r11', 'r12' );
-
-=cut
-
-sub svn_diff
-{
-	my $file = shift or carp("No file specified");
-	my $rev1 = shift or carp("No orig revision specified");
-	my $rev2 = shift or carp("No target revision specified");
-
-	carp( "No such file: $file" ) unless -e $file;
-
-	# intitalize SVN client
-	my $ctx = SVN::Client->new();
-
-	# create twoo filehandles for output and error streams
-
-	# TODO: this doesn't work (bug in SVN::Client?)
-	my ($out,$err);
-	#open ( my $fd_out, '>', \$out ) or croak("Couldn't open \\\$out");
-	#open ( my $fd_err, '>', \$err ) or croak("Couldn't open \\\$err");
-
-	open ( my $fd_out, '+>', undef ) or croak("Couldn't open anonymous output");
-	open ( my $fd_err, '+>', undef ) or croak("Couldn't open anonymous error");
-
-	$ctx->diff( 
-		[],  # options to diff (-u is default)
-		$file, $rev1, # first file
-		$file, $rev2, # second file
-		1, # recursiveness
-		1, # don't bother with ancestors
-		0, # do diff deleted files
-		$fd_out, # output file
-		$fd_err, # error output file
-	);
-
-	# read the stuff from the files
-	seek( $fd_out, 0, SEEK_SET );
-	seek( $fd_err, 0, SEEK_SET );
-	{ 
-		local $/;
-		$out = <$fd_out>;
-		$err = <$fd_err>;
-	}
-
-	# done with the files
-	close( $fd_out );
-	close( $fd_err );
-
-	# croak on error
-	croak( $err ) if $err;
-
-	# return the diff
-	return $out;
-}
-
-
-=item svn_log
-
-Return the log entries of a particular file
-
-The first argument is a name of a file.
-The (optional) second  and third argument specify the revision range
-
-This function retrieves the log entry/entries of the specified revision(s) for
-the specified file.  If only a file name is given, the entire history is
-returned; if only 1 revision is specified, the log entrie of that particular
-revision is returned; if two revisions are specified, all log entries in
-between are returned.
-
-Example use:
-
-   my @log = svn_log( 'foo.c' );
-   my @log = svn_log( 'foo.c', 'r42' );
-   my @log = svn_log( 'foo.c', 'r42', 'r112' );
-   my @log = svn_log( 'foo.c', 'r42', 'HEAD' );
-
-=cut
-
-my @_log_collection;
-
-sub _log_receiver
-{
-	my $paths  = shift; # NOTE: not used
-	my $rev    = shift;
-	my $author = shift;
-	my $date   = str2time( shift );
-	my $msg    = shift;
-
-	push @_log_collection, { 
-		'rev'     => $rev,
-		'author'  => $author,
-		'date'    => $date,
-		'message' => $msg,
-	};
-
-}
-
-sub svn_log
-{
-	my $file = shift or carp("No file specified");
-	my $rev1 = shift || '0';
-	my $rev2 = shift || 'HEAD';
-
-	carp( "No such file: $file" ) unless -e $file;
-
-	# clear log
-	@_log_collection = ();
-
-	# intitialize SVN client
-	my $ctx = SVN::Client->new();
-
-	eval {
-		$ctx->log( 
-			$file,
-			$rev1,
-			$rev2,
-			0,  # determine which files were changed on each revision?
-			0,  # don't traverse history of copies?
-			\&_log_receiver
-		);
-	};
-	carp($@) if $@;
-
-
-	# return a copy of the logs
-	return @_log_collection;
-}
-
-=item svn_get_info
-
-Return info about the (local) Subversion repository
-
-The first argument is a name of a checked-out file or directory.
-
-Example use:
-
-   my %info = svn_info( 'foo.c' );
-
-=cut
-
-my %_info_data;
-
-sub _info_receiver
-{
-	my( $path, $info, $pool ) = @_;
-
-	# return if the info is already known
-	return if %_info_data;
-
-	%_info_data = (
-		'url'                 => $info->URL(),
-		'rev'                 => $info->rev(),
-		'kind'                => $info->kind(),
-		'root'                => $info->repos_root_URL(),
-		'uuid'                => $info->repos_UUID(),
-		'last_changed_rev'    => $info->last_changed_rev(),
-		'last_changed_date'   => $info->last_changed_date(),
-		'last_changed_author' => $info->last_changed_author(),
-	);
-};
-
-sub svn_get_info
-{
-	my $file = shift or carp("No file specified");
-
-	$file = rel2abs( $file );
-
-	# intitialize SVN client
-	my $ctx = SVN::Client->new();
-
-	# reset the info hash
-	%_info_data = ();
-
-	eval {
-		$ctx->info( 
-			$file,
-			undef, # no revision info, so...
-			undef, # ...only use local info
-			\&_info_receiver,
-			0,     # no, don't recurse
-		);
-	};
-	carp($@) if $@;
-
-	return %_info_data;
-}
-
-
-=item svn_get_depth
-
-Find how deep we are inside the repository
-
-The first argument is a name of a checked-out file or directory.
-
-Example use:
-
-   my $depth = svn_get_topdir( 'foo.c' );
-
-=cut
-
-sub svn_get_depth
-{
-	my $file = shift or carp("No file specified");
-
-
-	my %info = svn_get_info( $file );
-	my $top  = $info{'url'};
-	my $root = $info{'root'};
-
-	# if $file really is a file (not a dir), only look at the directory part of
-	# the filename
-	$top = dirname( $top )  if $info{'kind'} == 1;
-
-	# remove the root from the start of url to get a top dir
-	$top =~ s{^\Q$root\E}{};
-	$top =~ s{/+}{/};
-
-	# count the number of elements in the path
-	my $num = scalar splitdir( $top );
-
-	# minus 1, because $top starts with a '/', and thus splitdir adds an empty
-	# field at the beginning
-	return $num - 1;
-}

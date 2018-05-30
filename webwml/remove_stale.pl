@@ -26,11 +26,13 @@ FindBin::again();
 use lib "$FindBin::Bin/Perl";
 
 use Webwml::Langs;
-use Local::VCS 'vcs_file_info';
+use Local::VCS;
 
 
 # directory where "make install" installs the website
 use constant INSTALLDIR => '../www';
+
+my $VCS = Local::VCS->new();
 
 ###############################################################
 # "main"
@@ -128,7 +130,7 @@ sub find_stale_files
 	my %wmlfiles  = map { $_ => 1 } find_files_ext( $dir, 'wml' );
 
 	# Locate all HTML files, and find out which ones do not correspond
-	# to a WML file, and does not live in the CVS by itself.
+	# to a WML file, and does not live in the VCS by itself.
 	my @toremove;
 	foreach my $htmlfile (sort @htmlfiles)
 	{
@@ -151,7 +153,7 @@ sub find_stale_files
 		my $haswml = exists( $wmlfiles{$source} ) || -f $source || 0;
 
 		# is the html file checked in the VCS?
-		my $checkedin = vcs_file_info($htmlfile , quiet => 1 ) ? 1 : 0;
+		my $checkedin = $VCS->file_info($htmlfile , quiet => 1 ) ? 1 : 0;
 
 		#if ($checkedin) 
 		#{ print "==> `$htmlfile' : `$source' : $haswml : $checkedin\n"; }

@@ -21,7 +21,7 @@ FindBin::again();
 use lib "$FindBin::Bin/Perl";
 
 use File::Path;
-use Local::VCS qw(vcs_file_info);
+use Local::VCS;
 use File::Temp qw/tempfile/;
 use Getopt::Std;
 
@@ -52,6 +52,8 @@ if (exists $ENV{DWWW_MAINT})
 {
 	$maintainer = $ENV{DWWW_MAINT};
 }
+
+my $VCS = Local::VCS->new();
 
 # Options
 our ($opt_n, $opt_t, $opt_l);
@@ -85,7 +87,6 @@ if ($#ARGV == -1)
         print "\t\t(overwrites language.conf definition\n";
         print "\tDWWW_MAINT\tSets maintainer for the translation\n";
         print "Options:\n";
-        print "\t-n\tDoes not check status of target files in CVS\n";
         print "\t-m\tSets the maintainer for the translation (overwrites environment)\n";
         print "\t-l\tSets the language for the translation (overwrites environment)\n";
         print "\n";
@@ -190,9 +191,7 @@ sub copy
 	}
 
 	# Retrieve VCS revision number
-	my %vcsinfo = vcs_file_info( $srcfile );
-
-        find_files_attic ( $dstfile ) if ! $opt_n;
+	my %vcsinfo = $VCS->file_info( $srcfile );
 
 	if ( not %vcsinfo  or  not exists $vcsinfo{'cmt_rev'}  )
 	{
@@ -246,81 +245,4 @@ sub copy
 	print "Copied $page, remember to edit $dstfile\n";
 	print "and to remove $dsttitle when finished\n"
 		if defined $dsttitle;
-}
-
-# Find for old translations in the CVS Attic 
-sub find_files_attic
-{
-        my ($file) = @_;
-        $file =~ s/'//;
-        print "Checking CVS information for $file...\n";
-
-        # Create a temporary file for the cvs results
-        my ($tempfh, $tmpfile) = tempfile("cvsinfo.XXXXXX", DIR => File::Spec->tmpdir, UNLINK => 0) ;
-        close $tempfh;
-
-        # Run 'cvs status'. Unfortunately, this is the only way
-        # to look for files in the Attic
-        system "LC_ALL=C cvs status '$file' >$tmpfile 2>&1";
-
-        if ( $? != 0 ) 
-        {
-        # CVS returns an error, then cleanup and return
-        # Do not complain because this might happen just because we
-        # have no network access, just cleanup the temporary file
-            unlink $tmpfile;
-            return 0;
-        }
-
-        # If CVS does not return an error then there is a file in CVS
-        # even if $dstfile is not in the filesystem
-        # There could be two reasons for this:
-        #  - The user has removed it but somebody else put it in CVS
-        #  - It resides in the Attic
-        my $deleted_version = "<latest_version>";
-        my $previous_version = "<version_before_deletion>";
-        my $cvs_location = "";
-
-        # Parse the result of cvs status
-        open(TF, $tmpfile) || die ("Cannot open temporary file: $?");
-        while ($line = <TF>) {
-            chomp $line;
-            if ( $line =~ /Repository revision:\s+(\d+)\.(\d+)\s+(.*)$/ )  {
-                $cvs_location = $3;
-                $deleted_version = $1.".".$2 ;
-                $previous_version = $1.".".($2-1);
-            }
-        }
-        close TF;
-        unlink $tmpfile; # File is not used from here on, delete it
-
-        # Now determine in which situation we are in:
-
-        if ( $cvs_location eq "" ) 
-        {
-# Situation 0 - This happens when the return text is
-# "Repository revision: No revision control file"
-            return 0; # Nothing to do here
-
-        } 
-        
-        if ( $cvs_location =~ /Attic\// ) 
-        {
-# Situation 1 - There is a translation in the Attic
-# Give information on how to restore
-
-            print STDERR "ERROR: An old translation exists in the Attic, you should restore it using:\n";
-            print STDERR "\tcvs update -j $deleted_version -j $previous_version $dstfile\n";
-            print STDERR "\t[Edit and update the file]\n";
-            print STDERR "\tcvs ci $dstfile\n";
-            die ("Old translation found\n");
-        }
-
-        # Situation 2 - There is already a file in CVS with this
-        # name, since it does not exist in the local copy maybe
-        # the local copy is not up to date
-        print STDERR "ERROR: A translation already exist in CVS for this file.\n";
-        print STDERR "\tPlease update your CVS copy using 'cvs update'.\n";
-        die ("Translation already exists\n");
-
 }

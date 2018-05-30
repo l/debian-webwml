@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 
 # This is a toy to compute the karma of translators in the Debian web site
-# CVS repository.
 
 # It use information about translation revisions please see
 # https://www.debian.org/devel/website/uptodate
@@ -27,7 +26,7 @@ use FindBin;
 
 # These modules reside under webwml/Perl
 use lib "$FindBin::Bin/Perl";
-use Local::VCS ':all';
+use Local::VCS;
 use Local::WmlDiffTrans;
 use Webwml::TransCheck;
 use Webwml::TransIgnore;
@@ -56,7 +55,8 @@ foreach my $d (@DIRS)
 print "Reading data...";
 
 my $lang_from = 'english';
-my %info_from = vcs_path_info( $lang_from, 
+my $VCS = Local::VCS->new();
+my %info_from = $VCS->path_info( $lang_from, 
 	match_pat => $MATCH, 
 	skip_pat  => $SKIP,
 	recursive => 1, 
@@ -80,7 +80,7 @@ foreach my $subdir (@DIRS)
 	# TODO: transignore
 
 	# fetch a list of all (translated) files in this subdir
-	my %info_to = vcs_path_info( catfile($lang_to,$subdir), 
+	my %info_to = $VCS->path_info( catfile($lang_to,$subdir), 
 		match_pat => $MATCH, 
 		skip_pat  => $SKIP,
 		recursive => 1, 
@@ -151,9 +151,9 @@ sub check_file
 	$translator =~ s/^\s+ |\s+$//;
 
 	# calculate the number of revision the original english file has has
-	my $numrev = vcs_count_changes( $file_trans, undef, $revision );
+	my $numrev = $VCS->count_changes( $file_trans, undef, $revision );
 	# calculate the age of the translated file
-	my $age    = vcs_count_changes( $file_orig,  $oldr, $revision );
+	my $age    = $VCS->count_changes( $file_orig,  $oldr, $revision );
 
 	$karma->{$translator} += $numrev; # page translated. GOOD
 	$karma->{$translator} -= $numrev*$age/4; #out of date page; Bad

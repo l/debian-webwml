@@ -21,13 +21,20 @@
 #	- think of a better way to check when the file has been rebuilt last
 
 #    These modules reside under webwml/Perl
+#
+#    FIXME 93sam 2018-05-17: Converted to use Local::VCS to allow for
+#    usage with git, but not tested much. It's not clear at all if this
+#    script is still used or not.
+
 use lib ($0 =~ m|(.*)/|, $1 or ".") ."/Perl";
-use Local::Cvsinfo;
+use Local::VCS;
 use Webwml::Langs;
 use Webwml::TransCheck;
 
 # Set this to 1 for debugging
 $debug = 0;
+
+my $VCS = Local::VCS->new();
 
 sub rebuild {
     my $file = shift;
@@ -72,8 +79,6 @@ sub when_forced {
     }
 }
 
-#   We call constructor without argument.  It means there must be a
-#   CVS/Repository file or program will abort.
 my $l = Webwml::Langs->new();
 my %langs = $l->iso_name();
 my @langs = $l->names();
@@ -84,10 +89,12 @@ $arglang = $langs{$ARGV[1]} or die "Invalid lang argument: $ARGV[1]";
 $argfile =~ m+(.*)/(.*\.wml)+ or die "pattern does not match";
 my ($path, $file) = ($1, $2);
 
-my $cvs = Local::Cvsinfo->new();
-$cvs->options(matchfile => [ $file ]);
-$cvs->readinfo($path);
-my $origrev = $cvs->revision($argfile) || "1.0";
+my %file_info = $VCS->file_info($argfile);
+my $origrev = $file_info{'cmt_rev'};
+unless ($origrev)
+{
+	die "Could not get revision number for $argfile - bug in script?\n";
+}
 
 foreach $lang (@langs) {
     next if ($lang eq $arglang);
@@ -104,15 +111,10 @@ foreach $lang (@langs) {
     $original = $transcheck->original();
     $maxdelta = $transcheck->maxdelta() if $transcheck->maxdelta();
     $mindelta = $transcheck->mindelta() if $transcheck->mindelta();
-    # TODO - would cause unspecified results if 1. changed to 2.
-    $origrev =~ s/1\.//;
-    $langrev =~ s/1\.//;
     
     next unless not defined $original or $original eq $arglang;
 
-    # Compare the revisions
-    print "Orig: $origrev, lang: $langrev\n" if $debug;
-    $difference = $origrev-$langrev;
+    $difference = $VCS->count_changes($argfile, $langrev, $origrev);
     if ($difference < $mindelta) {
         next unless was_forced($transfile);
         print "unlinking $transfile.forced\n" if $debug;
